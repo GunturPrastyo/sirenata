@@ -1,13 +1,24 @@
 <x-layouts.app title="Users">
     <div class="w-full max-w-5xl mx-auto">
         <h1 class="" style="color: red;">Hello World</h1>
-        <p class="text-blue-500 my-2">Module: {!! config('roles.name') !!}</p>
+        <p class="text-blue-500 my-2">Module: {!! config('user.name') !!} 
+            @auth
+                {{ Auth::user()->name }}
+            @endauth
+        </p>
+
+        @auth
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit">Logout</button>
+        </form>
+        @endauth
         <x-flash-message class="my-2" />
         
         <form action="{{ route('user.index') }}" method="GET" class="my-5">
             <div class="flex shadow-xs rounded-base -space-x-0.5">
                 <label for="search-dropdown" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
-                    Search Role
+                    Search Users
                 </label>
 
                 <select id="order" name="orderBy" class="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body">

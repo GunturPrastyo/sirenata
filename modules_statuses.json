@@ -1,5 +1,7 @@
 {
     "Roles": true,
     "Permission": true,
-    "User": true
+    "User": true,
+    "Auth": true,
+    "Dashboard": true
 }

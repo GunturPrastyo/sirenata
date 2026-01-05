@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Support\Facades\Auth;
 use Modules\User\Http\Requests\UserUpdateRequest;
 use Modules\User\Services\UserService;
 

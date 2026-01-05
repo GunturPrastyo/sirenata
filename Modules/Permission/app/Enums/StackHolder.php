@@ -2,7 +2,7 @@
 
 namespace Modules\Permission\Enums;
 
-enum ModuleStatus: String
+enum StackHolder: String
 {
     case SUPER_ADMIN = 'Super Admin';
     case ADMIN_PUSAT = 'Admin Pusat';
