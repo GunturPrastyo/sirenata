@@ -9,24 +9,21 @@ use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
-use Illuminate\Support\Facades\Auth;
 use Modules\User\Http\Requests\UserUpdateRequest;
 use Modules\User\Services\UserService;
 
 class UserController extends Controller
 {
-    private UserService $userService;
-    public function __construct(UserService $userService)
-    {
-        $this->userService = $userService;
-    }
+    public function __construct(
+        private UserService $userService
+    ) {}
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $limit = 2;
+        $limit = 10;
         $search = $request->search;
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy

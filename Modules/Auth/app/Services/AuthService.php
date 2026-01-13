@@ -2,7 +2,11 @@
 
 namespace Modules\Auth\Services;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Modules\Permission\Enums\StackHolder;
 
 class AuthService
 {
@@ -26,7 +30,17 @@ class AuthService
     /**
      * Handle user registration.
      */
-    public function register($username, $email, $password) {}
+    public function register($validated) {
+        return DB::transaction(function () use ($validated) {
+            $user = User::create([
+                'name'     => $validated['name'],
+                'email'    => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
+            $user->assignRole(StackHolder::USER->value);
+            return $user;
+        });
+    }
 
     /**
      * Handle user logout.
