@@ -19,6 +19,12 @@
                         Daftar
                     </a>
                 @endguest
+
+                @auth
+                    <a href="{{ route('landingpage.index') }}" class="text-gray-600 hover:text-gray-900 font-medium">
+                        ← Kembali ke Beranda
+                    </a>
+                @endauth
             </div>
         </div>
     </div>
