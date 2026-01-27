@@ -18,3 +18,24 @@
     --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
     --font-heading: "Montserrat", ui-sans-serif, system-ui, sans-serif;
 }
+
+@layer utilities {
+    .gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .gradient-secondary {
+        background: linear-gradient(135deg, #13416B 0%, #1e5a8e 100%);
+    }
+}
+
+
+@layer components {
+    .card-hover {
+        transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+}

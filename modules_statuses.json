@@ -3,5 +3,6 @@
     "Permission": true,
     "User": true,
     "Auth": true,
-    "Dashboard": true
+    "Dashboard": true,
+    "LandingPage": true
 }
