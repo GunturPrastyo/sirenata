@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cff518903f17eb2d3e4308127f50d082",
+    "content-hash": "0e4607b12de0a81591217afdfc845525",
     "packages": [
         {
             "name": "brick/math",
@@ -134,6 +134,82 @@
                 }
             ],
             "time": "2024-02-09T16:56:22+00:00"
+        },
+        {
+            "name": "creasi/laravel-nusa",
+            "version": "v0.1.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/creasico/laravel-nusa.git",
+                "reference": "6dc2b214c3e1fb3221ec4d9c24c07cfcc901ca5c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/creasico/laravel-nusa/zipball/6dc2b214c3e1fb3221ec4d9c24c07cfcc901ca5c",
+                "reference": "6dc2b214c3e1fb3221ec4d9c24c07cfcc901ca5c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-sqlite3": "*",
+                "laravel/framework": "^9.0|^10.0|^11.0|^12.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "composer-runtime-api": "*",
+                "laravel/pint": "^1.1",
+                "nunomaduro/collision": "^7.4|^8.0",
+                "orchestra/testbench": "^8.5|^9.0|^10.0",
+                "phpmyadmin/sql-parser": "^6.0",
+                "spatie/fork": "^1.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Creasi\\Nusa\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Creasi\\Nusa\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Creasi Developers",
+                    "email": "developers@creasi.co"
+                }
+            ],
+            "description": "A Laravel package that aim to provide Indonesia' Administrative Data",
+            "keywords": [
+                "desa",
+                "indonesia",
+                "kabupaten",
+                "kecamatan",
+                "kelurahan",
+                "kota",
+                "laravel",
+                "package",
+                "provinsi"
+            ],
+            "support": {
+                "docs": "https://nusa.creasi.dev",
+                "forum": "https://github.com/orgs/creasico/discussions",
+                "issues": "https://github.com/creasico/laravel-nusa/issues",
+                "source": "https://github.com/creasico/laravel-nusa"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/creasico",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-29T07:15:55+00:00"
         },
         {
             "name": "devrabiul/laravel-toaster-magic",

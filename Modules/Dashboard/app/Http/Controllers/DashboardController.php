@@ -5,7 +5,7 @@ namespace Modules\Dashboard\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class ashboardController extends Controller
 {
     /**
      * Display a listing of the resource.

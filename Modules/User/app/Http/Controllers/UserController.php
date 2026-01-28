@@ -94,6 +94,8 @@ class UserController extends Controller
     {
         try {
             $this->userService->deleteUser($user);
+            return redirect()->route('user.index')
+                ->with('success', "User deleted successfully!");
         } catch (\Exception $e) {
             ToastMagic::error("Failed to delete user: " . $e->getMessage());
             throw $e;

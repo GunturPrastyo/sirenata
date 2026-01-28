@@ -28,7 +28,7 @@ class LoginController extends Controller
         $remember = $request->boolean('remember');
 
         if ($this->authService->authenticate($credentials, $remember)) {
-            return redirect()->intended(route('user.index'));
+            return redirect()->intended(route('portal-dashboard'));
         }
 
         return back()->withErrors([

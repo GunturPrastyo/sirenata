@@ -45,11 +45,11 @@ class RolesDatabaseSeeder extends Seeder
         }
 
         // Super Admin - Full Access
-        $superAdmin = Role::create(['name' => 'Super Admin']);
+        $superAdmin = Role::create(['name' => 'super-admin']);
         $superAdmin->givePermissionTo(Permission::all());
 
         // Admin - Most Access
-        $admin = Role::create(['name' => 'Admin']);
+        $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo([
             'user.view',
             'user.create',
@@ -62,44 +62,29 @@ class RolesDatabaseSeeder extends Seeder
             'post.delete',
         ]);
 
-        // Editor - Limited Access
-        $editor = Role::create(['name' => 'Editor']);
-        $editor->givePermissionTo([
-            'post.view',
-            'post.create',
-            'post.edit',
-        ]);
-
         // User - Basic Access
-        $user = Role::create(['name' => 'User']);
+        $user = Role::create(['name' => 'user']);
         $user->givePermissionTo(['post.view']);
 
         // Create Users dengan Role
         $superAdminUser = \App\Models\User::create([
             'name' => 'Super Admin',
-            'email' => 'superadmin@example.com',
+            'email' => 'superadmin@gmail.com',
             'password' => bcrypt('password'),
         ]);
-        $superAdminUser->assignRole('Super Admin');
+        $superAdminUser->assignRole('super-admin');
 
         $adminUser = \App\Models\User::create([
             'name' => 'Admin User',
-            'email' => 'admin@example.com',
+            'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
         ]);
-        $adminUser->assignRole('Admin');
-
-        $editorUser = \App\Models\User::create([
-            'name' => 'Editor User',
-            'email' => 'editor@example.com',
-            'password' => bcrypt('password'),
-        ]);
-        $editorUser->assignRole('Editor');
+        $adminUser->assignRole('admin');
 
         // User dengan direct permission (tanpa role)
         $normalUser = \App\Models\User::create([
             'name' => 'Normal User',
-            'email' => 'user@example.com',
+            'email' => 'user@gmail.com',
             'password' => bcrypt('password'),
         ]);
         $normalUser->assignRole('User');

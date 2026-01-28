@@ -21,9 +21,15 @@
                 @endguest
 
                 @auth
-                    <a href="{{ route('landingpage.index') }}" class="text-gray-600 hover:text-gray-900 font-medium">
-                        ← Kembali ke Beranda
-                    </a>
+                    @if (request()->routeIs('portal-dashboard'))
+                        <a href="{{ route('landingpage.index') }}" class="text-gray-600 hover:text-gray-900 font-medium">
+                            ← Kembali ke Beranda
+                        </a>
+                    @else
+                        <a href="{{ route('portal-dashboard') }}" class="text-gray-600 hover:text-gray-900 font-medium">
+                            Masuk ke Portal
+                        </a>
+                    @endif
                 @endauth
             </div>
         </div>
