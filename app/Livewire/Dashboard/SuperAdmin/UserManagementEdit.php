@@ -10,8 +10,9 @@ use Livewire\Component;
 use Modules\Permission\Models\Permission;
 use Modules\Roles\Models\Role;
 use Modules\User\Services\UserService;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
-class UserManagemanetEdit extends Component
+class UserManagementEdit extends Component
 {
     public User $user;
 
@@ -57,11 +58,42 @@ class UserManagemanetEdit extends Component
         $this->regency  = $user->scopeArea?->regency_code;
     }
 
+
+    protected function rules(): array
+    {
+        return [
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$this->user->id,
+            'phone' => 'required|string|max:20',
+            'roleId' => 'required|exists:roles,uuid',
+            'jabatan' => 'required|string|max:255',
+            'province' => 'nullable|string|size:2',
+            'regency'  => 'nullable|string|max:5',
+            'permissionsSelected' => 'required|array',
+            'permissionsSelected.*' => 'required|exists:permissions,uuid',
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'required' => 'The :attribute field is required.',
+            'email.unique' => 'The email is already registered in our system.',
+        ];
+    }
+
+    protected function validationAttributes()
+    {
+        return [
+            'roleId' => 'role',
+        ];
+    }
+
     public function save()
     {
         try {
+            $this->validate();
             $data = [
-                'name'        => $this->full_name,
                 'email'       => $this->email,
                 'full_name'   => $this->full_name,
                 'phone'       => $this->phone,
@@ -72,12 +104,19 @@ class UserManagemanetEdit extends Component
                 'regency'     => $this->regency,
             ];
             
-
             $this->userService->updateUser($this->user, $data);
-            return redirect()->route('super-admin.user-management');
+            return redirect()->route('super-admin.user-management.index');
 
         } catch (\Exception $e) {
+            ToastMagic::error($e->getMessage());
             throw $e;
+        }
+    }
+
+    public function updatedProvince($value)             
+    {
+        if (empty($value)) {
+            $this->regency = null;
         }
     }
 
@@ -93,14 +132,11 @@ class UserManagemanetEdit extends Component
         return Regency::where('province_code', $this->province)->select('code', 'name')->get();
     }
 
-    public function updatedProvince($value)
-    {
-        $this->regency = null;
-    }
+
 
     public function render()
     {
-        return view('livewire.dashboard.super-admin.user-managemanet-edit', [
+        return view('livewire.dashboard.super-admin.user-management-edit', [
             'roles'       => Role::select('uuid', 'name')->get(),
             'permissions' => Permission::select('uuid', 'name')->get(),
         ]);

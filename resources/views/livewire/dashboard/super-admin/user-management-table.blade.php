@@ -11,6 +11,17 @@
             this.selected = ids
     }
 }" x-on:bulk-cleared.window="selected = []">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+
+        <a href="{{ route('super-admin.user-management.create') }}"
+            class="flex items-center bg-indigo-600 text-white px-4 py-2.5 rounded-md hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md w-full sm:w-auto justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Tambah User
+        </a>
+    </div>
+
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -77,9 +88,9 @@
         <div
             class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-base font-semibold text-slate-800">Daftar Admin Pusat</h2>
+                <h2 class="text-base font-semibold text-slate-800">Daftar User</h2>
                 <p class="text-sm text-slate-500 mt-1">
-                    Total: <span class="font-medium text-slate-700" id="total-admin">{{ $users->total() }}</span> admin
+                    Total: <span class="font-medium text-slate-700" id="total-admin">{{ $users->total() }}</span> user
                 </p>
             </div>
 
@@ -115,6 +126,8 @@
                         <th class="px-4 md:px-6 py-3 text-left">Email</th>
                         <th class="px-4 md:px-6 py-3 text-left">Role</th>
                         <th class="px-4 md:px-6 py-3 text-left">Status</th>
+                        <th class="px-4 md:px-6 py-3 text-left">Provinsi</th>
+                        <th class="px-4 md:px-6 py-3 text-left">Kabupaten/Kota</th>
                         <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -154,13 +167,28 @@
                                     Aktif
                                 </span>
                             </td>
-
+                            <td class="px-4 md:px-6 py-3  lg:table-cell">
+                                <p class="text-slate-600">{{ $user->scopeArea?->province_name }}</p>
+                            </td>
+                            <td class="px-4 md:px-6 py-3  lg:table-cell">
+                                <p class="text-slate-600">{{ $user->scopeArea?->regency_name }}</p>
+                            </td>
 
                             <td class="px-4 md:px-6 py-3 text-center">
                                 <x-table.action>
                                     <li>
                                         <a href="{{ route('super-admin.user-management.edit', $user->id) }}"
                                             class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('super-admin.user-management.show', $user->id) }}"
+                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
+                                    </li>
+                                    <li>
+                                        <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                            <x-modal-delete :id="$user->id" message="Are you sure delete user"
+                                                :item-name="$user->name" :route="route('super-admin.user-management.destroy', $user->id)" />
+                                        </div>
                                     </li>
                                 </x-table.action>
                             </td>

@@ -3,6 +3,8 @@
 namespace Modules\User\Models;
 
 use App\Models\User;
+use Creasi\Nusa\Models\Province;
+use Creasi\Nusa\Models\Regency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,8 +28,22 @@ class UserScope extends Model
         return $this->belongsTo(User::class);
     }
 
-    // protected static function newFactory(): UserScopeFactory
-    // {
-    //     // return UserScopeFactory::new();
-    // }
+     public function getProvinceNameAttribute()
+    {
+        if (!$this->province_code) return null;
+
+        return Province::where('code', $this->province_code)
+            ->value('name');
+    }
+
+    public function getRegencyNameAttribute()
+    {
+        if (!$this->regency_code) return null;
+
+        return Regency::where('code', $this->regency_code)
+            ->value('name');
+    }
+
+
+    
 }

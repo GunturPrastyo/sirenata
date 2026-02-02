@@ -3,7 +3,7 @@
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
-                    <a href="../index.html"
+                    <a href="{{ route('super-admin.user-management.index') }}"
                         class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path
@@ -19,7 +19,7 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <a href="./index.html"
+                        <a href="{{ route('super-admin.user-management.index') }}"
                             class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Manajemen
                             Admin</a>
                     </div>
@@ -63,19 +63,19 @@
                     </h2>
 
                     <p id="admin-role" class="text-sm text-indigo-600 font-medium mt-1">
-                        {{ $user->roles->first()->name }}
+                        {{-- {{ $user->roles->first()->name }} --}}
                     </p>
 
                     <p id="last-updated" class="text-xs text-slate-400 mt-4">
                         Terakhir diperbarui:
-                        <span id="last-updated-date"
-                            class="font-medium text-slate-500">{{ $user->updated_at->diffForHumans() }}</span>
+                        {{-- <span id="last-updated-date"
+                            class="font-medium text-slate-500">{{ $user->updated_at->diffForHumans() }}</span> --}}
                     </p>
                 </div>
             </div>
         </div>
 
-        <livewire:dashboard.super-admin.user-managemanet-edit :user="$user" />
+        <livewire:dashboard.super-admin.user-management-edit :user="$user" />
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 card-hover">
             <div class="flex items-center justify-between mb-6">

@@ -8,16 +8,18 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Modules\User\Services\UserService;
 
+
 class UserManagementTable extends Component
 {
     use WithPagination;
 
     #[Url]
-    public $limit = 2;
+    public $limit = 10;
     #[Url]
     public $search = '';
     #[Url]
     public $orderBy = 'desc';
+    public $user;
 
     protected UserService $userService;
     public function boot(UserService $userService)
@@ -33,6 +35,7 @@ class UserManagementTable extends Component
 
     public function bulkDelete(array $ids)
     {
+        $this->user = User::find($ids);
         User::whereIn('id', $ids)->delete();
 
         $this->dispatch('bulk-cleared');

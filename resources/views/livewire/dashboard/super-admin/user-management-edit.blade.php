@@ -1,4 +1,5 @@
 <div>
+    <x-flash-message />
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-6 card-hover">
         <form wire:submit="save">
             <!-- Informasi Pribadi -->
@@ -18,6 +19,9 @@
                         <input type="text" id="nama" name="nama" wire:model.lazy="full_name"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
                             placeholder="Masukkan nama lengkap">
+                        @error('full_name')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -27,7 +31,9 @@
                         <input type="email" id="email" name="email" wire:model.lazy="email" disabled
                             class="w-full px-4 py-2.5 border border-gray-300 cursor-not-allowed rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
                             placeholder="contoh@kemnaker.go.id">
-                        <p class="text-xs text-gray-500 mt-2">Harus menggunakan domain kemnaker.go.id</p>
+                        @error('email')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -37,6 +43,9 @@
                         <input type="tel" id="telepon" name="telepon" wire:model.lazy="phone" inputmode="numeric"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
                             placeholder="+62 812-3456-7890">
+                        @error('phone')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -46,6 +55,9 @@
                         <input type="text" id="jabatan" name="jabatan" wire:model.lazy="jabatan"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
                             placeholder="Contoh: Staff Administrasi">
+                        @error('jabatan')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -62,11 +74,14 @@
                         </label>
                         <select wire:model.lazy="province" id="province" name="province"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input">
-                            <option value="">Semua Status</option>
+                            <option value="">Pilih Provinsi</option>
                             @foreach ($this->provinces as $province)
                                 <option value="{{ $province->code }}">{{ $province->name }}</option>
                             @endforeach
                         </select>
+                        @error('province')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -75,11 +90,14 @@
                         </label>
                         <select wire:model.lazy="regency" id="regency" name="regency"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input">
-                            <option value="">Semua Status</option>
+                            <option value="">Pilih Kabupaten/Kota</option>
                             @foreach ($this->regencies as $regency)
                                 <option value="{{ $regency->code }}">{{ $regency->name }}</option>
                             @endforeach
                         </select>
+                        @error('regency')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- <div>
@@ -156,6 +174,9 @@
                                 </p>
                             @endforelse
                         </div>
+                        @error('role')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -179,6 +200,9 @@
                                 </p>
                             @endforelse
                         </div>
+                        @error('permissionsSelected')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>

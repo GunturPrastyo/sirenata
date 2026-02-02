@@ -16,9 +16,9 @@
 </li>
 
 <li>
-    <a href="{{ route('super-admin.user-management') }}"
+    <a href="{{ route('super-admin.user-management.index') }}"
         class="flex items-center px-2 py-1.5 rounded-md transition
-        {{ request()->routeIs('super-admin.user-management')
+        {{ request()->routeIs('super-admin.user-management.index')
             ? 'text-indigo-600 bg-purple-100'
             : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}"
         hover:bg-purple-100 hover:text-indigo-600 transition">
@@ -27,7 +27,7 @@
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
         </svg>
-        <span class="ms-3">Manajemen Admin</span>
+        <span class="ms-3">Manajemen User</span>
     </a>
 </li>
 

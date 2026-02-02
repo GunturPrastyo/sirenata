@@ -11,7 +11,7 @@
 
 <div x-data="{ open: false }" class="inline-block">
     <!-- Trigger Button -->
-    <button type="button" @click="open = true" class="{{ $buttonClass }}">
+    <button type="button" @click="open = true" class="{{ $buttonClass }} ">
         {{ $buttonText }}
     </button>
 

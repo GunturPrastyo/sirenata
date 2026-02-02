@@ -6,6 +6,7 @@ use App\Models\User;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Modules\Permission\Models\Permission;
 use Modules\Roles\Models\Role;
 use Spatie\Activitylog\Models\Activity;
@@ -14,7 +15,7 @@ class UserService
 {
     public function getFilteredQueryUsers(?string $search = null, string $sortBy = 'desc')
     {
-        return User::query()->with(['roles', 'permissions'])
+        return User::query()->with(['roles', 'permissions','scopeArea'])
             ->when($search, function ($q) use ($search) {
                 $q->search($search);
             })
@@ -33,8 +34,8 @@ class UserService
             $oldPermissions = $user->getPermissionNames()->toArray();
 
             $user->update([
-                'name'  => $data['name'],
-                'email' => $data['email'],
+                'name'  => $data['name'] ?? $user->name,
+                'email' => $data['email'] ?? $user->email,
             ]);
 
             $user->profile()->updateOrCreate(
@@ -46,19 +47,13 @@ class UserService
                 ]
             );
 
-
-
-            if ($data['province'] || $data['regency']) {
-                $user->scopeArea()->updateOrCreate(
-                    ['user_id' => $user->id],
-                    [
-                        'province_code' => $data['province'],
-                        'regency_code'  => $data['regency'],
-                    ]
-                );
-            }
-
-
+            $user->scopeArea()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'province_code' => $data['province'] ?: null,
+                    'regency_code'  => $data['regency'] ?: null,
+                ]
+            );
 
             if (!empty($data['password'])) {
                 $user->update(['password' => bcrypt($data['password'])]);
@@ -99,6 +94,44 @@ class UserService
             }
 
             ToastMagic::success("User {$user->name} updated successfully!");
+
+            return $user;
+        });
+    }
+
+    public function createUser(array $data): User
+    {
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name'     => $data['name'],
+                'email'    => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+
+            $user->profile()->create([
+                'full_name' => $data['full_name'],
+                'jabatan'   => $data['jabatan'],
+                'phone'     => $data['phone'],
+            ]);
+
+            $user->scopeArea()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'province_code' => $data['province'] ?: null,
+                    'regency_code'  => $data['regency'] ?: null,
+                ]
+            );
+
+            $role = Role::where('uuid', $data['role'])->firstOrFail();
+            $user->assignRole($role);
+
+            $permissions = Permission::whereIn('uuid', $data['permissions'] ?? [])
+                ->pluck('name')
+                ->toArray();
+
+            $user->syncPermissions($permissions);
+
+            ToastMagic::success("User {$user->name} created successfully!");
 
             return $user;
         });
