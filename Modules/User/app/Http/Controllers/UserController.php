@@ -23,7 +23,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $limit = 10;
+        $limit = 2;
         $search = $request->search;
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
@@ -61,7 +61,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $permissions = Permission::select('uuid', 'name', 'module')->get();
+        $permissions = Permission::select('uuid', 'name')->get();
         $roles = Role::select('uuid', 'name')->get();
         return view('user::edit', [
             'user' => $user,

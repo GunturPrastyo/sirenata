@@ -11,6 +11,8 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Modules\User\Models\UserProfile;
+use Modules\User\Models\UserScope;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -68,4 +70,15 @@ class User extends Authenticatable
         $query->where('name', 'like', "%{$keyword}%")
             ->orWhere('email', 'like', "%{$keyword}%");
     }
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function scopeArea()
+    {
+        return $this->hasOne(UserScope::class);
+    }
+
 }

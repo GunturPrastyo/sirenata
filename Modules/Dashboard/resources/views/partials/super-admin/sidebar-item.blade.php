@@ -1,5 +1,9 @@
 <li>
-    <a href="#" class="flex items-center px-2 py-1.5 text-indigo-600 bg-purple-100 rounded-md">
+    <a href="{{ route('super-admin.dashboard') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
+        {{ request()->routeIs('super-admin.dashboard')
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -12,8 +16,11 @@
 </li>
 
 <li>
-    <a href="#"
-        class="flex items-center px-2 py-1.5 text-gray-600 rounded-md
+    <a href="{{ route('super-admin.user-management') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
+        {{ request()->routeIs('super-admin.user-management')
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}"
         hover:bg-purple-100 hover:text-indigo-600 transition">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -26,8 +33,10 @@
 
 <li>
     <a href="#"
-        class="flex items-center px-2 py-1.5 text-gray-600 rounded-md
-        hover:bg-purple-100 hover:text-indigo-600 transition">
+        class="flex items-center px-2 py-1.5 rounded-md transition
+        {{ request()->routeIs('super-admin.help')
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

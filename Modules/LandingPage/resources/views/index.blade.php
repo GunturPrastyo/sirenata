@@ -56,7 +56,7 @@
     <section id="features" class="py-20 px-4 bg-white">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-red-500 mb-4">Fitur Utama SIRENATA</h2>
+                <h2 class="text-4xl font-bold text-gray-900  mb-4">Fitur Utama SIRENATA</h2>
                 <p class="text-xl text-gray-600 dark:text-gray-400">Solusi lengkap untuk manajemen RTK dan pengembangan
                     kompetensi</p>
             </div>

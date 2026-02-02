@@ -37,6 +37,29 @@ class UserService
                 'email' => $data['email'],
             ]);
 
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'full_name' => $data['full_name'],
+                    'jabatan'   => $data['jabatan'],
+                    'phone'     => $data['phone'],
+                ]
+            );
+
+
+
+            if ($data['province'] || $data['regency']) {
+                $user->scopeArea()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'province_code' => $data['province'],
+                        'regency_code'  => $data['regency'],
+                    ]
+                );
+            }
+
+
+
             if (!empty($data['password'])) {
                 $user->update(['password' => bcrypt($data['password'])]);
             }
