@@ -11,7 +11,13 @@
         </a>
 
         <ul class="space-y-2 font-medium">
-            @include('dashboard::partials.super-admin.sidebar-item')
+            @role('super-admin')
+                @include('dashboard::partials.super-admin.sidebar-item')
+            @endrole
+
+            @role('admin-pusat')
+                @include('dashboard::partials.admin-pusat.sidebar-item')
+            @endrole
         </ul>
     </div>
 </aside>

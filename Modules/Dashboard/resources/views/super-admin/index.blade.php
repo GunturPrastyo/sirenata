@@ -17,6 +17,7 @@
                             </path>
                         </svg>
                     </a>
+                </li>
                 <li>
                     <div class="flex items-center">
                         <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">

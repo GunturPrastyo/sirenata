@@ -27,8 +27,8 @@
             @endrole
             <!-- Admin Pusat Dashboard -->
             @role('admin-pusat')
-                <x-dashboard::accesscard title="Admin Pusat" description="Manajemen tingkat pusat" url="#"
-                    variant="purple">
+                <x-dashboard::accesscard title="Admin Pusat" description="Manajemen tingkat pusat"
+                    url="{{ route('admin-pusat.dashboard') }}" variant="purple">
                     <div
                         class="w-20 h-20 bg-purple-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-500 transition-all">
                         <svg class="w-10 h-10 text-purple-600 group-hover:text-white transition-all" fill="none"
