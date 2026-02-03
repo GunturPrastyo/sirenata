@@ -1,0 +1,11 @@
+{
+    "name": "RTK",
+    "alias": "rtk",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\RTK\\Providers\\RTKServiceProvider"
+    ],
+    "files": []
+}

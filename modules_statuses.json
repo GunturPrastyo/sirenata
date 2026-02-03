@@ -4,5 +4,6 @@
     "User": true,
     "Auth": true,
     "Dashboard": true,
-    "LandingPage": true
+    "LandingPage": true,
+    "RTK": true
 }
