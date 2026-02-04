@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('rencana_tenaga_kerjas', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->char('province_code', 10)->nullable();
+            $table->char('regency_code', 10)->nullable();
+            $table->string('name');
+            $table->year('start_date')->nullable();
+            $table->year('end_date')->nullable();
+            $table->string('status');
+            $table->string('type')->nullable();
+            $table->string('document_path')->nullable();
+
+            $table->index(['name', 'status']);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('rencana_tenaga_kerjas');
+    }
+};

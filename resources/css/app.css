@@ -50,6 +50,26 @@
 
 
 @layer components {
+    .file-upload-area {
+        border: 2px dashed #cbd5e1;
+        transition: all 0.3s ease;
+    }
+
+    .file-upload-area:hover {
+        border-color: #6366f1;
+        background-color: #f8f9ff;
+    }
+
+    .file-upload-area.dragover {
+        border-color: #6366f1;
+        background-color: #eef2ff;
+    }
+
+    .file-upload-area.has-file {
+        border-color: #10b981;
+        background-color: #f0fdf4;
+    }
+
     .card-hover {
         transition: all 0.3s ease;
     }

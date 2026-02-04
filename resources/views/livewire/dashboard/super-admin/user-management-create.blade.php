@@ -1,5 +1,5 @@
 <div>
-    <x-flash-message />
+    <x-validation-message />
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-6 card-hover">
         <form wire:submit="store">
             <!-- Informasi Pribadi -->
