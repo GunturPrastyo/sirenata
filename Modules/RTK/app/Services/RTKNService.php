@@ -15,6 +15,7 @@ class RTKNService
     public function getFilteredQueryBuilderRTKN(?string $search = null, string $sortBy = 'desc', ?string $status = null)
     {
         return DB::table('rencana_tenaga_kerjas')
+            ->where('type', TypeRtk::NASIONAL->value)
             ->when($search, fn($query) => $query->where('nama', 'like', "%{$search}%"))
             ->when($status, fn($query) => $query->where('status', $status))
             ->orderBy('created_at', $sortBy);

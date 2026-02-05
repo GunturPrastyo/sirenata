@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\MasterData\Models\Province;
+use Modules\MasterData\Models\Regency;
 use Modules\RTK\Enums\RTKStatus;
 use Modules\RTK\Enums\TypeRtk;
 
@@ -56,8 +58,13 @@ class RencanaTenagaKerja extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // protected static function newFactory(): RencanaTenagaKerjaFactory
-    // {
-    //     // return RencanaTenagaKerjaFactory::new();
-    // }
+    public function province()
+    {
+        return $this->belongsTo(Province::class, 'province_code', 'code');
+    }
+
+    public function regency()
+    {
+        return $this->belongsTo(Regency::class, 'regency_code', 'code');
+    }
 }

@@ -14,13 +14,13 @@ enum RTKStatus: string
         return $this->value;
     }
 
-    public function color(): string
+    public function color(): string         
     {
         return match ($this) {
-            self::PENDING => 'bg-yellow-500',
-            self::BERLAKU => 'bg-green-500',
-            self::PENGESAHAN_ULANG => 'bg-orange-500',
-            self::TIDAK_BERLAKU => 'bg-red-500',
+            self::PENDING => 'bg-[#fef3c7] text-[#92400e]',
+            self::BERLAKU => 'bg-[#d1fae5] text-[#065f46]',
+            self::PENGESAHAN_ULANG => 'bg-[#fee2e2] text-[#991b1b]',
+            self::TIDAK_BERLAKU => 'bg-[#fee2e2] text-[#991b1b]',
         };
     }
 }

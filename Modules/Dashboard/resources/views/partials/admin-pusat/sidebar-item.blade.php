@@ -30,10 +30,10 @@
     </a>
 </li>
 
-<li x-data="{ open: {{ request()->routeIs('admin-pusat.rtkn*', 'admin-pusat.billing*', 'admin-pusat.invoice*') ? 'true' : 'false' }} }">
+<li x-data="{ open: {{ request()->routeIs('admin-pusat.rtkn*', 'admin-pusat.rtkd.index*') ? 'true' : 'false' }} }">
     <button @click="open = !open"
         class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
-        {{ request()->routeIs('admin-pusat.rtkn*', 'admin-pusat.billing*', 'admin-pusat.invoice*')
+        {{ request()->routeIs('admin-pusat.rtkn*', 'admin-pusat.rtkd.index*')
             ? 'text-indigo-600 bg-purple-100'
             : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -52,9 +52,9 @@
 
     <ul x-show="open" x-collapse class="mt-1 space-y-1">
         <li>
-            <a href="#"
+            <a href="{{ route('admin-pusat.rtkd.index') }}"
                 class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-sm
-                {{ request()->routeIs('admin-pusat.products*')
+                {{ request()->routeIs('admin-pusat.rtkd*')
                     ? 'text-indigo-600 bg-purple-100'
                     : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
                 Rencana Tenaga Kerja (RTK)
