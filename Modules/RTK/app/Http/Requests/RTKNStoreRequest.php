@@ -22,8 +22,10 @@ class RTKNStoreRequest extends FormRequest
                 'integer',
                 'digits:4',
                 function ($attribute, $value, $fail) {
-                    if ($value < ((int) $this->start_date + 5)) {
-                        $fail('Tahun akhir harus minimal 5 tahun setelah tahun mulai.');
+                    $expectedEndYear = (int) $this->start_date + 5;
+
+                    if ((int) $value !== $expectedEndYear) {
+                        $fail('Tahun akhir harus tepat 5 tahun setelah tahun mulai.');
                     }
                 },
             ],

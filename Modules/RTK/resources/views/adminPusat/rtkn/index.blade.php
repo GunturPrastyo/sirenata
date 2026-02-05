@@ -27,7 +27,7 @@
         </nav>
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <a href="{{ route('admin-pusat.rencana-tenaga-kerja-nasional.create') }}"
+            <a href="{{ route('admin-pusat.rtkn.create') }}"
                 class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -47,11 +47,13 @@
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <select name="status"
                             class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                    focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Semua Status</option>
-                            <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                            <option value="nonaktif" {{ request('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif
-                            </option>
+                            @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
+                                <option value="{{ $status->value }}" @selected(request('status') === $status->value)>
+                                    {{ $status->value }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -59,7 +61,7 @@
                     <div class="relative w-full sm:w-44">
                         <select name="per_page"
                             class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                    focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             @foreach ([10, 20, 50, 100] as $page)
                                 <option value="{{ $page }}"
                                     {{ request('per_page') == $page ? 'selected' : '' }}>
@@ -90,7 +92,7 @@
                     </button>
 
                     <!-- Reset -->
-                    <a href="{{ route('admin-pusat.rencana-tenaga-kerja-nasional.index') }}"
+                    <a href="{{ route('admin-pusat.rtkn.index') }}"
                         class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium
                 hover:bg-slate-100 transition">
@@ -167,20 +169,20 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        {{-- <li>
-                                            <a href="{{ route('super-admin.user-management.edit', $rtkn->id) }}"
+                                        <li>
+                                            <a href="{{ route('admin-pusat.rtkn.edit', $rtkn->id) }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('super-admin.user-management.show', $rtkn->id) }}"
+                                            <a href="{{ route('admin-pusat.rtkn.show', $rtkn->id) }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
                                         </li>
                                         <li>
                                             <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                <x-modal-delete :id="$user->id" message="Are you sure delete user"
-                                                    :item-name="$user->name" :route="route('super-admin.user-management.destroy', $user->id)" />
+                                                <x-modal-delete :id="$rtkn->id" message="Are you sure delete RTKN"
+                                                    :item-name="$rtkn->name" :route="route('admin-pusat.rtkn.destroy', $rtkn->id)" />
                                             </div>
-                                        </li> --}}
+                                        </li>
                                     </x-table.action>
                                 </td>
                             </tr>

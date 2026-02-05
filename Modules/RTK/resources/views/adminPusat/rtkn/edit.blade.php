@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Upload RTKN">
+<x-dashboard::layouts.dashboard title="Edit RTKN">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
@@ -32,30 +32,71 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Upload RTKN</span>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Ubah RTKN</span>
                     </div>
                 </li>
             </ol>
         </nav>
 
-        <x-validation-message />
+        <x-validation-message class="mb-3" />
+        <div class="">
+            <button type="button" x-data @click="$dispatch('open-modal', 'edit-user')"
+                class="inline-flex mb-3 cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-200 rounded-md bg-neutral-950 hover:bg-neutral-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">
+                Preview Dokumen Lama
+            </button>
+
+            <x-modal name="edit-user" title="Preview Dokumen Lama" maxWidth="sm:max-w-2xl">
+                <div class="border border-gray-300 rounded-md overflow-hidden">
+
+                    @if ($rtkn->document_path && Storage::disk('public')->exists($rtkn->document_path))
+                        <iframe src="{{ Storage::url($rtkn->document_path) }}"
+                            class="w-full min-h-[500px] rounded-md border"></iframe>
+                    @else
+                        <div class="flex items-center justify-center  min-h-[500px] text-gray-400 border rounded-md">
+                            Tidak ada dokumen tersimpan
+                        </div>
+                    @endif
+                </div>
+
+                <x-slot:footer>
+                    <button @click="$dispatch('close-modal', 'edit-user')"
+                        class="inline-flex items-center justify-center  px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">Close</button>
+                </x-slot:footer>
+            </x-modal>
+        </div>
         <!-- Upload Form with Side-by-Side Layout -->
         <div class="bg-white rounded-md shadow-sm p-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Left Column: Form -->
                 <div>
-                    <form action="{{ route('admin-pusat.rtkn.store') }}" method="POST" id="uploadForm"
+                    <form action="{{ route('admin-pusat.rtkn.update', $rtkn->id) }}" method="POST" id="uploadForm"
                         class="space-y-8" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
                         <!-- Nama -->
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                                 Nama <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="name" name="name" value="{{ old('name') }}"
+                            <input type="text" id="name" name="name" value="{{ $rtkn->name }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                 placeholder="Masukkan nama dokumen RTKN">
                             @error('name')
+                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                                Status <span class="text-red-500">*</span>
+                            </label>
+                            <select name="status" class="w-full rounded-md border-gray-300">
+                                @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
+                                    <option value="{{ $status->value }}" @selected(old('status', $rtkn->status?->value ?? $rtkn->status) == $status->value)>
+                                        {{ $status->value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('status')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -66,7 +107,7 @@
                                 <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
                                     Berlaku Dari Tahun <span class="text-red-500">*</span>
                                 </label>
-                                <input type="number" id="start_date" name="start_date" value="{{ old('start_date') }}"
+                                <input type="number" id="start_date" name="start_date" value="{{ $rtkn->start_date }}"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="2025">
                                 @error('start_date')
@@ -77,7 +118,7 @@
                                 <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
                                     Sampai Tahun <span class="text-red-500">*</span>
                                 </label>
-                                <input type="number" id="end_date" name="end_date" value="{{ old('end_date') }}"
+                                <input type="number" id="end_date" name="end_date" value="{{ $rtkn->end_date }}"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="2030">
                                 @error('end_date')
@@ -89,7 +130,7 @@
                         <!-- File Upload -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Upload Dokumen RTKN <span class="text-red-500">*</span>
+                                Upload Dokumen RTKN
                             </label>
                             <div class="file-upload-area rounded-md p-8 text-center cursor-pointer" id="fileUploadArea">
                                 <input type="file" id="fileInput" name="document_path" accept=".pdf" class="hidden">
@@ -158,23 +199,34 @@
                 <!-- Right Column: Preview -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Preview Dokumen
+                        Dokumen Baru (Hasil Upload)
                     </label>
-                    <div id="noPreview"
-                        class="border-2 border-dashed border-gray-300 rounded-md h-full min-h-[400px] flex items-center justify-center">
-                        <div class="text-center text-gray-400">
-                            <svg class="mx-auto h-16 w-16 mb-4" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                            </svg>
-                            <p class="text-sm">Belum ada file yang dipilih</p>
-                            <p class="text-xs mt-1">Upload file untuk melihat preview</p>
+
+                    <div class="border border-indigo-300 rounded-md overflow-hidden min-h-[400px]">
+
+
+                        <div class="bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+                            Preview Dokumen Baru
                         </div>
-                    </div>
-                    <div id="filePreview"
-                        class="hidden border border-gray-300 rounded-md overflow-hidden h-full min-h-[400px]">
-                        <iframe id="previewFrame" class="w-full h-full"></iframe>
+
+
+                        <div id="noPreview"
+                            class="flex items-center justify-center h-[350px] text-center text-gray-400">
+                            <div>
+                                <svg class="mx-auto h-14 w-14 mb-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <p class="text-sm">Belum ada dokumen baru</p>
+                                <p class="text-xs mt-1">Upload file untuk melihat preview</p>
+                            </div>
+                        </div>
+
+                        {{-- Preview Upload --}}
+                        <div id="filePreview" class="hidden h-[350px]">
+                            <iframe id="previewFrame" class="w-full h-full"></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
