@@ -57,9 +57,11 @@ class RencanaTenagaKerjaNasionalController extends Controller
     /**
      * Show the specified resource.
      */
-    public function show($id)
+    public function show(RencanaTenagaKerja $rencanaTenagaKerjaNasional)
     {
-        return view('rtk::adminPusat.rtkn.show');
+        return view('rtk::adminPusat.rtkn.show', [
+            'rtkn' => $rencanaTenagaKerjaNasional
+        ]);
     }
 
     /**
