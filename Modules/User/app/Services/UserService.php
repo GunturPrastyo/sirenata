@@ -15,7 +15,7 @@ class UserService
 {
     public function getFilteredQueryUsers(?string $search = null, string $sortBy = 'desc')
     {
-        return User::query()->with(['roles', 'permissions','scopeArea'])
+        return User::query()->with(['roles', 'permissions','scopeArea.province','scopeArea.regency'])
             ->when($search, function ($q) use ($search) {
                 $q->search($search);
             })

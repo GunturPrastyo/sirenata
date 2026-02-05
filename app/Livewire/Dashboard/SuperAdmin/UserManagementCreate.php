@@ -2,8 +2,7 @@
 
 namespace App\Livewire\Dashboard\SuperAdmin;
 
-use Creasi\Nusa\Models\Province;
-use Creasi\Nusa\Models\Regency;
+
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Modules\Permission\Models\Permission;
@@ -11,6 +10,8 @@ use Modules\Roles\Models\Role;
 use Modules\User\Services\UserService;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Validation\Rules\Password;
+use Modules\MasterData\Models\Province;
+use Modules\MasterData\Models\Regency;
 
 class UserManagementCreate extends Component
 {
@@ -104,13 +105,13 @@ class UserManagementCreate extends Component
     #[Computed()]
     public function provinces()
     {
-        return Province::select('code', 'name')->get();
+        return Province::select('code', 'name')->lazy();
     }
 
     #[Computed()]
     public function regencies()
     {
-        return Regency::where('province_code', $this->province)->select('code', 'name')->get();
+        return Regency::where('province_code', $this->province)->select('code', 'name')->lazy();
     }
 
     public function updatedProvince($value)

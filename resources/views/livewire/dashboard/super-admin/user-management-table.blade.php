@@ -168,10 +168,10 @@
                                 </span>
                             </td>
                             <td class="px-4 md:px-6 py-3  lg:table-cell">
-                                <p class="text-slate-600">{{ $user->scopeArea?->province_name }}</p>
+                                <p class="text-slate-600">{{ $user->scopeArea?->province?->name }}</p>
                             </td>
                             <td class="px-4 md:px-6 py-3  lg:table-cell">
-                                <p class="text-slate-600">{{ $user->scopeArea?->regency_name }}</p>
+                                <p class="text-slate-600">{{ $user->scopeArea?->regency?->name }}</p>
                             </td>
 
                             <td class="px-4 md:px-6 py-3 text-center">

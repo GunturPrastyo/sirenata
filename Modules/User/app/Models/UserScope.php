@@ -28,20 +28,14 @@ class UserScope extends Model
         return $this->belongsTo(User::class);
     }
 
-     public function getProvinceNameAttribute()
+    public function province()
     {
-        if (!$this->province_code) return null;
-
-        return Province::where('code', $this->province_code)
-            ->value('name');
+        return $this->belongsTo(Province::class, 'province_code', 'code');
     }
 
-    public function getRegencyNameAttribute()
+    public function regency()
     {
-        if (!$this->regency_code) return null;
-
-        return Regency::where('code', $this->regency_code)
-            ->value('name');
+        return $this->belongsTo(Regency::class, 'regency_code', 'code');
     }
 
 

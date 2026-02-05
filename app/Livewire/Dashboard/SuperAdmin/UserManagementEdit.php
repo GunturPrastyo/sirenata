@@ -3,8 +3,8 @@
 namespace App\Livewire\Dashboard\SuperAdmin;
 
 use App\Models\User;
-use Creasi\Nusa\Models\Province;
-use Creasi\Nusa\Models\Regency;
+use Modules\MasterData\Models\Province;
+use Modules\MasterData\Models\Regency;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Modules\Permission\Models\Permission;
@@ -123,16 +123,14 @@ class UserManagementEdit extends Component
     #[Computed()]
     public function provinces()
     {
-        return Province::select('code', 'name')->get();
+        return Province::select('code', 'name')->lazy();
     }
 
     #[Computed()]
     public function regencies()
     {
-        return Regency::where('province_code', $this->province)->select('code', 'name')->get();
+        return Regency::where('province_code', $this->province)->select('code', 'name')->lazy();
     }
-
-
 
     public function render()
     {

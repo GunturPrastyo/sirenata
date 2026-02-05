@@ -4,7 +4,7 @@
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
-                    <a href="../index.html"
+                    <a href="{{ route('super-admin.dashboard') }}"
                         class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path
@@ -20,7 +20,7 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <a href="./index.html"
+                        <a href="{{ route('super-admin.user-management.index') }}"
                             class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Management
                             User</a>
                     </div>
@@ -32,7 +32,7 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <a href="./index.html"
+                        <a href="{{ route('super-admin.user-management.create') }}"
                             class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Create User</a>
                     </div>
                 </li>

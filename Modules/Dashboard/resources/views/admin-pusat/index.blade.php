@@ -9,7 +9,7 @@
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
-                    <a href="./index.html"
+                    <a href="{{ route('admin-pusat.dashboard') }}"
                         class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path

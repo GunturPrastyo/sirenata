@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <div class="flex items-center justify-between">
             <!-- Logo -->
-            <a href="index.html" class="flex items-center gap-3">
+            <a href="{{ route('landingpage.index') }}" class="flex items-center gap-3">
                 <img src="{{ asset('images/logo.png') }}" alt="SIRENATA Logo" class="h-10 w-auto">
                 <span class="text-xl font-bold" style="color: #13416B;">SIRENATA</span>
             </a>

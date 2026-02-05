@@ -116,12 +116,12 @@
                 <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6 card-title">Aksi Cepat</h2>
 
                 <div class="grid grid-cols-2 gap-3 md:gap-4 quick-actions">
-                    <a href="../admin-pusat/index.html"
+                    <a href="{{ route('super-admin.user-management.create') }}"
                         class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 md:p-4 flex flex-col items-center justify-center text-center hover:bg-indigo-100 transition-colors card-hover">
                         <div class="p-2 md:p-3 rounded-full bg-indigo-100 text-indigo-600 mb-2 md:mb-3">
                             <i class="fas fa-user-plus text-base md:text-lg"></i>
                         </div>
-                        <p class="font-medium text-gray-900 text-sm md:text-base">Tambah Admin</p>
+                        <p class="font-medium text-gray-900 text-sm md:text-base">Tambah User</p>
                         <p class="text-xs text-gray-500 mt-1">Buat akun baru</p>
                     </a>
 
