@@ -42,10 +42,10 @@
         <div class="">
             <button type="button" x-data @click="$dispatch('open-modal', 'edit-user')"
                 class="inline-flex mb-3 cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-200 rounded-md bg-neutral-950 hover:bg-neutral-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">
-                Preview Dokumen Lama
+                Pratinjau Dokumen Saat Ini
             </button>
 
-            <x-modal name="edit-user" title="Preview Dokumen Lama" maxWidth="sm:max-w-2xl">
+            <x-modal name="edit-user" title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
                 <div class="border border-gray-300 rounded-md overflow-hidden">
 
                     @if ($rtkn->document_path && Storage::disk('public')->exists($rtkn->document_path))
