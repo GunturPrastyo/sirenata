@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\RTK\Http\Controllers\AdminProvinsi\RencanaTenagaKerjaKabKotaController;
 use Modules\RTK\Http\Controllers\AdminPusat\RencanaTenagaKerjaDaerahController;
 use Modules\RTK\Http\Controllers\RencanaTenagaKerjaNasionalController;
 use Modules\RTK\Http\Controllers\AdminProvinsi\RencanaTenagaKerjaProvinceController;
@@ -18,4 +19,8 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
     Route::resource('rencana-tenaga-kerja-daerah-provinsi', RencanaTenagaKerjaProvinceController::class)
         ->parameters(['rencana-tenaga-kerja-daerah-provinsi' => 'rtkdp',])
         ->names('rtkdp');
+
+    Route::prefix('laporan')->name('laporan.')->group(function () {
+        Route::get('/', [RencanaTenagaKerjaKabKotaController::class, 'index'])->name('index');
+    });
 });

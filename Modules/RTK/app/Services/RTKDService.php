@@ -78,6 +78,9 @@ class RTKDService
             ->orderBy('created_at', $sortBy);
     }
 
+    /**
+     * Get paginated filtered RTKD by Province Code
+     */
     public function paginateFilteredRTKDByProvinceCode(
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
@@ -91,6 +94,58 @@ class RTKDService
         )->paginate($limit)->withQueryString();
     }
 
+    /**
+     * Get filtered query builder for RTKD by Kab/Kota
+     * Admin Province
+     * RTKD grouped by kab/kota (per provinsi login)
+     */
+    public function getFilteredQueryBuilderRTKDByKabKota(
+        ?string $search = null,
+        string $sortBy = self::DEFAULT_SORT,
+        ?string $status = null
+    ): Builder {
+        $user = Auth::user();
+
+        return DB::table('rencana_tenaga_kerjas')
+            ->select(
+                'province_code',
+                'regency_code',
+                DB::raw('MAX(id) as id'),
+                DB::raw('MAX(name) as name'),
+                DB::raw('MAX(status) as status'),
+                DB::raw('MAX(start_date) as start_date'),
+                DB::raw('MAX(end_date) as end_date'),
+                DB::raw('MAX(document_path) as document_path'),
+                DB::raw('MAX(created_at) as created_at')
+            )
+            ->where('type', TypeRtk::KAB_KOTA->value)
+            ->where('province_code', $user->scopeArea?->province_code)
+            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
+            ->when($status, fn ($q) => $q->where('status', $status))
+            ->groupBy('province_code', 'regency_code')
+            ->orderByRaw('MAX(created_at) ' . $sortBy);
+    }
+
+    /**
+     * Get paginated filtered RTKD by Kab/Kota
+     */
+    public function paginateFilteredRTKDByKabKota(
+        ?string $search = null,
+        string $sortBy = self::DEFAULT_SORT,
+        int $limit = self::DEFAULT_LIMIT,
+        ?string $status = null
+    ): LengthAwarePaginator {
+        return $this->getFilteredQueryBuilderRTKDByKabKota(
+            $search,
+            $sortBy,
+            $status
+        )->paginate($limit)->withQueryString();
+    }
+
+
+    /**
+     * Delete RTKD
+     */
     public function deleteRTKD(RencanaTenagaKerja $rencanaTenagaKerja)
     {
         if ($rencanaTenagaKerja->document_path) {
@@ -136,6 +191,13 @@ class RTKDService
         });
     }
 
+    /**
+     * Update RTK Provinsi
+     * 
+     * @param RencanaTenagaKerja $rtkdProvince
+     * @param array $data
+     * @return RencanaTenagaKerja
+     */
     public function updateRTKProvince(RencanaTenagaKerja $rtkdProvince, array $data): RencanaTenagaKerja
     {
         $user = Auth::user();
