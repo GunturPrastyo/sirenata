@@ -63,7 +63,7 @@
                     </h2>
 
                     <p id="admin-role" class="text-sm text-indigo-600 font-medium mt-1">
-                        {{-- {{ $user->roles->first()->name }} --}}
+                        Role {{ $user->roles->first()->name }}
                     </p>
 
                     <p id="last-updated" class="text-xs text-slate-400 mt-4">

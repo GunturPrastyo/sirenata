@@ -38,7 +38,7 @@
             </ol>
         </nav>
 
-        <x-validation-message class="mb-3" />
+        <x-validation-errors class="mb-3" />
         <div class="">
             <button type="button" x-data @click="$dispatch('open-modal', 'edit-user')"
                 class="inline-flex mb-3 cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-200 rounded-md bg-neutral-950 hover:bg-neutral-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">
@@ -172,6 +172,7 @@
                                 </div>
 
                             </div>
+                            <span class="text-sm text-gray-500">File maksimal berukuran 10 MB</span>
                             @error('document_path')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror

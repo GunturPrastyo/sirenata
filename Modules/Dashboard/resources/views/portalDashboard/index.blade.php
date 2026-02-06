@@ -41,9 +41,9 @@
             @endrole
 
             <!-- Admin Provinsi Dashboard -->
-            @role('admin-provinsi')
-                <x-dashboard::accesscard title="Admin Provinsi" description="Manajemen tingkat provinsi" url="#"
-                    variant="emerald">
+            @role('admin-province')
+                <x-dashboard::accesscard title="Admin Provinsi" description="Manajemen tingkat provinsi"
+                    url="{{ route('admin-province.dashboard') }}" variant="emerald">
                     <div
                         class="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500 transition-all">
                         <svg class="w-10 h-10 text-emerald-600 group-hover:text-white transition-all" fill="none"

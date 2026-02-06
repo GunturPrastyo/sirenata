@@ -1,10 +1,9 @@
-<x-dashboard::layouts.dashboard title="Upload RTKN">
+<x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah Provinsi Create">
     <div class="p-2 sm:p-6">
-        <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}"
+                    <a href="{{ route('admin-province.dashboard') }}"
                         class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path
@@ -20,9 +19,10 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <a href="{{ route('admin-pusat.rtkn.index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Daftar Laporan
-                            RTKN</a>
+                        <a href="{{ route('admin-province.rtkdp.index') }}"
+                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Rencana Tenaga
+                            Kerja Daerah
+                            Provinsi</a>
                     </div>
                 </li>
                 <li>
@@ -32,7 +32,7 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Upload RTKN</span>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Upload RTKP</span>
                     </div>
                 </li>
             </ol>
@@ -44,7 +44,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Left Column: Form -->
                 <div>
-                    <form action="{{ route('admin-pusat.rtkn.store') }}" method="POST" id="uploadForm"
+                    <form action="{{ route('admin-province.rtkdp.store') }}" method="POST" id="uploadForm"
                         class="space-y-8" enctype="multipart/form-data">
                         @csrf
                         <!-- Nama -->
@@ -138,7 +138,7 @@
 
                         <!-- Action Buttons -->
                         <div class="flex gap-4 pt-4">
-                            <a href="{{ route('admin-pusat.rtkn.index') }}"
+                            <a href="{{ route('admin-province.rtkdp.index') }}"
                                 class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium hover:bg-gray-300 transition-colors text-center">
                                 Batal
                             </a>

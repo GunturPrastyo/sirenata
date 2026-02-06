@@ -18,6 +18,10 @@
             @role('admin-pusat')
                 @include('dashboard::partials.admin-pusat.sidebar-item')
             @endrole
+
+            @role('admin-province')
+                @include('dashboard::partials.admin-province.sidebar-item')
+            @endrole
         </ul>
     </div>
 </aside>
