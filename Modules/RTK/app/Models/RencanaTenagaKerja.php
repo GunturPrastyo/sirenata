@@ -3,6 +3,7 @@
 namespace Modules\RTK\Models;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,6 +47,11 @@ class RencanaTenagaKerja extends Model
     public function getStatusLabelAttribute(): string
     {
         return $this->status->label();
+    }
+
+    public function isExpired(): bool
+    {
+        return (int) $this->end_date < now()->year;
     }
 
     /**

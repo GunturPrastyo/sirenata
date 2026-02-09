@@ -225,4 +225,155 @@ class RTKDService
             return $rtkdProvince;
         });
     }
+
+
+    // Admin Kab/kota
+    /**
+     * Get filtered query builder for RTKD by Kab/Kota Code
+     * Admin Kab/Kota
+     * RTKD by single kab/kota
+     */
+    public function getFilteredQueryBuilderRTKDByKabKotaCode(
+        ?string $search = null,
+        string $sortBy = self::DEFAULT_SORT,
+        ?string $status = null
+    ): Builder {
+        $scopeArea = Auth::user()->scopeArea;
+        
+        return DB::table('rencana_tenaga_kerjas as rtk')
+            ->join('users as u', 'rtk.user_id', '=', 'u.id')
+            ->select('rtk.*')
+            ->where([
+                ['rtk.type', '=', TypeRtk::KAB_KOTA->value],
+                ['rtk.province_code', '=', $scopeArea->province_code],
+                ['rtk.regency_code', '=', $scopeArea->regency_code],
+            ])
+            ->when($search, fn($q) => $q->where('rtk.name', 'like', "%{$search}%"))
+            ->when($status, fn($q) => $q->where('rtk.status', $status))
+            ->orderBy('rtk.created_at', $sortBy);
+    }
+
+    /**
+     * Get paginated filtered RTKD by Kab/Kota Code
+     */
+    public function paginateFilteredRTKDByKabKotaCode(
+        ?string $search = null,
+        string $sortBy = self::DEFAULT_SORT,
+        int $limit = self::DEFAULT_LIMIT,
+        ?string $status = null
+    ): LengthAwarePaginator {
+        return $this->getFilteredQueryBuilderRTKDByKabKotaCode(
+            search: $search,
+            sortBy: $sortBy,
+            status: $status
+        )->paginate($limit)->withQueryString();
+    }
+
+    /**
+     * Create RTK Kab/Kota
+     * 
+     * @param array $data
+     * @return RencanaTenagaKerja
+     */
+    public function createRTKKabKota(array $data): RencanaTenagaKerja
+    {
+        $user = Auth::user();
+        if (!$user->scopeArea) {
+            throw new \LogicException('Wilayah kerja akun belum terdaftar di sistem');
+        }
+
+        return DB::transaction(function () use ($data, $user) {
+            $documentPath = null;
+            if (!empty($data['document_path']) 
+                && $data['document_path'] instanceof \Illuminate\Http\UploadedFile) {
+                $documentPath = $data['document_path']->store(
+                    'rtkd/documents/kab-kota',
+                    'public'
+                );
+            }
+
+            $rtkkabkota = RencanaTenagaKerja::create([
+                'user_id' => $user->id,
+                'province_code' => $user->scopeArea->province_code,
+                'regency_code' => $user->scopeArea->regency_code,
+                'name' => $data['name'],
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'status' => RTKStatus::PENDING->value,
+                'type' => TypeRtk::KAB_KOTA->value,
+                'document_path' => $documentPath,
+            ]);
+
+            return $rtkkabkota;
+        });
+    }
+
+    /**
+     * Update RTK Kab/Kota
+     * 
+     * @param RencanaTenagaKerja $rtkdKabKota
+     * @param array $data
+     * @return RencanaTenagaKerja
+     */
+    public function updateRTKKabKota(RencanaTenagaKerja $rtkdKabKota, array $data): RencanaTenagaKerja {
+        $user = Auth::user();
+        if (!$user->scopeArea) {
+            throw new \LogicException('Wilayah kerja akun belum terdaftar di sistem');
+        }
+        return DB::transaction(function () use ($rtkdKabKota, $data, $user) {
+            if (
+                isset($data['status']) &&
+                $data['status'] === RTKStatus::BERLAKU->value
+            ) {
+                RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+                    ->where('province_code', $user->scopeArea->province_code)
+                    ->where('regency_code', $user->scopeArea->regency_code)
+                    ->where('status', RTKStatus::BERLAKU->value)
+                    ->where('id', '!=', $rtkdKabKota->id)
+                    ->update([
+                        'status' => RTKStatus::TIDAK_BERLAKU->value,
+                    ]);
+            }
+
+            $documentPath = $rtkdKabKota->document_path;
+
+            if (!empty($data['document_path'])) {
+                if ($documentPath && Storage::disk('public')->exists($documentPath)) {
+                    Storage::disk('public')->delete($documentPath);
+                }
+
+                $documentPath = $data['document_path']->store(
+                    'rtkd/documents/kab-kota',
+                    'public'
+                );
+            }
+
+            $rtkdKabKota->update([
+                'province_code' => $user->scopeArea->province_code,
+                'regency_code' => $user->scopeArea->regency_code,
+                'name' => $data['name'],
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'status' => $data['status'] ?? RTKStatus::PENDING->value,
+                'type' => TypeRtk::KAB_KOTA->value,
+                'document_path' => $documentPath,
+            ]);
+
+            return $rtkdKabKota;
+        });
+    }
+
+    public function rtkKabKotaActive(): ?RencanaTenagaKerja
+    {
+        $user = Auth::user();
+        $rtkAktif = RencanaTenagaKerja::query()
+            ->where('type', TypeRtk::KAB_KOTA->value)
+            ->where('province_code', $user->scopeArea?->province_code)
+            ->where('regency_code', $user->scopeArea?->regency_code)
+            ->where('status', RTKStatus::BERLAKU->value)
+            ->orderByDesc('start_date')
+            ->first();
+
+        return $rtkAktif;
+    }
 }
