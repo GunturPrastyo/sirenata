@@ -22,6 +22,10 @@
             @role('admin-province')
                 @include('dashboard::partials.admin-province.sidebar-item')
             @endrole
+
+            @role('admin-kab-kota')
+                @include('dashboard::partials.admin-kab-kota.sidebar-item')
+            @endrole
         </ul>
     </div>
 </aside>
