@@ -74,6 +74,22 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <!-- Filter Tahun RTK -->
+                    <div class="relative w-full sm:w-40">
+                        <i class="fas fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <select name="year"
+                            class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
+                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua Tahun</option>
+                            @for ($year = now()->year; $year >= 2015; $year--)
+                                <option value="{{ $year }}" @selected(request('year') == $year)>
+                                    {{ $year }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
+
                 </div>
 
                 <!-- Right: Search + Buttons -->
@@ -96,7 +112,7 @@
                     </button>
 
                     <!-- Reset -->
-                    <a href="{{ route('admin-pusat.rtkn.index') }}"
+                    <a href="{{ route('admin-province.rtkdp.index') }}"
                         class="inline-flex items-center gap-2 px-4 rounded-md
                         border border-slate-300 text-slate-600 text-sm font-medium
                         hover:bg-slate-100 transition">
@@ -182,7 +198,13 @@
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
                                         </li>
                                         <li>
-                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                            <a href="{{ Storage::url($rtkdp->document_path) }}"
+                                                download="{{ $rtkdp->name }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
+                                        </li>
+                                        <li>
+                                            <div
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
                                                 <x-modal-delete :id="$rtkdp->id" message="Are you sure delete RTKN"
                                                     :item-name="$rtkdp->name" :route="route('admin-province.rtkdp.destroy', $rtkdp->id)" />
                                             </div>

@@ -164,7 +164,8 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-base sm:text-lg font-bold text-gray-900">Dokumen RTK</h3>
                         @if ($rtkKabKotaActive)
-                            <a href="{{ Storage::url($rtkKabKotaActive->document_path) }}" download
+                            <a href="{{ Storage::url($rtkKabKotaActive->document_path) }}"
+                                download="{{ $rtkKabKotaActive->name }}"
                                 class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 bg-indigo-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

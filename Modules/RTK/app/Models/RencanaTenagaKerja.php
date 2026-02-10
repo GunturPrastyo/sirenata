@@ -4,6 +4,7 @@ namespace Modules\RTK\Models;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,9 +13,11 @@ use Modules\MasterData\Models\Province;
 use Modules\MasterData\Models\Regency;
 use Modules\RTK\Enums\RTKStatus;
 use Modules\RTK\Enums\TypeRtk;
+use Modules\RTK\Policies\RencanaTenagaKerjaPolicy;
 
 // use Modules\RTK\Database\Factories\RencanaTenagaKerjaFactory;
 
+#[UsePolicy(RencanaTenagaKerjaPolicy::class)]
 class RencanaTenagaKerja extends Model
 {
     use HasFactory, HasUuids;

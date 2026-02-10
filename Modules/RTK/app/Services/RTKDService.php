@@ -67,7 +67,8 @@ class RTKDService
     public function getFilteredQueryBuilderRTKDByProvinceCode(
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
-        ?string $status = null
+        ?string $status = null,
+        ?string $year = null
     ): Builder {
         $user = Auth::user();
         return DB::table('rencana_tenaga_kerjas')
@@ -75,6 +76,7 @@ class RTKDService
             ->where('province_code', $user->scopeArea->province_code)
             ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
             ->when($status, fn($q) => $q->where('status', $status))
+            ->when($year, fn($q) => $q->whereYear('start_date', $year))
             ->orderBy('created_at', $sortBy);
     }
 
@@ -85,12 +87,14 @@ class RTKDService
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
-        ?string $status = null
+        ?string $status = null,
+        ?string $year = null
     ): LengthAwarePaginator {
         return $this->getFilteredQueryBuilderRTKDByProvinceCode(
-            $search,
-            $sortBy,
-            $status
+            search: $search,
+            sortBy: $sortBy,
+            status: $status,
+            year: $year
         )->paginate($limit)->withQueryString();
     }
 
@@ -103,27 +107,30 @@ class RTKDService
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         ?string $status = null
-    ): Builder {
+    ) {
         $user = Auth::user();
-
-        return DB::table('rencana_tenaga_kerjas')
-            ->select(
-                'province_code',
-                'regency_code',
-                DB::raw('MAX(id) as id'),
-                DB::raw('MAX(name) as name'),
-                DB::raw('MAX(status) as status'),
-                DB::raw('MAX(start_date) as start_date'),
-                DB::raw('MAX(end_date) as end_date'),
-                DB::raw('MAX(document_path) as document_path'),
-                DB::raw('MAX(created_at) as created_at')
-            )
+        
+        return RencanaTenagaKerja::query()
+            ->with(['user','regency'])
             ->where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $user->scopeArea?->province_code)
-            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
+            ->whereIn('id', function ($sub) use ($user) {
+                $sub->selectRaw('MAX(id)')
+                    ->from('rencana_tenaga_kerjas')
+                    ->where('type', TypeRtk::KAB_KOTA->value)
+                    ->where('province_code', $user->scopeArea?->province_code)
+                    ->groupBy('province_code', 'regency_code');
+            })
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('regency', function ($regencyQuery) use ($search) {
+                            $regencyQuery->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
             ->when($status, fn ($q) => $q->where('status', $status))
-            ->groupBy('province_code', 'regency_code')
-            ->orderByRaw('MAX(created_at) ' . $sortBy);
+            ->orderBy('created_at', $sortBy);
     }
 
     /**
@@ -136,9 +143,9 @@ class RTKDService
         ?string $status = null
     ): LengthAwarePaginator {
         return $this->getFilteredQueryBuilderRTKDByKabKota(
-            $search,
-            $sortBy,
-            $status
+            search: $search,
+            sortBy: $sortBy,
+            status: $status
         )->paginate($limit)->withQueryString();
     }
 
@@ -202,15 +209,30 @@ class RTKDService
     {
         $user = Auth::user();
         return DB::transaction(function () use ($rtkdProvince, $data, $user) {
+            if (
+                isset($data['status']) &&
+                $data['status'] === RTKStatus::BERLAKU->value
+            ) {
+                RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
+                    ->where('province_code', $user->scopeArea->province_code)
+                    ->where('status', RTKStatus::BERLAKU->value)
+                    ->where('id', '!=', $rtkdProvince->id)
+                    ->update([
+                        'status' => RTKStatus::TIDAK_BERLAKU->value,
+                    ]);
+            }
+
             $documentPath = $rtkdProvince->document_path;
-            if (isset($data['document_path'])) {
+            if (!empty($data['document_path'])) {
+                // if ($documentPath && Storage::disk('public')->exists($documentPath)) {
+                //     Storage::disk('public')->delete($documentPath);
+                // }
                 $documentPath = $data['document_path']->store(
                     'rtkd/documents/province',
                     'public'
                 );
             }
             $rtkdProvince->update([
-                'user_id' => $user->id,
                 'province_code' => $user->scopeArea->province_code,
                 'regency_code' => null,
                 'name' => $data['name'],
@@ -338,9 +360,9 @@ class RTKDService
             $documentPath = $rtkdKabKota->document_path;
 
             if (!empty($data['document_path'])) {
-                if ($documentPath && Storage::disk('public')->exists($documentPath)) {
-                    Storage::disk('public')->delete($documentPath);
-                }
+                // if ($documentPath && Storage::disk('public')->exists($documentPath)) {
+                //     Storage::disk('public')->delete($documentPath);
+                // }
 
                 $documentPath = $data['document_path']->store(
                     'rtkd/documents/kab-kota',

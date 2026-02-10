@@ -131,6 +131,7 @@
 
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
                             <th class="px-4 md:px-6 py-3 text-left">Instansi (Kab/Kota)</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
                             <th class="px-4 md:px-6 py-3 text-left">Tahun Berlaku</th>
                             <th class="px-4 md:px-6 py-3 text-left">Status</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
@@ -144,6 +145,9 @@
                                     <p class="text-slate-600">{{ $key + $rtkds->firstItem() }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
+                                    <p class="text-slate-600">{{ $rtkd->regency->name }}</p>
+                                </td>
+                                <td class="px-4 md:px-6 py-3 ">
                                     <p class="text-slate-600">{{ $rtkd->name }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
@@ -151,13 +155,17 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
                                     <span
-                                        class="px-2 py-1 text-xs rounded-full font-semibold
-                                        {{ Modules\RTK\Enums\RTKStatus::from($rtkd->status)->color() }}">
-                                        {{ Modules\RTK\Enums\RTKStatus::from($rtkd->status)->label() }}
+                                        class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkd->status->color() }}">
+                                        {{ $rtkd->status->label() }}
                                     </span>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
+                                        <li>
+                                            <a href="{{ Storage::url($rtkd->document_path) }}"
+                                                download="{{ $rtkd->name }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
+                                        </li>
                                         {{-- <li>
                                             <a href="{{ route('admin-pusat.rtkd.edit', $rtkd->id) }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>

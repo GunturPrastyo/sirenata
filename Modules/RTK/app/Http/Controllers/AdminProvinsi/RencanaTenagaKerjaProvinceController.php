@@ -32,12 +32,14 @@ class RencanaTenagaKerjaProvinceController extends Controller
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
             : 'desc';
+        $year = $request->year;
 
         $rtkdps = $this->rtkdService->paginateFilteredRTKDByProvinceCode(
-            $search,
-            $orderBy,
-            $limit,
-            $status
+            search: $search,
+            sortBy: $orderBy,
+            limit: $limit,
+            status: $status,
+            year: $year
         );
         return view('rtk::adminProvince.rtkp.index', compact('rtkdps'));
     }

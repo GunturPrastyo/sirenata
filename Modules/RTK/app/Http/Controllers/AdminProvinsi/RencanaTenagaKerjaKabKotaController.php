@@ -23,7 +23,15 @@ class RencanaTenagaKerjaKabKotaController extends Controller
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
             : 'desc';
-        $rtkds = $this->rtkdService->paginateFilteredRTKDByKabKota($search, $orderBy, $limit, $status);
+        $year = $request->year;
+
+        $rtkds = $this->rtkdService->paginateFilteredRTKDByKabKota(
+            search: $search,
+            sortBy: $orderBy,
+            limit: $limit,
+            status: $status
+        );
+
         return view('rtk::adminProvince.rtkd.index', compact('rtkds'));
     }
 }
