@@ -4,6 +4,7 @@ namespace Modules\RTK\Http\Controllers\AdminProvinsi;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Modules\RTK\Services\RTKDService;
 
 class RencanaTenagaKerjaKabKotaController extends Controller
@@ -24,8 +25,10 @@ class RencanaTenagaKerjaKabKotaController extends Controller
             ? $request->orderBy
             : 'desc';
         $year = $request->year;
+        $provinceCode = Auth::user()->scopeArea?->province_code;
 
-        $rtkds = $this->rtkdService->paginateFilteredRTKDByKabKota(
+        $rtkds = $this->rtkdService->paginateFilteredRTKKabKotaByProvince(
+            provinceCode: $provinceCode,
             search: $search,
             sortBy: $orderBy,
             limit: $limit,

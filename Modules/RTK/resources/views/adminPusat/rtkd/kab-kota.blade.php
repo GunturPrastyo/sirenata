@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Nasional">
+<x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
@@ -20,22 +20,23 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Daftar Laporan RTKN</span>
+                        <a href="{{ route('admin-pusat.rtkd.index') }}"
+                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Daftar Laporan
+                            RTKD Provinsi</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Daftar Laporan RTKD Kab/Kota</span>
                     </div>
                 </li>
             </ol>
         </nav>
-
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <a href="{{ route('admin-pusat.rtkn.create') }}"
-                class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                Upload RTK
-            </a>
-        </div>
 
         <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -108,10 +109,10 @@
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar RTKN</h2>
+                    <h2 class="text-base font-semibold text-slate-800">Daftar Laporan RTKD Kab/Kota</h2>
                     <p class="text-sm text-slate-500 mt-1">
-                        Total: <span class="font-medium text-slate-700" id="total-admin">{{ $rtkns->total() }}</span>
-                        RTKN
+                        Total: <span class="font-medium text-slate-700" id="total-admin">{{ $rtkds->total() }}</span>
+                        RTKD Kab/Kota
                     </p>
                 </div>
 
@@ -140,7 +141,8 @@
                         <tr class="text-slate-500 uppercase text-xs">
 
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Dokumen RTKN Name</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Instansi (Kab/Kota)</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
                             <th class="px-4 md:px-6 py-3 text-left">Status</th>
 
@@ -149,46 +151,61 @@
                     </thead>
 
                     <tbody id="admin-table-body" class="divide-y divide-slate-200">
-                        @forelse ($rtkns as $key => $rtkn)
+                        @forelse ($rtkds as $key => $rtkd)
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $key + $rtkns->firstItem() }}</p>
+                                    <p class="text-slate-600">{{ $key + $rtkds->firstItem() }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $rtkn->name }}</p>
+                                    <p class="text-slate-600">{{ $rtkd->regency?->name ?? '-' }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $rtkn->start_date }} - {{ $rtkn->end_date }}</p>
+                                    <p class="text-slate-600">{{ $rtkd->name }}</p>
+                                </td>
+                                <td class="px-4 md:px-6 py-3 ">
+                                    <p class="text-slate-600">{{ $rtkd->start_date }} - {{ $rtkd->end_date }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
                                     <span
-                                        class="px-2 py-1 text-xs rounded-full font-semibold
-                                        {{ Modules\RTK\Enums\RTKStatus::from($rtkn->status)->color() }}">
-                                        {{ Modules\RTK\Enums\RTKStatus::from($rtkn->status)->label() }}
+                                        class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkd->status->color() }}">
+                                        {{ $rtkd->status->label() }}
                                     </span>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
                                         <li>
-                                            <a href="{{ route('admin-pusat.rtkn.edit', $rtkn->id) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{ route('admin-pusat.rtkn.show', $rtkn->id) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="{{ Storage::url($rtkn->document_path) }}"
-                                                download="{{ $rtkn->name }}"
+                                            <a href="{{ Storage::url($rtkd->document_path) }}"
+                                                download="{{ $rtkd->name }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
                                         </li>
                                         <li>
-                                            <div
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                <x-modal-delete :id="$rtkn->id" message="Are you sure delete RTKN"
-                                                    :item-name="$rtkn->name" :route="route('admin-pusat.rtkn.destroy', $rtkn->id)" />
-                                            </div>
+                                            <button type="button" x-data
+                                                @click="$dispatch('open-modal', 'open-document-kab-kota-{{ $rtkd->id }}')"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Lihat
+                                                RTK</button>
+
+                                            <x-modal name="open-document-kab-kota-{{ $rtkd->id }}"
+                                                title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
+                                                <h1 class="">{{ $rtkd->name }}</h1>
+                                                <div class="border border-gray-300 rounded-md overflow-hidden">
+
+                                                    @if ($rtkd->document_path && Storage::disk('public')->exists($rtkd->document_path))
+                                                        <iframe src="{{ Storage::url($rtkd->document_path) }}"
+                                                            class="w-full min-h-[500px] rounded-md border"></iframe>
+                                                    @else
+                                                        <div
+                                                            class="flex items-center justify-center  min-h-[500px] text-gray-400 border rounded-md">
+                                                            Tidak ada dokumen tersimpan
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                <x-slot:footer>
+                                                    <button
+                                                        @click="$dispatch('close-modal', 'open-document-kab-kota-{{ $rtkd->id }}')"
+                                                        class="inline-flex items-center justify-center  px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">Close</button>
+                                                </x-slot:footer>
+                                            </x-modal>
                                         </li>
                                     </x-table.action>
                                 </td>
@@ -196,7 +213,7 @@
                         @empty
                             <tr class="">
                                 <td colspan="5" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">Tidak ada data RTKN</p>
+                                    <p class="text-sm text-slate-500">Tidak ada data RTKD Kab/Kota</p>
                                 </td>
                             </tr>
                         @endforelse
@@ -205,7 +222,7 @@
             </div>
 
             <div class="px-5 py-4 border-t border-slate-200">
-                {{ $rtkns->links() }}
+                {{ $rtkds->links() }}
             </div>
         </div>
     </div>

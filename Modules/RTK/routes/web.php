@@ -13,6 +13,7 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
 
     Route::prefix('rencana-tenaga-kerja-daerah')->name('rtkd.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaDaerahController::class, 'index'])->name('index');
+        Route::get('/{provinceCode}/kab-kota', [RencanaTenagaKerjaDaerahController::class, 'kabKota'])->name('kab-kota');
     });
 });
 

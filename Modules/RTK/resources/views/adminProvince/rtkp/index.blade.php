@@ -193,10 +193,10 @@
                                             <a href="{{ route('admin-province.rtkdp.edit', $rtkdp->id) }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
                                         </li>
-                                        <li>
+                                        {{-- <li>
                                             <a href="{{ route('admin-province.rtkdp.show', $rtkdp->id) }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
-                                        </li>
+                                        </li> --}}
                                         <li>
                                             <a href="{{ Storage::url($rtkdp->document_path) }}"
                                                 download="{{ $rtkdp->name }}"

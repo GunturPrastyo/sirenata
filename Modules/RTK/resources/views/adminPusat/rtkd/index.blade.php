@@ -130,6 +130,7 @@
 
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
                             <th class="px-4 md:px-6 py-3 text-left">Instansi (Provinsi)</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
                             <th class="px-4 md:px-6 py-3 text-left">Status</th>
 
@@ -144,6 +145,9 @@
                                     <p class="text-slate-600">{{ $key + $rtkds->firstItem() }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
+                                    <p class="text-slate-600">{{ $rtkd->province->name }}</p>
+                                </td>
+                                <td class="px-4 md:px-6 py-3 ">
                                     <p class="text-slate-600">{{ $rtkd->name }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
@@ -151,27 +155,52 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 ">
                                     <span
-                                        class="px-2 py-1 text-xs rounded-full font-semibold
-                                        {{ Modules\RTK\Enums\RTKStatus::from($rtkd->status)->color() }}">
-                                        {{ Modules\RTK\Enums\RTKStatus::from($rtkd->status)->label() }}
+                                        class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkd->status->color() }}">
+                                        {{ $rtkd->status->label() }}
                                     </span>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        {{-- <li>
-                                            <a href="{{ route('admin-pusat.rtkd.edit', $rtkd->id) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
+                                        <li>
+                                            <a href="{{ route('admin-pusat.rtkd.kab-kota', $rtkd->province_code) }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Detail</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('admin-pusat.rtkn.show', $rtkn->id) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
+                                            <a href="{{ Storage::url($rtkd->document_path) }}"
+                                                download="{{ $rtkd->name }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
                                         </li>
+
                                         <li>
-                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                <x-modal-delete :id="$rtkn->id" message="Are you sure delete RTKN"
-                                                    :item-name="$rtkn->name" :route="route('admin-pusat.rtkn.destroy', $rtkn->id)" />
-                                            </div>
-                                        </li> --}}
+                                            <button type="button" x-data
+                                                @click="$dispatch('open-modal', 'open-document-province-{{ $rtkd->id }}')"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Lihat
+                                                RTK</button>
+
+                                            <x-modal name="open-document-province-{{ $rtkd->id }}"
+                                                title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
+                                                <h1 class="">{{ $rtkd->name }}</h1>
+                                                <div class="border border-gray-300 rounded-md overflow-hidden">
+
+                                                    @if ($rtkd->document_path && Storage::disk('public')->exists($rtkd->document_path))
+                                                        <iframe src="{{ Storage::url($rtkd->document_path) }}"
+                                                            class="w-full min-h-[500px] rounded-md border"></iframe>
+                                                    @else
+                                                        <div
+                                                            class="flex items-center justify-center  min-h-[500px] text-gray-400 border rounded-md">
+                                                            Tidak ada dokumen tersimpan
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                <x-slot:footer>
+                                                    <button
+                                                        @click="$dispatch('close-modal', 'open-document-province-{{ $rtkd->id }}')"
+                                                        class="inline-flex items-center justify-center  px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">Close</button>
+                                                </x-slot:footer>
+                                            </x-modal>
+                                        </li>
+
                                     </x-table.action>
                                 </td>
                             </tr>

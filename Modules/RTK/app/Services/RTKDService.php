@@ -18,30 +18,36 @@ class RTKDService
     private const DEFAULT_LIMIT = 10;
     
     /**
-     * Get filtered query builder for RTKD Province
-     * Admin Pusat
-     * RTKD grouped by province
+     * Build query for latest RTK Province per province
+     *
+     * - Returns only the most recent RTK for each province
+     * - Supports search by RTK name or province name
+     * - Can be filtered by RTK status
+     * - Used by Admin Pusat
      */
-    public function getFilteredQueryBuilderRTKDProvince(
+    public function queryLatestRTKProvince(
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         ?string $status = null
-    ): Builder {
-        return DB::table('rencana_tenaga_kerjas')
-            ->select(
-                'province_code',
-                DB::raw('MAX(id) as id'),
-                DB::raw('MAX(name) as name'),
-                DB::raw('MAX(status) as status'),
-                DB::raw('MAX(start_date) as start_date'),
-                DB::raw('MAX(end_date) as end_date'),
-                DB::raw('MAX(document_path) as document_path'),
-                DB::raw('MAX(created_at) as created_at')
-            )
+    ) {
+        return RencanaTenagaKerja::query()
+            ->with(['user', 'province'])
             ->where('type', TypeRtk::PROVINSI->value)
-            ->when($search, fn($query) => $query->where('name', 'like', "%{$search}%"))
-            ->when($status, fn($query) => $query->where('status', $status))
-            ->groupBy('province_code')
+            ->whereIn('id', function ($sub) {
+                $sub->selectRaw('MAX(id)')
+                    ->from('rencana_tenaga_kerjas')
+                    ->where('type', TypeRtk::PROVINSI->value)
+                    ->groupBy('province_code');
+            })
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('province', function ($provinceQuery) use ($search) {
+                            $provinceQuery->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when($status, fn ($q) => $q->where('status', $status))
             ->orderBy('created_at', $sortBy);
     }
 
@@ -54,7 +60,7 @@ class RTKDService
         int $limit = self::DEFAULT_LIMIT,
         ?string $status = null
     ): LengthAwarePaginator {
-        return $this->getFilteredQueryBuilderRTKDProvince($search, $sortBy, $status)
+        return $this->queryLatestRTKProvince($search, $sortBy, $status)
             ->paginate($limit)
             ->withQueryString();
     }
@@ -99,26 +105,28 @@ class RTKDService
     }
 
     /**
-     * Get filtered query builder for RTKD by Kab/Kota
-     * Admin Province
-     * RTKD grouped by kab/kota (per provinsi login)
+     * Build query for latest RTK Kab/Kota per regency in a province
+     *
+     * - Returns only latest RTK per kab/kota
+     * - Province is explicitly provided (Admin Pusat / Provinsi)
+     * - Supports search by RTK name or regency name
+     * - Can be filtered by status
      */
-    public function getFilteredQueryBuilderRTKDByKabKota(
+    public function queryLatestRTKKabKotaByProvince(
+        string $provinceCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         ?string $status = null
     ) {
-        $user = Auth::user();
-        
         return RencanaTenagaKerja::query()
-            ->with(['user','regency'])
+            ->with(['user', 'regency'])
             ->where('type', TypeRtk::KAB_KOTA->value)
-            ->where('province_code', $user->scopeArea?->province_code)
-            ->whereIn('id', function ($sub) use ($user) {
+            ->where('province_code', $provinceCode)
+            ->whereIn('id', function ($sub) use ($provinceCode) {
                 $sub->selectRaw('MAX(id)')
                     ->from('rencana_tenaga_kerjas')
                     ->where('type', TypeRtk::KAB_KOTA->value)
-                    ->where('province_code', $user->scopeArea?->province_code)
+                    ->where('province_code', $provinceCode)
                     ->groupBy('province_code', 'regency_code');
             })
             ->when($search, function ($q) use ($search) {
@@ -133,21 +141,25 @@ class RTKDService
             ->orderBy('created_at', $sortBy);
     }
 
+
     /**
-     * Get paginated filtered RTKD by Kab/Kota
+     * Paginate latest RTK Kab/Kota by Province
      */
-    public function paginateFilteredRTKDByKabKota(
+    public function paginateFilteredRTKKabKotaByProvince(
+        string $provinceCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
         ?string $status = null
     ): LengthAwarePaginator {
-        return $this->getFilteredQueryBuilderRTKDByKabKota(
+        return $this->queryLatestRTKKabKotaByProvince(
+            provinceCode: $provinceCode,
             search: $search,
             sortBy: $sortBy,
             status: $status
         )->paginate($limit)->withQueryString();
     }
+
 
 
     /**

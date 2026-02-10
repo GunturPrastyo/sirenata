@@ -57,17 +57,28 @@ class RTKNService
 
     public function updateRTKN(array $data, RencanaTenagaKerja $rencanaTenagaKerjaNasional)
     {
-        $user = Auth::user();
-        return DB::transaction(function () use ($data, $user, $rencanaTenagaKerjaNasional) {
+        return DB::transaction(function () use ($data, $rencanaTenagaKerjaNasional) {
+
+            if (
+                isset($data['status']) &&
+                $data['status'] === RTKStatus::BERLAKU->value
+            ) {
+                RencanaTenagaKerja::where('type', TypeRtk::NASIONAL->value)
+                    ->where('status', RTKStatus::BERLAKU->value)
+                    ->where('id', '!=', $rencanaTenagaKerjaNasional->id)
+                    ->update([
+                        'status' => RTKStatus::TIDAK_BERLAKU->value,
+                    ]);
+            }
+
             $documentPath = $rencanaTenagaKerjaNasional->document_path;
-            if (isset($data['document_path'])) {
+            if (!empty($data['document_path'])) {
                 $documentPath = $data['document_path']->store(
                     'rtkn/documents',
                     'public'
                 );
             }
             $rencanaTenagaKerjaNasional->update([
-                'user_id' => $user->id,
                 'name' => $data['name'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
