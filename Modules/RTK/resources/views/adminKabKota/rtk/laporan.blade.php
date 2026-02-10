@@ -163,35 +163,39 @@
                 <div class="bg-white rounded-lg p-6 shadow-sm sticky top-20">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-base sm:text-lg font-bold text-gray-900">Dokumen RTK</h3>
-                        <a href="../../assets/UU Nomor 13 Tahun 2003.pdf" download
-                            class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 bg-indigo-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Download
-                        </a>
-                    </div>
-                    <div class="border rounded-lg overflow-hidden bg-gray-100" style="height: 400px;"
-                        class="sm:!h-[700px]">
                         @if ($rtkKabKotaActive)
-                            <iframe src="{{ Storage::url($rtkKabKotaActive->document_path) }}" class="w-full h-full"
-                                frameborder="0"></iframe>
-                        @else
-                            <p>Belum ada RTK yang diupload</p>
+                            <a href="{{ Storage::url($rtkKabKotaActive->document_path) }}" download
+                                class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 bg-indigo-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Download
+                            </a>
                         @endif
                     </div>
-                    <div class="mt-3 flex items-center text-sm text-gray-600">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                        RTK_{{ $rtkKabKotaActive?->regency->name }}_{{ $rtkKabKotaActive?->start_date }}-
-                        {{ $rtkKabKotaActive?->end_date }}.pdf
-                    </div>
+                    @if ($rtkKabKotaActive)
+                        <div class="border rounded-lg overflow-hidden bg-gray-100" style="height: 400px;"
+                            class="sm:!h-[700px]">
+
+                            <iframe src="{{ Storage::url($rtkKabKotaActive->document_path) }}" class="w-full h-full"
+                                frameborder="0"></iframe>
+                        </div>
+                    @else
+                        <div class="flex items-center justify-center" style="height: 400px;" class="sm:!h-[700px]">
+                            <p>Belum ada RTK yang diupload</p>
+                        </div>
+                    @endif
+                </div>
+                <div class="mt-3 flex items-center text-sm text-gray-600">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    RTK_{{ $rtkKabKotaActive?->regency->name }}_{{ $rtkKabKotaActive?->start_date }}-
+                    {{ $rtkKabKotaActive?->end_date }}.pdf
                 </div>
             </div>
-
         </div>
     </div>
 

@@ -133,7 +133,7 @@
                         <!-- File Upload -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Upload Dokumen RTKN <span class="text-red-500">*</span>
+                                Upload Dokumen RTKN
                             </label>
                             <div class="file-upload-area rounded-md p-8 text-center cursor-pointer" id="fileUploadArea">
                                 <input type="file" id="fileInput" name="document_path" accept=".pdf" class="hidden">
