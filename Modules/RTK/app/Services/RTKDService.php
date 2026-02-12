@@ -33,10 +33,12 @@ class RTKDService
         return RencanaTenagaKerja::query()
             ->with(['user', 'province'])
             ->where('type', TypeRtk::PROVINSI->value)
+            ->where('is_active', true)
             ->whereIn('id', function ($sub) {
                 $sub->selectRaw('MAX(id)')
                     ->from('rencana_tenaga_kerjas')
                     ->where('type', TypeRtk::PROVINSI->value)
+                    ->where('is_active', true)
                     ->groupBy('province_code');
             })
             ->when($search, function ($q) use ($search) {
@@ -122,11 +124,13 @@ class RTKDService
             ->with(['user', 'regency'])
             ->where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
+            ->where('is_active', true)
             ->whereIn('id', function ($sub) use ($provinceCode) {
                 $sub->selectRaw('MAX(id)')
                     ->from('rencana_tenaga_kerjas')
                     ->where('type', TypeRtk::KAB_KOTA->value)
                     ->where('province_code', $provinceCode)
+                    ->where('is_active', true)
                     ->groupBy('province_code', 'regency_code');
             })
             ->when($search, function ($q) use ($search) {
@@ -407,7 +411,7 @@ class RTKDService
             ->where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $user->scopeArea?->province_code)
             ->where('regency_code', $user->scopeArea?->regency_code)
-            ->where('status', RTKStatus::BERLAKU->value)
+            ->where('is_active', true)
             ->orderByDesc('start_date')
             ->first();
 
