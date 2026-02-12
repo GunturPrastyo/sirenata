@@ -32,7 +32,11 @@ class PermissionController extends Controller
             ? $request->orderBy
             : 'desc';
 
-        $permissions = $this->permissionService->paginateFilteredPermissions($search, $orderBy, $this->perPage);
+        $permissions = $this->permissionService->paginateFilteredPermissions(
+            search: $search,
+            sortBy: $orderBy,
+            limit: $this->perPage
+        );
         return view('permission::index', [
             'permissions' => $permissions
         ]);
@@ -54,7 +58,7 @@ class PermissionController extends Controller
         try {
             $validate = $request->validated();
             $permission = $this->permissionService->createPermission($validate);
-            return redirect()->route('permission.index')->with('success', 'Permission created successfully');
+            return redirect()->route('super-admin.permissions.index')->with('success', 'Permission created successfully');
         } catch (\Exception $e) {
             ToastMagic::error("Failed to Create permission: " . $e->getMessage());
             throw $e;
@@ -88,7 +92,7 @@ class PermissionController extends Controller
         try {
             $validated = $request->validated();
             $permission = $this->permissionService->updatePermission($permission, $validated);
-            return redirect()->route('permission.index')
+            return redirect()->route('super-admin.permissions.index')
                 ->with('success', "Permission {$permission->name} updated successfully!");
         } catch (\Exception $e) {
             ToastMagic::error("Failed to Update permission: " . $e->getMessage());
@@ -103,7 +107,7 @@ class PermissionController extends Controller
     {
         try {
             $this->permissionService->deletePermission($permission);
-            return redirect()->route('permission.index')
+            return redirect()->route('super-admin.permissions.index')
                 ->with('success', "Permission {$permission->name} deleted successfully!");
         } catch (\Exception $e) {
             ToastMagic::error("Failed to delete permission: " . $e->getMessage());

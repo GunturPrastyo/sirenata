@@ -183,6 +183,12 @@
                         </div>
                     </div>
                 </div>
+                @error('password')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+                @error('password_confirmation')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Pengaturan Role -->

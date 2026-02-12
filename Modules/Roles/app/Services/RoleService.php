@@ -20,7 +20,10 @@ class RoleService
 
     public function paginateFilteredRoles(?string $search = null, string $sortBy = 'desc', $limit = 10)
     {
-        return $this->getFilteredQueryRoles($search, $sortBy)->paginate($limit)->withQueryString();
+        return $this->getFilteredQueryRoles(
+            search: $search,
+            sortBy: $sortBy,
+        )->paginate($limit)->withQueryString();
     }
 
     public function createRole(array $data)

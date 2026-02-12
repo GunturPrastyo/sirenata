@@ -13,13 +13,10 @@ use Modules\Roles\Services\RoleService;
 
 class RolesController extends Controller
 {
-    protected $roleService;
-    protected $perPage = 2;
-
-    public function __construct(RoleService $roleService)
-    {
-        $this->roleService = $roleService;
-    }
+    protected $perPage = 20;
+    public function __construct(
+        private RoleService $roleService
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -31,7 +28,11 @@ class RolesController extends Controller
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
             : 'desc';
-        $roles =  $this->roleService->paginateFilteredRoles($search, $orderBy, $this->perPage);
+        $roles =  $this->roleService->paginateFilteredRoles(
+            search: $search,
+            sortBy: $orderBy,
+            limit: $this->perPage
+        );
         return view('roles::index', [
             'roles' => $roles
         ]);
@@ -53,7 +54,7 @@ class RolesController extends Controller
         try {
             $validated = $request->validated();
             $role = $this->roleService->createRole($validated);
-            return redirect()->route('roles.index')->with('success', 'Role created successfully');
+            return redirect()->route('super-admin.roles.index')->with('success', 'Role created successfully');
         } catch (\Exception $e) {
             ToastMagic::error("Failed to create role: " . $e->getMessage());
             throw $e;
@@ -88,7 +89,7 @@ class RolesController extends Controller
             $validated = $request->validated();
 
             $this->roleService->updateRole($role, $validated);
-            return redirect()->route('roles.index')
+            return redirect()->route('super-admin.roles.index')
                 ->with('success', "Role {$role->name} updated successfully!");
         } catch (\Exception $e) {
             ToastMagic::error("Failed to update role: " . $e->getMessage());
@@ -103,7 +104,7 @@ class RolesController extends Controller
     {
         try {
             $this->roleService->deleteRole($role);
-            return redirect()->route('roles.index')
+            return redirect()->route('super-admin.roles.index')
                 ->with('success', "Role {$role->name} deleted successfully!");
         } catch (\Exception $e) {
             ToastMagic::error("Failed to delete role: " . $e->getMessage());

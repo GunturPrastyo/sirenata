@@ -37,3 +37,5 @@ Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->na
         Route::get('/', 'index')->name('index');
     });
 });
+
+

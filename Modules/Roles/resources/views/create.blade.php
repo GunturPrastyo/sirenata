@@ -1,26 +1,71 @@
-<x-layouts.app title="Create Role">
-    <div class="flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-center font-bold text-2xl mb-5">Create Roles</h1>
-    <div class="w-full max-w-md">
-        <x-validation-errors class="mb-4" />
-    </div>
-    
-    <div class="w-full max-w-md bg-neutral-primary-soft p-6 border border-default rounded-base shadow-xs">
-        <form action="{{ route('roles.store') }}" method="POST">
-            @csrf
-            <h5 class="text-xl font-semibold text-heading mb-6">Create Role User</h5>
-            <div class="mb-4">
-                <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Name Roles</label>
-                <input type="name" id="name" name="name" value="{{ old('name') }}"
-                    class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
-                    placeholder="Admin" required />
-            </div>
+<x-dashboard::layouts.dashboard title="Create Role">
 
-            <button type="submit"
-                class="text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none w-full mb-3">
-                Create Role
-            </button>
-        </form>
+    <div class="p-2 sm:p-6">
+        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1">
+                <li class="inline-flex items-center">
+                    <a href="{{ route('super-admin.dashboard') }}"
+                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                            </path>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <a href="{{ route('super-admin.roles.index') }}"
+                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Management
+                            Role</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-gray-500 hover:text-indigo-600 md:ml-2">
+                            Create Role
+                        </span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <x-validation-errors />
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-6 card-hover">
+            <form action="{{ route('super-admin.roles.store') }}" method="POST">
+                @csrf
+                <div class="mb-8">
+                    <div>
+                        <label for="name"
+                            class="block text-sm font-medium text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
+                            Name
+                        </label>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
+                            placeholder="Masukkan name">
+                        @error('name')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 action-buttons form-section w-full">
+                    <button type="submit" id="btn-submit"
+                        class="inline-flex items-center w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm justify-center">
+                        Simpan Role
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-</x-layouts.app>
+</x-dashboard::layouts.dashboard>

@@ -16,15 +16,8 @@ class PermissionUpdateRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                Rule::unique('permissions')
-                    ->ignore($this->route('permission')->id)
-                    ->where(function ($query) {
-                        return $query->where('module', $this->module);
-                    }),
-            ],
-            'module' => [
-                'required',
-                'string',
+                Rule::unique('permissions', 'name')
+                    ->ignore($this->route('permission')->uuid, 'uuid'),
             ],
         ];
     }

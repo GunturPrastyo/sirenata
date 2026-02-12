@@ -41,9 +41,9 @@ class RolesDatabaseSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission, 'module' => 'Super Admin']);
+            Permission::create(['name' => $permission]);
         }
-
+        
         // Super Admin - Full Access
         $superAdmin = Role::create(['name' => 'super-admin']);
         $superAdmin->givePermissionTo(Permission::all());
@@ -89,5 +89,9 @@ class RolesDatabaseSeeder extends Seeder
         ]);
         $normalUser->assignRole('User');
         $normalUser->givePermissionTo('post.create');
+
+        Role::create(['name' => 'admin-pusat']);
+        Role::create(['name' => 'admin-province']);
+        Role::create(['name' => 'admin-kab-kota']);
     }
 }

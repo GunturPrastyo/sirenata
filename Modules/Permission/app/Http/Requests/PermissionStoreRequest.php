@@ -16,13 +16,7 @@ class PermissionStoreRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                Rule::unique('permissions')->where(function ($query) {
-                    return $query->where('module', $this->module);
-                }),
-            ],
-            'module' => [
-                'required',
-                'string',
+                Rule::unique('permissions'),
             ],
         ];
     }
