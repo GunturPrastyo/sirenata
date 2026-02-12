@@ -210,55 +210,57 @@ class RTKDService
         });
     }
 
-    /**
-     * Update RTK Provinsi
-     * 
-     * @param RencanaTenagaKerja $rtkdProvince
-     * @param array $data
-     * @return RencanaTenagaKerja
-     */
-    public function updateRTKProvince(RencanaTenagaKerja $rtkdProvince, array $data): RencanaTenagaKerja
-    {
+    public function updateRTKProvince(RencanaTenagaKerja $rtkdProvince, array $data): RencanaTenagaKerja {
+
         $user = Auth::user();
         return DB::transaction(function () use ($rtkdProvince, $data, $user) {
-            if (
-                isset($data['status']) &&
-                $data['status'] === RTKStatus::BERLAKU->value
-            ) {
-                RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
-                    ->where('province_code', $user->scopeArea->province_code)
-                    ->where('status', RTKStatus::BERLAKU->value)
-                    ->where('id', '!=', $rtkdProvince->id)
-                    ->update([
-                        'status' => RTKStatus::TIDAK_BERLAKU->value,
-                    ]);
-            }
-
             $documentPath = $rtkdProvince->document_path;
+
             if (!empty($data['document_path'])) {
-                // if ($documentPath && Storage::disk('public')->exists($documentPath)) {
-                //     Storage::disk('public')->delete($documentPath);
-                // }
                 $documentPath = $data['document_path']->store(
                     'rtkd/documents/province',
                     'public'
                 );
             }
+            $status = $data['status'] ?? $rtkdProvince->status;
+
+            // Jika RTK ini diset menjadi BERLAKU
+            if ($status === RTKStatus::BERLAKU->value) {
+
+                // Nonaktifkan versi aktif sebelumnya (apapun statusnya)
+                RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
+                    ->where('province_code', $user->scopeArea->province_code)
+                    ->where('is_active', true)
+                    ->where('id', '!=', $rtkdProvince->id)
+                    ->update([
+                        'status' => RTKStatus::TIDAK_BERLAKU->value,
+                        'is_active' => false,
+                    ]);
+
+                $isActive = true;
+            } else {
+                // Jangan ubah is_active kalau bukan diset berlaku
+                $isActive = $rtkdProvince->is_active;
+            }
+
             $rtkdProvince->update([
                 'province_code' => $user->scopeArea->province_code,
-                'regency_code' => null,
-                'name' => $data['name'],
-                'start_date' => $data['start_date'],
-                'end_date' => $data['end_date'],
-                'status' => $data['status'] ?? RTKStatus::PENDING->value,
-                'type' => TypeRtk::PROVINSI->value,
+                'regency_code'  => null,
+                'name'          => $data['name'],
+                'start_date'    => $data['start_date'],
+                'end_date'      => $data['end_date'],
+                'status'        => $status,
+                'type'          => TypeRtk::PROVINSI->value,
                 'document_path' => $documentPath,
+                'is_active'     => $isActive,
             ]);
 
             ToastMagic::success("RTKD Provinsi berhasil diupdate!");
+
             return $rtkdProvince;
         });
     }
+
 
 
     // Admin Kab/kota
