@@ -348,6 +348,13 @@ class RTKDService
         });
     }
 
+    /**
+     * Update RTK Kab/Kota
+     * 
+     * @param RencanaTenagaKerja $rtkdKabKota
+     * @param array $data
+     * @return RencanaTenagaKerja
+     */
     public function updateRTKKabKota(RencanaTenagaKerja $rtkdKabKota, array $data): RencanaTenagaKerja {
         $user = Auth::user();
         if (!$user->scopeArea) {
@@ -403,7 +410,9 @@ class RTKDService
         });
     }
 
-
+    /**
+     * Get active RTK Kab/Kota for current user
+     */
     public function rtkKabKotaActive(): ?RencanaTenagaKerja
     {
         $user = Auth::user();
