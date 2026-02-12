@@ -25,6 +25,7 @@ class RencanaTenagaKerja extends Model
     protected $casts = [
         'status' => RTKStatus::class,
         'type' => TypeRtk::class,
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -38,6 +39,7 @@ class RencanaTenagaKerja extends Model
         'start_date',
         'end_date',
         'status',
+        'is_active',
         'type',
         'document_path',
     ];
