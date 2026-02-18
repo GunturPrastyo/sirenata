@@ -14,13 +14,9 @@ use Modules\Permission\Services\PermissionService;
 
 class PermissionController extends Controller
 {
-    protected $permissionService;
-    protected $perPage = 10;
-
-    public function __construct(PermissionService $permissionService)
-    {
-        $this->permissionService = $permissionService;
-    }
+    public function __construct(
+        private PermissionService $permissionService
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -31,11 +27,13 @@ class PermissionController extends Controller
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
             : 'desc';
-
+        $perPage = in_array($request->per_page, [10, 20, 50, 100])
+            ? $request->per_page
+            : 10;
         $permissions = $this->permissionService->paginateFilteredPermissions(
             search: $search,
             sortBy: $orderBy,
-            limit: $this->perPage
+            limit: $perPage
         );
         return view('permission::index', [
             'permissions' => $permissions

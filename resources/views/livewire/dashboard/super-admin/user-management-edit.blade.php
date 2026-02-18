@@ -1,4 +1,7 @@
 <div>
+    <div class="my-3">
+        <x-validation-errors />
+    </div>
     <x-flash-message />
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-6 card-hover">
         <form wire:submit="save">
@@ -50,7 +53,7 @@
 
                     <div>
                         <label for="jabatan" class="block text-sm font-medium text-gray-700 mb-2">
-                            Jabatan
+                            Jabatan <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="jabatan" name="jabatan" wire:model.lazy="jabatan"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
@@ -180,17 +183,35 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Izin Khusus (Permissions)
-                        </label>
+                        <div class="flex items-center justify-between mb-3">
+                            <label
+                                class="block text-sm font-medium text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+                                Izin Khusus (Permissions)
+                            </label>
+                            @if ($permissions->isNotEmpty())
+                                <div class="flex gap-4">
+                                    {{-- wire:click="$set('permissionsSelected', {{ $permissions->pluck('uuid') }})" --}}
+                                    <button type="button"
+                                        wire:click='$set("permissionsSelected", @json($permissions->pluck('uuid')))'
+                                        class="text-xs font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 transition-colors">
+                                        Pilih Semua
+                                    </button>
+                                    <button type="button" wire:click="$set('permissionsSelected', [])"
+                                        class="text-xs font-semibold cursor-pointer text-red-600 hover:text-red-800 transition-colors">
+                                        Hapus Semua
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                             @forelse($permissions as $permission)
-                                <div class="flex items-center">
+                                <div
+                                    class="flex items-center p-2.5 border border-slate-200 rounded-lg bg-slate-50/50 hover:bg-slate-50 transition-colors">
                                     <input type="checkbox" id="permission_{{ $permission->uuid }}"
                                         wire:model="permissionsSelected" value="{{ $permission->uuid }}"
-                                        class="custom-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                                     <label for="permission_{{ $permission->uuid }}"
-                                        class="ml-2 block text-sm text-gray-700">
+                                        class="ml-2 block text-sm font-medium text-slate-700 cursor-pointer">
                                         {{ ucfirst($permission->name) }}
                                     </label>
                                 </div>
@@ -243,7 +264,7 @@
                     Simpan Perubahan
                 </button>
 
-                <a href="../admin-pusat/show.html?id=1"
+                <a href="{{ route('super-admin.user-management.index') }}"
                     class="inline-flex items-center bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors shadow-sm">
                     <i class="fas fa-times mr-2"></i>
                     Batal

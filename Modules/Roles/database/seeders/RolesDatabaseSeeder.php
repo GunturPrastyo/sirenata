@@ -16,28 +16,28 @@ class RolesDatabaseSeeder extends Seeder
         // $this->call([]);
         $permissions = [
             // User Management
-            'user.view',
-            'user.create',
-            'user.edit',
-            'user.delete',
+            'user-view',
+            'user-create',
+            'user-edit',
+            'user-delete',
 
             // Role Management
-            'role.view',
-            'role.create',
-            'role.edit',
-            'role.delete',
+            'role-view',
+            'role-create',
+            'role-edit',
+            'role-delete',
 
             // Permission Management
-            'permission.view',
-            'permission.create',
-            'permission.edit',
-            'permission.delete',
+            'permission-view',
+            'permission-create',
+            'permission-edit',
+            'permission-delete',
 
             // Post Management
-            'post.view',
-            'post.create',
-            'post.edit',
-            'post.delete',
+            'post-view',
+            'post-create',
+            'post-edit',
+            'post-delete',
         ];
 
         foreach ($permissions as $permission) {
@@ -51,20 +51,20 @@ class RolesDatabaseSeeder extends Seeder
         // Admin - Most Access
         $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo([
-            'user.view',
-            'user.create',
-            'user.edit',
-            'role.view',
-            'permission.view',
-            'post.view',
-            'post.create',
-            'post.edit',
-            'post.delete',
+            'user-view',
+            'user-create',
+            'user-edit',
+            'role-view',
+            'permission-view',
+            'post-view',
+            'post-create',
+            'post-edit',
+            'post-delete',
         ]);
 
         // User - Basic Access
         $user = Role::create(['name' => 'user']);
-        $user->givePermissionTo(['post.view']);
+        $user->givePermissionTo(['post-view']);
 
         // Create Users dengan Role
         $superAdminUser = \App\Models\User::create([
@@ -88,10 +88,11 @@ class RolesDatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
         $normalUser->assignRole('User');
-        $normalUser->givePermissionTo('post.create');
+        $normalUser->givePermissionTo('post-create');
 
         Role::create(['name' => 'admin-pusat']);
         Role::create(['name' => 'admin-province']);
         Role::create(['name' => 'admin-kab-kota']);
+
     }
 }

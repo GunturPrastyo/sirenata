@@ -13,7 +13,6 @@ use Modules\Roles\Services\RoleService;
 
 class RolesController extends Controller
 {
-    protected $perPage = 20;
     public function __construct(
         private RoleService $roleService
     ) {}
@@ -28,10 +27,14 @@ class RolesController extends Controller
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
             : 'desc';
+        $perPage = in_array($request->per_page, [10, 20, 50, 100])
+            ? $request->per_page
+            : 10;
+            
         $roles =  $this->roleService->paginateFilteredRoles(
             search: $search,
             sortBy: $orderBy,
-            limit: $this->perPage
+            limit: $perPage
         );
         return view('roles::index', [
             'roles' => $roles

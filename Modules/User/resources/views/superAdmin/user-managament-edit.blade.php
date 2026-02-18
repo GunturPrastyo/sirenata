@@ -68,12 +68,13 @@
 
                     <p id="last-updated" class="text-xs text-slate-400 mt-4">
                         Terakhir diperbarui:
-                        {{-- <span id="last-updated-date"
-                            class="font-medium text-slate-500">{{ $user->updated_at->diffForHumans() }}</span> --}}
+                        <span id="last-updated-date"
+                            class="font-medium text-slate-500">{{ $user->updated_at->diffForHumans() }}</span>
                     </p>
                 </div>
             </div>
         </div>
+
 
         <livewire:dashboard.super-admin.user-management-edit :user="$user" />
 

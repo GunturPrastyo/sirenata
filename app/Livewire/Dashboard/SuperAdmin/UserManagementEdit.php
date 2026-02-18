@@ -74,14 +74,6 @@ class UserManagementEdit extends Component
         ];
     }
 
-    protected function messages(): array
-    {
-        return [
-            'required' => 'The :attribute field is required.',
-            'email.unique' => 'The email is already registered in our system.',
-        ];
-    }
-
     protected function validationAttributes()
     {
         return [

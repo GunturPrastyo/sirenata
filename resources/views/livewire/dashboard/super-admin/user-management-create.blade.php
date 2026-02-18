@@ -1,5 +1,7 @@
 <div>
-    <x-validation-errors />
+    <div class="my-3">
+        <x-validation-errors />
+    </div>
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-6 card-hover">
         <form wire:submit="store">
             <!-- Informasi Pribadi -->
@@ -148,8 +150,8 @@
                             </div>
 
                             <div class="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-                                <div id="password-strength-bar" class="h-full rounded-full transition-all duration-300"
-                                    style="width:0%">
+                                <div id="password-strength-bar"
+                                    class="h-full rounded-full transition-all duration-300" style="width:0%">
                                 </div>
                             </div>
                         </div>
@@ -245,18 +247,34 @@
                     </div>
 
                     <div>
-                        <label
-                            class="block text-sm font-medium text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                            Izin Khusus (Permissions)
-                        </label>
+                        <div class="flex items-center justify-between mb-3">
+                            <label
+                                class="block text-sm font-medium text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+                                Izin Khusus (Permissions)
+                            </label>
+                            @if ($permissions->isNotEmpty())
+                                <div class="flex gap-4">
+                                    <button type="button"
+                                        wire:click="$set('permissionsSelected', {{ $permissions->pluck('uuid') }})"
+                                        class="text-xs font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 transition-colors">
+                                        Pilih Semua
+                                    </button>
+                                    <button type="button" wire:click="$set('permissionsSelected', [])"
+                                        class="text-xs font-semibold cursor-pointer text-gray-500 hover:text-gray-700 transition-colors">
+                                        Hapus Semua
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                             @forelse($permissions as $permission)
-                                <div class="flex items-center">
+                                <div
+                                    class="flex items-center p-2.5 border border-slate-200 rounded-lg bg-slate-50/50 hover:bg-slate-50 transition-colors">
                                     <input type="checkbox" id="permission_{{ $permission->uuid }}"
                                         wire:model="permissionsSelected" value="{{ $permission->uuid }}"
-                                        class="custom-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                                     <label for="permission_{{ $permission->uuid }}"
-                                        class="ml-2 block text-sm text-gray-700">
+                                        class="ml-2 block text-sm font-medium text-slate-700 cursor-pointer">
                                         {{ ucfirst($permission->name) }}
                                     </label>
                                 </div>

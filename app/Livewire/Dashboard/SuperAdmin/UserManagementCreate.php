@@ -57,17 +57,6 @@ class UserManagementCreate extends Component
         ];
     }
 
-    protected function messages(): array
-    {
-        return [
-            'required' => 'The :attribute field is required.',
-            'email.unique' => 'The email is already registered in our system.',
-            'password.required' => 'Password harus diisi.',
-            'password.min' => 'Password minimal harus 6 karakter.',
-            'password.confirmed' => 'Password dan konfirmasinya tidak cocok.',
-        ];
-    }
-
     protected function validationAttributes()
     {
         return [
@@ -123,7 +112,7 @@ class UserManagementCreate extends Component
     {
         return view('livewire.dashboard.super-admin.user-management-create', [
             'roles'       => Role::select('uuid', 'name')->orderBy('name', 'asc')->get(),
-            'permissions' => Permission::select('uuid', 'name')->orderBy('name', 'asc')->get(),
+            'permissions' => Permission::select('uuid', 'name')->orderBy('name', 'desc')->get(),
         ]);
     }
 }

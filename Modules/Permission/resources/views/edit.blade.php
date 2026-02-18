@@ -57,6 +57,7 @@
                             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    <span class="text-sm text-gray-500">example: user-create</span>
                 </div>
 
                 <div class="flex flex-wrap gap-3 action-buttons form-section w-full">

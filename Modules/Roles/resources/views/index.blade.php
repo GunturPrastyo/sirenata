@@ -37,6 +37,15 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                     <div class="relative w-full sm:w-44">
+                        <select name="orderBy"
+                            class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
+                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="" selected>Pilih Order By</option>
+                            <option value="desc" @selected(request('orderBy') === 'desc')>Terbaru</option>
+                            <option value="asc" @selected(request('orderBy') === 'asc')>Terlama</option>
+                        </select>
+                    </div>
+                    <div class="relative w-full sm:w-44">
                         <select name="per_page"
                             class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
                             focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
