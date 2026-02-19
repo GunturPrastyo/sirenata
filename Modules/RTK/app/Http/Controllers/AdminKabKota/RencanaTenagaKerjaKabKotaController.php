@@ -2,22 +2,35 @@
 
 namespace Modules\RTK\Http\Controllers\AdminKabKota;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Modules\RTK\Services\RTKDService;
+use Modules\RTK\Models\RencanaTenagaKerja;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPStoreRequest;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPUpdateRequest;
-use Modules\RTK\Services\RTKDService;
-use Illuminate\Support\Facades\Log;
-use Devrabiul\ToastMagic\Facades\ToastMagic;
-use Modules\RTK\Models\RencanaTenagaKerja;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class RencanaTenagaKerjaKabKotaController extends Controller
+class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddleware
 {
 
     public function __construct(
         private RTKDService $rtkdService
     ) {}
 
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('rtkd-list|rtkd-create|rtkd-edit|rtkd-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['show']),
+            new Middleware(PermissionMiddleware::using('rtkd-create'), only: ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('rtkd-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('rtkd-delete'), only: ['destroy']),
+        ];
+    } 
 
     /**
      * Display a listing of the resource.

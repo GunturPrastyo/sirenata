@@ -85,27 +85,38 @@
                     </h2>
                     <p class="text-gray-600 mb-4">Kabupaten/Kota Administrasi</p>
 
-                    @if ($rtkKabKotaActive && $rtkKabKotaActive->isExpired())
-                        <div class="inline-flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-lg">
+                    @if ($rtkKabKotaActive)
+                        <div
+                            class="inline-flex items-center px-4 py-2 
+                            {{ $rtkKabKotaActive->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }} 
+                            rounded-lg">
+
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <div>
-                                <span class="font-semibold">RTK Tidak Berlaku</span>
-                                <p class="text-xs">Status: Tidak Aktif hingga {{ $rtkKabKotaActive?->end_date }} </p>
+                                <span class="font-semibold">
+                                    RTK {{ $rtkKabKotaActive->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                </span>
+
+                                <p class="text-xs">
+                                    Status:
+                                    <span
+                                        class="px-2 py-1 text-xs rounded-full font-semibold
+                                        {{ $rtkKabKotaActive?->status?->color() }}">
+                                        {{ $rtkKabKotaActive?->status?->label() }}
+                                    </span>
+
+                                    @if ($rtkKabKotaActive->end_date)
+                                        hingga {{ \Carbon\Carbon::parse($rtkKabKotaActive->end_date)->format('d M Y') }}
+                                    @endif
+                                </p>
                             </div>
                         </div>
                     @else
-                        <div class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-lg">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <div>
-                                <span class="font-semibold">RTK Berlaku</span>
-                                <p class="text-xs">Status: Aktif hingga {{ $rtkKabKotaActive?->end_date }}</p>
-                            </div>
+                        <div class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">
+                            <span class="font-semibold">RTK Belum Tersedia</span>
                         </div>
                     @endif
                 </div>
