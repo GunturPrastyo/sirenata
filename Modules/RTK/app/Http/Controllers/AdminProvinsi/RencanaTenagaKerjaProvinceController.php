@@ -4,7 +4,7 @@ namespace Modules\RTK\Http\Controllers\AdminProvinsi;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Log;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPStoreRequest;
 use Modules\RTK\Models\RencanaTenagaKerja;
@@ -12,14 +12,28 @@ use Modules\RTK\Services\RTKDService;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPUpdateRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
 
-class RencanaTenagaKerjaProvinceController extends Controller
+class RencanaTenagaKerjaProvinceController extends Controller implements HasMiddleware
 {
 
     public function __construct(
         private RTKDService $rtkdService
     ) {}
+
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('rtkd-list|rtkd-create|rtkd-edit|rtkd-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['show']),
+            new Middleware(PermissionMiddleware::using('rtkd-create'), only: ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('rtkd-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('rtkd-delete'), only: ['destroy']),
+        ];
+    }   
 
     /**
      * Display a listing of the resource.

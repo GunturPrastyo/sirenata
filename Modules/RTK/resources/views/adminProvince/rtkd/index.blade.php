@@ -134,6 +134,7 @@
                             <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
                             <th class="px-4 md:px-6 py-3 text-left">Tahun Berlaku</th>
                             <th class="px-4 md:px-6 py-3 text-left">Status</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -158,6 +159,27 @@
                                         class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkd->status->color() }}">
                                         {{ $rtkd->status->label() }}
                                     </span>
+                                </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    @if ($rtkd->is_active)
+                                        <span
+                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
+                                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
+                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M6 6L18 18M6 18L18 6" />
+                                            </svg>
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>

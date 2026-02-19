@@ -4,14 +4,24 @@ namespace Modules\RTK\Http\Controllers\AdminProvinsi;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Modules\RTK\Services\RTKDService;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class RencanaTenagaKerjaKabKotaController extends Controller
+class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddleware
 {
     public function __construct(
         private RTKDService $rtkdService
     ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('rtkd-list|rtkd-view'), only: ['index']),
+        ];
+    } 
 
     /**
      * Display a listing of the resource.
