@@ -5,13 +5,23 @@ namespace Modules\RTK\Http\Controllers\AdminPusat;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\RTK\Services\RTKDService;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class RencanaTenagaKerjaDaerahController extends Controller
+class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddleware
 {
-
     public function __construct(
         private RTKDService $rtkdService
     ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('rtkd-list'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['kabKota']),
+        ];
+    }   
 
     /**
      * List latest RTK Province (Admin Pusat)

@@ -6,17 +6,30 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\RTK\Http\Requests\RTKNStoreRequest;
 use Modules\RTK\Http\Requests\RTKNUpdateRequest;
-use Modules\RTK\Http\Requests\RTKNUploadRequest;
 use Modules\RTK\Models\RencanaTenagaKerja;
 use Modules\RTK\Services\RTKNService;
-use Modules\User\Services\UserService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class RencanaTenagaKerjaNasionalController extends Controller
+class RencanaTenagaKerjaNasionalController extends Controller implements HasMiddleware
 {
 
     public function __construct(
         private RTKNService $rtknService
     ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('rtkn-list|rtkn-create|rtkn-edit|rtkn-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('rtkn-view'), only: ['show']),
+            new Middleware(PermissionMiddleware::using('rtkn-create'), only: ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('rtkn-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('rtkn-delete'), only: ['destroy']),
+        ];
+    }   
 
     /**
      * Display a listing of the resource.
