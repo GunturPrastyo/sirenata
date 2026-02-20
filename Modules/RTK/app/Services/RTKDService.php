@@ -273,6 +273,8 @@ class RTKDService
      * RTKD by single kab/kota
      */
     public function getFilteredQueryBuilderRTKDByKabKotaCode(
+        string $provinceCode,
+        string $regencyCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         ?string $status = null
@@ -284,8 +286,8 @@ class RTKDService
             ->select('rtk.*')
             ->where([
                 ['rtk.type', '=', TypeRtk::KAB_KOTA->value],
-                ['rtk.province_code', '=', $scopeArea->province_code],
-                ['rtk.regency_code', '=', $scopeArea->regency_code],
+                ['rtk.province_code', '=', $provinceCode],
+                ['rtk.regency_code', '=', $regencyCode],
             ])
             ->when($search, fn($q) => $q->where('rtk.name', 'like', "%{$search}%"))
             ->when($status, fn($q) => $q->where('rtk.status', $status))
@@ -296,12 +298,16 @@ class RTKDService
      * Get paginated filtered RTKD by Kab/Kota Code
      */
     public function paginateFilteredRTKDByKabKotaCode(
+        string $provinceCode,
+        string $regencyCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
         ?string $status = null
     ): LengthAwarePaginator {
         return $this->getFilteredQueryBuilderRTKDByKabKotaCode(
+            provinceCode: $provinceCode,
+            regencyCode: $regencyCode,
             search: $search,
             sortBy: $sortBy,
             status: $status

@@ -51,7 +51,7 @@
         @if (!$rtkKabKotaActive)
             <div class="mb-4 rounded-lg bg-blue-50 border border-blue-300 p-4">
                 <div class="flex items-start">
-                    <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor"
+                    <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5 shrink-0" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
@@ -61,15 +61,22 @@
                         <p class="font-semibold text-blue-800">
                             Belum terdapat RTK Kabupaten/Kota
                         </p>
+
                         <p class="text-sm text-blue-700 mb-3">
                             Saat ini belum ada RTK yang berstatus berlaku.
-                            Silakan membuat RTK baru untuk periode berjalan.
                         </p>
 
-                        <a href="{{ route('admin-kab-kota.rtkd.create') }}"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">
-                            + Buat RTK Baru
-                        </a>
+                        {{-- Tombol hanya tampil kalau wilayah lengkap --}}
+                        @if (auth()->user()->hasCompleteScope())
+                            <a href="{{ route('admin-kab-kota.rtkd.create') }}"
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">
+                                + Buat RTK Baru
+                            </a>
+                        @else
+                            <p class="text-sm text-blue-700">
+                                Silakan hubungi Admin Pusat untuk pengaturan wilayah sebelum membuat RTK baru.
+                            </p>
+                        @endif
                     </div>
                 </div>
             </div>

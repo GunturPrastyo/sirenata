@@ -10,6 +10,7 @@ use Modules\RTK\Models\RencanaTenagaKerja;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Support\Facades\Auth;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPStoreRequest;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPUpdateRequest;
 use Spatie\Permission\Middleware\PermissionMiddleware;
@@ -42,8 +43,20 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
         $status  = $request->string('status')->toString();
         $orderBy = in_array($request->orderBy, ['asc', 'desc']) ? $request->orderBy : 'desc';
 
+        $user = Auth::user();
+        
+        if (!$user->hasCompleteScope()) {
+            abort(403, 'Admin kab/kota belum memiliki wilayah.');
+        }
 
-        $rtkds = $this->rtkdService->paginateFilteredRTKDByKabKotaCode($search, $orderBy, $limit, $status);
+        $rtkds = $this->rtkdService->paginateFilteredRTKDByKabKotaCode(
+            provinceCode: $user->scopeArea->province_code,
+            regencyCode: $user->scopeArea->regency_code,
+            search: $search,
+            sortBy: $orderBy,
+            limit: $limit,
+            status: $status
+        );
         return view('rtk::adminKabKota.rtk.index', compact('rtkds'));
     }
 

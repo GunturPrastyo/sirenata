@@ -56,7 +56,7 @@
 
 
 @section('action-buttons')
-    <a href="#"
+    <a href="javascript:history.back()"
         class="button-hover block w-full bg-orange-600 text-white text-center px-6 py-3.5 rounded-lg font-semibold hover:bg-orange-700 transition-colors">
         <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />

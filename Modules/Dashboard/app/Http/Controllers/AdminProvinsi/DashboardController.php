@@ -14,6 +14,10 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+        // if (!$user->scopeArea) {
+            // return back()->with('warning', 'Wilayah belum ditetapkan.');
+            // abort(403, 'Wilayah provinsi belum ditetapkan.');
+        // }
         return view('dashboard::admin-provinsi.index', [
             'user' => $user
         ]);

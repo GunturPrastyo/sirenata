@@ -1,5 +1,27 @@
 <x-dashboard::layouts.dashboard title="Dashboard Admin Kab Kota">
     <div class="p-2 sm:p-6">
+        @if (!$user->hasCompleteScope())
+            <div class="mb-4 rounded-lg bg-yellow-50 border border-yellow-300 p-4">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-yellow-600 mr-2 mt-0.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01M4.93 19h14.14c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.2 16c-.77 1.33.19 3 1.73 3z" />
+                    </svg>
+
+                    <div>
+                        <h1 class="font-semibold text-yellow-800">
+                            Data Tidak Dapat Ditampilkan
+                        </h1>
+                        <p class="text-sm text-yellow-700">
+                            Wilayah Kabupaten/Kota untuk akun ini belum ditetapkan,
+                            sehingga data tidak dapat dimuat. Silakan hubungi Admin Pusat
+                            untuk pengaturan wilayah.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="mb-5">
             <h1 class="text-2xl font-bold">Halo {{ $user->name }}</h1>
 

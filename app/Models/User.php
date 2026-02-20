@@ -60,8 +60,31 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name']);
+            ->logOnly(['name','email']);
     }
+
+    public function hasCompleteScope(): bool
+    {
+        if (!$this->scopeArea) {
+            return false;
+        }
+
+        if ($this->hasRole('super-admin')) {
+            return true;
+        }
+
+        if ($this->hasRole('admin-provinsi')) {
+            return !empty($this->scopeArea->province_code);
+        }
+
+        if ($this->hasRole('admin-kabkota')) {
+            return !empty($this->scopeArea->province_code)
+                && !empty($this->scopeArea->regency_code);
+        }
+
+        return false;
+    }
+
 
 
     #[Scope]
