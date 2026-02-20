@@ -13,6 +13,7 @@ use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 
 
@@ -48,7 +49,13 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
             : 'desc';
         $year = $request->year;
 
+        $user = Auth::user();
+        $provinceCode = $user->scopeArea?->province_code;
+        if (!$provinceCode) {
+            abort(403, 'Admin provinsi belum memiliki wilayah.');
+        }
         $rtkdps = $this->rtkdService->paginateFilteredRTKDByProvinceCode(
+            provinceCode: $provinceCode,
             search: $search,
             sortBy: $orderBy,
             limit: $limit,

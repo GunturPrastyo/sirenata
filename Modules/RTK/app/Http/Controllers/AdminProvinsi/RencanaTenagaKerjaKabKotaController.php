@@ -35,7 +35,12 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
             ? $request->orderBy
             : 'desc';
         $year = $request->year;
-        $provinceCode = Auth::user()->scopeArea?->province_code;
+
+        $user = Auth::user();
+        $provinceCode = $user->scopeArea?->province_code;
+        if (!$provinceCode) {
+            abort(403, 'Admin provinsi belum memiliki wilayah.');
+        }
 
         $rtkds = $this->rtkdService->paginateFilteredRTKKabKotaByProvince(
             provinceCode: $provinceCode,

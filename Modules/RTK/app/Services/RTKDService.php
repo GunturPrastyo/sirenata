@@ -73,25 +73,23 @@ class RTKDService
      * RTKD by single province
      */
     public function getFilteredQueryBuilderRTKDByProvinceCode(
+        string $provinceCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         ?string $status = null,
         ?string $year = null
     ): Builder {
-        $user = Auth::user();
         return DB::table('rencana_tenaga_kerjas')
             ->where('type', TypeRtk::PROVINSI->value)
-            ->where('province_code', $user->scopeArea->province_code)
+            ->where('province_code', $provinceCode)
             ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
             ->when($status, fn($q) => $q->where('status', $status))
             ->when($year, fn($q) => $q->whereYear('start_date', $year))
             ->orderBy('created_at', $sortBy);
     }
 
-    /**
-     * Get paginated filtered RTKD by Province Code
-     */
     public function paginateFilteredRTKDByProvinceCode(
+        string $provinceCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
@@ -99,6 +97,7 @@ class RTKDService
         ?string $year = null
     ): LengthAwarePaginator {
         return $this->getFilteredQueryBuilderRTKDByProvinceCode(
+            provinceCode: $provinceCode,
             search: $search,
             sortBy: $sortBy,
             status: $status,
