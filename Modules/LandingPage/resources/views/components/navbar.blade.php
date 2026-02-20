@@ -25,6 +25,13 @@
                         <a href="{{ route('landingpage.index') }}" class="text-gray-600 hover:text-gray-900 font-medium">
                             ← Kembali ke Beranda
                         </a>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit"
+                                class="px-5 py-2.5 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-md transition-all">
+                                Log Out
+                            </button>
+                        </form>
                     @else
                         <a href="{{ route('portal-dashboard') }}" class="text-gray-600 hover:text-gray-900 font-medium">
                             Masuk ke Portal

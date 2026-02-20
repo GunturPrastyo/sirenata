@@ -33,38 +33,29 @@ class RolesDatabaseSeeder extends Seeder
             'permission-edit',
             'permission-delete',
 
-            // Post Management
-            'post-view',
-            'post-create',
-            'post-edit',
-            'post-delete',
+            'rtkn-view',
+            'rtkn-list',
+            'rtkn-create',
+            'rtkn-edit',
+            'rtkn-delete',
+
+            'rtkd-view',
+            'rtkd-list',
+            'rtkd-create',
+            'rtkd-edit',
+            'rtkd-delete',
         ];
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }
         
-        // Super Admin - Full Access
+        // // Super Admin - Full Access
         $superAdmin = Role::create(['name' => 'super-admin']);
-        $superAdmin->givePermissionTo(Permission::all());
-
-        // Admin - Most Access
-        $admin = Role::create(['name' => 'admin']);
-        $admin->givePermissionTo([
-            'user-view',
-            'user-create',
-            'user-edit',
-            'role-view',
-            'permission-view',
-            'post-view',
-            'post-create',
-            'post-edit',
-            'post-delete',
-        ]);
+        // $superAdmin->givePermissionTo(Permission::all());
 
         // User - Basic Access
         $user = Role::create(['name' => 'user']);
-        $user->givePermissionTo(['post-view']);
 
         // Create Users dengan Role
         $superAdminUser = \App\Models\User::create([
@@ -73,13 +64,7 @@ class RolesDatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
         $superAdminUser->assignRole('super-admin');
-
-        $adminUser = \App\Models\User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('password'),
-        ]);
-        $adminUser->assignRole('admin');
+        $superAdminUser->givePermissionTo(Permission::all());
 
         // User dengan direct permission (tanpa role)
         $normalUser = \App\Models\User::create([
@@ -87,12 +72,33 @@ class RolesDatabaseSeeder extends Seeder
             'email' => 'user@gmail.com',
             'password' => bcrypt('password'),
         ]);
-        $normalUser->assignRole('User');
-        $normalUser->givePermissionTo('post-create');
+        $normalUser->assignRole('user');
 
-        Role::create(['name' => 'admin-pusat']);
-        Role::create(['name' => 'admin-province']);
-        Role::create(['name' => 'admin-kab-kota']);
-
+        $adminPusat = Role::create(['name' => 'admin-pusat']);
+        $adminPusatUser = \App\Models\User::create([
+            'name' => 'Admin Pusat',
+            'email' => 'pusrenaker@gmail.com',
+            'password' => bcrypt('password'),
+        ]);
+        $adminPusatUser->assignRole('admin-pusat');
+        $adminPusatUser->givePermissionTo(Permission::all());
+        
+        $adminProvince = Role::create(['name' => 'admin-province']);
+        $adminProvinceUser = \App\Models\User::create([
+            'name' => 'Admin Provinsi',
+            'email' => 'adminprovinceJabar@gmail.com',
+            'password' => bcrypt('password'),
+        ]);
+        $adminProvinceUser->assignRole('admin-province');
+        $adminProvinceUser->givePermissionTo(Permission::all());
+        
+        $adminKabKota = Role::create(['name' => 'admin-kab-kota']);
+        $adminKabKotaUser = \App\Models\User::create([
+            'name' => 'Admin Kabupaten/Kota',
+            'email' => 'adminKabBekasi@gmail.com',
+            'password' => bcrypt('password'),
+        ]);
+        $adminKabKotaUser->assignRole('admin-kab-kota');
+        $adminKabKotaUser->givePermissionTo(Permission::all());
     }
 }

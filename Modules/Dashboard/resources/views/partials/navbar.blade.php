@@ -23,14 +23,15 @@
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open" class="rounded-full overflow-hidden focus:outline-none cursor-pointer">
                     <img class="w-8 h-8 rounded-full"
-                        src="https://ui-avatars.com/api/?name=Super+Admin&background=6366f1&color=fff" alt="user">
+                        src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}&background=6366f1&color=fff"
+                        alt="user">
                 </button>
 
                 <!-- Dropdown -->
                 <div x-show="open" @click.outside="open = false" x-transition x-cloak
                     class="absolute right-0 top-full mt-2 bg-gray-50 border border-slate-200 rounded-lg shadow-lg w-44 z-50">
                     <div class="px-4 py-3 border-b border-slate-100">
-                        <p class="text-sm font-medium">Super Admin</p>
+                        <p class="text-sm font-medium">{{ auth()->user()->name }}</p>
                     </div>
                     <ul class="p-2 text-sm">
                         <li>

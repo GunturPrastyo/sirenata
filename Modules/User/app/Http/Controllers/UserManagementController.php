@@ -7,13 +7,27 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Modules\User\Services\UserService;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class UserManagementController extends Controller
+class UserManagementController extends Controller implements HasMiddleware
 {
 
     public function __construct(
         private UserService $userService
     ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('user-view|user-create|user-edit|user-delete'), only: ['index']),
+            // new Middleware(PermissionMiddleware::using('user-view'), only: ['show']),
+            // new Middleware(PermissionMiddleware::using('user-create'), only: ['create', 'store']),
+            // new Middleware(PermissionMiddleware::using('user-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('user-delete'), only: ['destroy']),
+        ];
+    }   
 
     /**
      * Display a listing of the resource.

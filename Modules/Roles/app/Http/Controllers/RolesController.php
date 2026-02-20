@@ -6,16 +6,30 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Modules\Roles\Http\Requests\RoleStoreRequest;
 use Modules\Roles\Http\Requests\RoleUpdateRequest;
 use Modules\Roles\Models\Role;
 use Modules\Roles\Services\RoleService;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class RolesController extends Controller
+class RolesController extends Controller implements HasMiddleware
 {
     public function __construct(
         private RoleService $roleService
     ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('role-view|role-create|role-edit|role-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('role-view'), only: ['show']),
+            new Middleware(PermissionMiddleware::using('role-create'), only: ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('role-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('role-delete'), only: ['destroy']),
+        ];
+    }   
 
     /**
      * Display a listing of the resource.

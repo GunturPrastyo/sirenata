@@ -7,16 +7,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Modules\Permission\Http\Requests\PermissionStoreRequest;
 use Modules\Permission\Http\Requests\PermissionUpdateRequest;
 use Modules\Permission\Models\Permission;
 use Modules\Permission\Services\PermissionService;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class PermissionController extends Controller
+class PermissionController extends Controller implements HasMiddleware
 {
     public function __construct(
         private PermissionService $permissionService
     ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('permission-view|permission-create|permission-edit|permission-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('permission-view'), only: ['show']),
+            new Middleware(PermissionMiddleware::using('permission-create'), only: ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('permission-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('permission-delete'), only: ['destroy']),
+        ];
+    }   
+
 
     /**
      * Display a listing of the resource.
