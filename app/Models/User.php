@@ -85,13 +85,22 @@ class User extends Authenticatable
         return false;
     }
 
-
-
     #[Scope]
     protected function search(Builder $query, string $keyword): void
     {
         $query->where('name', 'like', "%{$keyword}%")
             ->orWhere('email', 'like', "%{$keyword}%");
+    }
+
+    public function getRedirectRoute(): string
+    {
+        return match (true) {
+            $this->hasRole('super-admin') => 'super-admin.dashboard',
+            $this->hasRole('admin-pusat') => 'admin-pusat.dashboard',
+            $this->hasRole('admin-province') => 'admin-province.dashboard',
+            $this->hasRole('admin-kab-kota') => 'admin-kab-kota.dashboard',
+            default => 'portal-dashboard',
+        };
     }
 
     public function profile()

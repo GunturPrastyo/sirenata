@@ -5,6 +5,7 @@ namespace Modules\Auth\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Modules\Auth\Http\Requests\LoginRequest;
 use Modules\Auth\Services\AuthService;
 
@@ -28,7 +29,7 @@ class LoginController extends Controller
         $remember = $request->boolean('remember');
 
         if ($this->authService->authenticate($credentials, $remember)) {
-            return redirect()->intended(route('portal-dashboard'));
+            return redirect()->route(Auth::user()->getRedirectRoute());
         }
 
         return back()->withErrors([

@@ -12,6 +12,8 @@ use Modules\Roles\Http\Requests\RoleUpdateRequest;
 use Modules\Roles\Models\Role;
 use Modules\Roles\Services\RoleService;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Log;
+use Modules\Permission\Models\Permission;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 
 class RolesController extends Controller implements HasMiddleware
@@ -92,8 +94,13 @@ class RolesController extends Controller implements HasMiddleware
     public function edit($id)
     {
         $role = Role::find($id);
+        $permissions = Permission::all()
+        ->groupBy(function ($permission) {
+            return explode('-', $permission->name)[0];
+        });
         return view('roles::edit', [
-            'role' => $role
+            'role' => $role,
+            'permissions' => $permissions
         ]);
     }
 
@@ -105,10 +112,11 @@ class RolesController extends Controller implements HasMiddleware
         try {
             $validated = $request->validated();
 
-            $this->roleService->updateRole($role, $validated);
+            $role = $this->roleService->updateRole($role, $validated);
             return redirect()->route('super-admin.roles.index')
                 ->with('success', "Role {$role->name} updated successfully!");
         } catch (\Exception $e) {
+            Log::info($e);
             ToastMagic::error("Failed to update role: " . $e->getMessage());
             throw $e;
         }

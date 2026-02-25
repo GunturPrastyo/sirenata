@@ -60,6 +60,85 @@
                     </div>
                 </div>
 
+                <div class="mb-8" x-data="{
+                    toggleAll(state) {
+                        document.querySelectorAll('input[name=\'permissions[]\']')
+                            .forEach(cb => cb.checked = state);
+                    }
+                }">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Assign Permissions
+                        </h3>
+                        <div class="flex gap-3">
+                            <button type="button" @click="toggleAll(true)"
+                                class="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+                                Pilih Semua
+                            </button>
+                            <span class="text-gray-300">|</span>
+                            <button type="button" @click="toggleAll(false)"
+                                class="text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
+                                Batalkan Pilihan
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto border border-slate-400 rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                                        Module
+                                    </th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
+                                        Create
+                                    </th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
+                                        Edit
+                                    </th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
+                                        View
+                                    </th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
+                                        List
+                                    </th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
+                                        Delete
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-100 bg-white">
+                                @foreach ($permissions as $module => $modulePermissions)
+                                    <tr>
+                                        <td class="px-4 py-3 font-medium text-gray-700">
+                                            {{ $module }}
+                                        </td>
+
+                                        @foreach (['create', 'edit', 'view', 'list', 'delete'] as $action)
+                                            @php
+                                                $permissionName = $module . '-' . $action;
+                                                $exists = $modulePermissions->firstWhere('name', $permissionName);
+                                            @endphp
+
+                                            <td class="px-4 py-3 text-center">
+                                                @if ($exists)
+                                                    <input type="checkbox" name="permissions[]"
+                                                        value="{{ $permissionName }}"
+                                                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                        {{ $role->hasPermissionTo($permissionName) ? 'checked' : '' }}>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="flex flex-wrap gap-3 action-buttons form-section w-full">
                     <button type="submit" id="btn-submit"
                         class="inline-flex items-center w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm justify-center">

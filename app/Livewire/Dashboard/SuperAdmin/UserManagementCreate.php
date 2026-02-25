@@ -23,8 +23,7 @@ class UserManagementCreate extends Component
     public $join_date;
     public $province;
     public $regency;
-    public ?string $roleId = null;
-    public array $permissionsSelected = [];
+    public array $roleIds = [];
     public ?string $password = null;
     public ?string $password_confirmation = null;
 
@@ -34,7 +33,6 @@ class UserManagementCreate extends Component
     {
         $this->userService = $userService;
     }
-
 
     protected function rules(): array
     {
@@ -48,19 +46,18 @@ class UserManagementCreate extends Component
                 Password::defaults(),
             ],
             'phone' => 'required|string|max:20',
-            'roleId' => 'required|exists:roles,uuid',
+            'roleIds' => 'required|array|min:1|max:2',
+            'roleIds.*' => 'exists:roles,uuid',
             'jabatan' => 'required|string|max:255',
             'province' => 'nullable|string|size:2',
             'regency'  => 'nullable|string|max:5',
-            'permissionsSelected' => 'required|array',
-            'permissionsSelected.*' => 'required|exists:permissions,uuid',
         ];
     }
 
     protected function validationAttributes()
     {
         return [
-            'roleId' => 'role',
+            'roleIds' => 'role',
         ];
     }
 
@@ -74,8 +71,7 @@ class UserManagementCreate extends Component
                 'full_name'   => $this->full_name,
                 'phone'       => $this->phone,
                 'jabatan'     => $this->jabatan,
-                'role'        => $this->roleId, 
-                'permissions' => $this->permissionsSelected,
+                'roles'        => $this->roleIds, 
                 'province'    => $this->province,
                 'regency'     => $this->regency,
                 'password'    => $this->password,
@@ -112,7 +108,6 @@ class UserManagementCreate extends Component
     {
         return view('livewire.dashboard.super-admin.user-management-create', [
             'roles'       => Role::select('uuid', 'name')->orderBy('name', 'asc')->get(),
-            'permissions' => Permission::select('uuid', 'name')->orderBy('name', 'desc')->get(),
         ]);
     }
 }

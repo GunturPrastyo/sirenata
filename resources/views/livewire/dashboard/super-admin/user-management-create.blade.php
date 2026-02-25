@@ -211,14 +211,17 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             @forelse ($roles as $role)
                                 <div class="relative">
-                                    <input type="radio" id="role_{{ $role->uuid }}" wire:model.lazy="roleId"
-                                        name="role" value="{{ $role->uuid }}" class="hidden peer">
+                                    <input type="checkbox" id="role_{{ $role->uuid }}" wire:model="roleIds"
+                                        value="{{ $role->uuid }}" class="hidden peer"
+                                        :disabled="$wire.roleIds.length >= 2 && !$wire.roleIds.includes('{{ $role->uuid }}')">
 
                                     <label for="role_{{ $role->uuid }}"
                                         class="flex flex-col h-full p-4 border-2 border-slate-200 rounded-xl cursor-pointer
                                         hover:border-indigo-300
                                         peer-checked:border-indigo-500
                                         peer-checked:bg-indigo-50
+                                        peer-disabled:opacity-50
+                                        peer-disabled:cursor-not-allowed
                                         transition">
                                         <div class="flex items-center mb-2">
                                             <div class="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
@@ -231,7 +234,8 @@
                                         </div>
 
                                         <p class="text-sm text-slate-600 leading-relaxed">
-                                            Akses sesuai role <span class="font-medium">{{ $role->name }}</span>
+                                            Akses sesuai role
+                                            <span class="font-medium">{{ $role->name }}</span>
                                         </p>
                                     </label>
                                 </div>
@@ -242,49 +246,6 @@
                             @endforelse
                         </div>
                         @error('roleId')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <label
-                                class="block text-sm font-medium text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-                                Izin Khusus (Permissions)
-                            </label>
-                            @if ($permissions->isNotEmpty())
-                                <div class="flex gap-4">
-                                    <button type="button"
-                                        wire:click="$set('permissionsSelected', {{ $permissions->pluck('uuid') }})"
-                                        class="text-xs font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 transition-colors">
-                                        Pilih Semua
-                                    </button>
-                                    <button type="button" wire:click="$set('permissionsSelected', [])"
-                                        class="text-xs font-semibold cursor-pointer text-gray-500 hover:text-gray-700 transition-colors">
-                                        Hapus Semua
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            @forelse($permissions as $permission)
-                                <div
-                                    class="flex items-center p-2.5 border border-slate-200 rounded-lg bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                                    <input type="checkbox" id="permission_{{ $permission->uuid }}"
-                                        wire:model="permissionsSelected" value="{{ $permission->uuid }}"
-                                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                                    <label for="permission_{{ $permission->uuid }}"
-                                        class="ml-2 block text-sm font-medium text-slate-700 cursor-pointer">
-                                        {{ ucfirst($permission->name) }}
-                                    </label>
-                                </div>
-                            @empty
-                                <p class="text-sm text-slate-500 col-span-full">
-                                    Izin tidak tersedia
-                                </p>
-                            @endforelse
-                        </div>
-                        @error('permissionsSelected')
                             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>

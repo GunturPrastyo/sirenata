@@ -52,10 +52,11 @@ class RolesDatabaseSeeder extends Seeder
         
         // // Super Admin - Full Access
         $superAdmin = Role::create(['name' => 'super-admin']);
-        // $superAdmin->givePermissionTo(Permission::all());
+        $superAdmin->givePermissionTo(Permission::all());
 
         // User - Basic Access
         $user = Role::create(['name' => 'user']);
+        $user->givePermissionTo(Permission::all());
 
         // Create Users dengan Role
         $superAdminUser = \App\Models\User::create([
@@ -64,7 +65,6 @@ class RolesDatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
         $superAdminUser->assignRole('super-admin');
-        $superAdminUser->givePermissionTo(Permission::all());
 
         // User dengan direct permission (tanpa role)
         $normalUser = \App\Models\User::create([
@@ -81,24 +81,25 @@ class RolesDatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
         $adminPusatUser->assignRole('admin-pusat');
-        $adminPusatUser->givePermissionTo(Permission::all());
         
         $adminProvince = Role::create(['name' => 'admin-province']);
+        $adminProvince->givePermissionTo(Permission::all());
+        
         $adminProvinceUser = \App\Models\User::create([
             'name' => 'Admin Provinsi',
             'email' => 'adminprovinceJabar@gmail.com',
             'password' => bcrypt('password'),
         ]);
         $adminProvinceUser->assignRole('admin-province');
-        $adminProvinceUser->givePermissionTo(Permission::all());
         
         $adminKabKota = Role::create(['name' => 'admin-kab-kota']);
+        $adminKabKota->givePermissionTo(Permission::all());
+        
         $adminKabKotaUser = \App\Models\User::create([
             'name' => 'Admin Kabupaten/Kota',
             'email' => 'adminKabBekasi@gmail.com',
             'password' => bcrypt('password'),
         ]);
         $adminKabKotaUser->assignRole('admin-kab-kota');
-        $adminKabKotaUser->givePermissionTo(Permission::all());
     }
 }
