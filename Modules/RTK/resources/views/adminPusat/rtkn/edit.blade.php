@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Edit RTKN">
+<x-dashboard::layouts.dashboard title="Edit Rencana Tenaga Kerja Nasional">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
@@ -21,8 +21,8 @@
                                 clip-rule="evenodd"></path>
                         </svg>
                         <a href="{{ route('admin-pusat.rtkn.index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Daftar Laporan
-                            RTKN</a>
+                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Laporan
+                            Rekapitulasi Rencana Tenaga Kerja Nasional</a>
                     </div>
                 </li>
                 <li>
@@ -32,7 +32,8 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Ubah RTKN</span>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Ubah Rencana Tenaga Kerja
+                            Nasional</span>
                     </div>
                 </li>
             </ol>
@@ -85,7 +86,7 @@
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div>
+                        {{-- <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                                 Status <span class="text-red-500">*</span>
                             </label>
@@ -97,6 +98,32 @@
                                 @endforeach
                             </select>
                             @error('status')
+                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div> --}}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                Status Dokumen <span class="text-red-500">*</span>
+                            </label>
+
+                            <div class="flex items-center gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="is_active" value="1"
+                                        class="text-green-600 border-gray-300 focus:ring-green-500"
+                                        @checked(old('is_active', $rtkn->is_active ?? 1) == 1)>
+                                    <span class="text-sm text-gray-700">Aktif</span>
+                                </label>
+
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="is_active" value="0"
+                                        class="text-red-600 border-gray-300 focus:ring-red-500"
+                                        @checked(old('is_active', $rtkn->is_active ?? 1) == 0)>
+                                    <span class="text-sm text-gray-700">Tidak Aktif</span>
+                                </label>
+                            </div>
+
+                            @error('is_active')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -130,10 +157,11 @@
                         <!-- File Upload -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Upload Dokumen RTKN
+                                Upload Dokumen Rencana Tenaga Kerja Nasional
                             </label>
                             <div class="file-upload-area rounded-md p-8 text-center cursor-pointer" id="fileUploadArea">
-                                <input type="file" id="fileInput" name="document_path" accept=".pdf" class="hidden">
+                                <input type="file" id="fileInput" name="document_path" accept=".pdf"
+                                    class="hidden">
                                 <div id="uploadPrompt">
                                     <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
                                         viewBox="0 0 48 48">

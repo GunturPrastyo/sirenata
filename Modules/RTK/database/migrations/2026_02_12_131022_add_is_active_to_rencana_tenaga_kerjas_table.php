@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rencana_tenaga_kerjas', function (Blueprint $table) {
-            $table->boolean('is_active')->default(false)->after('status');
+            $table->boolean('is_active')->default(false)->after('end_date');
         });
     }
 

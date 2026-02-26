@@ -61,7 +61,7 @@
 
                 <div class="flex flex-wrap gap-3 action-buttons form-section w-full">
                     <button type="submit" id="btn-submit"
-                        class="inline-flex items-center w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm justify-center">
+                        class="inline-flex cursor-pointer items-center w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm justify-center">
                         Simpan Permission
                     </button>
                 </div>

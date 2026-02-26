@@ -19,11 +19,11 @@ return new class extends Migration
             $table->string('name');
             $table->year('start_date')->nullable();
             $table->year('end_date')->nullable();
-            $table->string('status');
+            // $table->string('status');
             $table->string('type')->nullable();
             $table->string('document_path')->nullable();
 
-            $table->index(['name', 'status']);
+            $table->index(['name']);
             $table->timestamps();
         });
     }

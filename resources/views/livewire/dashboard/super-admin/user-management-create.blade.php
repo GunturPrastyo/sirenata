@@ -225,7 +225,7 @@
                                         transition">
                                         <div class="flex items-center mb-2">
                                             <div class="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
-                                                <i class="fas fa-user-cog"></i>
+                                                <i class="fas fa-user-shield"></i>
                                             </div>
 
                                             <span class="font-medium text-slate-900">

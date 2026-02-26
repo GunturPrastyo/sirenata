@@ -72,12 +72,12 @@
                         </h3>
                         <div class="flex gap-3">
                             <button type="button" @click="toggleAll(true)"
-                                class="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+                                class="text-sm cursor-pointer font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
                                 Pilih Semua
                             </button>
                             <span class="text-gray-300">|</span>
                             <button type="button" @click="toggleAll(false)"
-                                class="text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
+                                class="text-sm cursor-pointer font-medium text-red-600 hover:text-red-700 transition-colors">
                                 Batalkan Pilihan
                             </button>
                         </div>
@@ -141,7 +141,7 @@
 
                 <div class="flex flex-wrap gap-3 action-buttons form-section w-full">
                     <button type="submit" id="btn-submit"
-                        class="inline-flex items-center w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm justify-center">
+                        class="inline-flex cursor-pointer items-center w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm justify-center">
                         Simpan Role
                     </button>
                 </div>

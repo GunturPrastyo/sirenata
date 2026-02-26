@@ -44,7 +44,8 @@ class RTKNService
                 'name' => $data['name'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
-                'status' => RTKStatus::PENDING->value,
+                // 'status' => RTKStatus::PENDING->value,
+                'is_active' => false,
                 'type' => TypeRtk::NASIONAL->value,
                 'document_path' => $documentPath,
             ]);
@@ -65,29 +66,29 @@ class RTKNService
                     ->store('rtkn/documents', 'public');
             }
 
-            $status = $data['status'] ?? $rtkn->status;
+            // $status = $data['status'] ?? $rtkn->status;
+            $isActive = $data['is_active'] ?? $rtkn->is_active;
 
-            if ($status === RTKStatus::BERLAKU->value) {
+            if ($isActive) {
                 // Nonaktifkan semua RTK Nasional lain
                 RencanaTenagaKerja::where('type', TypeRtk::NASIONAL->value)
                     ->where('id', '!=', $rtkn->id)
                     ->update([
-                        'status' => RTKStatus::TIDAK_BERLAKU->value,
+                        // 'status' => RTKStatus::TIDAK_BERLAKU->value,
                         'is_active' => false,
                     ]);
-
-                $isActive = true;
-            } else {
-
-                // Kalau bukan BERLAKU
-                // Jangan ubah is_active kalau dia memang versi aktif terakhir
-                $isActive = $rtkn->is_active;
-            }
+                // $isActive = true;
+            } 
+            // else {
+            //     // Kalau bukan BERLAKU
+            //     // Jangan ubah is_active kalau dia memang versi aktif terakhir
+            //     $isActive = $rtkn->is_active;
+            // }
             $rtkn->update([
                 'name'          => $data['name'],
                 'start_date'    => $data['start_date'],
                 'end_date'      => $data['end_date'],
-                'status'        => $status,
+                // 'status'        => $status,
                 'type'          => TypeRtk::NASIONAL->value,
                 'document_path' => $documentPath,
                 'is_active'     => $isActive,

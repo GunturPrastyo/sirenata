@@ -75,6 +75,7 @@ class RolesDatabaseSeeder extends Seeder
         $normalUser->assignRole('user');
 
         $adminPusat = Role::create(['name' => 'admin-pusat']);
+        $adminPusat->givePermissionTo(Permission::all());
         $adminPusatUser = \App\Models\User::create([
             'name' => 'Admin Pusat',
             'email' => 'pusrenaker@gmail.com',
