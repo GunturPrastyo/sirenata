@@ -54,8 +54,8 @@
                                 Nama <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="name" name="name" value="{{ old('name') }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Masukkan nama dokumen RTKN">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Masukkan nama dokumen Rencana Tenaga Kerja Nasional">
                             @error('name')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -68,7 +68,7 @@
                                     Berlaku Dari Tahun <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" id="start_date" name="start_date" value="{{ old('start_date') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="2025">
                                 @error('start_date')
                                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -79,7 +79,7 @@
                                     Sampai Tahun <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" id="end_date" name="end_date" value="{{ old('end_date') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="2030">
                                 @error('end_date')
                                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>

@@ -74,11 +74,11 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
         try {
             $validated = $request->validated();
             $rtkdp = $this->rtkdService->createRTKProvince($validated);
-            return redirect()->route('admin-province.rtkdp.index')->with('success', 'RTKDP berhasil ditambahkan');
+            return redirect()->route('admin-province.rtkdp.index')->with('success', 'RTK Provinsi berhasil ditambahkan');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            ToastMagic::error('RTKDP gagal ditambahkan!');
-            return redirect()->route('admin-province.rtkdp.index')->with('error', 'RTKDP gagal ditambahkan!');
+            ToastMagic::error('RTK Provinsi gagal ditambahkan!');
+            return redirect()->route('admin-province.rtkdp.index')->with('error', 'RTK Provinsi gagal ditambahkan!');
         }
     }
 
@@ -114,11 +114,11 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
         try {
             $validated = $request->validated();
             $rtkdp = $this->rtkdService->updateRTKProvince($rtkdp, $validated);
-            return redirect()->route('admin-province.rtkdp.index')->with('success', 'RTKDP berhasil diupdate');
+            return redirect()->route('admin-province.rtkdp.index')->with('success', 'RTK Provinsi berhasil diupdate');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             ToastMagic::error('RTKDP gagal diupdate!', $e->getMessage());
-            return redirect()->route('admin-province.rtkdp.index')->with('error', 'RTKDP gagal diupdate!');
+            return redirect()->route('admin-province.rtkdp.index')->with('error', 'RTK Provinsi gagal diupdate!');
         }
     }
 
@@ -129,9 +129,9 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
     {
         try {
             $this->rtkdService->deleteRTKD($rtkdp);
-            return redirect()->route('admin-province.rtkdp.index')->with('success', 'RTKDP berhasil dihapus!');
+            return redirect()->route('admin-province.rtkdp.index')->with('success', 'RTK Provinsi berhasil dihapus!');
         } catch (\Throwable $th) {
-            return redirect()->route('admin-province.rtkdp.index')->with('error', 'RTKDP gagal dihapus!');
+            return redirect()->route('admin-province.rtkdp.index')->with('error', 'RTK Provinsi gagal dihapus!');
         }
     }
 }

@@ -203,7 +203,7 @@ class RTKDService
                 'name' => $data['name'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
-                'status' => RTKStatus::PENDING->value,
+                // 'status' => RTKStatus::PENDING->value,
                 'type' => TypeRtk::PROVINSI->value,
                 'document_path' => $documentPath,
             ]);
@@ -225,26 +225,25 @@ class RTKDService
                     'public'
                 );
             }
-            $status = $data['status'] ?? $rtkdProvince->status;
+            // $status = $data['status'] ?? $rtkdProvince->status;
+            $isActive = $data['is_active'] ?? $rtkdProvince->is_active;
 
             // Jika RTK ini diset menjadi BERLAKU
-            if ($status === RTKStatus::BERLAKU->value) {
-
-                // Nonaktifkan versi aktif sebelumnya (apapun statusnya)
+            if ($isActive) {
                 RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
                     ->where('province_code', $user->scopeArea->province_code)
                     ->where('is_active', true)
                     ->where('id', '!=', $rtkdProvince->id)
                     ->update([
-                        'status' => RTKStatus::TIDAK_BERLAKU->value,
                         'is_active' => false,
                     ]);
 
-                $isActive = true;
-            } else {
-                // Jangan ubah is_active kalau bukan diset berlaku
-                $isActive = $rtkdProvince->is_active;
-            }
+                // $isActive = true;
+            } 
+            // else {
+            //     // Jangan ubah is_active kalau bukan diset berlaku
+            //     $isActive = $rtkdProvince->is_active;
+            // }
 
             $rtkdProvince->update([
                 'province_code' => $user->scopeArea->province_code,
@@ -252,7 +251,7 @@ class RTKDService
                 'name'          => $data['name'],
                 'start_date'    => $data['start_date'],
                 'end_date'      => $data['end_date'],
-                'status'        => $status,
+                // 'status'        => $status,
                 'type'          => TypeRtk::PROVINSI->value,
                 'document_path' => $documentPath,
                 'is_active'     => $isActive,

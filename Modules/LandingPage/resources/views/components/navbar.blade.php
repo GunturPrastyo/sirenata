@@ -58,7 +58,7 @@
                                         </a>
                                     </li>
                                 @endrole
-                                @role('admin-provinsi')
+                                @role('admin-province')
                                     <li>
                                         <a href="{{ route('admin-province.dashboard') }}"
                                             class="block p-2 rounded hover:bg-purple-200">

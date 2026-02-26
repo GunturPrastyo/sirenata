@@ -80,8 +80,8 @@
                                 Nama <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="name" name="name" value="{{ $rtkn->name }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Masukkan nama dokumen RTKN">
+                                class="w-full px-4 py-2 border border-gray-300 placeholder:text-sm rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Masukkan nama dokumen Rencana Tenaga Kerja Nasional">
                             @error('name')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -114,11 +114,10 @@
                                     <span class="text-sm text-gray-700">Aktif</span>
                                 </label>
 
-
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="is_active" value="0"
                                         class="text-red-600 border-gray-300 focus:ring-red-500"
-                                        @checked(old('is_active', $rtkn->is_active ?? 1) == 0)>
+                                        @checked(old('is_active', $rtkn->is_active ?? 0) == 0)>
                                     <span class="text-sm text-gray-700">Tidak Aktif</span>
                                 </label>
                             </div>
@@ -135,7 +134,7 @@
                                     Berlaku Dari Tahun <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" id="start_date" name="start_date" value="{{ $rtkn->start_date }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="2025">
                                 @error('start_date')
                                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -146,7 +145,7 @@
                                     Sampai Tahun <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" id="end_date" name="end_date" value="{{ $rtkn->end_date }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="2030">
                                 @error('end_date')
                                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -219,7 +218,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
                                 </svg>
-                                Upload
+                                Simpan
                             </button>
                         </div>
                     </form>

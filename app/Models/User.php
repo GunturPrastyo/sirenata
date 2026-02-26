@@ -13,13 +13,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Modules\User\Models\UserProfile;
 use Modules\User\Models\UserScope;
+use Modules\User\Traits\HasScopeAccess;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, HasUuids, LogsActivity;
+    use HasFactory, Notifiable, HasRoles, HasUuids, LogsActivity, HasScopeAccess;
 
     protected $keyType = 'string';
 
@@ -62,28 +63,7 @@ class User extends Authenticatable
         return LogOptions::defaults()
             ->logOnly(['name','email']);
     }
-
-    public function hasCompleteScope(): bool
-    {
-        if (!$this->scopeArea) {
-            return false;
-        }
-
-        if ($this->hasRole('super-admin')) {
-            return true;
-        }
-
-        if ($this->hasRole('admin-provinsi')) {
-            return !empty($this->scopeArea->province_code);
-        }
-
-        if ($this->hasRole('admin-kabkota')) {
-            return !empty($this->scopeArea->province_code)
-                && !empty($this->scopeArea->regency_code);
-        }
-
-        return false;
-    }
+    
 
     #[Scope]
     protected function search(Builder $query, string $keyword): void

@@ -52,22 +52,22 @@
 
     <ul x-show="open" x-collapse class="mt-1 space-y-1">
         <li>
-            <a href="{{ route('admin-province.laporan.index') }}"
-                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-sm
-                {{ request()->routeIs('admin-province.laporan*')
+            <a href="{{ route('admin-province.rtkdp.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+                {{ request()->routeIs('admin-province.rtkdp*')
                     ? 'text-indigo-600 bg-purple-100'
                     : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
-                Rencana Tenaga Kerja (RTK)
+                Rekapitulasi Rencana Tenaga Kerja Provinsi
             </a>
         </li>
 
         <li>
-            <a href="{{ route('admin-province.rtkdp.index') }}"
-                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-sm
-                {{ request()->routeIs('admin-province.rtkdp*')
+            <a href="{{ route('admin-province.laporan.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+                {{ request()->routeIs('admin-province.laporan*')
                     ? 'text-indigo-600 bg-purple-100'
                     : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
-                Rencana Tenaga Kerja Provinsi (RTKP)
+                Rekapitulasi Rencana Tenaga Kerja
             </a>
         </li>
     </ul>
