@@ -20,9 +20,9 @@
                                 clip-rule="evenodd"></path>
                         </svg>
                         <a href="{{ route('admin-kab-kota.rtkd.index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Rencana Tenaga
-                            Kerja Daerah
-                            Kabupaten/Kota</a>
+                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">
+                            Rekapitulasi Rencana Tenaga Kerja Kab/Kota
+                        </a>
                     </div>
                 </li>
                 <li>
@@ -32,7 +32,9 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Upload RTKP</span>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">
+                            Upload Rekapitulasi Rencana Tenaga Kerja Kab/Kota
+                        </span>
                     </div>
                 </li>
             </ol>
@@ -53,8 +55,8 @@
                                 Nama <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="name" name="name" value="{{ old('name') }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Masukkan nama dokumen RTKN">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Masukkan nama dokumen Rencana Tenaga Kerja Kab/Kota">
                             @error('name')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -67,7 +69,7 @@
                                     Berlaku Dari Tahun <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" id="start_date" name="start_date" value="{{ old('start_date') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="2025">
                                 @error('start_date')
                                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -78,7 +80,7 @@
                                     Sampai Tahun <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" id="end_date" name="end_date" value="{{ old('end_date') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="2030">
                                 @error('end_date')
                                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -89,7 +91,7 @@
                         <!-- File Upload -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Upload Dokumen RTKN <span class="text-red-500">*</span>
+                                Upload Dokumen Rencana Tenaga Kerja Kab/Kota <span class="text-red-500">*</span>
                             </label>
                             <div class="file-upload-area rounded-md p-8 text-center cursor-pointer" id="fileUploadArea">
                                 <input type="file" id="fileInput" name="document_path" accept=".pdf" class="hidden">
@@ -149,7 +151,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
                                 </svg>
-                                Upload
+                                Simpan
                             </button>
                         </div>
                     </form>

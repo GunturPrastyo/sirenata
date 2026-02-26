@@ -20,7 +20,9 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Daftar Laporan RTK</span>
+                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">
+                            Rekapitulasi Rencana Tenaga Kerja Kab/Kota
+                        </span>
                     </div>
                 </li>
             </ol>
@@ -112,7 +114,7 @@
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar Dokumen RTK
+                    <h2 class="text-sm font-semibold text-slate-800">Daftar Dokumen Rekapitulasi Rencana Tenaga Kerja
                         {{ auth()->user()->scopeArea?->regency?->name }}</h2>
                     <p class="text-sm text-slate-500 mt-1">
                         Total: <span class="font-medium text-slate-700" id="total-admin">{{ $rtkds->total() }}</span>
@@ -146,7 +148,7 @@
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
                             <th class="px-4 md:px-6 py-3 text-left">Dokumen RTK</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status</th>
+                            {{-- <th class="px-4 md:px-6 py-3 text-left">Status</th> --}}
                             <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
@@ -164,13 +166,13 @@
                                 <td class="px-4 md:px-6 py-3 ">
                                     <p class="text-slate-600">{{ $rtkd->start_date }} - {{ $rtkd->end_date }}</p>
                                 </td>
-                                <td class="px-4 md:px-6 py-3 ">
+                                {{-- <td class="px-4 md:px-6 py-3 ">
                                     <span
                                         class="px-2 py-1 text-xs rounded-full font-semibold
                                         {{ Modules\RTK\Enums\RTKStatus::from($rtkd->status)->color() }}">
                                         {{ Modules\RTK\Enums\RTKStatus::from($rtkd->status)->label() }}
                                     </span>
-                                </td>
+                                </td> --}}
                                 <td class="px-4 md:px-6 py-3">
                                     @if ($rtkd->is_active)
                                         <span
@@ -198,10 +200,10 @@
                                             <a href="{{ route('admin-kab-kota.rtkd.edit', $rtkd->id) }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
                                         </li>
-                                        <li>
+                                        {{-- <li>
                                             <a href="{{ route('admin-kab-kota.rtkd.show', $rtkd->id) }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
-                                        </li>
+                                        </li> --}}
                                         <li>
                                             <div
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">

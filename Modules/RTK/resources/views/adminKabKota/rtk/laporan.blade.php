@@ -88,9 +88,10 @@
                 <!-- RTK Status Card -->
                 <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                        {{ $rtkKabKotaActive->regency?->name ?? '' }}
+                        {{ $rtkKabKotaActive?->name ?? '' }}
+
                     </h2>
-                    <p class="text-gray-600 mb-4">Kabupaten/Kota Administrasi</p>
+                    <p class="text-gray-600 mb-4">{{ $rtkKabKotaActive?->regency?->name ?? '' }}</p>
 
                     @if ($rtkKabKotaActive)
                         <div
@@ -109,12 +110,6 @@
 
                                 <p class="text-xs">
                                     Status:
-                                    <span
-                                        class="px-2 py-1 text-xs rounded-full font-semibold
-                                        {{ $rtkKabKotaActive?->status?->color() }}">
-                                        {{ $rtkKabKotaActive?->status?->label() }}
-                                    </span>
-
                                     @if ($rtkKabKotaActive->end_date)
                                         hingga {{ \Carbon\Carbon::parse($rtkKabKotaActive->end_date)->format('d M Y') }}
                                     @endif

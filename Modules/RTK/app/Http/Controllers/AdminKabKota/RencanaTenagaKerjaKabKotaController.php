@@ -117,7 +117,7 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
             ToastMagic::error('RTK gagal diupdate!');
             return redirect()->route('admin-kab-kota.rtkd.index')->with('error', 'RTK gagal diupdate!');
         }
-    }
+    }  
 
     /**
      * Remove the specified resource from storage.
