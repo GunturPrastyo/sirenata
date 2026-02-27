@@ -75,7 +75,7 @@
 <li>
     <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
         class="flex items-center px-2 py-1.5 rounded-md transition
-        {{ request()->routeIs('admin-pusat.rekapitulasi.index*')
+        {{ request()->routeIs('admin-pusat.rekapitulasi*')
             ? 'text-indigo-600 bg-purple-100'
             : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
