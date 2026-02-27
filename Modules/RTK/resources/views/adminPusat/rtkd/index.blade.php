@@ -100,7 +100,6 @@
                     <h2 class="text-base font-semibold text-slate-800">Daftar Laporan RTKD Provinsi</h2>
                     <p class="text-sm text-slate-500 mt-1">
                         Total: <span class="font-medium text-slate-700" id="total-admin">{{ $rtkds->total() }}</span>
-                        RTKD Provinsi
                     </p>
                 </div>
 

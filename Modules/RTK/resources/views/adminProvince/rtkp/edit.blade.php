@@ -155,7 +155,7 @@
                         <!-- File Upload -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Upload Dokumen RTKN
+                                Upload Dokumen Rencana Tenaga Kerja Daerah Provinsi
                             </label>
                             <div class="file-upload-area rounded-md p-8 text-center cursor-pointer" id="fileUploadArea">
                                 <input type="file" id="fileInput" name="document_path" accept=".pdf"
@@ -206,7 +206,7 @@
 
                         <!-- Action Buttons -->
                         <div class="flex gap-4 pt-4">
-                            <a href="{{ route('admin-pusat.rtkn.index') }}"
+                            <a href="{{ route('admin-province.rtkdp.index') }}"
                                 class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium hover:bg-gray-300 transition-colors text-center">
                                 Batal
                             </a>
