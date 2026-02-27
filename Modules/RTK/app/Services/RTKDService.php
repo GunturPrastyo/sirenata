@@ -2,7 +2,7 @@
 
 namespace Modules\RTK\Services;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,14 +21,14 @@ class RTKDService
     private const DEFAULT_LIMIT = 10;
     
     /**
-     * Build query for latest RTK Province per province
+     * Build query for active RTK Province per province
      *
      * - Returns only the most recent RTK for each province
      * - Supports search by RTK name or province name
      * - Can be filtered by RTK status
      * - Used by Admin Pusat
      */
-    public function queryLatestRTKProvince(
+    public function queryActiveRTKProvince(
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
@@ -74,7 +74,7 @@ class RTKDService
         int $limit = self::DEFAULT_LIMIT,
         ?string $status = null
     ): LengthAwarePaginator {
-        return $this->queryLatestRTKProvince(
+        return $this->queryActiveRTKProvince(
             search: $search,
             sortBy: $sortBy,
             limit: $limit,

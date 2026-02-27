@@ -2,22 +2,21 @@
 
 namespace Modules\RTK\Http\Controllers\AdminKabKota;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Modules\RTK\Services\RTKDService;
-use Modules\RTK\Models\RencanaTenagaKerja;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
-use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPStoreRequest;
 use Modules\RTK\Http\Requests\AdminPusat\RTKPUpdateRequest;
+use Modules\RTK\Models\RencanaTenagaKerja;
+use Modules\RTK\Services\RTKDService;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 
 class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddleware
 {
-
     public function __construct(
         private RTKDService $rtkdService
     ) {}
@@ -31,20 +30,20 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
             new Middleware(PermissionMiddleware::using('rtkd-edit'), only: ['edit', 'update']),
             new Middleware(PermissionMiddleware::using('rtkd-delete'), only: ['destroy']),
         ];
-    } 
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $limit   = $request->integer('per_page', 10);
-        $search  = $request->string('search')->toString();
-        $status  = $request->string('status')->toString();
+        $limit = $request->integer('per_page', 10);
+        $search = $request->string('search')->toString();
+        $status = $request->string('status')->toString();
         $orderBy = in_array($request->orderBy, ['asc', 'desc']) ? $request->orderBy : 'desc';
 
         $user = Auth::user();
-        
+
         if (!$user->hasCompleteScope()) {
             abort(403, 'Admin kab/kota belum memiliki wilayah.');
         }

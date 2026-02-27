@@ -73,6 +73,21 @@
 </li>
 
 <li>
+    <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
+        {{ request()->routeIs('admin-pusat.rekapitulasi.index*')
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+        <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
+        </svg>
+        <span class="flex-1 ms-3 whitespace-nowrap">Rekapitulasi SDM</span>
+    </a>
+</li>
+
+<li>
     <a href="#"
         class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-pusat.notification')

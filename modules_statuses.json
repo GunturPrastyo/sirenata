@@ -6,5 +6,6 @@
     "Dashboard": true,
     "LandingPage": true,
     "RTK": true,
-    "MasterData": true
+    "MasterData": true,
+    "LMS": true
 }
