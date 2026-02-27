@@ -10,7 +10,10 @@ use Modules\RTK\Enums\RTKStatus;
 use Modules\RTK\Enums\TypeRtk;
 use Modules\RTK\Models\RencanaTenagaKerja;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Modules\MasterData\Models\Province;
+use Modules\MasterData\Models\Regency;
 
 class RTKDService
 {
@@ -28,29 +31,38 @@ class RTKDService
     public function queryLatestRTKProvince(
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
+        int $limit = self::DEFAULT_LIMIT,
         ?string $status = null
-    ) {
-        return RencanaTenagaKerja::query()
-            ->with(['user', 'province'])
+    ): LengthAwarePaginator {
+
+        $provinceQuery = $search
+            ? Province::search($search)->orderBy('name')
+            : Province::query()->orderBy('name');
+
+        $provinces = $provinceQuery->paginate($limit);
+        $provinceCodes = $provinces->getCollection()->pluck('code')->toArray();
+
+        if (empty($provinceCodes)) {
+            return $provinces;
+        }
+        
+        $rtks = RencanaTenagaKerja::query()
             ->where('type', TypeRtk::PROVINSI->value)
+            ->whereIn('province_code', $provinceCodes)
             ->where('is_active', true)
-            ->whereIn('id', function ($sub) {
-                $sub->selectRaw('MAX(id)')
-                    ->from('rencana_tenaga_kerjas')
-                    ->where('type', TypeRtk::PROVINSI->value)
-                    ->where('is_active', true)
-                    ->groupBy('province_code');
-            })
-            ->when($search, function ($q) use ($search) {
-                $q->where(function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhereHas('province', function ($provinceQuery) use ($search) {
-                            $provinceQuery->where('name', 'like', "%{$search}%");
-                        });
-                });
-            })
-            ->when($status, fn ($q) => $q->where('status', $status))
-            ->orderBy('created_at', $sortBy);
+            // ->where('end_date', '>=', Carbon::now()->year)
+            ->when($status, fn($q) => $q->where('status', $status))
+            ->orderByDesc('end_date') // safety
+            ->get()
+            ->unique('province_code')
+            ->keyBy('province_code');
+
+        $provinces->getCollection()->transform(function ($province) use ($rtks) {
+            $province->latest_rtk = $rtks[$province->code] ?? null;
+            return $province;
+        });
+
+        return $provinces;
     }
 
     /**
@@ -62,9 +74,12 @@ class RTKDService
         int $limit = self::DEFAULT_LIMIT,
         ?string $status = null
     ): LengthAwarePaginator {
-        return $this->queryLatestRTKProvince($search, $sortBy, $status)
-            ->paginate($limit)
-            ->withQueryString();
+        return $this->queryLatestRTKProvince(
+            search: $search,
+            sortBy: $sortBy,
+            limit: $limit,
+            status: $status
+        )->withQueryString();
     }
 
     /**
@@ -117,31 +132,41 @@ class RTKDService
         string $provinceCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
+        int $limit = self::DEFAULT_LIMIT,
         ?string $status = null
     ) {
-        return RencanaTenagaKerja::query()
-            ->with(['user', 'regency'])
+        // 1️⃣ Regency (SQLite - nusa)
+        $regencyQuery = $search
+            ? Regency::search($search)->where('province_code', $provinceCode)->orderBy('name', $sortBy)
+            : Regency::query()->where('province_code', $provinceCode)->orderBy('name', $sortBy);
+
+        $regencies = $regencyQuery->paginate($limit)->withQueryString();
+
+        $regencyCodes = $regencies->getCollection()->pluck('code')->toArray();
+
+        if (empty($regencyCodes)) {
+            return $regencies;
+        }
+
+        $rtks = RencanaTenagaKerja::query()
             ->where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
+            ->whereIn('regency_code', $regencyCodes)
             ->where('is_active', true)
-            ->whereIn('id', function ($sub) use ($provinceCode) {
-                $sub->selectRaw('MAX(id)')
-                    ->from('rencana_tenaga_kerjas')
-                    ->where('type', TypeRtk::KAB_KOTA->value)
-                    ->where('province_code', $provinceCode)
-                    ->where('is_active', true)
-                    ->groupBy('province_code', 'regency_code');
-            })
-            ->when($search, function ($q) use ($search) {
-                $q->where(function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhereHas('regency', function ($regencyQuery) use ($search) {
-                            $regencyQuery->where('name', 'like', "%{$search}%");
-                        });
-                });
-            })
-            ->when($status, fn ($q) => $q->where('status', $status))
-            ->orderBy('created_at', $sortBy);
+            // ->where('end_date', '>=', Carbon::now()->year)
+            ->when($status, fn($q) => $q->where('status', $status))
+            ->orderByDesc('end_date')
+            ->get()
+            ->unique('regency_code')
+            ->keyBy('regency_code');
+
+        // 3️⃣ Attach RTK ke Regency
+        $regencies->getCollection()->transform(function ($regency) use ($rtks) {
+            $regency->latest_rtk = $rtks[$regency->code] ?? null;
+            return $regency;
+        });
+
+        return $regencies;
     }
 
 
@@ -159,8 +184,9 @@ class RTKDService
             provinceCode: $provinceCode,
             search: $search,
             sortBy: $sortBy,
+            limit: $limit,
             status: $status
-        )->paginate($limit)->withQueryString();
+        );
     }
 
 

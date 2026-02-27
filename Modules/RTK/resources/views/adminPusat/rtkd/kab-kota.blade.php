@@ -78,7 +78,7 @@
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari nama atau email..."
+                            placeholder="Cari nama kab/kota"
                             class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
                     focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
@@ -93,7 +93,7 @@
                     </button>
 
                     <!-- Reset -->
-                    <a href="{{ route('admin-pusat.rtkn.index') }}"
+                    <a href="{{ route('admin-pusat.rtkd.kab-kota', $provinceCode) }}"
                         class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium
                 hover:bg-slate-100 transition">
@@ -144,96 +144,108 @@
                             <th class="px-4 md:px-6 py-3 text-left">Instansi (Kab/Kota)</th>
                             <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status</th>
                             <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody id="admin-table-body" class="divide-y divide-slate-200">
-                        @forelse ($rtkds as $key => $rtkd)
+                        @forelse ($rtkds as $key => $regency)
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3 ">
+                                <td class="px-4 md:px-6 py-3">
                                     <p class="text-slate-600">{{ $key + $rtkds->firstItem() }}</p>
                                 </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $rtkd->regency?->name ?? '-' }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $rtkd->name }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $rtkd->start_date }} - {{ $rtkd->end_date }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <span
-                                        class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkd->status->color() }}">
-                                        {{ $rtkd->status->label() }}
-                                    </span>
+                                <td class="px-4 md:px-6 py-3">
+                                    <p class="text-slate-600">{{ $regency->name }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
-                                    @if ($rtkd->is_active)
-                                        <span
-                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
-                                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </span>
+                                    <p class="text-slate-600">{{ $regency->latest_rtk->name ?? '-' }}</p>
+                                </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    <p class="text-slate-600">
+                                        @if ($regency->latest_rtk)
+                                            {{ $regency->latest_rtk->start_date }} -
+                                            {{ $regency->latest_rtk->end_date }}
+                                        @else
+                                            <span class="text-slate-400 italic">Belum ada</span>
+                                        @endif
+                                    </p>
+                                </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    @if ($regency->latest_rtk)
+                                        @if ($regency->latest_rtk->is_active)
+                                            <span
+                                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
+                                                <svg class="w-4 h-4 text-emerald-600" fill="none"
+                                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
+                                                <svg class="w-4 h-4 text-red-500" fill="none"
+                                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M6 6L18 18M6 18L18 6" />
+                                                </svg>
+                                            </span>
+                                        @endif
                                     @else
-                                        <span
-                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
-                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M6 6L18 18M6 18L18 6" />
-                                            </svg>
-                                        </span>
+                                        <span class="text-slate-400 italic text-xs">Belum ada</span>
                                     @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        <li>
-                                            <a href="{{ Storage::url($rtkd->document_path) }}"
-                                                download="{{ $rtkd->name }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
-                                        </li>
-                                        <li>
-                                            <button type="button" x-data
-                                                @click="$dispatch('open-modal', 'open-document-kab-kota-{{ $rtkd->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Lihat
-                                                RTK</button>
+                                        @if ($regency->latest_rtk)
+                                            <li>
+                                                <a href="{{ Storage::url($regency->latest_rtk->document_path) }}"
+                                                    download="{{ $regency->latest_rtk->name }}"
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
+                                            </li>
+                                            <li>
+                                                <button type="button" x-data
+                                                    @click="$dispatch('open-modal', 'open-document-kab-kota-{{ $regency->code }}')"
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Lihat
+                                                    RTK</button>
 
-                                            <x-modal name="open-document-kab-kota-{{ $rtkd->id }}"
-                                                title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
-                                                <h1 class="">{{ $rtkd->name }}</h1>
-                                                <div class="border border-gray-300 rounded-md overflow-hidden">
-
-                                                    @if ($rtkd->document_path && Storage::disk('public')->exists($rtkd->document_path))
-                                                        <iframe src="{{ Storage::url($rtkd->document_path) }}"
-                                                            class="w-full min-h-[500px] rounded-md border"></iframe>
-                                                    @else
-                                                        <div
-                                                            class="flex items-center justify-center  min-h-[500px] text-gray-400 border rounded-md">
-                                                            Tidak ada dokumen tersimpan
-                                                        </div>
-                                                    @endif
-                                                </div>
-
-                                                <x-slot:footer>
-                                                    <button
-                                                        @click="$dispatch('close-modal', 'open-document-kab-kota-{{ $rtkd->id }}')"
-                                                        class="inline-flex items-center justify-center  px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">Close</button>
-                                                </x-slot:footer>
-                                            </x-modal>
-                                        </li>
+                                                <x-modal name="open-document-kab-kota-{{ $regency->code }}"
+                                                    title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
+                                                    <h1 class="">{{ $regency->latest_rtk->name }}</h1>
+                                                    <div class="border border-gray-300 rounded-md overflow-hidden">
+                                                        @if ($regency->latest_rtk->document_path && Storage::disk('public')->exists($regency->latest_rtk->document_path))
+                                                            <iframe
+                                                                src="{{ Storage::url($regency->latest_rtk->document_path) }}"
+                                                                class="w-full min-h-[500px] rounded-md border"></iframe>
+                                                        @else
+                                                            <div
+                                                                class="flex items-center justify-center min-h-[500px] text-gray-400 border rounded-md">
+                                                                Tidak ada dokumen tersimpan
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                    <x-slot:footer>
+                                                        <button
+                                                            @click="$dispatch('close-modal', 'open-document-kab-kota-{{ $regency->code }}')"
+                                                            class="inline-flex items-center justify-center px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">Close</button>
+                                                    </x-slot:footer>
+                                                </x-modal>
+                                            </li>
+                                        @else
+                                            <li>
+                                                <span
+                                                    class="inline-flex items-center w-full p-2 text-slate-400 italic text-xs cursor-default">
+                                                    Belum ada dokumen
+                                                </span>
+                                            </li>
+                                        @endif
                                     </x-table.action>
                                 </td>
                             </tr>
                         @empty
-                            <tr class="">
-                                <td colspan="5" class="px-6 py-12 text-center">
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center">
                                     <p class="text-sm text-slate-500">Tidak ada data RTKD Kab/Kota</p>
                                 </td>
                             </tr>

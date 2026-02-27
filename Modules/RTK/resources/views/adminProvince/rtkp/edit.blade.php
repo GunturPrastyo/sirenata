@@ -109,14 +109,14 @@
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="is_active" value="1"
                                         class="text-green-600 border-gray-300 focus:ring-green-500 focus:ring-2 "
-                                        @checked(old('is_active', $rtkn->is_active ?? 1) == 1)>
+                                        @checked(old('is_active', $rtkdp->is_active ?? 1) == 1)>
                                     <span class="text-sm text-gray-700">Aktif</span>
                                 </label>
 
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="is_active" value="0"
                                         class="text-red-600 border-gray-300 focus:ring-red-500 focus:ring-2 "
-                                        @checked(old('is_active', $rtkn->is_active ?? 0) == 0)>
+                                        @checked(old('is_active', $rtkdp->is_active ?? 0) == 0)>
                                     <span class="text-sm text-gray-700">Tidak Aktif</span>
                                 </label>
                             </div>

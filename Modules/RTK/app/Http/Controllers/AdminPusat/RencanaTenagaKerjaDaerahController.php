@@ -35,7 +35,12 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
             ? $request->orderBy
             : 'desc';
 
-        $rtkds = $this->rtkdService->paginateFilteredRTKDProvince($search, $orderBy, $limit, $status);
+        $rtkds = $this->rtkdService->paginateFilteredRTKDProvince(
+            search: $search,
+            sortBy: $orderBy,
+            limit: $limit,
+            status: $status
+        );
         return view('rtk::adminPusat.rtkd.index', compact('rtkds'));
     }
 
@@ -58,7 +63,6 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
                 limit: $limit,
                 status: $status
             );
-
         return view('rtk::adminPusat.rtkd.kab-kota', compact('rtkds', 'provinceCode'));
     }
 }
