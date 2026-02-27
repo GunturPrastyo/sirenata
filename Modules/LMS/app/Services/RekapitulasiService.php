@@ -6,35 +6,51 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\MasterData\Models\Province;
+use Modules\MasterData\Models\Regency;
 use Modules\User\Models\UserScope;
 
 class RekapitulasiService
 {
+    private const DEFAULT_SORT = 'desc';
     private const DEFAULT_LIMIT = 10;
 
     /**
      *  Query Rekapitulasi Province
      */
-    public function queryRekapitulasiProvince(?string $search = null)
-    {
-        $provinceCodes = null;
+    public function queryRekapitulasiProvince(
+        ?string $search = null,
+        int $limit = self::DEFAULT_LIMIT
+    ): LengthAwarePaginator {
 
-        if ($search) {
-            $provinceCodes = Province::where('name', 'like', "%{$search}%")
-                ->pluck('code')
-                ->toArray();
+        // 1️⃣ Ambil Province (SQLite)
+        $provinceQuery = $search
+            ? Province::search($search)->orderBy('name')
+            : Province::query()->orderBy('name');
+
+        $provinces = $provinceQuery->paginate($limit)->withQueryString();
+        $provinceCodes = $provinces->getCollection()
+            ->pluck('code')
+            ->toArray();
+
+        if (!empty($provinceCodes)) {
+            $userCounts = UserScope::query()
+                ->select('province_code')
+                ->selectRaw('COUNT(DISTINCT user_id) as total_users')
+                ->whereIn('province_code', $provinceCodes)
+                ->whereNotNull('province_code')
+                ->groupBy('province_code')
+                ->pluck('total_users', 'province_code');
+
+            // 3️⃣ Attach total_users
+            $provinces->getCollection()->transform(function ($province) use ($userCounts) {
+                $province->total_users = $userCounts[$province->code] ?? 0;
+                return $province;
+            });
         }
 
-        return UserScope::query()
-            ->select('province_code')
-            ->selectRaw('COUNT(DISTINCT user_id) as total_users')
-            ->whereNotNull('province_code')
-            ->when($provinceCodes !== null, fn($q) =>
-                $q->whereIn('province_code', $provinceCodes)
-            )
-            ->groupBy('province_code')
-            ->with('province');
+        return $provinces;
     }
+
     /**
      *  Paginate Rekapitulasi Province
      */
@@ -42,28 +58,47 @@ class RekapitulasiService
         ?string $search = null,
         int $limit = self::DEFAULT_LIMIT
     ): LengthAwarePaginator {
-        return $this->queryRekapitulasiProvince($search)
-            ->paginate($limit)
-            ->withQueryString();
+        return $this->queryRekapitulasiProvince(
+            search: $search,
+            limit: $limit
+        );
     }
 
     /**
      *  Query Rekapitulasi Regency Kab/Kota
      */
-    public function queryRekapitulasiRegency(string $provinceCode, ?string $search = null)
+    public function queryRekapitulasiRegency(string $provinceCode, ?string $search = null, int $limit = self::DEFAULT_LIMIT)
     {
-        return UserScope::query()
-            ->select('regency_code')
-            ->selectRaw('COUNT(DISTINCT user_id) as total_users')
-            ->where('province_code', $provinceCode)
-            ->whereNotNull('regency_code')
-            ->when($search !== null, function ($query) use ($search) {
-                $query->whereHas('regency', function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%");
-                });
-            })
-            ->groupBy('regency_code')
-            ->with('regency');
+        // 1️⃣ Regency (SQLite - nusa)
+        $regencyQuery = $search
+            ? Regency::search($search)->where('province_code', $provinceCode)->orderBy('name')
+            : Regency::query()->where('province_code', $provinceCode)->orderBy('name');
+
+        $regencies = $regencyQuery->paginate($limit)->withQueryString();
+
+        $regencyCodes = $regencies->getCollection()->pluck('code')->toArray();
+
+        if (empty($regencyCodes)) {
+            return $regencies;
+        }
+
+        if (!empty($regencyCodes)) {
+            $userCounts = UserScope::query()
+                ->select('regency_code')
+                ->selectRaw('COUNT(DISTINCT user_id) as total_users')
+                ->whereIn('regency_code', $regencyCodes)
+                ->whereNotNull('regency_code')
+                ->groupBy('regency_code')
+                ->pluck('total_users', 'regency_code');
+
+            // 3️⃣ Attach total_users
+            $regencies->getCollection()->transform(function ($regency) use ($userCounts) {
+                $regency->total_users = $userCounts[$regency->code] ?? 0;
+                return $regency;
+            });
+        }
+
+        return $regencies;
     }
 
     /**
@@ -74,9 +109,11 @@ class RekapitulasiService
         ?string $search = null,
         int $limit = self::DEFAULT_LIMIT
     ): LengthAwarePaginator {
-        return $this->queryRekapitulasiRegency($provinceCode, $search)
-            ->paginate($limit)
-            ->withQueryString();
+        return $this->queryRekapitulasiRegency(
+            provinceCode: $provinceCode,
+            search: $search,
+            limit: $limit
+        );
     }
 
     /**

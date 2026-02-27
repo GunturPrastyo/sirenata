@@ -20,7 +20,18 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Rekapitulasi Provinsi</span>
+                        <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
+                            class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Rekapitulasi Provinsi</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Rekapitulasi Kabupaten/Kota</span>
                     </div>
                 </li>
             </ol>
@@ -55,7 +66,7 @@
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari nama provinsi..."
+                            placeholder="Cari nama kabupaten/kota..."
                             class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
                     focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
@@ -63,17 +74,17 @@
                     <!-- Search -->
                     <button type="submit"
                         class="inline-flex items-center gap-2 px-4 rounded-md
-                bg-indigo-600 text-white text-sm font-medium
-                hover:bg-indigo-700 transition">
+                        bg-indigo-600 text-white text-sm font-medium
+                        hover:bg-indigo-700 transition">
                         <i class="fas fa-search text-xs"></i>
                         <span class="hidden sm:inline">Search</span>
                     </button>
 
                     <!-- Reset -->
-                    <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
+                    <a href="{{ route('admin-pusat.rekapitulasi.kab-kota', $provinceCode) }}"
                         class="inline-flex items-center gap-2 px-4 rounded-md
-                border border-slate-300 text-slate-600 text-sm font-medium
-                hover:bg-slate-100 transition">
+                        border border-slate-300 text-slate-600 text-sm font-medium
+                        hover:bg-slate-100 transition">
                         <i class="fas fa-rotate-left text-xs"></i>
                         <span class="hidden sm:inline">Reset</span>
                     </a>
@@ -86,7 +97,7 @@
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Rekapitulasi SDM Provinsi</h2>
+                    <h2 class="text-base font-semibold text-slate-800">Rekapitulasi SDM Kabupaten/Kota</h2>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -134,11 +145,20 @@
 
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        <li>
-                                            <a href="{{ route('admin-pusat.rekapitulasi.kab-kota', $item->code) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Rekapitulasi
-                                                Kabupaten/Kota</a>
+                                        {{-- <li>
+                                            <a href="{{ route('admin-kab-kota.rtkd.edit', $rtkd->id) }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
                                         </li>
+                                        <li>
+                                            <a href="{{ route('admin-kab-kota.rtkd.show', $rtkd->id) }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
+                                        </li>
+                                        <li>
+                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                <x-modal-delete :id="$rtkd->id" message="Are you sure delete RTKD"
+                                                    :item-name="$rtkd->name" :route="route('admin-kab-kota.rtkd.destroy', $rtkd->id)" />
+                                            </div>
+                                        </li> --}}
                                     </x-table.action>
                                 </td>
                             </tr>

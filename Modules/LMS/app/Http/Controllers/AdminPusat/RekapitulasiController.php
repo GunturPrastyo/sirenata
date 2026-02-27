@@ -22,8 +22,21 @@ class RekapitulasiController extends Controller
         $data = $this->rekapitulasiService->paginateFilteredRekapitulasiProvince(
             search: $search,
             limit: $limit
-        ); 
+        );
         return view('lms::admin-pusat.rekapitulasi-index', compact('data'));
     }
 
+    public function kabKota(Request $request, string $provinceCode) {
+        $limit   = $request->per_page ?? 10;
+        $search  = $request->search;
+
+        $data = $this->rekapitulasiService
+            ->paginateFilteredRekapitulasiRegency(
+                provinceCode: $provinceCode,
+                search: $search,
+                limit: $limit,
+            );
+        return view('lms::admin-pusat.rekapitulasi-kab-kota', compact('data', 'provinceCode'));
+    }
+    
 }
