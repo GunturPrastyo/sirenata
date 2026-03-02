@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Rekapitulasi Provinsi">
+<x-dashboard::layouts.dashboard title="Rekapitulasi SDM Kabupaten/Kota">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
@@ -12,17 +12,6 @@
                             </path>
                         </svg>
                     </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Rekapitulasi Provinsi</a>
-                    </div>
                 </li>
                 <li>
                     <div class="flex items-center">
@@ -81,7 +70,7 @@
                     </button>
 
                     <!-- Reset -->
-                    <a href="{{ route('admin-pusat.rekapitulasi.kab-kota', $provinceCode) }}"
+                    <a href="{{ route('admin-province.rekapitulasi.index') }}"
                         class="inline-flex items-center gap-2 px-4 rounded-md
                         border border-slate-300 text-slate-600 text-sm font-medium
                         hover:bg-slate-100 transition">
@@ -124,7 +113,7 @@
                     <thead class="bg-slate-100 border-b border-slate-200">
                         <tr class="text-slate-500 uppercase text-xs">
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Nama Provinsi</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Nama Kab/Kota</th>
                             <th class="px-4 md:px-6 py-3 text-left">Jumlah User</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>

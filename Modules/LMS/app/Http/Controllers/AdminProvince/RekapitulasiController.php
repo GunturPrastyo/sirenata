@@ -1,9 +1,10 @@
 <?php
 
-namespace Modules\LMS\Http\Controllers\AdminPusat;
+namespace Modules\LMS\Http\Controllers\AdminProvince;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Modules\LMS\Services\RekapitulasiService;
 
 class RekapitulasiController extends Controller
@@ -16,17 +17,8 @@ class RekapitulasiController extends Controller
      */
     public function index(Request $request)
     {
-        $limit   = $request->integer('per_page', 10);
-        $search  = $request->string('search')->toString();
-
-        $data = $this->rekapitulasiService->paginateFilteredRekapitulasiProvince(
-            search: $search,
-            limit: $limit
-        );
-        return view('lms::admin-pusat.sdm.rekapitulasi-index', compact('data'));
-    }
-
-    public function kabKota(Request $request, string $provinceCode) {
+        $user = Auth::user();
+        $provinceCode = $user->scopeArea->province_code;
         $limit   = $request->per_page ?? 10;
         $search  = $request->search;
 
@@ -36,7 +28,7 @@ class RekapitulasiController extends Controller
                 search: $search,
                 limit: $limit,
             );
-        return view('lms::admin-pusat.sdm.rekapitulasi-kab-kota', compact('data', 'provinceCode'));
+
+        return view('lms::admin-province.sdm.rekapitulasi-kab-kota',compact('data'));
     }
-    
 }
