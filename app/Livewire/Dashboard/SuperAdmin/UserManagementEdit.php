@@ -20,7 +20,7 @@ class UserManagementEdit extends Component
     public $email;
     public $full_name;
     public $phone;
-    public $jabatan;
+    public $instansi;
     public ?string $province = null;
     public ?string $regency  = null;
 
@@ -43,7 +43,7 @@ class UserManagementEdit extends Component
         $this->email     = $user->email;
         $this->full_name = $user->profile?->full_name;
         $this->phone     = $user->profile?->phone;
-        $this->jabatan   = $user->profile?->jabatan;
+        $this->instansi   = $user->profile?->instansi;
         $this->join_date = $user->created_at->format('Y-m-d');
 
         $this->roleIds = $user->roles->pluck('uuid')->toArray();
@@ -61,7 +61,7 @@ class UserManagementEdit extends Component
             'phone' => 'required|string|max:20',
             'roleIds' => 'required|array',
             'roleIds.*' => 'required|exists:roles,uuid',
-            'jabatan' => 'required|string|max:255',
+            'instansi' => 'required|string|max:255',
             'province' => 'nullable|string|size:2',
             'regency'  => 'nullable|string|max:5',
         ];
@@ -82,7 +82,7 @@ class UserManagementEdit extends Component
                 'email'       => $this->email,
                 'full_name'   => $this->full_name,
                 'phone'       => $this->phone,
-                'jabatan'     => $this->jabatan,
+                'instansi'     => $this->instansi,
                 'roles'       => $this->roleIds,
                 'province'    => $this->province,
                 'regency'     => $this->regency,

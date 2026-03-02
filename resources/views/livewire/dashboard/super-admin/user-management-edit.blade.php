@@ -52,13 +52,13 @@
                     </div>
 
                     <div>
-                        <label for="jabatan" class="block text-sm font-medium text-gray-700 mb-2">
-                            Jabatan <span class="text-red-500">*</span>
+                        <label for="instansi" class="block text-sm font-medium text-gray-700 mb-2">
+                            instansi <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="jabatan" name="jabatan" wire:model.lazy="jabatan"
+                        <input type="text" id="instansi" name="instansi" wire:model.lazy="instansi"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
                             placeholder="Contoh: Staff Administrasi">
-                        @error('jabatan')
+                        @error('instansi')
                             <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
                         @enderror
                     </div>

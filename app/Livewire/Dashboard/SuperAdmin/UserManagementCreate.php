@@ -19,7 +19,7 @@ class UserManagementCreate extends Component
     public $full_name;
     public $email;
     public $phone;
-    public $jabatan;
+    public $instansi;
     public $join_date;
     public $province;
     public $regency;
@@ -48,7 +48,7 @@ class UserManagementCreate extends Component
             'phone' => 'required|string|max:20',
             'roleIds' => 'required|array|min:1|max:2',
             'roleIds.*' => 'exists:roles,uuid',
-            'jabatan' => 'required|string|max:255',
+            'instansi' => 'required|string|max:255',
             'province' => 'nullable|string|size:2',
             'regency'  => 'nullable|string|max:5',
         ];
@@ -70,7 +70,7 @@ class UserManagementCreate extends Component
                 'email'       => $this->email,
                 'full_name'   => $this->full_name,
                 'phone'       => $this->phone,
-                'jabatan'     => $this->jabatan,
+                'instansi'     => $this->instansi,
                 'roles'        => $this->roleIds, 
                 'province'    => $this->province,
                 'regency'     => $this->regency,

@@ -41,7 +41,7 @@ class UserService
                 ['user_id' => $user->id],
                 [
                     'full_name' => $data['full_name'],
-                    'jabatan'   => $data['jabatan'],
+                    'instansi'   => $data['instansi'],
                     'phone'     => $data['phone'],
                 ]
             );
@@ -89,7 +89,7 @@ class UserService
 
             $user->profile()->create([
                 'full_name' => $data['full_name'],
-                'jabatan'   => $data['jabatan'],
+                'instansi'   => $data['instansi'],
                 'phone'     => $data['phone'],
             ]);
 
@@ -113,11 +113,8 @@ class UserService
     public function deleteUser(User $user): void
     {
         DB::transaction(function () use ($user) {
-            // Lepas semua role & permission (best practice Spatie)
             $user->syncRoles([]);
             $user->syncPermissions([]);
-
-            // Hapus user
             $user->delete();
         });
     }
