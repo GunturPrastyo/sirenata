@@ -5,12 +5,17 @@ namespace Modules\LMS\Http\Controllers\AdminProvince;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\LMS\Services\CourseService;
 use Modules\LMS\Services\RekapitulasiService;
+use Modules\MasterData\Models\Regency;
 
 class RekapitulasiController extends Controller
 {
 
-    public function __construct(private RekapitulasiService $rekapitulasiService) {}
+    public function __construct(
+        private RekapitulasiService $rekapitulasiService,
+        private CourseService $courseService
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -18,17 +23,32 @@ class RekapitulasiController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $provinceCode = $user->scopeArea->province_code;
+        if (!$user->hasCompleteScope()) {
+            abort(403, 'Admin provinsi belum memiliki wilayah.');
+        }        
         $limit   = $request->per_page ?? 10;
         $search  = $request->search;
-
         $data = $this->rekapitulasiService
             ->paginateFilteredRekapitulasiRegency(
-                provinceCode: $provinceCode,
+                provinceCode: $user->scopeArea->province_code,
                 search: $search,
                 limit: $limit,
             );
 
         return view('lms::admin-province.sdm.rekapitulasi-kab-kota',compact('data'));
+    }
+
+    public function rekapUserKabKota(Request $request, string $regencyCode) {
+        $regency = Regency::find($regencyCode);
+        $limit   = $request->integer('per_page', 10);
+        $search  = $request->string('search')->toString();
+
+        $data = $this->courseService->paginatedCourseByRegency(
+            regencyCode: $regencyCode,
+            search: $search,
+            limit: $limit,
+        );
+
+        return view('lms::admin-province.sdm.rekapitulasi-user-kab-kota', compact('data', 'regencyCode', 'regency'));
     }
 }
