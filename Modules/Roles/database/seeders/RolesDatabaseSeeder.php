@@ -66,14 +66,6 @@ class RolesDatabaseSeeder extends Seeder
         ]);
         $superAdminUser->assignRole('super-admin');
 
-        // User dengan direct permission (tanpa role)
-        $normalUser = \App\Models\User::create([
-            'name' => 'Normal User',
-            'email' => 'user@gmail.com',
-            'password' => bcrypt('password'),
-        ]);
-        $normalUser->assignRole('user');
-
         $adminPusat = Role::create(['name' => 'admin-pusat']);
         $adminPusat->givePermissionTo(Permission::all());
         $adminPusatUser = \App\Models\User::create([

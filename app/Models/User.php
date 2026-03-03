@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Modules\LMS\Models\Course;
 use Modules\User\Models\UserProfile;
 use Modules\User\Models\UserScope;
 use Modules\User\Traits\HasScopeAccess;
@@ -91,6 +92,18 @@ class User extends Authenticatable
     public function scopeArea()
     {
         return $this->hasOne(UserScope::class);
+    }
+
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'course_student')
+            ->withPivot([
+                'is_active',
+                'status',
+                'progress',
+                'completed_at'
+            ])
+            ->withTimestamps();
     }
 
 }

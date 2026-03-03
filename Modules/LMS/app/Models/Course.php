@@ -2,6 +2,7 @@
 
 namespace Modules\LMS\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,5 +53,25 @@ class Course extends Model
         static::updating(function ($course) {
             $course->slug = SlugService::createSlug($course, 'slug', $course->name);
         });
+    }
+    
+    public function students()
+    {
+        return $this->belongsToMany(User::class, 'course_student')
+            ->withPivot([
+                'is_active',
+                'status',
+                'progress',
+                'completed_at'
+            ])
+            ->withTimestamps();
+    }
+
+    public function mentors()
+    {
+        return $this->belongsToMany(User::class, 'course_mentors')
+            ->using(CourseMentor::class)
+            ->withPivot('is_active')
+            ->withTimestamps();
     }
 }

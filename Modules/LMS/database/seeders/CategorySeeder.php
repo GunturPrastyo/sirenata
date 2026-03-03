@@ -3,6 +3,7 @@
 namespace Modules\LMS\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use Modules\LMS\Models\Category;
 
 class CategorySeeder extends Seeder
@@ -24,6 +25,7 @@ class CategorySeeder extends Seeder
         foreach ($categories as $category) {
             Category::firstOrCreate([
                 'name' => $category,
+                'slug' => Str::slug($category),
             ]);
         }
     }

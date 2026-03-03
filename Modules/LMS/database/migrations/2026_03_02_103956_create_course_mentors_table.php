@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('course_mentors', function (Blueprint $table) {
-            // $table->uuid('id')->primary();
             $table->foreignUuid('course_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->boolean('is_active')->default(true);
