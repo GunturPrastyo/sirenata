@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\LMS\Database\Factories\CourseFactory;
 
 // use Modules\LMS\Database\Factories\CourseFactory;
@@ -54,12 +55,21 @@ class Course extends Model
             $course->slug = SlugService::createSlug($course, 'slug', $course->name);
         });
     }
+
+    /**
+     * Get the category that owns the Course
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
     
     public function students()
     {
         return $this->belongsToMany(User::class, 'course_student')
             ->withPivot([
-                'is_active',
                 'status',
                 'progress',
                 'completed_at'
@@ -74,4 +84,5 @@ class Course extends Model
             ->withPivot('is_active')
             ->withTimestamps();
     }
+    
 }

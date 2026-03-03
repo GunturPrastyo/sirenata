@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('full_name')->nullable();
             $table->string('phone')->nullable();
             $table->string('institution_type')->nullable();
-            $table->string('institution_level')->nullable();
             $table->string('instansi')->nullable();
             $table->string('unit_kerja')->nullable();
             $table->string('nik')->unique()->nullable();

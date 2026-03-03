@@ -12,6 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Modules\LMS\Models\Course;
+use Modules\User\Enums\InstitutionType;
 use Modules\User\Models\UserProfile;
 use Modules\User\Models\UserScope;
 use Modules\User\Traits\HasScopeAccess;
@@ -69,8 +70,46 @@ class User extends Authenticatable
     #[Scope]
     protected function search(Builder $query, string $keyword): void
     {
-        $query->where('name', 'like', "%{$keyword}%")
-            ->orWhere('email', 'like', "%{$keyword}%");
+        $query->where(function ($q) use ($keyword) {
+            $q->where('name', 'like', "%{$keyword}%")
+                ->orWhere('email', 'like', "%{$keyword}%")
+                ->orWhereHas('profile', fn($sub) => $sub->where('instansi', 'like', "%{$keyword}%"));
+                // ->orWhereHas('enrolledCourses', fn($sub) => $sub->where('name', 'like', "%{$keyword}%"));
+        });
+    }
+
+    #[Scope]
+    protected function inProvince(Builder $query, string $provinceCode): void
+    {
+        $query->whereHas('scopeArea', fn($q) => $q->where('province_code', $provinceCode));
+    }
+
+    #[Scope]
+    protected function inRegency(Builder $query, string $regencyCode): void
+    {
+        $query->whereHas('scopeArea', fn($q) => $q->where('regency_code', $regencyCode));
+    }
+
+    #[Scope]
+    protected function provinceInstitution(Builder $query): void
+    {
+        $query->whereHas('profile', fn($q) => $q->where('institution_type', InstitutionType::PROVINSI));
+    }
+
+    #[Scope]
+    protected function regencyInstitution(Builder $query): void
+    {
+        $query->whereHas('profile', fn($q) => $q->where('institution_type', InstitutionType::KAB_KOTA));
+    }
+
+    #[Scope]
+    protected function hasEnrolledCourses(Builder $query, string $search = ''): void
+    {
+        $query->whereHas('enrolledCourses', function ($q) use ($search) {
+            if ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            }
+        });
     }
 
     public function getRedirectRoute(): string
@@ -98,7 +137,6 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Course::class, 'course_student')
             ->withPivot([
-                'is_active',
                 'status',
                 'progress',
                 'completed_at'

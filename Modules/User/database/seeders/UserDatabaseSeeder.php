@@ -4,8 +4,7 @@ namespace Modules\User\Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Modules\User\Enums\IntantionLevel;
-use Modules\User\Enums\IntantionType;
+use Modules\User\Enums\InstitutionType;
 
 class UserDatabaseSeeder extends Seeder
 {
@@ -18,7 +17,7 @@ class UserDatabaseSeeder extends Seeder
 
         $user = User::factory()->create([
             'name' => 'Test User',
-            'email' => 'user@gmail.com',
+            'email' => 'acehkabkota@gmail.com',
         ]);
         $user->assignRole('user');
         $user->profile()->create([
@@ -26,8 +25,7 @@ class UserDatabaseSeeder extends Seeder
             'instansi'   => 'Test Instansi',
             'phone'     => '08123456789',
             'unit_kerja'     => 'test Instansi',
-            'institution_type' => IntantionType::TYPE_PUSAT,
-            'institution_level' => IntantionLevel::PROVINSI,
+            'institution_type' => InstitutionType::KAB_KOTA,
         ]);
 
         $user->scopeArea()->updateOrCreate(
@@ -35,6 +33,27 @@ class UserDatabaseSeeder extends Seeder
             [
                 'province_code' => '11',
                 'regency_code'  => '11.01',
+            ]
+        );
+
+
+        $user2 = User::factory()->create([
+            'name' => 'Aceh Provinsi',
+            'email' => 'acehprov@gmail.com',
+        ]);
+        $user2->assignRole('user');
+        $user2->profile()->create([
+            'full_name' => 'Aceh Provinsi',
+            'instansi'   => 'Aceh Provinsi',
+            'phone'     => '08123456789',
+            'unit_kerja'     => 'Aceh Provinsi',
+            'institution_type' => InstitutionType::PROVINSI,
+        ]);
+
+        $user2->scopeArea()->updateOrCreate(
+            ['user_id' => $user2->id],
+            [
+                'province_code' => '11',
             ]
         );
     }

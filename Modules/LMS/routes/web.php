@@ -8,6 +8,10 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(RekapitulasiController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/kab-kota/{provinceCode}', 'kabKota')->name('kab-kota');
+
+
+        Route::get('/rekap-user-province/{provinceCode}', 'rekapUserProvince')->name('rekap-user-province');
+        Route::get('/rekap-user-kab-kota/{regencyCode}', 'rekapUserKabKota')->name('rekap-user-kab-kota');
     });
 });
 
