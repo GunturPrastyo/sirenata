@@ -243,7 +243,7 @@ class RTKDService
                 'end_date' => $data['end_date'],
                 'status' => RTKStatus::PENDING->value,
                 'type' => TypeRtk::PROVINSI->value,
-                'is_active' => true, // langsung aktif
+                'is_active' => true,
                 'document_path' => $documentPath,
             ]);
 
@@ -367,6 +367,18 @@ class RTKDService
         }
 
         return DB::transaction(function () use ($data, $user) {
+            $provinceCode = $user->scopeArea->province_code;
+            $regencyCode = $user->scopeArea->regency_code;
+            
+            RencanaTenagaKerja::query()
+                ->where('province_code', $provinceCode)
+                ->where('regency_code', $regencyCode)
+                ->where('type', TypeRtk::KAB_KOTA->value)
+                ->where('is_active', true)
+                ->update([
+                    'is_active' => false
+                ]);
+
             $documentPath = null;
             if (!empty($data['document_path']) 
                 && $data['document_path'] instanceof \Illuminate\Http\UploadedFile) {
@@ -378,12 +390,13 @@ class RTKDService
 
             $rtkkabkota = RencanaTenagaKerja::create([
                 'user_id' => $user->id,
-                'province_code' => $user->scopeArea->province_code,
-                'regency_code' => $user->scopeArea->regency_code,
+                'province_code' => $provinceCode,
+                'regency_code' => $regencyCode,
                 'name' => $data['name'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
-                // 'status' => RTKStatus::PENDING->value,
+                'status' => RTKStatus::PENDING->value,
+                'is_active' => true,
                 'type' => TypeRtk::KAB_KOTA->value,
                 'document_path' => $documentPath,
             ]);

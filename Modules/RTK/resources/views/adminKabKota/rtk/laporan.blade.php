@@ -25,9 +25,10 @@
             </ol>
         </nav>
 
-        @if ($rtkKabKotaActive && $rtkKabKotaActive->isExpired())
+        @if ($rtkKabKotaActive && $rtkKabKotaActive->status === Modules\RTK\Enums\RTKStatus::EXPIRED->value)
             <div class="mb-4 rounded-lg bg-yellow-50 border border-yellow-300 p-4">
                 <div class="flex items-start">
+
                     <svg class="w-5 h-5 text-yellow-600 mr-2 mt-0.5" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -38,12 +39,14 @@
                         <p class="font-semibold text-yellow-800">
                             RTK telah melewati masa berlaku
                         </p>
+
                         <p class="text-sm text-yellow-700">
                             Periode RTK berakhir pada tahun
                             <strong>{{ $rtkKabKotaActive->end_date }}</strong>.
                             Silakan segera menyusun RTK terbaru.
                         </p>
                     </div>
+
                 </div>
             </div>
         @endif
@@ -87,40 +90,44 @@
             <div class="space-y-4 sm:space-y-6">
                 <!-- RTK Status Card -->
                 <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                        {{ $rtkKabKotaActive?->name ?? '' }}
 
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                        {{ $rtkKabKotaActive?->name ?? 'RTK Belum Tersedia' }}
                     </h2>
-                    <p class="text-gray-600 mb-4">{{ $rtkKabKotaActive?->regency?->name ?? '' }}</p>
+
+                    <p class="text-gray-600 mb-4">
+                        {{ $rtkKabKotaActive?->regency?->name ?? '' }}
+                    </p>
 
                     @if ($rtkKabKotaActive)
                         <div
-                            class="inline-flex items-center px-4 py-2 
-                            {{ $rtkKabKotaActive->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }} 
-                            rounded-lg">
-
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            class="inline-flex items-center px-4 py-2 rounded-lg {{ $rtkKabKotaActive->status_color }}">
                             <div>
                                 <span class="font-semibold">
-                                    RTK {{ $rtkKabKotaActive->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                    {{ $rtkKabKotaActive->status_label }}
                                 </span>
 
-                                <p class="text-xs">
-                                    Status:
-                                    @if ($rtkKabKotaActive->end_date)
-                                        hingga {{ \Carbon\Carbon::parse($rtkKabKotaActive->end_date)->format('d M Y') }}
-                                    @endif
-                                </p>
+                                @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::APPROVED)
+                                    <p class="text-xs">
+                                        Berlaku hingga
+                                        {{ \Carbon\Carbon::parse($rtkKabKotaActive->end_date)->format('d M Y') }}
+                                    </p>
+                                @endif
+
+                                @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::PENDING)
+                                    <p class="text-xs">
+                                        Dokumen sedang diverifikasi oleh Admin Provinsi
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     @else
                         <div class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">
                             <span class="font-semibold">RTK Belum Tersedia</span>
                         </div>
+
                     @endif
+
                 </div>
 
                 <!-- Masa Berlaku RTK -->

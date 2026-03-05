@@ -47,14 +47,14 @@ class RencanaTenagaKerja extends Model
         'rejected_reason',
     ];
 
-    public function getStatusColorAttribute(): string
-    {
-        return $this->status->color();
-    }
-
     public function getStatusLabelAttribute(): string
     {
         return $this->status->label();
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return $this->status->color();
     }
 
     public function isExpired(): bool
