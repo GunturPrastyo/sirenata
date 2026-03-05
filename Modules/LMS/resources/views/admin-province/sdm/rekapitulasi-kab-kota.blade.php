@@ -86,7 +86,8 @@
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Rekapitulasi SDM Kabupaten/Kota</h2>
+                    <h2 class="text-base font-semibold text-slate-800">Rekapitulasi SDM Kabupaten/Kota
+                        {{ $user->scopeArea->province->name ?? '-' }}</h2>
                 </div>
 
                 <div class="flex items-center gap-2">

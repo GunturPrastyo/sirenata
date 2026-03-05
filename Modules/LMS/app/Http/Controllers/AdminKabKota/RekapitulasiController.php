@@ -22,15 +22,23 @@ class RekapitulasiController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $regency = Regency::find($user->scopeArea->regency_code);
+        $regency = Regency::find($user->scopeArea?->regency_code);
         $limit   = $request->integer('per_page', 10);
         $search  = $request->string('search')->toString();
+        $courseId = $request->string('course_id')->toString();
 
-        $data = $this->courseService->paginatedCourseByRegency(
+        $courses = $this->courseService->getCoursesForFilter();
+        $data = $this->courseService->paginateCourseEnrollmentsByRegency(
             regencyCode: $user->scopeArea->regency_code,
             search: $search,
             limit: $limit,
+            courseId: $courseId,
         );
-        return view('lms::admin-kab-kota.sdm.rekapitulasi-index', compact('data', 'regency'));
+        return view('lms::admin-kab-kota.sdm.rekapitulasi-index', [
+            'data' => $data, 
+            'regencyCode' => $user->scopeArea?->regency_code, 
+            'regency' => $regency,
+            'courses' => $courses,
+        ]);
     }
 }

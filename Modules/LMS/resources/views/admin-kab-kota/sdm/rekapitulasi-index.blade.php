@@ -30,51 +30,73 @@
             <x-flash-message />
         </div>
 
-        <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <!-- Left: Filter & Per Page -->
-                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    <!-- Per Page -->
-                    <div class="relative w-full sm:w-44">
-                        <select name="per_page"
-                            class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
+        <form method="GET" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+                <!-- Per Page -->
+                <div class="lg:col-span-2">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Data per Halaman
+                    </label>
+                    <select name="per_page" onchange="this.form.submit()"
+                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm
+                        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        @foreach ([10, 20, 50, 100] as $page)
+                            <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
+                                {{ $page }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Filter Course -->
+                <div class="lg:col-span-3">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Filter Kursus
+                    </label>
+                    <select name="course_id" onchange="this.form.submit()"
+                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm
+                        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Semua Kursus</option>
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->id }}"
+                                {{ request('course_id') == $course->id ? 'selected' : '' }}>
+                                {{ $course->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Search -->
+                <div class="lg:col-span-4">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Pencarian
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari nama user, instansi..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm
                             focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            @foreach ([10, 20, 50, 100] as $page)
-                                <option value="{{ $page }}"
-                                    {{ request('per_page') == $page ? 'selected' : '' }}>
-                                    {{ $page }} / Halaman
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
                 </div>
 
-                <!-- Right: Search + Buttons -->
-                <div class="flex w-full  gap-2">
-                    <div class="relative flex-1">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari nama User, Kursus, Instansi..."
-                            class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                    focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
+                <!-- Buttons -->
+                <div class="lg:col-span-3 flex gap-2">
 
-                    <!-- Search -->
                     <button type="submit"
-                        class="inline-flex items-center gap-2 px-4 rounded-md
-                        bg-indigo-600 text-white text-sm font-medium
-                        hover:bg-indigo-700 transition">
+                        class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg
+                    bg-indigo-600 text-white text-sm font-medium
+                    hover:bg-indigo-700 transition">
                         <i class="fas fa-search text-xs"></i>
-                        <span class="hidden sm:inline">Search</span>
+                        Search
                     </button>
 
-                    <!-- Reset -->
                     <a href="{{ route('admin-kab-kota.rekapitulasi.index') }}"
-                        class="inline-flex items-center gap-2 px-4 rounded-md
-                        border border-slate-300 text-slate-600 text-sm font-medium
-                        hover:bg-slate-100 transition">
+                        class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg
+                    border border-slate-300 text-slate-600 text-sm font-medium
+                    hover:bg-slate-100 transition">
                         <i class="fas fa-rotate-left text-xs"></i>
-                        <span class="hidden sm:inline">Reset</span>
+                        Reset
                     </a>
                 </div>
             </div>
@@ -120,50 +142,37 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
-                        @forelse ($data as $user)
-                            @foreach ($user->enrolledCourses as $course)
-                                <tr class="hover:bg-slate-50 transition">
-                                    <td class="px-4 md:px-6 py-3">
-                                        <p class="text-slate-600">
-                                            {{ $loop->parent->iteration }}
-                                        </p>
-                                    </td>
+                        @forelse ($data as $key => $row)
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-4 md:px-6 py-3">
+                                    {{ $data->firstItem() + $key }}
+                                </td>
 
-                                    <td class="px-4 md:px-6 py-3">
-                                        <p class="text-slate-600">
-                                            {{ $user->name }}
-                                        </p>
-                                    </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    <p class="text-slate-600">{{ $row->user_name }}</p>
+                                </td>
 
-                                    <td class="px-4 md:px-6 py-3">
-                                        <p class="text-slate-600">
-                                            {{ $course->name }}
-                                        </p>
-                                    </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    <p class="text-slate-600">{{ $row->course_name }}</p>
+                                </td>
 
-                                    <td class="px-4 md:px-6 py-3">
-                                        <p class="text-slate-600">
-                                            {{ $user->profile?->instansi }}
-                                        </p>
-                                    </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    <p class="text-slate-600">{{ $row->instansi }}</p>
+                                </td>
 
-                                    <td class="px-4 md:px-6 py-3">
-                                        <span class="text-sm">
-                                            {{ ucfirst($course->pivot->status) }}
-                                            ({{ $course->pivot->progress }}%)
-                                        </span>
-                                    </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    <x-lms::enrollment.progressstatus :status="$row->status" :progress="$row->progress" />
+                                </td>
 
-                                    <td class="px-4 md:px-6 py-3 text-center">
-                                        <x-table.action>
-                                            <a href="#"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Belum
-                                                ada aksi
-                                            </a>
-                                        </x-table.action>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                <td class="px-4 md:px-6 py-3 text-center">
+                                    <x-table.action>
+                                        <a href="#"
+                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                            Belum ada aksi
+                                        </a>
+                                    </x-table.action>
+                                </td>
+                            </tr>
                         @empty
                             <tr>
                                 <td colspan="6" class="px-6 py-12 text-center">

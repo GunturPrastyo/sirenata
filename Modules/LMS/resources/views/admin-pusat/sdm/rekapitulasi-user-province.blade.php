@@ -170,7 +170,6 @@
                                 <td class="px-4 md:px-6 py-3">
                                     <p class="text-slate-600">{{ $row->instansi }}</p>
                                 </td>
-                                k
                                 <td class="px-4 md:px-6 py-3">
                                     <x-lms::enrollment.progressstatus :status="$row->status" :progress="$row->progress" />
                                 </td>

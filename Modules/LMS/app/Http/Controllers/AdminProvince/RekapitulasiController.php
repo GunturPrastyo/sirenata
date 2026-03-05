@@ -35,20 +35,28 @@ class RekapitulasiController extends Controller
                 limit: $limit,
             );
 
-        return view('lms::admin-province.sdm.rekapitulasi-kab-kota',compact('data'));
+        return view('lms::admin-province.sdm.rekapitulasi-kab-kota',compact('data', 'user'));
     }
 
     public function rekapUserKabKota(Request $request, string $regencyCode) {
         $regency = Regency::find($regencyCode);
         $limit   = $request->integer('per_page', 10);
         $search  = $request->string('search')->toString();
+        $courseId = $request->string('course_id')->toString();
 
-        $data = $this->courseService->paginatedCourseByRegency(
+        $courses = $this->courseService->getCoursesForFilter();
+        $data = $this->courseService->paginateCourseEnrollmentsByRegency(
             regencyCode: $regencyCode,
             search: $search,
             limit: $limit,
+            courseId: $courseId,
         );
 
-        return view('lms::admin-province.sdm.rekapitulasi-user-kab-kota', compact('data', 'regencyCode', 'regency'));
+        return view('lms::admin-province.sdm.rekapitulasi-user-kab-kota', [
+            'data' => $data, 
+            'regencyCode' => $regencyCode, 
+            'regency' => $regency,
+            'courses' => $courses,
+        ]);
     }
 }
