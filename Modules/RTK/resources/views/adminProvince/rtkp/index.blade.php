@@ -161,7 +161,7 @@
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
                             <th class="px-4 md:px-6 py-3 text-left">Dokumen RTK</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            {{-- <th class="px-4 md:px-6 py-3 text-left">Status</th> --}}
+                            <th class="px-4 md:px-6 py-3 text-left">Status</th>
                             <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
 
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
@@ -180,13 +180,13 @@
                                 <td class="px-4 md:px-6 py-3 ">
                                     <p class="text-slate-600">{{ $rtkdp->start_date }} - {{ $rtkdp->end_date }}</p>
                                 </td>
-                                {{-- <td class="px-4 md:px-6 py-3 ">
+                                <td class="px-4 md:px-6 py-3 ">
                                     <span
                                         class="px-2 py-1 text-xs rounded-full font-semibold
                                         {{ Modules\RTK\Enums\RTKStatus::from($rtkdp->status)->color() }}">
                                         {{ Modules\RTK\Enums\RTKStatus::from($rtkdp->status)->label() }}
                                     </span>
-                                </td> --}}
+                                </td>
                                 <td class="px-4 md:px-6 py-3">
                                     @if ($rtkdp->is_active)
                                         <span

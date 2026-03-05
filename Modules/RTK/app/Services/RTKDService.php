@@ -12,6 +12,7 @@ use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Support\Facades\Storage;
 use Modules\MasterData\Models\Province;
 use Modules\MasterData\Models\Regency;
+use Modules\RTK\Enums\RTKStatus;
 
 class RTKDService
 {
@@ -213,26 +214,41 @@ class RTKDService
     {
         $user = Auth::user();
         return DB::transaction(function () use ($data, $user) {
+            $provinceCode = $user->scopeArea->province_code;
+
+            // Nonaktifkan RTK lama di provinsi yang sama
+            RencanaTenagaKerja::query()
+                ->where('province_code', $provinceCode)
+                ->where('type', TypeRtk::PROVINSI->value)
+                ->where('is_active', true)
+                ->update([
+                    'is_active' => false
+                ]);
+
             $documentPath = null;
+
             if (isset($data['document_path'])) {
                 $documentPath = $data['document_path']->store(
                     'rtkd/documents/province',
                     'public'
                 );
             }
+
             $rtkdProvince = RencanaTenagaKerja::create([
                 'user_id' => $user->id,
-                'province_code' => $user->scopeArea->province_code,
+                'province_code' => $provinceCode,
                 'regency_code' => null,
                 'name' => $data['name'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
-                // 'status' => RTKStatus::PENDING->value,
+                'status' => RTKStatus::PENDING->value,
                 'type' => TypeRtk::PROVINSI->value,
+                'is_active' => true, // langsung aktif
                 'document_path' => $documentPath,
             ]);
 
             ToastMagic::success("RTKD Provinsi berhasil ditambahkan!");
+
             return $rtkdProvince;
         });
     }

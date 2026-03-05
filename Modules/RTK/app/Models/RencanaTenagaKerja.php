@@ -23,7 +23,7 @@ class RencanaTenagaKerja extends Model
     use HasFactory, HasUuids;
 
     protected $casts = [
-        // 'status' => RTKStatus::class,
+        'status' => RTKStatus::class,
         'type' => TypeRtk::class,
         'is_active' => 'boolean',
     ];
@@ -38,10 +38,13 @@ class RencanaTenagaKerja extends Model
         'name',
         'start_date',
         'end_date',
-        // 'status',
+        'status',
         'is_active',
         'type',
         'document_path',
+        'approved_by',
+        'approved_at',
+        'rejected_reason',
     ];
 
     public function getStatusColorAttribute(): string
