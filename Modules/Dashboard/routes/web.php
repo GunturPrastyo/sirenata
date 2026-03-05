@@ -7,7 +7,14 @@ use Modules\Dashboard\Http\Controllers\AdminPusat\DashbordController as AdminPus
 use Modules\Dashboard\Http\Controllers\AdminProvinsi\DashboardController as AdminProvinsiDashboardController;
 use Modules\Dashboard\Http\Controllers\AdminKabKota\DashboardController as AdminKabKotaDashboardController;
 
+use Modules\Dashboard\Http\Controllers\UserDashboardController;
+
 Route::get('/portal-dashboard', [PortalDashboardController::class, 'index'])->middleware(['auth'])->name('portal-dashboard');
+
+Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(function () {
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/instansi', [UserDashboardController::class, 'updateInstansi'])->name('update-instansi');
+});
 
 Route::prefix('super-admin')->middleware(['auth', 'role:super-admin'])->name('super-admin.')->group(function () {
     Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');

@@ -38,19 +38,31 @@ class RolesDatabaseSeeder extends Seeder
             'post.create',
             'post.edit',
             'post.delete',
+
+            // Project Management
+            'project.view',
+            'project.create',
+            'project.edit',
+            'project.delete',
+
+            // Faq Management
+            'faq.view',
+            'faq.create',
+            'faq.edit',
+            'faq.delete',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission, 'module' => 'Super Admin']);
+            Permission::firstOrCreate(['name' => $permission, 'module' => 'Super Admin']);
         }
 
         // Super Admin - Full Access
-        $superAdmin = Role::create(['name' => 'super-admin']);
+        $superAdmin = Role::firstOrCreate(['name' => 'super-admin']);
         $superAdmin->givePermissionTo(Permission::all());
 
-        // Admin - Most Access
-        $admin = Role::create(['name' => 'admin']);
-        $admin->givePermissionTo([
+        // Admin Pusat
+        $adminPusat = Role::firstOrCreate(['name' => 'admin-pusat']);
+        $adminPusat->givePermissionTo([
             'user.view',
             'user.create',
             'user.edit',
@@ -60,34 +72,128 @@ class RolesDatabaseSeeder extends Seeder
             'post.create',
             'post.edit',
             'post.delete',
+            'project.view',
+            'project.create',
+            'project.edit',
+            'project.delete',
+            'faq.view',
+            'faq.create',
+            'faq.edit',
+            'faq.delete',
+        ]);
+
+        // Admin Province
+        $adminProvince = Role::firstOrCreate(['name' => 'admin-province']);
+        $adminProvince->givePermissionTo([
+            'user.view',
+            'user.create',
+            'user.edit',
+            'post.view',
+            'post.create',
+            'post.edit',
+            'project.view',
+            'project.create',
+            'project.edit',
+            'project.delete',
+            'faq.view',
+            'faq.create',
+            'faq.edit',
+            'faq.delete',
+        ]);
+
+        // Admin Kab Kota
+        $adminKabKota = Role::firstOrCreate(['name' => 'admin-kab-kota']);
+        $adminKabKota->givePermissionTo([
+            'user.view',
+            'post.view',
+            'project.view',
+            'project.create',
+            'project.edit',
+            'project.delete',
+            'faq.view',
+            'faq.create',
+            'faq.edit',
+            'faq.delete',
         ]);
 
         // User - Basic Access
-        $user = Role::create(['name' => 'user']);
-        $user->givePermissionTo(['post.view']);
+        $user = Role::firstOrCreate(['name' => 'user']);
+        $user->givePermissionTo(['post.view', 'project.view', 'faq.view']);
 
         // Create Users dengan Role
-        $superAdminUser = \App\Models\User::create([
-            'name' => 'Super Admin',
+        $superAdminUser = \App\Models\User::firstOrCreate([
             'email' => 'superadmin@gmail.com',
+        ], [
+            'name' => 'Super Admin',
             'password' => bcrypt('password'),
         ]);
         $superAdminUser->assignRole('super-admin');
 
-        $adminUser = \App\Models\User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@gmail.com',
+        // Admin Pusat User
+        $adminPusatUser = \App\Models\User::firstOrCreate([
+            'email' => 'adminpusat@gmail.com',
+        ], [
+            'name' => 'Admin Pusat',
             'password' => bcrypt('password'),
         ]);
-        $adminUser->assignRole('admin');
+        $adminPusatUser->assignRole('admin-pusat');
+
+        // Admin Province User
+        $adminProvinceUser = \App\Models\User::firstOrCreate([
+            'email' => 'adminprovinsi@gmail.com',
+        ], [
+            'name' => 'Admin Provinsi',
+            'password' => bcrypt('password'),
+        ]);
+        $adminProvinceUser->assignRole('admin-province');
+
+        // Admin Kab Kota User
+        $adminKabKotaUser = \App\Models\User::firstOrCreate([
+            'email' => 'adminkabkota@gmail.com',
+        ], [
+            'name' => 'Admin Kab Kota',
+            'password' => bcrypt('password'),
+        ]);
+        $adminKabKotaUser->assignRole('admin-kab-kota');
 
         // User dengan direct permission (tanpa role)
-        $normalUser = \App\Models\User::create([
-            'name' => 'Normal User',
+        $normalUser = \App\Models\User::firstOrCreate([
             'email' => 'user@gmail.com',
+        ], [
+            'name' => 'Normal User',
             'password' => bcrypt('password'),
         ]);
-        $normalUser->assignRole('User');
+        $normalUser->assignRole('user');
         $normalUser->givePermissionTo('post.create');
+        // This user will purposely NOT have an instansi to test the modal
+        \Modules\User\Models\UserProfile::firstOrCreate([
+            'user_id' => $normalUser->id
+        ], [
+            'full_name' => 'Normal User (No Instansi)',
+            'gender' => 'male',
+        ]);
+
+        // Create Dummy Users for testing — 1 per location level
+        $dummyUsers = [
+            ['email' => 'user.pusat@example.com', 'name' => 'User Pusat', 'instansi' => 'Kementerian Pusat', 'gender' => 'male'],
+            ['email' => 'user.jabar@example.com', 'name' => 'User Prov Jawa Barat', 'instansi' => 'Dinas Tenaga Kerja Jabar', 'gender' => 'female'],
+            ['email' => 'user.sumut@example.com', 'name' => 'User Prov Sumatera Utara', 'instansi' => 'Dinas Tenaga Kerja Sumut', 'gender' => 'male'],
+            ['email' => 'user.kotabandung@example.com', 'name' => 'User Kota Bandung', 'instansi' => 'BLK Kota Bandung', 'gender' => 'female'],
+            ['email' => 'user.kabbandung@example.com', 'name' => 'User Kab Bandung', 'instansi' => 'BLK Kab Bandung', 'gender' => 'male'],
+            ['email' => 'user.kotamedan@example.com', 'name' => 'User Kota Medan', 'instansi' => 'BLK Kota Medan', 'gender' => 'female'],
+        ];
+
+        foreach ($dummyUsers as $data) {
+            $dummyUser = \App\Models\User::firstOrCreate(
+                ['email' => $data['email']],
+                ['name' => $data['name'], 'password' => bcrypt('password')]
+            );
+            $dummyUser->assignRole('user');
+
+            \Modules\User\Models\UserProfile::firstOrCreate(
+                ['user_id' => $dummyUser->id],
+                ['full_name' => $data['name'], 'instansi' => $data['instansi'], 'gender' => $data['gender']]
+            );
+        }
     }
 }

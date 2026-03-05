@@ -5,6 +5,7 @@ namespace Modules\Dashboard\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\Faq\Models\Faq;
 
 class DashboardController extends Controller
 {

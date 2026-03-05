@@ -1,0 +1,106 @@
+<?php
+
+namespace Modules\Roles\Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\User;
+use Modules\User\Models\UserProfile;
+use Modules\User\Models\UserScope;
+use Creasi\Nusa\Models\Province;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+
+class RegionUserSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $provinces = Province::all();
+        $password = Hash::make('password');
+
+        $this->command->info('Mulai generate Admin & User Regional...');
+
+        foreach ($provinces as $province) {
+            $slugProv = Str::slug($province->name);
+            $this->createUser(
+                "admin.{$slugProv}@example.com",
+                "Admin Prov {$province->name}",
+                "Dinas Tenaga Kerja {$province->name}",
+                ['male', 'female'][array_rand(['male', 'female'])],
+                'admin-province',
+                $password,
+                $province->code,
+                null
+            );
+
+            $this->createUser(
+                "user.{$slugProv}@example.com",
+                "User Prov {$province->name}",
+                "Instansi Prov {$province->name}",
+                ['male', 'female'][array_rand(['male', 'female'])],
+                'user',
+                $password,
+                $province->code,
+                null
+            );
+            $regencies = $province->regencies()->inRandomOrder()->take(rand(2, 3))->get();
+
+            foreach ($regencies as $regency) {
+                $slugRegency = Str::slug($regency->name);
+
+                $this->createUser(
+                    "admin.{$slugRegency}@example.com",
+                    "Admin {$regency->name}",
+                    "Dinas Tenaga Kerja {$regency->name}",
+                    ['male', 'female'][array_rand(['male', 'female'])],
+                    'admin-kab-kota',
+                    $password,
+                    $province->code,
+                    $regency->code
+                );
+
+                $this->createUser(
+                    "user.{$slugRegency}@example.com",
+                    "User {$regency->name}",
+                    "Instansi {$regency->name}",
+                    ['male', 'female'][array_rand(['male', 'female'])],
+                    'user',
+                    $password,
+                    $province->code,
+                    $regency->code
+                );
+            }
+
+            $this->command->info("Selesai generate region: {$province->name}");
+        }
+
+        $this->command->info('Semua data Admin & User Regional berhasil digenerate.');
+    }
+
+    private function createUser($email, $name, $instansi, $gender, $role, $password, $provCode, $regCode)
+    {
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            ['name' => $name, 'password' => $password]
+        );
+
+        if (!$user->hasRole($role)) {
+            $user->assignRole($role);
+        }
+
+        UserProfile::updateOrCreate(
+            ['user_id' => $user->id],
+            ['full_name' => $name, 'instansi' => $instansi, 'gender' => $gender]
+        );
+
+        UserScope::updateOrCreate(
+            ['user_id' => $user->id],
+            ['province_code' => $provCode, 'regency_code' => $regCode]
+        );
+    }
+}

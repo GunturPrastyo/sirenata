@@ -33,33 +33,32 @@
 
         <!-- Quick Stats Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 stats-grid">
-            <!-- Total Admin Pusat -->
-            <x-dashboard::superadmin.statscard title="Total Admin Pusat" count="12" growth="2 baru"
-                period="Bulan ini">
+            <!-- Total Admin Pusat (dari DB) -->
+            <x-dashboard::superadmin.statscard title="Total Admin Pusat" :count="$totalAdminPusat" growth="Data Aktual"
+                period="Dari Database">
                 <div class="p-2 md:p-3 rounded-full gradient-indigo">
                     <i class="fas fa-users text-white text-base md:text-lg"></i>
                 </div>
             </x-dashboard::superadmin.statscard>
 
-
-            <!-- Admin Aktif -->
-            <x-dashboard::superadmin.statscard title="Admin Aktif" count="10" growth="83% dari total"
-                period="Bulan ini">
+            <!-- Admin Aktif (Admin Provinsi + Admin Kab/Kota) -->
+            <x-dashboard::superadmin.statscard title="Admin Aktif" :count="$adminAktif" growth="Data Aktual"
+                period="Admin Regional">
                 <div class="p-2 md:p-3 rounded-full gradient-emerald">
                     <i class="fas fa-user-check text-white text-base md:text-lg"></i>
                 </div>
             </x-dashboard::superadmin.statscard>
 
-            <!-- Admin Nonaktif -->
-            <x-dashboard::superadmin.statscard title="Admin Nonaktif" count="5" growth="17% dari total"
-                period="Bulan ini">
+            <!-- Admin Nonaktif (Belum Tersedia) -->
+            <x-dashboard::superadmin.statscard title="Admin Nonaktif" count="Belum Tersedia" growth="-"
+                period="Fitur belum tersedia">
                 <div class="p-2 md:p-3 rounded-full gradient-amber">
                     <i class="fas fa-user-slash text-white text-base md:text-lg"></i>
                 </div>
             </x-dashboard::superadmin.statscard>
 
-            <!-- Aktivitas Admin -->
-            <x-dashboard::superadmin.statscard title="Aktivitas Admin" count="247" growth="17% dari total"
+            <!-- Aktivitas Admin (dari DB) -->
+            <x-dashboard::superadmin.statscard title="Aktivitas Admin" :count="$aktivitasAdmin" growth="Data Aktual"
                 period="Bulan ini">
                 <div class="p-2 md:p-3 rounded-full gradient-rose">
                     <i class="fas fa-chart-line text-white text-base md:text-lg"></i>
@@ -67,244 +66,151 @@
             </x-dashboard::superadmin.statscard>
         </div>
 
-        <!-- Bar Chart: SDM per Provinsi -->
+        <!-- Bar Chart: SDM per Provinsi (dari DB) -->
         <div class="bg-white rounded-lg p-3 sm:p-6 shadow-sm mb-4 sm:mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
-                <h2 class="text-base sm:text-xl font-bold text-gray-900">Jumlah SDM yang Mengambil Kursus per Provinsi
-                </h2>
-                <div class="flex items-center gap-2">
-                    <label for="yearFilter" class="hidden sm:inline text-sm font-medium text-gray-700">Tahun:</label>
-                    <select id="yearFilter"
-                        class=" py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="{{ date('Y') }}" selected>{{ date('Y') }}</option>
-                        <option value="{{ date('Y') - 1 }}">{{ date('Y') - 1 }}</option>
-                        <option value="{{ date('Y') - 2 }}">{{ date('Y') - 2 }}</option>
-                        <option value="{{ date('Y') - 3 }}">{{ date('Y') - 3 }}</option>
-                    </select>
+                <h2 class="text-base sm:text-xl font-bold text-gray-900">Jumlah SDM (User) per Provinsi</h2>
+            </div>
+            @if($sdmPerProvinsi->count() > 0)
+                <div class="h-64 sm:h-96">
+                    <canvas id="sdmBarChart"></canvas>
                 </div>
-            </div>
-            <div class="h-64 sm:h-96">
-                <canvas id="sdmBarChart"></canvas>
-            </div>
+            @else
+                <div class="h-64 sm:h-96 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-chart-bar text-5xl text-gray-300"></i>
+                        </div>
+                        <p class="text-lg font-semibold text-gray-400">Belum Ada Data</p>
+                        <p class="text-sm text-gray-400 mt-1">Belum ada user dengan data provinsi</p>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <!-- Pie Charts Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <!-- Left Card: Gender Distribution Pie Chart -->
+            <!-- Left Card: Gender Distribution Pie Chart (dari DB) -->
             <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
                 <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Perbandingan Jenis Kelamin
                 </h2>
-                <div class="h-60 sm:h-80 flex items-center justify-center">
-                    <canvas id="genderPieChart"></canvas>
-                </div>
+                @if($genderMale + $genderFemale > 0)
+                    <div class="h-60 sm:h-80 flex items-center justify-center">
+                        <canvas id="genderPieChart"></canvas>
+                    </div>
+                @else
+                    <div class="h-60 sm:h-80 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="mb-4">
+                                <i class="fas fa-venus-mars text-5xl text-gray-300"></i>
+                            </div>
+                            <p class="text-lg font-semibold text-gray-400">Belum Ada Data</p>
+                            <p class="text-sm text-gray-400 mt-1">Data jenis kelamin user belum diisi di profil</p>
+                        </div>
+                    </div>
+                @endif
             </div>
 
-            <!-- Right Card: Module Distribution Pie Chart -->
+            <!-- Right Card: Module Distribution Pie Chart (Belum Tersedia) -->
             <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
                 <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Perbandingan Modul yang
                     Diambil</h2>
                 <div class="h-60 sm:h-80 flex items-center justify-center">
-                    <canvas id="modulePieChart"></canvas>
+                    <div class="text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-book text-5xl text-gray-300"></i>
+                        </div>
+                        <p class="text-lg font-semibold text-gray-400">Belum Tersedia</p>
+                        <p class="text-sm text-gray-400 mt-1">Data modul dan enrollment belum tersedia di database</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     @push('scripts')
         <script>
-            console.log('Chart.js loaded');
             document.addEventListener('DOMContentLoaded', function() {
-                // Chart data by year - 38 Provinces
-                const chartDataByYear = {
-                    2022: {
-                        labels: ['Aceh', 'Sumut', 'Sumsel', 'Sumbar', 'Bengkulu', 'Riau', 'Kep. Riau', 'Jambi',
-                            'Lampung', 'Babel',
-                            'Kalbar', 'Kaltim', 'Kalsel', 'Kalteng', 'Kaltara', 'Banten', 'DKI Jakarta',
-                            'Jabar', 'Jateng', 'DIY',
-                            'Jatim', 'Bali', 'NTT', 'NTB', 'Gorontalo', 'Sulbar', 'Sulteng', 'Sulut', 'Sultra',
-                            'Sulsel',
-                            'Malut', 'Maluku', 'Papua Barat', 'Papua', 'Papua Tengah', 'Papua Pegunungan',
-                            'Papua Selatan', 'Papua Barat Daya'
-                        ],
-                        data: [245, 312, 289, 276, 198, 265, 156, 187, 234, 145,
-                            198, 276, 234, 189, 123, 298, 456, 567, 498, 234,
-                            534, 312, 167, 198, 134, 156, 178, 234, 189, 345,
-                            123, 145, 98, 112, 87, 76, 89, 94
-                        ]
-                    },
-                    2023: {
-                        labels: ['Aceh', 'Sumut', 'Sumsel', 'Sumbar', 'Bengkulu', 'Riau', 'Kep. Riau', 'Jambi',
-                            'Lampung', 'Babel',
-                            'Kalbar', 'Kaltim', 'Kalsel', 'Kalteng', 'Kaltara', 'Banten', 'DKI Jakarta',
-                            'Jabar', 'Jateng', 'DIY',
-                            'Jatim', 'Bali', 'NTT', 'NTB', 'Gorontalo', 'Sulbar', 'Sulteng', 'Sulut', 'Sultra',
-                            'Sulsel',
-                            'Malut', 'Maluku', 'Papua Barat', 'Papua', 'Papua Tengah', 'Papua Pegunungan',
-                            'Papua Selatan', 'Papua Barat Daya'
-                        ],
-                        data: [289, 356, 324, 298, 234, 298, 187, 219, 267, 172,
-                            234, 312, 267, 218, 145, 334, 523, 645, 567, 276,
-                            612, 356, 198, 234, 156, 187, 206, 267, 219, 389,
-                            145, 172, 115, 134, 102, 89, 105, 112
-                        ]
-                    },
-                    2024: {
-                        labels: ['Aceh', 'Sumut', 'Sumsel', 'Sumbar', 'Bengkulu', 'Riau', 'Kep. Riau', 'Jambi',
-                            'Lampung', 'Babel',
-                            'Kalbar', 'Kaltim', 'Kalsel', 'Kalteng', 'Kaltara', 'Banten', 'DKI Jakarta',
-                            'Jabar', 'Jateng', 'DIY',
-                            'Jatim', 'Bali', 'NTT', 'NTB', 'Gorontalo', 'Sulbar', 'Sulteng', 'Sulut', 'Sultra',
-                            'Sulsel',
-                            'Malut', 'Maluku', 'Papua Barat', 'Papua', 'Papua Tengah', 'Papua Pegunungan',
-                            'Papua Selatan', 'Papua Barat Daya'
-                        ],
-                        data: [324, 398, 367, 342, 265, 334, 215, 249, 298, 198,
-                            267, 345, 298, 245, 167, 378, 598, 734, 645, 312,
-                            698, 398, 234, 267, 178, 215, 234, 298, 249, 434,
-                            167, 198, 134, 156, 119, 104, 123, 131
-                        ]
-                    },
-                    2025: {
-                        labels: ['Aceh', 'Sumut', 'Sumsel', 'Sumbar', 'Bengkulu', 'Riau', 'Kep. Riau', 'Jambi',
-                            'Lampung', 'Babel',
-                            'Kalbar', 'Kaltim', 'Kalsel', 'Kalteng', 'Kaltara', 'Banten', 'DKI Jakarta',
-                            'Jabar', 'Jateng', 'DIY',
-                            'Jatim', 'Bali', 'NTT', 'NTB', 'Gorontalo', 'Sulbar', 'Sulteng', 'Sulut', 'Sultra',
-                            'Sulsel',
-                            'Malut', 'Maluku', 'Papua Barat', 'Papua', 'Papua Tengah', 'Papua Pegunungan',
-                            'Papua Selatan', 'Papua Barat Daya'
-                        ],
-                        data: [156, 187, 165, 142, 98, 134, 89, 112, 124, 76,
-                            112, 145, 124, 98, 67, 156, 287, 356, 298, 134,
-                            324, 187, 98, 112, 78, 89, 98, 124, 106, 198,
-                            72, 86, 54, 67, 48, 42, 51, 58
-                        ]
-                    }
-                };
+
+                @if($sdmPerProvinsi->count() > 0)
+                // Bar Chart: SDM per Provinsi (data dari database)
+                const barCtx = document.getElementById('sdmBarChart').getContext('2d');
 
                 // Function to generate alternating colors
                 function generateAlternatingColors(dataLength) {
-                    const colors = [{
-                            bg: 'rgba(59, 130, 246, 0.8)',
-                            border: 'rgba(59, 130, 246, 1)',
-                            hover: 'rgba(59, 130, 246, 1)'
-                        }, // Biru
-                        {
-                            bg: 'rgba(239, 68, 68, 0.8)',
-                            border: 'rgba(239, 68, 68, 1)',
-                            hover: 'rgba(239, 68, 68, 1)'
-                        }, // Merah
-                        {
-                            bg: 'rgba(34, 197, 94, 0.8)',
-                            border: 'rgba(34, 197, 94, 1)',
-                            hover: 'rgba(34, 197, 94, 1)'
-                        } // Hijau
+                    const colors = [
+                        { bg: 'rgba(59, 130, 246, 0.8)', border: 'rgba(59, 130, 246, 1)', hover: 'rgba(59, 130, 246, 1)' },
+                        { bg: 'rgba(239, 68, 68, 0.8)', border: 'rgba(239, 68, 68, 1)', hover: 'rgba(239, 68, 68, 1)' },
+                        { bg: 'rgba(34, 197, 94, 0.8)', border: 'rgba(34, 197, 94, 1)', hover: 'rgba(34, 197, 94, 1)' }
                     ];
 
-                    const bgColors = [];
-                    const borderColors = [];
-                    const hoverColors = [];
-
+                    const bgColors = [], borderColors = [], hoverColors = [];
                     for (let i = 0; i < dataLength; i++) {
                         const colorIndex = i % 3;
                         bgColors.push(colors[colorIndex].bg);
                         borderColors.push(colors[colorIndex].border);
                         hoverColors.push(colors[colorIndex].hover);
                     }
-
-                    return {
-                        bgColors,
-                        borderColors,
-                        hoverColors
-                    };
+                    return { bgColors, borderColors, hoverColors };
                 }
 
-                // Bar Chart: SDM per Provinsi
-                const barCtx = document.getElementById('sdmBarChart').getContext('2d');
-                console.log(barCtx);
-                const initialColors = generateAlternatingColors(chartDataByYear[2025].data.length);
+                const sdmLabels = @json($sdmPerProvinsi->pluck('province_name'));
+                const sdmData = @json($sdmPerProvinsi->pluck('total'));
+                const barColors = generateAlternatingColors(sdmData.length);
 
-                let sdmBarChart = new Chart(barCtx, {
+                new Chart(barCtx, {
                     type: 'bar',
                     data: {
-                        labels: chartDataByYear[2025].labels,
+                        labels: sdmLabels,
                         datasets: [{
-                            label: 'Jumlah SDM',
-                            data: chartDataByYear[2025].data,
-                            backgroundColor: initialColors.bgColors,
-                            borderColor: initialColors.borderColors,
+                            label: 'Jumlah User',
+                            data: sdmData,
+                            backgroundColor: barColors.bgColors,
+                            borderColor: barColors.borderColors,
                             borderWidth: 1,
                             borderRadius: 6,
-                            hoverBackgroundColor: initialColors.hoverColors
+                            hoverBackgroundColor: barColors.hoverColors
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: {
-                                display: false
-                            },
+                            legend: { display: false },
                             tooltip: {
                                 backgroundColor: 'rgba(31, 41, 55, 0.95)',
                                 padding: 12,
                                 cornerRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 'bold'
-                                },
-                                bodyFont: {
-                                    size: 13
-                                }
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 }
                             }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
                                 ticks: {
-                                    font: {
-                                        size: 12
-                                    }
+                                    font: { size: 12 },
+                                    stepSize: 1
                                 },
-                                grid: {
-                                    color: 'rgba(229, 231, 235, 0.8)'
-                                }
+                                grid: { color: 'rgba(229, 231, 235, 0.8)' }
                             },
                             x: {
-                                ticks: {
-                                    font: {
-                                        size: 12
-                                    }
-                                },
-                                grid: {
-                                    display: false
-                                }
+                                ticks: { font: { size: 12 } },
+                                grid: { display: false }
                             }
                         }
                     }
                 });
+                @endif
 
-                // Year filter change handler
-                document.getElementById('yearFilter').addEventListener('change', function(e) {
-                    const year = e.target.value;
-                    const newColors = generateAlternatingColors(chartDataByYear[year].data.length);
-
-                    sdmBarChart.data.labels = chartDataByYear[year].labels;
-                    sdmBarChart.data.datasets[0].data = chartDataByYear[year].data;
-                    sdmBarChart.data.datasets[0].backgroundColor = newColors.bgColors;
-                    sdmBarChart.data.datasets[0].borderColor = newColors.borderColors;
-                    sdmBarChart.data.datasets[0].hoverBackgroundColor = newColors.hoverColors;
-                    sdmBarChart.update();
-                });
-
-
-                // Pie Chart: Gender Distribution
+                @if($genderMale + $genderFemale > 0)
+                // Pie Chart: Gender Distribution (data dari database)
                 const genderCtx = document.getElementById('genderPieChart').getContext('2d');
-                const genderPieChart = new Chart(genderCtx, {
+                new Chart(genderCtx, {
                     type: 'pie',
                     data: {
                         labels: ['Laki-laki', 'Perempuan'],
                         datasets: [{
-                            data: [5432, 5782],
+                            data: [{{ $genderMale }}, {{ $genderFemale }}],
                             backgroundColor: [
                                 'rgba(59, 130, 246, 0.8)',
                                 'rgba(236, 72, 153, 0.8)'
@@ -323,25 +229,14 @@
                         plugins: {
                             legend: {
                                 position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    font: {
-                                        size: 13,
-                                        weight: '500'
-                                    }
-                                }
+                                labels: { padding: 20, font: { size: 13, weight: '500' } }
                             },
                             tooltip: {
                                 backgroundColor: 'rgba(31, 41, 55, 0.95)',
                                 padding: 12,
                                 cornerRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 'bold'
-                                },
-                                bodyFont: {
-                                    size: 13
-                                },
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 },
                                 callbacks: {
                                     label: function(context) {
                                         const label = context.label || '';
@@ -355,67 +250,7 @@
                         }
                     }
                 });
-
-                // Pie Chart: Module Distribution
-                const moduleCtx = document.getElementById('modulePieChart').getContext('2d');
-                const modulePieChart = new Chart(moduleCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Modul Makro', 'Modul Mikro', 'Modul Pembangunan Ketenagakerjaan'],
-                        datasets: [{
-                            data: [3456, 4234, 3524],
-                            backgroundColor: [
-                                'rgba(16, 185, 129, 0.8)',
-                                'rgba(245, 158, 11, 0.8)',
-                                'rgba(139, 92, 246, 0.8)'
-                            ],
-                            borderColor: [
-                                'rgba(16, 185, 129, 1)',
-                                'rgba(245, 158, 11, 1)',
-                                'rgba(139, 92, 246, 1)'
-                            ],
-                            borderWidth: 2,
-                            hoverOffset: 10
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    font: {
-                                        size: 13,
-                                        weight: '500'
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                padding: 12,
-                                cornerRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 'bold'
-                                },
-                                bodyFont: {
-                                    size: 13
-                                },
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.parsed || 0;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = ((value / total) * 100).toFixed(1);
-                                        return `${label}: ${value} (${percentage}%)`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
+                @endif
             });
         </script>
     @endpush

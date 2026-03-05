@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class UserProfile extends Model
 {
     use HasFactory, HasUuids;
-    
+
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +19,7 @@ class UserProfile extends Model
     protected $fillable = [
         'user_id',
         'full_name',
+        'instansi',
         'jabatan',
         'unit_kerja',
         'nik',

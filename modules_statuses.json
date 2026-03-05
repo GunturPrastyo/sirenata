@@ -6,5 +6,8 @@
     "Dashboard": true,
     "LandingPage": true,
     "RTK": true,
-    "MasterData": true
+    "MasterData": true,
+    "Proyek": true,
+    "Project": true,
+    "Faq": true
 }
