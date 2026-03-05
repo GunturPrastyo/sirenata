@@ -19,7 +19,10 @@ class PermissionService
 
     public function paginateFilteredPermissions(?string $search = null, string $sortBy = 'desc', $limit = 10)
     {
-        return $this->getFilteredQueryPermissions($search, $sortBy)->paginate($limit)->withQueryString();
+        return $this->getFilteredQueryPermissions(
+            search: $search,
+            sortBy: $sortBy
+        )->paginate($limit)->withQueryString();
     }
 
     public function createPermission(array $data)

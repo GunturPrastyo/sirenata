@@ -1,4 +1,7 @@
 <div>
+    <div class="my-3">
+        <x-validation-errors />
+    </div>
     <x-flash-message />
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-6 card-hover">
         <form wire:submit="save">
@@ -49,13 +52,13 @@
                     </div>
 
                     <div>
-                        <label for="jabatan" class="block text-sm font-medium text-gray-700 mb-2">
-                            Jabatan
+                        <label for="instansi" class="block text-sm font-medium text-gray-700 mb-2">
+                            instansi <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="jabatan" name="jabatan" wire:model.lazy="jabatan"
+                        <input type="text" id="instansi" name="instansi" wire:model.lazy="instansi"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
                             placeholder="Contoh: Staff Administrasi">
-                        @error('jabatan')
+                        @error('instansi')
                             <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
                         @enderror
                     </div>
@@ -144,15 +147,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             @forelse ($roles as $role)
                                 <div class="relative">
-                                    <input type="radio" id="role_{{ $role->uuid }}" wire:model.lazy="roleId"
-                                        name="role" value="{{ $role->uuid }}" class="hidden peer">
+                                    <input type="checkbox" id="role_{{ $role->uuid }}" wire:model="roleIds"
+                                        value="{{ $role->uuid }}" class="hidden peer"
+                                        :disabled="$wire.roleIds.length >= 2 && !$wire.roleIds.includes('{{ $role->uuid }}')">
 
                                     <label for="role_{{ $role->uuid }}"
-                                        class="flex flex-col h-full p-4 border-2 border-slate-200 rounded-xl cursor-pointer
-                                        hover:border-indigo-300
-                                        peer-checked:border-indigo-500
-                                        peer-checked:bg-indigo-50
-                                        transition">
+                                        class="flex flex-col h-full p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-indigo-300 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed transition">
                                         <div class="flex items-center mb-2">
                                             <div class="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
                                                 <i class="fas fa-user-cog"></i>
@@ -164,7 +164,8 @@
                                         </div>
 
                                         <p class="text-sm text-slate-600 leading-relaxed">
-                                            Akses sesuai role <span class="font-medium">{{ $role->name }}</span>
+                                            Akses sesuai role
+                                            <span class="font-medium">{{ $role->name }}</span>
                                         </p>
                                     </label>
                                 </div>
@@ -174,33 +175,8 @@
                                 </p>
                             @endforelse
                         </div>
-                        @error('role')
-                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                        @enderror
-                    </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Izin Khusus (Permissions)
-                        </label>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            @forelse($permissions as $permission)
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="permission_{{ $permission->uuid }}"
-                                        wire:model="permissionsSelected" value="{{ $permission->uuid }}"
-                                        class="custom-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                                    <label for="permission_{{ $permission->uuid }}"
-                                        class="ml-2 block text-sm text-gray-700">
-                                        {{ ucfirst($permission->name) }}
-                                    </label>
-                                </div>
-                            @empty
-                                <p class="text-sm text-slate-500 col-span-full">
-                                    Izin tidak tersedia
-                                </p>
-                            @endforelse
-                        </div>
-                        @error('permissionsSelected')
+                        @error('roleIds')
                             <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
                         @enderror
                     </div>
@@ -243,23 +219,11 @@
                     Simpan Perubahan
                 </button>
 
-                <a href="../admin-pusat/show.html?id=1"
+                <a href="{{ route('super-admin.user-management.index') }}"
                     class="inline-flex items-center bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors shadow-sm">
                     <i class="fas fa-times mr-2"></i>
                     Batal
                 </a>
-
-                <button type="button" id="btn-reset"
-                    class="inline-flex items-center bg-amber-100 text-amber-700 px-6 py-3 rounded-lg hover:bg-amber-200 transition-colors shadow-sm">
-                    <i class="fas fa-redo mr-2"></i>
-                    Reset Perubahan
-                </button>
-
-                <button type="button" id="btn-delete"
-                    class="inline-flex items-center bg-red-100 text-red-700 px-6 py-3 rounded-lg hover:bg-red-200 transition-colors shadow-sm">
-                    <i class="fas fa-trash-alt mr-2"></i>
-                    Hapus Admin
-                </button>
             </div>
         </form>
     </div>

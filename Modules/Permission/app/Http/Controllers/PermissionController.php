@@ -7,20 +7,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Modules\Permission\Http\Requests\PermissionStoreRequest;
 use Modules\Permission\Http\Requests\PermissionUpdateRequest;
 use Modules\Permission\Models\Permission;
 use Modules\Permission\Services\PermissionService;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class PermissionController extends Controller
+class PermissionController extends Controller implements HasMiddleware
 {
-    protected $permissionService;
-    protected $perPage = 10;
+    public function __construct(
+        private PermissionService $permissionService
+    ) {}
 
-    public function __construct(PermissionService $permissionService)
+    public static function middleware(): array
     {
-        $this->permissionService = $permissionService;
-    }
+        return [
+            new Middleware(PermissionMiddleware::using('permission-view|permission-create|permission-edit|permission-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('permission-view'), only: ['show']),
+            new Middleware(PermissionMiddleware::using('permission-create'), only: ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('permission-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('permission-delete'), only: ['destroy']),
+        ];
+    }   
+
 
     /**
      * Display a listing of the resource.
@@ -31,8 +42,14 @@ class PermissionController extends Controller
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
             : 'desc';
-
-        $permissions = $this->permissionService->paginateFilteredPermissions($search, $orderBy, $this->perPage);
+        $perPage = in_array($request->per_page, [10, 20, 50, 100])
+            ? $request->per_page
+            : 10;
+        $permissions = $this->permissionService->paginateFilteredPermissions(
+            search: $search,
+            sortBy: $orderBy,
+            limit: $perPage
+        );
         return view('permission::index', [
             'permissions' => $permissions
         ]);
@@ -54,7 +71,7 @@ class PermissionController extends Controller
         try {
             $validate = $request->validated();
             $permission = $this->permissionService->createPermission($validate);
-            return redirect()->route('permission.index')->with('success', 'Permission created successfully');
+            return redirect()->route('super-admin.permissions.index')->with('success', 'Permission created successfully');
         } catch (\Exception $e) {
             ToastMagic::error("Failed to Create permission: " . $e->getMessage());
             throw $e;
@@ -88,7 +105,7 @@ class PermissionController extends Controller
         try {
             $validated = $request->validated();
             $permission = $this->permissionService->updatePermission($permission, $validated);
-            return redirect()->route('permission.index')
+            return redirect()->route('super-admin.permissions.index')
                 ->with('success', "Permission {$permission->name} updated successfully!");
         } catch (\Exception $e) {
             ToastMagic::error("Failed to Update permission: " . $e->getMessage());
@@ -103,7 +120,7 @@ class PermissionController extends Controller
     {
         try {
             $this->permissionService->deletePermission($permission);
-            return redirect()->route('permission.index')
+            return redirect()->route('super-admin.permissions.index')
                 ->with('success', "Permission {$permission->name} deleted successfully!");
         } catch (\Exception $e) {
             ToastMagic::error("Failed to delete permission: " . $e->getMessage());

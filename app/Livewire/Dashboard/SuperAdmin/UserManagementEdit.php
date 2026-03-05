@@ -20,13 +20,11 @@ class UserManagementEdit extends Component
     public $email;
     public $full_name;
     public $phone;
-    public $jabatan;
+    public $instansi;
     public ?string $province = null;
     public ?string $regency  = null;
 
-    public ?string $roleId = null;
-    public array $permissionsSelected = [];
-
+    public array $roleIds = [];
 
     protected UserService $userService;
 
@@ -38,21 +36,17 @@ class UserManagementEdit extends Component
 
     public function mount(User $user)
     {
-        $user->load(['roles', 'permissions', 'profile', 'scopeArea']);
+        $user->load(['roles', 'profile', 'scopeArea']);
 
         $this->user = $user;
 
         $this->email     = $user->email;
         $this->full_name = $user->profile?->full_name;
         $this->phone     = $user->profile?->phone;
-        $this->jabatan   = $user->profile?->jabatan;
+        $this->instansi   = $user->profile?->instansi;
         $this->join_date = $user->created_at->format('Y-m-d');
 
-        $this->roleId = $user->roles->first()?->uuid;
-
-        $this->permissionsSelected = $user->permissions
-            ->pluck('uuid')
-            ->toArray();
+        $this->roleIds = $user->roles->pluck('uuid')->toArray();
 
         $this->province = $user->scopeArea?->province_code;
         $this->regency  = $user->scopeArea?->regency_code;
@@ -65,27 +59,18 @@ class UserManagementEdit extends Component
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$this->user->id,
             'phone' => 'required|string|max:20',
-            'roleId' => 'required|exists:roles,uuid',
-            'jabatan' => 'required|string|max:255',
+            'roleIds' => 'required|array',
+            'roleIds.*' => 'required|exists:roles,uuid',
+            'instansi' => 'required|string|max:255',
             'province' => 'nullable|string|size:2',
             'regency'  => 'nullable|string|max:5',
-            'permissionsSelected' => 'required|array',
-            'permissionsSelected.*' => 'required|exists:permissions,uuid',
-        ];
-    }
-
-    protected function messages(): array
-    {
-        return [
-            'required' => 'The :attribute field is required.',
-            'email.unique' => 'The email is already registered in our system.',
         ];
     }
 
     protected function validationAttributes()
     {
         return [
-            'roleId' => 'role',
+            'roleIds' => 'role',
         ];
     }
 
@@ -97,9 +82,8 @@ class UserManagementEdit extends Component
                 'email'       => $this->email,
                 'full_name'   => $this->full_name,
                 'phone'       => $this->phone,
-                'jabatan'     => $this->jabatan,
-                'role'        => $this->roleId,
-                'permissions' => $this->permissionsSelected,
+                'instansi'     => $this->instansi,
+                'roles'       => $this->roleIds,
                 'province'    => $this->province,
                 'regency'     => $this->regency,
             ];
@@ -136,7 +120,6 @@ class UserManagementEdit extends Component
     {
         return view('livewire.dashboard.super-admin.user-management-edit', [
             'roles'       => Role::select('uuid', 'name')->get(),
-            'permissions' => Permission::select('uuid', 'name')->get(),
         ]);
     }
 }

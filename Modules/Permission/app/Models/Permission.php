@@ -20,14 +20,17 @@ class Permission extends SpatiePermission
     #[Scope]
     protected function search(Builder $query, string $keyword): void
     {
-        $query->where('name', 'like', "%{$keyword}%")
-            ->orWhere('module', 'like', "%{$keyword}%");
+        $query->where('name', 'like', "%{$keyword}%");
     }
 
     /**
      * The attributes that are mass assignable.
      */
-    // protected $fillable = [];
+    protected $fillable = [
+        'name',
+        'guard_name',
+        'module',
+    ];
 
     // protected static function newFactory(): PermissionFactory
     // {

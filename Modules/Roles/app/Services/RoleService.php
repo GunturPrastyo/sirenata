@@ -5,6 +5,7 @@ namespace Modules\Roles\Services;
 use Modules\Roles\Models\Role;
 use Symfony\Component\HttpFoundation\Request;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Support\Facades\Log;
 
 class RoleService
 {
@@ -20,7 +21,10 @@ class RoleService
 
     public function paginateFilteredRoles(?string $search = null, string $sortBy = 'desc', $limit = 10)
     {
-        return $this->getFilteredQueryRoles($search, $sortBy)->paginate($limit)->withQueryString();
+        return $this->getFilteredQueryRoles(
+            search: $search,
+            sortBy: $sortBy,
+        )->paginate($limit)->withQueryString();
     }
 
     public function createRole(array $data)
@@ -32,7 +36,11 @@ class RoleService
 
     public function updateRole(Role $role, array $data)
     {
-        $role->update($data);
+        $role->update([
+            'name' => $data['name'],
+        ]);
+        $role->syncPermissions($data['permissions'] ?? []);
+        Log::info($role);
         ToastMagic::success("Role updated successfully!");
         return $role;
     }

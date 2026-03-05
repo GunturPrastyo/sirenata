@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->string('document_path')->nullable();
 
-            $table->index(['name', 'status']);
+            $table->index(['name']);
             $table->timestamps();
         });
     }

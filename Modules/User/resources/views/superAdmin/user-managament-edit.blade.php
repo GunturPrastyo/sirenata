@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="User Management">
+<x-dashboard::layouts.dashboard title="User Management Edit">
     <div class="p-2 sm:p-6">
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
@@ -68,12 +68,13 @@
 
                     <p id="last-updated" class="text-xs text-slate-400 mt-4">
                         Terakhir diperbarui:
-                        {{-- <span id="last-updated-date"
-                            class="font-medium text-slate-500">{{ $user->updated_at->diffForHumans() }}</span> --}}
+                        <span id="last-updated-date"
+                            class="font-medium text-slate-500">{{ $user->updated_at->diffForHumans() }}</span>
                     </p>
                 </div>
             </div>
         </div>
+
 
         <livewire:dashboard.super-admin.user-management-edit :user="$user" />
 

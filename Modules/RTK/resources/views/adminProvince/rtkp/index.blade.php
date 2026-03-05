@@ -20,7 +20,7 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Rencana Tenaga Kerja Daerah
+                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Rekapitulasi Rencana Tenaga Kerja
                             Provinsi</span>
                     </div>
                 </li>
@@ -128,10 +128,9 @@
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar Laporan RTKD Provinsi</h2>
+                    <h2 class="text-sm font-semibold text-slate-800">Daftar Rekapitulasi RTKD Provinsi</h2>
                     <p class="text-sm text-slate-500 mt-1">
                         Total: <span class="font-medium text-slate-700" id="total-admin">{{ $rtkdps->total() }}</span>
-                        RTKD Provinsi
                     </p>
                 </div>
 
@@ -163,6 +162,7 @@
                             <th class="px-4 md:px-6 py-3 text-left">Dokumen RTK</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
                             <th class="px-4 md:px-6 py-3 text-left">Status</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
 
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
@@ -186,6 +186,27 @@
                                         {{ Modules\RTK\Enums\RTKStatus::from($rtkdp->status)->color() }}">
                                         {{ Modules\RTK\Enums\RTKStatus::from($rtkdp->status)->label() }}
                                     </span>
+                                </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    @if ($rtkdp->is_active)
+                                        <span
+                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
+                                            <svg class="w-4 h-4 text-emerald-600" fill="none"
+                                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
+                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M6 6L18 18M6 18L18 6" />
+                                            </svg>
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>

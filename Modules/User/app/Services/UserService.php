@@ -31,7 +31,6 @@ class UserService
     {
         return DB::transaction(function () use ($user, $data) {
             $oldRoles = $user->getRoleNames()->toArray();
-            $oldPermissions = $user->getPermissionNames()->toArray();
 
             $user->update([
                 'name'  => $data['name'] ?? $user->name,
@@ -42,7 +41,7 @@ class UserService
                 ['user_id' => $user->id],
                 [
                     'full_name' => $data['full_name'],
-                    'jabatan'   => $data['jabatan'],
+                    'instansi'   => $data['instansi'],
                     'phone'     => $data['phone'],
                 ]
             );
@@ -59,8 +58,8 @@ class UserService
                 $user->update(['password' => bcrypt($data['password'])]);
             }
 
-            $role = Role::where('uuid', $data['role'])->firstOrFail();
-            $newRoles = [$role->name];
+            $roles = Role::whereIn('uuid', $data['roles'])->get();
+            $newRoles = $roles->pluck('name')->toArray();
 
             if (array_diff($oldRoles, $newRoles) || array_diff($newRoles, $oldRoles)) {
                 $user->syncRoles($newRoles);
@@ -73,26 +72,6 @@ class UserService
                     ])
                     ->log('User role updated');
             }
-            // {"attributes":
-            $newPermissions = Permission::whereIn('uuid', $data['permissions'] ?? [])
-                ->pluck('name')
-                ->toArray();
-
-            sort($oldPermissions);
-            sort($newPermissions);
-
-            if ($oldPermissions !== $newPermissions) {
-                $user->syncPermissions($newPermissions);
-                activity('user-permission')
-                    ->causedBy(Auth::user())
-                    ->performedOn($user)
-                    ->withProperties([
-                        'old' => $oldPermissions,
-                        'attributes' => $newPermissions,
-                    ])
-                    ->log('User permissions updated');
-            }
-
             ToastMagic::success("User {$user->name} updated successfully!");
 
             return $user;
@@ -110,7 +89,7 @@ class UserService
 
             $user->profile()->create([
                 'full_name' => $data['full_name'],
-                'jabatan'   => $data['jabatan'],
+                'instansi'   => $data['instansi'],
                 'phone'     => $data['phone'],
             ]);
 
@@ -122,17 +101,10 @@ class UserService
                 ]
             );
 
-            $role = Role::where('uuid', $data['role'])->firstOrFail();
-            $user->assignRole($role);
-
-            $permissions = Permission::whereIn('uuid', $data['permissions'] ?? [])
-                ->pluck('name')
-                ->toArray();
-
-            $user->syncPermissions($permissions);
+            $roles = Role::whereIn('uuid', $data['roles'])->get();
+            $user->syncRoles($roles);
 
             ToastMagic::success("User {$user->name} created successfully!");
-
             return $user;
         });
     }
@@ -141,11 +113,8 @@ class UserService
     public function deleteUser(User $user): void
     {
         DB::transaction(function () use ($user) {
-            // Lepas semua role & permission (best practice Spatie)
             $user->syncRoles([]);
             $user->syncPermissions([]);
-
-            // Hapus user
             $user->delete();
         });
     }

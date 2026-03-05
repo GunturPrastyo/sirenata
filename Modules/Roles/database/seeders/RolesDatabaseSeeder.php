@@ -16,22 +16,22 @@ class RolesDatabaseSeeder extends Seeder
         // $this->call([]);
         $permissions = [
             // User Management
-            'user.view',
-            'user.create',
-            'user.edit',
-            'user.delete',
+            'user-view',
+            'user-create',
+            'user-edit',
+            'user-delete',
 
             // Role Management
-            'role.view',
-            'role.create',
-            'role.edit',
-            'role.delete',
+            'role-view',
+            'role-create',
+            'role-edit',
+            'role-delete',
 
             // Permission Management
-            'permission.view',
-            'permission.create',
-            'permission.edit',
-            'permission.delete',
+            'permission-view',
+            'permission-create',
+            'permission-edit',
+            'permission-delete',
 
             // Post Management
             'post.view',
@@ -50,6 +50,18 @@ class RolesDatabaseSeeder extends Seeder
             'faq.create',
             'faq.edit',
             'faq.delete',
+
+            'rtkn-view',
+            'rtkn-list',
+            'rtkn-create',
+            'rtkn-edit',
+            'rtkn-delete',
+
+            'rtkd-view',
+            'rtkd-list',
+            'rtkd-create',
+            'rtkd-edit',
+            'rtkd-delete',
         ];
 
         foreach ($permissions as $permission) {
@@ -62,63 +74,19 @@ class RolesDatabaseSeeder extends Seeder
 
         // Admin Pusat
         $adminPusat = Role::firstOrCreate(['name' => 'admin-pusat']);
-        $adminPusat->givePermissionTo([
-            'user.view',
-            'user.create',
-            'user.edit',
-            'role.view',
-            'permission.view',
-            'post.view',
-            'post.create',
-            'post.edit',
-            'post.delete',
-            'project.view',
-            'project.create',
-            'project.edit',
-            'project.delete',
-            'faq.view',
-            'faq.create',
-            'faq.edit',
-            'faq.delete',
-        ]);
+        $adminPusat->givePermissionTo(Permission::all());
 
         // Admin Province
         $adminProvince = Role::firstOrCreate(['name' => 'admin-province']);
-        $adminProvince->givePermissionTo([
-            'user.view',
-            'user.create',
-            'user.edit',
-            'post.view',
-            'post.create',
-            'post.edit',
-            'project.view',
-            'project.create',
-            'project.edit',
-            'project.delete',
-            'faq.view',
-            'faq.create',
-            'faq.edit',
-            'faq.delete',
-        ]);
+        $adminProvince->givePermissionTo(Permission::all());
 
         // Admin Kab Kota
         $adminKabKota = Role::firstOrCreate(['name' => 'admin-kab-kota']);
-        $adminKabKota->givePermissionTo([
-            'user.view',
-            'post.view',
-            'project.view',
-            'project.create',
-            'project.edit',
-            'project.delete',
-            'faq.view',
-            'faq.create',
-            'faq.edit',
-            'faq.delete',
-        ]);
+        $adminKabKota->givePermissionTo(Permission::all());
 
         // User - Basic Access
         $user = Role::firstOrCreate(['name' => 'user']);
-        $user->givePermissionTo(['post.view', 'project.view', 'faq.view']);
+        $user->givePermissionTo(Permission::all());
 
         // Create Users dengan Role
         $superAdminUser = \App\Models\User::firstOrCreate([

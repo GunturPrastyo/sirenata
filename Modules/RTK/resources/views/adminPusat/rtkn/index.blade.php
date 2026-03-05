@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Nasional">
+<x-dashboard::layouts.dashboard title="Rekapitulasi Rencana Tenaga Kerja Nasional">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
@@ -20,7 +20,10 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Daftar Laporan RTKN</span>
+                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">
+                            Daftar Laporan Rekapitulasi Rencana
+                            Tenaga Kerja Nasional
+                        </span>
                     </div>
                 </li>
             </ol>
@@ -108,10 +111,10 @@
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar RTKN</h2>
+                    <h2 class="text-sm font-semibold text-slate-800">Daftar Rekapitulasi Rencana Tenaga Kerja Nasional
+                    </h2>
                     <p class="text-sm text-slate-500 mt-1">
                         Total: <span class="font-medium text-slate-700" id="total-admin">{{ $rtkns->total() }}</span>
-                        RTKN
                     </p>
                 </div>
 
@@ -140,10 +143,10 @@
                         <tr class="text-slate-500 uppercase text-xs">
 
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Dokumen RTKN Name</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status</th>
-
+                            {{-- <th class="px-4 md:px-6 py-3 text-left">Status</th> --}}
+                            <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -160,12 +163,33 @@
                                 <td class="px-4 md:px-6 py-3 ">
                                     <p class="text-slate-600">{{ $rtkn->start_date }} - {{ $rtkn->end_date }}</p>
                                 </td>
-                                <td class="px-4 md:px-6 py-3 ">
+                                {{-- <td class="px-4 md:px-6 py-3 ">
                                     <span
                                         class="px-2 py-1 text-xs rounded-full font-semibold
                                         {{ Modules\RTK\Enums\RTKStatus::from($rtkn->status)->color() }}">
                                         {{ Modules\RTK\Enums\RTKStatus::from($rtkn->status)->label() }}
                                     </span>
+                                </td> --}}
+                                <td class="px-4 md:px-6 py-3">
+                                    @if ($rtkn->is_active)
+                                        <span
+                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
+                                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
+                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M6 6L18 18M6 18L18 6" />
+                                            </svg>
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
@@ -195,8 +219,10 @@
                             </tr>
                         @empty
                             <tr class="">
-                                <td colspan="5" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">Tidak ada data RTKN</p>
+                                <td colspan="6" class="px-6 py-12 text-center">
+                                    <p class="text-sm text-slate-500">Tidak ada data Rekapitulasi Rencana Tenaga Kerja
+                                        Nasional
+                                    </p>
                                 </td>
                             </tr>
                         @endforelse

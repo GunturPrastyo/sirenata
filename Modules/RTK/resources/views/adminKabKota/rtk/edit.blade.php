@@ -86,7 +86,7 @@
                             @enderror
                         </div>
 
-                        <div>
+                        {{-- <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                                 Status <span class="text-red-500">*</span>
                             </label>
@@ -98,6 +98,32 @@
                                 @endforeach
                             </select>
                             @error('status')
+                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div> --}}
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                Status Dokumen <span class="text-red-500">*</span>
+                            </label>
+
+                            <div class="flex items-center gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="is_active" value="1"
+                                        class="text-green-600 border-gray-300 focus:ring-green-500 focus:ring-2 "
+                                        @checked(old('is_active', $rtkd->is_active ?? 1) == 1)>
+                                    <span class="text-sm text-gray-700">Aktif</span>
+                                </label>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="is_active" value="0"
+                                        class="text-red-600 border-gray-300 focus:ring-red-500 focus:ring-2 "
+                                        @checked(old('is_active', $rtkd->is_active ?? 0) == 0)>
+                                    <span class="text-sm text-gray-700">Tidak Aktif</span>
+                                </label>
+                            </div>
+
+                            @error('is_active')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -133,10 +159,11 @@
                         <!-- File Upload -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Upload Dokumen RTKN
+                                Upload Dokumen Rencana Tenaga Kerja Kab/Kota
                             </label>
                             <div class="file-upload-area rounded-md p-8 text-center cursor-pointer" id="fileUploadArea">
-                                <input type="file" id="fileInput" name="document_path" accept=".pdf" class="hidden">
+                                <input type="file" id="fileInput" name="document_path" accept=".pdf"
+                                    class="hidden">
                                 <div id="uploadPrompt">
                                     <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
                                         viewBox="0 0 48 48">
@@ -182,7 +209,7 @@
 
                         <!-- Action Buttons -->
                         <div class="flex gap-4 pt-4">
-                            <a href="{{ route('admin-province.rtkdp.index') }}"
+                            <a href="{{ route('admin-kab-kota.rtkd.index') }}"
                                 class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium hover:bg-gray-300 transition-colors text-center">
                                 Batal
                             </a>
@@ -193,7 +220,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
                                 </svg>
-                                Upload
+                                Simpan
                             </button>
                         </div>
                     </form>

@@ -55,7 +55,7 @@
             </div>
             <div class="relative w-full md:w-72">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" wire:model.lazy="search" placeholder="Cari nama, email, atau telepon..."
+                <input type="text" wire:model.lazy="search" placeholder="Cari nama, email..."
                     class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
                         focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
             </div>

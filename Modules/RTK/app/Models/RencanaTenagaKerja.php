@@ -25,6 +25,7 @@ class RencanaTenagaKerja extends Model
     protected $casts = [
         'status' => RTKStatus::class,
         'type' => TypeRtk::class,
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -38,18 +39,22 @@ class RencanaTenagaKerja extends Model
         'start_date',
         'end_date',
         'status',
+        'is_active',
         'type',
         'document_path',
+        'approved_by',
+        'approved_at',
+        'rejected_reason',
     ];
-
-    public function getStatusColorAttribute(): string
-    {
-        return $this->status->color();
-    }
 
     public function getStatusLabelAttribute(): string
     {
         return $this->status->label();
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return $this->status->color();
     }
 
     public function isExpired(): bool

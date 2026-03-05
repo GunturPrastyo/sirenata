@@ -17,9 +17,10 @@ return new class extends Migration
 
             $table->string('full_name')->nullable();
             $table->string('phone')->nullable();
-            $table->string('jabatan')->nullable();
+            $table->string('institution_type')->nullable();
+            $table->string('instansi')->nullable();
             $table->string('unit_kerja')->nullable();
-            $table->string('nik')->nullable();
+            $table->string('nik')->unique()->nullable();
             $table->string('avatar')->nullable();
             $table->text('address')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();

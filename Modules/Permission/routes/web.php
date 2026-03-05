@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Permission\Http\Controllers\PermissionController;
 
-// Route::middleware(['auth', 'verified'])->group(function () {
-// });
-Route::resource('permissions', PermissionController::class)->names('permission');
+
+Route::prefix('super-admin')->middleware(['auth', 'role:super-admin'])->name('super-admin.')->group(function () {
+    Route::resource('permissions', PermissionController::class);
+});

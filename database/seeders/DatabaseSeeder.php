@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Modules\LMS\Database\Seeders\LMSDatabaseSeeder;
+use Modules\Roles\Database\Seeders\RolesDatabaseSeeder;
+use Modules\User\Database\Seeders\UserDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,8 +21,10 @@ class DatabaseSeeder extends Seeder
         // Panggil seeder modul-modul di sini agar jalan otomatis saat php artisan migrate --seed
         $this->call([
             \Modules\Roles\Database\Seeders\RolesDatabaseSeeder::class,
+            \Modules\User\Database\Seeders\UserDatabaseSeeder::class,
             \Modules\User\Database\Seeders\UserScopeSeeder::class,
             \Modules\Roles\Database\Seeders\RegionUserSeeder::class,
+            \Modules\LMS\Database\Seeders\LMSDatabaseSeeder::class,
             \Modules\Faq\Database\Seeders\FaqDatabaseSeeder::class,
         ]);
     }

@@ -13,24 +13,6 @@
         <div x-show="open" @click.away="open = false" x-transition x-anchor.bottom-end="$refs.trigger"
             class="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-lg w-44">
             <ul class="p-2 text-sm text-slate-700 font-medium">
-                {{-- @if ($edit)
-                    <li>
-                        <a href="{{ $edit }}"
-                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
-                    </li>
-                @endif
-                @if ($delete)
-                    <li>
-                        <a href="{{ $delete }}"
-                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Hapus</a>
-                    </li>
-                @endif
-                @if ($detail)
-                    <li>
-                        <a href="{{ $detail }}"
-                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Detail</a>
-                    </li>
-                @endif --}}
                 {{ $slot }}
             </ul>
         </div>
