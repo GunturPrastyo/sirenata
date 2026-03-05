@@ -65,7 +65,7 @@ class RolesDatabaseSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'module' => 'Super Admin']);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Super Admin - Full Access

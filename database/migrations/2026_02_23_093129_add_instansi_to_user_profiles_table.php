@@ -10,9 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('user_profiles', function (Blueprint $table) {
-            $table->string('instansi')->nullable()->after('full_name');
-        });
+        if (!Schema::hasColumn('user_profiles', 'instansi')) {
+            Schema::table('user_profiles', function (Blueprint $table) {
+                $table->string('instansi')->nullable()->after('full_name');
+            });
+        }
     }
 
     /**
