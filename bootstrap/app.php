@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Console\Scheduling\Schedule;
+use Modules\RTK\Console\ExpireRTKCommand;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,4 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        // $schedule->job(new SendPaymentReminderEmailJob())->everyMinute();
+        // daily everyThreeMinutes
+        // weekly
+        $schedule->command(ExpireRTKCommand::class)->everyMinute();
+    })
+    ->create();

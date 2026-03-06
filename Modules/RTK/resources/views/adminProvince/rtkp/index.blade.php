@@ -162,7 +162,7 @@
                             <th class="px-4 md:px-6 py-3 text-left">Dokumen RTK</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
                             <th class="px-4 md:px-6 py-3 text-left">Status</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
+                            <th class="px-4 md:px-6 py-3 text-left">RTK Acuan</th>
 
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
@@ -190,46 +190,86 @@
                                 <td class="px-4 md:px-6 py-3">
                                     @if ($rtkdp->is_active)
                                         <span
-                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
-                                            <svg class="w-4 h-4 text-emerald-600" fill="none"
-                                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="M5 13l4 4L19 7" />
                                             </svg>
+                                            Ya
                                         </span>
                                     @else
                                         <span
-                                            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
-                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                                 stroke-width="2" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="M6 6L18 18M6 18L18 6" />
                                             </svg>
+                                            Tidak
                                         </span>
                                     @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        <li>
-                                            <a href="{{ route('admin-province.rtkdp.edit', $rtkdp->id) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
-                                        </li>
-                                        {{-- <li>
-                                            <a href="{{ route('admin-province.rtkdp.show', $rtkdp->id) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
-                                        </li> --}}
+                                        @if (
+                                            $rtkdp->status != Modules\RTK\Enums\RTKStatus::APPROVED->value &&
+                                                $rtkdp->status != Modules\RTK\Enums\RTKStatus::EXPIRED->value)
+                                            <li>
+                                                <a href="{{ route('admin-province.rtkdp.edit', $rtkdp->id) }}"
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                    Edit
+                                                </a>
+                                            </li>
+                                        @endif
                                         <li>
                                             <a href="{{ Storage::url($rtkdp->document_path) }}"
                                                 download="{{ $rtkdp->name }}"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
                                         </li>
+
                                         <li>
-                                            <div
+                                            <button type="button" x-data
+                                                @click="$dispatch('open-modal', 'open-document-province-{{ $rtkdp->id }}')"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                <x-modal-delete :id="$rtkdp->id" message="Are you sure delete RTKN"
-                                                    :item-name="$rtkdp->name" :route="route('admin-province.rtkdp.destroy', $rtkdp->id)" />
-                                            </div>
+                                                Preview Dokumen RTK
+                                            </button>
+
+                                            <x-modal name="open-document-province-{{ $rtkdp->id }}"
+                                                title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
+                                                <h1>{{ $rtkdp->name }}</h1>
+                                                <div class="border border-gray-300 rounded-md overflow-hidden">
+                                                    @if ($rtkdp->document_path && Storage::disk('public')->exists($rtkdp->document_path))
+                                                        <iframe src="{{ Storage::url($rtkdp->document_path) }}"
+                                                            class="w-full min-h-[500px] rounded-md border"></iframe>
+                                                    @else
+                                                        <div
+                                                            class="flex items-center justify-center min-h-[500px] text-gray-400 border rounded-md">
+                                                            Tidak ada dokumen tersimpan
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <x-slot:footer>
+                                                    <button
+                                                        @click="$dispatch('close-modal', 'open-document-province-{{ $rtkdp->id }}')"
+                                                        class="inline-flex items-center justify-center px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">
+                                                        Close
+                                                    </button>
+                                                </x-slot:footer>
+                                            </x-modal>
                                         </li>
+                                        @if (
+                                            $rtkdp->status != Modules\RTK\Enums\RTKStatus::APPROVED->value &&
+                                                $rtkdp->status != Modules\RTK\Enums\RTKStatus::EXPIRED->value)
+                                            <li>
+                                                <div
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                    <x-modal-delete :id="$rtkdp->id"
+                                                        message="Are you sure delete RTKN" :item-name="$rtkdp->name"
+                                                        :route="route('admin-province.rtkdp.destroy', $rtkdp->id)" />
+                                                </div>
+                                            </li>
+                                        @endif
                                     </x-table.action>
                                 </td>
                             </tr>

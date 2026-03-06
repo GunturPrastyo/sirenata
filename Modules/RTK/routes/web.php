@@ -7,6 +7,7 @@ use Modules\RTK\Http\Controllers\RencanaTenagaKerjaNasionalController;
 use Modules\RTK\Http\Controllers\AdminProvinsi\RencanaTenagaKerjaProvinceController;
 use Modules\RTK\Http\Controllers\AdminKabKota\RencanaTenagaKerjaKabKotaController as RencanaTenagaKerjaKabKotaControllerAdminKabKota;
 use Modules\RTK\Http\Controllers\AdminKabKota\RtkKabKotaDashboardController;
+use Modules\RTK\Http\Controllers\AdminPusat\RTKApprovalPusatController;
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::resource('rencana-tenaga-kerja-nasional', RencanaTenagaKerjaNasionalController::class)->names('rtkn');
@@ -14,6 +15,14 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
     Route::prefix('rencana-tenaga-kerja-daerah')->name('rtkd.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaDaerahController::class, 'index'])->name('index');
         Route::get('/{provinceCode}/kab-kota', [RencanaTenagaKerjaDaerahController::class, 'kabKota'])->name('kab-kota');
+        
+        Route::get('/province/{provinceCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showProvince'])->name('show-province');
+
+        Route::get('/regency/{regencyCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showRegency'])->name('show-regency');
+        
+        Route::post('/province/{rtk}/approve', [RTKApprovalPusatController::class, 'approveProvince'])->name('approveProvince');
+        Route::post('/regency/{rtk}/approve', [RTKApprovalPusatController::class, 'approveKabKota'])->name('approveKabKota');
+        // Route::post('/{rtk}/reject', [RTKApprovalPusatController::class, 'rejectProvince'])->name('reject');
     });
 });
 

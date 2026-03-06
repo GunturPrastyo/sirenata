@@ -131,8 +131,10 @@
                             <th class="px-4 md:px-6 py-3 text-left">Instansi (Provinsi)</th>
                             <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            {{-- <th class="px-4 md:px-6 py-3 text-left">Status</th> --}}
-                            <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Status</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Disetujui Oleh</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Tanggal Disetujui</th>
+                            {{-- <th class="px-4 md:px-6 py-3 text-left">Aktif</th> --}}
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -163,6 +165,26 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
                                     @if ($province->latest_rtk)
+                                        <span
+                                            class="px-2 py-1 text-xs rounded-full font-semibold {{ $province->latest_rtk->status_color }}">
+                                            {{ $province->latest_rtk->status_label }}
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
+                                            Belum ada RTK
+                                        </span>
+                                    @endif
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3">
+                                    {{ $province->latest_rtk?->approver?->name ?? '-' }}
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3">
+                                    {{ $province->latest_rtk?->approved_at?->format('d M Y') ?? '-' }}
+                                </td>
+                                {{-- <td class="px-4 md:px-6 py-3">
+                                    @if ($province->latest_rtk)
                                         @if ($province->latest_rtk->is_active)
                                             <span
                                                 class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
@@ -185,8 +207,8 @@
                                     @else
                                         <span class="text-slate-400 italic text-xs">Belum ada</span>
                                     @endif
-                                </td>
-                                <td class="px-4 md:px-6 py-3 text-center">
+                                </td> --}}
+                                <td class="px-4 md:px-6 py-3 text-left">
                                     <x-table.action>
                                         <li>
                                             <a href="{{ route('admin-pusat.rtkd.kab-kota', $province->code) }}"
@@ -196,6 +218,12 @@
 
                                         @if ($province->latest_rtk)
                                             <li>
+                                                <a href="{{ route('admin-pusat.rtkd.show-province', $province->code) }}"
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                    Lihat RTK
+                                                </a>
+                                            </li>
+                                            <li>
                                                 <a href="{{ Storage::url($province->latest_rtk->document_path) }}"
                                                     download="{{ $province->latest_rtk->name }}"
                                                     class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
@@ -204,7 +232,7 @@
                                                 <button type="button" x-data
                                                     @click="$dispatch('open-modal', 'open-document-province-{{ $province->code }}')"
                                                     class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                    Lihat RTK
+                                                    Preview Dokumen RTK
                                                 </button>
 
                                                 <x-modal name="open-document-province-{{ $province->code }}"
