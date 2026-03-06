@@ -18,7 +18,24 @@ class UserDashboardController extends Controller
         // Ensure user has a profile
         $profile = UserProfile::firstOrCreate(['user_id' => $user->id]);
 
-        return view('dashboard::user.index', compact('profile'));
+        // Fetch provinces from Creasi/Nusa
+        $provinces = \Creasi\Nusa\Models\Province::all();
+
+        return view('dashboard::user.index', compact('profile', 'provinces'));
+    }
+
+    public function getRegencies(Request $request)
+    {
+        $request->validate([
+            'province_code' => 'required|string',
+        ]);
+
+        $province = \Creasi\Nusa\Models\Province::where('code', $request->province_code)->firstOrFail();
+
+        return response()->json([
+            'success' => true,
+            'data' => $province->regencies
+        ]);
     }
 
     public function updateInstansi(Request $request)

@@ -143,7 +143,9 @@
                             <th class="px-4 md:px-6 py-3 text-left">Instansi (Kab/Kota)</th>
                             <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
                             <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Status</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Disetujui Oleh</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Tanggal Disetujui</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -172,32 +174,33 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
                                     @if ($regency->latest_rtk)
-                                        @if ($regency->latest_rtk->is_active)
-                                            <span
-                                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
-                                                <svg class="w-4 h-4 text-emerald-600" fill="none"
-                                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M5 13l4 4L19 7" />
-                                                </svg>
-                                            </span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
-                                                <svg class="w-4 h-4 text-red-500" fill="none"
-                                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M6 6L18 18M6 18L18 6" />
-                                                </svg>
-                                            </span>
-                                        @endif
+                                        <span
+                                            class="px-2 py-1 text-xs rounded-full font-semibold {{ $regency->latest_rtk->status_color }}">
+                                            {{ $regency->latest_rtk->status_label }}
+                                        </span>
                                     @else
-                                        <span class="text-slate-400 italic text-xs">Belum ada</span>
+                                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
+                                            Belum ada RTK
+                                        </span>
                                     @endif
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3">
+                                    {{ $regency->latest_rtk?->approver?->name ?? '-' }}
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3">
+                                    {{ $regency->latest_rtk?->approved_at?->format('d M Y') ?? '-' }}
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
                                         @if ($regency->latest_rtk)
+                                            <li>
+                                                <a href="{{ route('admin-pusat.rtkd.show-regency', $regency->code) }}"
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                    Lihat RTK
+                                                </a>
+                                            </li>
                                             <li>
                                                 <a href="{{ Storage::url($regency->latest_rtk->document_path) }}"
                                                     download="{{ $regency->latest_rtk->name }}"
@@ -206,8 +209,9 @@
                                             <li>
                                                 <button type="button" x-data
                                                     @click="$dispatch('open-modal', 'open-document-kab-kota-{{ $regency->code }}')"
-                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Lihat
-                                                    RTK</button>
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                    Preview Dokumen RTK
+                                                </button>
 
                                                 <x-modal name="open-document-kab-kota-{{ $regency->code }}"
                                                     title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">

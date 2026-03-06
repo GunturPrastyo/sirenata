@@ -92,23 +92,25 @@
             </div>
         </div>
 
-        <!-- RTK Validity Status Pie Chart -->
-        <div class="flex justify-center mb-4 sm:mb-6">
-            <div class="bg-white rounded-lg p-4 md:p-6 shadow-sm w-full lg:w-2/3">
-                <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4 text-center">Status Masa Berlaku
-                    RTK Kab/Kota ({{ date('Y') }})
+        <!-- Pie Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Card 1: RTK Validity Status Pie Chart -->
+            <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Status Masa Berlaku RTK
+                    ({{ date('Y') }})
                 </h2>
-                <div class="h-96 flex flex-col justify-center items-center text-gray-500">
-                    <i class="fas fa-link-slash text-4xl mb-3 text-gray-300"></i>
-                    <p class="font-medium">Belum Dihubungkan</p>
-                    <p class="text-xs mt-1 text-center">Data RTK belum tersedia / belum dihubungkan dengan database</p>
+                <div class="h-60 sm:h-80 flex flex-col justify-center items-center text-gray-500">
+                    <div class="text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-link-slash text-5xl text-gray-300"></i>
+                        </div>
+                        <p class="text-lg font-semibold text-gray-400">Belum Dihubungkan</p>
+                        <p class="text-sm text-gray-400 mt-1">Data RTK belum tersedia</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Pie Charts Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <!-- Left Card: Gender Distribution Pie Chart -->
+            <!-- Card 2: Gender Distribution Pie Chart -->
             <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
                 <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Perbandingan Jenis Kelamin
                 </h2>
@@ -124,7 +126,7 @@
                 </div>
             </div>
 
-            <!-- Right Card: Module Distribution Pie Chart -->
+            <!-- Card 3: Module Distribution Pie Chart -->
             <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
                 <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Perbandingan Modul yang
                     Diambil</h2>

@@ -83,8 +83,8 @@
 </li>
 
 <li>
-    <a href="{{ route('admin-pusat.notification') }}" class="flex items-center px-2 py-1.5 rounded-md transition
-        {{ request()->routeIs('admin-pusat.notification')
+    <a href="#" class="flex items-center px-2 py-1.5 rounded-md transition
+        {{ request()->is('admin-pusat/notification')
     ? 'text-indigo-600 bg-purple-100'
     : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"

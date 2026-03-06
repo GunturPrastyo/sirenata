@@ -11,7 +11,7 @@
 
     <template x-teleport="body">
         <div x-show="open" @click.away="open = false" x-transition x-anchor.bottom-end="$refs.trigger"
-            class="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-lg w-44">
+            class="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-lg w-52">
             <ul class="p-2 text-sm text-slate-700 font-medium">
                 {{ $slot }}
             </ul>

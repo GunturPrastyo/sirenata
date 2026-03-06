@@ -14,6 +14,7 @@ Route::get('/portal-dashboard', [PortalDashboardController::class, 'index'])->mi
 Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/instansi', [UserDashboardController::class, 'updateInstansi'])->name('update-instansi');
+    Route::get('/dashboard/get-regencies', [UserDashboardController::class, 'getRegencies'])->name('get-regencies');
 });
 
 Route::prefix('super-admin')->middleware(['auth', 'role:super-admin'])->name('super-admin.')->group(function () {

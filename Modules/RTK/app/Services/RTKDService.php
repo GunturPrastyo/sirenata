@@ -49,11 +49,9 @@ class RTKDService
             ->where('type', TypeRtk::PROVINSI->value)
             ->whereIn('province_code', $provinceCodes)
             ->where('is_active', true)
-            // ->where('end_date', '>=', Carbon::now()->year)
             ->when($status, fn($q) => $q->where('status', $status))
-            ->orderByDesc('end_date') // safety
+            ->orderByDesc('end_date')
             ->get()
-            ->unique('province_code')
             ->keyBy('province_code');
 
         $provinces->getCollection()->transform(function ($province) use ($rtks) {

@@ -26,6 +26,7 @@ class RencanaTenagaKerja extends Model
         'status' => RTKStatus::class,
         'type' => TypeRtk::class,
         'is_active' => 'boolean',
+        'approved_at' => 'datetime',
     ];
 
     /**
@@ -70,6 +71,11 @@ class RencanaTenagaKerja extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function province()
