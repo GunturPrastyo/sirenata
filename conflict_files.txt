@@ -1,9 +1,0 @@
-﻿Modules/Dashboard/resources/views/admin-provinsi/index.blade.php
-Modules/Dashboard/resources/views/partials/admin-kab-kota/sidebar-item.blade.php
-Modules/Dashboard/resources/views/partials/admin-province/sidebar-item.blade.php
-Modules/Dashboard/resources/views/partials/admin-pusat/sidebar-item.blade.php
-Modules/Dashboard/resources/views/partials/super-admin/sidebar-item.blade.php
-Modules/Roles/database/seeders/RolesDatabaseSeeder.php
-Modules/User/app/Models/UserProfile.php
-database/seeders/DatabaseSeeder.php
-modules_statuses.json
