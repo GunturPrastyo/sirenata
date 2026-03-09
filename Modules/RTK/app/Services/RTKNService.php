@@ -32,6 +32,14 @@ class RTKNService
     {
         $user = Auth::user();
         return DB::transaction(function () use ($data, $user) {
+
+            RencanaTenagaKerja::query()
+                ->where('type', TypeRtk::NASIONAL->value)
+                ->where('is_active', true)
+                ->update([
+                    'is_active' => false
+                ]);
+
             $documentPath = null;
             if (isset($data['document_path'])) {
                 $documentPath = $data['document_path']->store(
@@ -44,8 +52,8 @@ class RTKNService
                 'name' => $data['name'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
-                // 'status' => RTKStatus::PENDING->value,
-                'is_active' => false,
+                'status' => RTKStatus::PENDING->value,
+                'is_active' => true,
                 'type' => TypeRtk::NASIONAL->value,
                 'document_path' => $documentPath,
             ]);
@@ -55,46 +63,96 @@ class RTKNService
         });
     }
 
+    // public function updateRTKN(array $data, RencanaTenagaKerja $rtkn)
+    // {
+    //     return DB::transaction(function () use ($data, $rtkn) {
+
+    //         $documentPath = $rtkn->document_path;
+
+    //         if (!empty($data['document_path'])) {
+    //             $documentPath = $data['document_path']
+    //                 ->store('rtkn/documents', 'public');
+    //         }
+
+    //         $status = $data['status'] ?? $rtkn->status;
+    //         $isActive = $data['is_active'] ?? $rtkn->is_active;
+
+    //         if ($isActive) {
+    //             // Nonaktifkan semua RTK Nasional lain
+    //             RencanaTenagaKerja::where('type', TypeRtk::NASIONAL->value)
+    //                 ->where('is_active', true)
+    //                 ->where('id', '!=', $rtkn->id)
+    //                 ->update([
+    //                     'status' => RTKStatus::EXPIRED->value,
+    //                     'is_active' => false,
+    //                 ]);
+    //             // $isActive = true;
+    //         } 
+    //         else {
+    //             //     // Kalau bukan BERLAKU
+    //             //     // Jangan ubah is_active kalau dia memang versi aktif terakhir
+    //             $isActive = $rtkn->is_active;
+    //         }
+    //         $rtkn->update([
+    //             'name'          => $data['name'],
+    //             'start_date'    => $data['start_date'],
+    //             'end_date'      => $data['end_date'],
+    //             'status'        => $status,
+    //             'type'          => TypeRtk::NASIONAL->value,
+    //             'document_path' => $documentPath,
+    //             'is_active'     => $isActive,
+    //         ]);
+
+    //         ToastMagic::success("RTKN berhasil diupdate!");
+    //         return $rtkn;
+    //     });
+    // }
+
     public function updateRTKN(array $data, RencanaTenagaKerja $rtkn)
     {
         return DB::transaction(function () use ($data, $rtkn) {
 
             $documentPath = $rtkn->document_path;
 
+            // Upload dokumen baru jika ada
             if (!empty($data['document_path'])) {
                 $documentPath = $data['document_path']
                     ->store('rtkn/documents', 'public');
             }
 
-            // $status = $data['status'] ?? $rtkn->status;
+            $status = $data['status'] ?? $rtkn->status;
             $isActive = $data['is_active'] ?? $rtkn->is_active;
 
-            if ($isActive) {
-                // Nonaktifkan semua RTK Nasional lain
+            /**
+             * Jika RTK Nasional diaktifkan,
+             * maka RTK Nasional lain harus dinonaktifkan
+             */
+            if ($isActive === true) {
+
                 RencanaTenagaKerja::where('type', TypeRtk::NASIONAL->value)
+                    ->where('is_active', true)
                     ->where('id', '!=', $rtkn->id)
                     ->update([
-                        // 'status' => RTKStatus::TIDAK_BERLAKU->value,
+                        'status' => RTKStatus::EXPIRED->value,
                         'is_active' => false,
                     ]);
-                // $isActive = true;
-            } 
-            // else {
-            //     // Kalau bukan BERLAKU
-            //     // Jangan ubah is_active kalau dia memang versi aktif terakhir
-            //     $isActive = $rtkn->is_active;
-            // }
+            }
+
+            /**
+             * Update RTK
+             */
             $rtkn->update([
                 'name'          => $data['name'],
                 'start_date'    => $data['start_date'],
                 'end_date'      => $data['end_date'],
-                // 'status'        => $status,
+                'status'        => $status,
                 'type'          => TypeRtk::NASIONAL->value,
                 'document_path' => $documentPath,
                 'is_active'     => $isActive,
             ]);
 
             ToastMagic::success("RTKN berhasil diupdate!");
+
             return $rtkn;
         });
     }
