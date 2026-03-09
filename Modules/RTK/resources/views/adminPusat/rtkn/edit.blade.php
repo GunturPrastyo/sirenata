@@ -86,41 +86,49 @@
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        {{-- <div>
+                        <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                                 Status <span class="text-red-500">*</span>
                             </label>
                             <select name="status" class="w-full rounded-md border-gray-300">
                                 @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
                                     <option value="{{ $status->value }}" @selected(old('status', $rtkn->status?->value ?? $rtkn->status) == $status->value)>
-                                        {{ $status->value }}
+                                        {{ $status->label() }}
                                     </option>
                                 @endforeach
                             </select>
                             @error('status')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
-                        </div> --}}
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">
-                                Status Dokumen <span class="text-red-500">*</span>
+                                RTK Acuan <span class="text-red-500">*</span>
                             </label>
 
                             <div class="flex items-center gap-6">
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="is_active" value="1"
-                                        class="text-green-600 border-gray-300 focus:ring-green-500"
+                                        class="text-green-600 border-gray-300 focus:ring-green-500 focus:ring-2"
                                         @checked(old('is_active', $rtkn->is_active ?? 1) == 1)>
-                                    <span class="text-sm text-gray-700">Aktif</span>
+
+                                    <span class="text-sm text-gray-700">
+                                        Ya <span class="text-gray-400">(Digunakan sebagai RTK Acuan)</span>
+                                    </span>
                                 </label>
 
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="is_active" value="0"
-                                        class="text-red-600 border-gray-300 focus:ring-red-500"
+                                        class="text-red-600 border-gray-300 focus:ring-red-500 focus:ring-2"
                                         @checked(old('is_active', $rtkn->is_active ?? 0) == 0)>
-                                    <span class="text-sm text-gray-700">Tidak Aktif</span>
+
+                                    <span class="text-sm text-gray-700">Tidak</span>
                                 </label>
                             </div>
+                            <p class="text-xs text-gray-500 mt-4">
+                                Hanya satu RTK yang dapat dijadikan acuan pada setiap provinsi.
+                            </p>
 
                             @error('is_active')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -158,7 +166,8 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Upload Dokumen Rencana Tenaga Kerja Nasional
                             </label>
-                            <div class="file-upload-area rounded-md p-8 text-center cursor-pointer" id="fileUploadArea">
+                            <div class="file-upload-area rounded-md p-8 text-center cursor-pointer"
+                                id="fileUploadArea">
                                 <input type="file" id="fileInput" name="document_path" accept=".pdf"
                                     class="hidden">
                                 <div id="uploadPrompt">

@@ -31,7 +31,7 @@ class RTKNUpdateRequest extends FormRequest
             ],
             'document_path' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'is_active' => ['required', 'boolean'],
-            // 'status' => ['required', new Enum(RTKStatus::class)],
+            'status' => ['required', new Enum(RTKStatus::class)],
         ];
     }
 
