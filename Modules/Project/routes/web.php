@@ -20,7 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['permission:project.edit'])->group(function () {
         Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
         Route::put('projects/{project}', [ProjectController::class, 'update'])->name('project.update');
-        Route::patch('projects/{project}', [ProjectController::class, 'update'])->name('project.update');
+        // Route::patch('projects/{project}', [ProjectController::class, 'update'])->name('project.update');
     });
 
     // Delete access
