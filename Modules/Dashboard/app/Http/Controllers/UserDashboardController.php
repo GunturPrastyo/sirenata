@@ -5,6 +5,7 @@ namespace Modules\Dashboard\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\User\Models\UserProfile;
+use Modules\User\Models\UserScope;
 
 class UserDashboardController extends Controller
 {
@@ -55,6 +56,22 @@ class UserDashboardController extends Controller
 
         $profile->instansi = $request->instansi;
         $profile->save();
+
+        $provinceCode = $request->input('province_code');
+        $regencyCode = $request->input('regency_code');
+
+        if ($provinceCode || $regencyCode) {
+            UserScope::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'province_code' => $provinceCode,
+                    'regency_code' => $regencyCode,
+                ]
+            );
+        } else {
+            // It's Pusat (no specific region scope)
+            UserScope::where('user_id', $user->id)->delete();
+        }
 
         return redirect()->route('user.dashboard')->with('success', 'Data instansi berhasil disimpan.');
     }

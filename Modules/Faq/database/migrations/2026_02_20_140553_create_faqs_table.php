@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('question');
             $table->text('answer');
-            $table->string('level')->default('pusat');
+            $table->string('level')->default('Nasional');
             $table->foreignUuid('created_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });

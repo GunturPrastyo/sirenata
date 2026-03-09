@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Modules\Project\Models\Project;
+use Modules\Project\Enums\ProjectType;
 
 class ProjectController extends Controller
 {
@@ -18,11 +19,11 @@ class ProjectController extends Controller
         $query = Project::with('leader')->latest();
 
         if ($user->hasRole('admin-pusat') || $user->hasRole('super-admin')) {
-            $query->where('type', 'RTKN');
+            $query->where('type', ProjectType::NASIONAL->value);
         } elseif ($user->hasRole('admin-province')) {
-            $query->where('type', 'RTKD_PROV');
+            $query->where('type', ProjectType::PROVINSI->value);
         } elseif ($user->hasRole('admin-kab-kota')) {
-            $query->where('type', 'RTKD_KAB');
+            $query->where('type', ProjectType::KAB_KOTA->value);
         } else {
             $query->where(function ($q) use ($user) {
                 $q->where('team_leader', $user->id)
@@ -95,12 +96,12 @@ class ProjectController extends Controller
         ]);
 
         $user = auth()->user();
-        $type = 'RTKN'; // Default fallback
+        $type = ProjectType::NASIONAL->value; // Default fallback
 
         if ($user->hasRole('admin-province')) {
-            $type = 'RTKD_PROV';
+            $type = ProjectType::PROVINSI->value;
         } elseif ($user->hasRole('admin-kab-kota')) {
-            $type = 'RTKD_KAB';
+            $type = ProjectType::KAB_KOTA->value;
         }
 
         Project::create([

@@ -318,6 +318,8 @@
 
                         <!-- Hidden input to concatenate values -->
                         <input type="hidden" name="instansi" id="finalInstansiValue">
+                        <input type="hidden" name="province_code" id="finalProvinceCode">
+                        <input type="hidden" name="regency_code" id="finalRegencyCode">
 
                         <!-- Submit Button -->
                         <button type="submit"
@@ -382,6 +384,7 @@
                         // Reset all sections
                         $('#kementerianSection, #provinsiSection, #kabkotaSection, #instansiSection, #customInstansiSection, #unitKerjaSection').addClass('hidden');
                         $('#kementerian, #provinsi, #kabkota, #instansi, #customInstansi, #unitKerja').val('').trigger('change');
+                        $('#finalProvinceCode, #finalRegencyCode').val('');
 
                         if (value === 'pusat') {
                             $('#kementerianSection, #unitKerjaSection').removeClass('hidden');
@@ -408,7 +411,7 @@
                                         if (response.success) {
                                             $('#kabkota').empty().append(new Option('Pilih Kabupaten/Kota', ''));
                                             response.data.forEach(regency => {
-                                                $('#kabkota').append(new Option(regency.name, regency.name));
+                                                $('#kabkota').append(new Option(regency.name, regency.code));
                                             });
                                             $('#kabkotaSection').removeClass('hidden');
                                             $('#instansiSection, #customInstansiSection, #unitKerjaSection').addClass('hidden');
@@ -507,6 +510,8 @@
                                 return;
                             }
                             finalInstansiText = `${kementerian} - ${unitKerja}`;
+                            $('#finalProvinceCode').val('');
+                            $('#finalRegencyCode').val('');
                         } else if (asalInstansi === 'provinsi') {
                             // get text name for province instead of code
                             const provinsi = $('#provinsi option:selected').data('name') || $('#provinsi option:selected').text();
@@ -528,12 +533,14 @@
                                 }
                             }
                             finalInstansiText = `${provinsi} - ${instansiName} - ${unitKerja}`;
+                            $('#finalProvinceCode').val($('#provinsi').val());
+                            $('#finalRegencyCode').val('');
                         } else if (asalInstansi === 'kabkota') {
                             const provinsi = $('#provinsi option:selected').data('name') || $('#provinsi option:selected').text();
-                            const kabkota = $('#kabkota').val();
+                            const kabkota = $('#kabkota option:selected').text(); // Change to get the text name, since value is now the code
                             const instansi = $('#instansi').val();
 
-                            if (!provinsi || !kabkota || !instansi) {
+                            if (!provinsi || !kabkota || !instansi || kabkota === 'Pilih Kabupaten/Kota') {
                                 e.preventDefault();
                                 alert('Lengkapi semua data daerah!');
                                 return;
@@ -549,6 +556,8 @@
                                 }
                             }
                             finalInstansiText = `${provinsi} - ${kabkota} - ${instansiName} - ${unitKerja}`;
+                            $('#finalProvinceCode').val($('#provinsi').val());
+                            $('#finalRegencyCode').val($('#kabkota').val());
                         }
 
                         // Set hidden input value

@@ -5,6 +5,7 @@ namespace Modules\Faq\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Faq\Models\Faq;
+use Modules\Faq\Enums\FaqLevel;
 
 class HelpController extends Controller
 {
@@ -16,30 +17,38 @@ class HelpController extends Controller
         $user = auth()->user();
         $query = Faq::with('creator')->latest();
 
-        if ($user->hasRole('user')) {
-            $userScope = $user->scopeArea;
-            $dashboardRoute = 'user.dashboard';
+        // 1. Tentukan rute Dashboard
+        $dashboardRoute = match (true) {
+            $user->hasRole('user')           => 'user.dashboard',
+            $user->hasRole('admin-province') => 'admin-province.dashboard',
+            $user->hasRole('admin-kab-kota') => 'admin-kab-kota.dashboard',
+            default                          => 'dashboard', // admin-pusat & super-admin
+        };
 
-            if ($userScope && $userScope->province_code && !$userScope->regency_code) {
-                $query->where('level', 'provinsi');
-            } elseif ($userScope && $userScope->regency_code) {
-                $query->where('level', 'kab_kota');
-            } else {
-                $query->where('level', 'pusat');
-            }
-        } elseif (!$user->hasRole('admin-pusat')) {
-            $dashboardRoute = 'dashboard'; // Set a default dashboard route for admin-province/kab-kota
-            if ($user->hasRole('admin-province')) {
-                $dashboardRoute = 'admin-province.dashboard';
-                $query->where('level', 'provinsi');
-            } elseif ($user->hasRole('admin-kab-kota')) {
-                $dashboardRoute = 'admin-kab-kota.dashboard';
-                $query->where('level', 'kab_kota');
-            } else {
-                $query->where('id', -1);
-            }
-        } else { // It's admin-pusat
-           $dashboardRoute = 'dashboard'; // Or appropriate route for admin-pusat
+        // 2. Tentukan Level FAQ
+        $faqLevel = match (true) {
+            $user->hasRole('admin-province') => FaqLevel::PROVINSI->value,
+            $user->hasRole('admin-kab-kota') => FaqLevel::KAB_KOTA->value,
+            
+            // Logika Region Scope khusus role 'user'
+            $user->hasRole('user') => match (true) {
+                $user->scopeArea?->regency_code !== null  => FaqLevel::KAB_KOTA->value,
+                $user->scopeArea?->province_code !== null => FaqLevel::PROVINSI->value,
+                default                                   => FaqLevel::NASIONAL->value,
+            },
+            
+            // admin-pusat & super-admin melihat semuanya secara penuh
+            $user->hasRole(['admin-pusat', 'super-admin']) => null, 
+            
+            // Jika role terdeteksi asing, halangi data
+            default => -1, 
+        };
+
+        // 3. Terapkan filter ke Query
+        if ($faqLevel !== null) {
+            $faqLevel === -1 
+                ? $query->where('id', -1) 
+                : $query->where('level', $faqLevel);
         }
 
         if ($request->filled('search')) {

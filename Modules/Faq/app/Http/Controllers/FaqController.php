@@ -5,6 +5,7 @@ namespace Modules\Faq\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Faq\Models\Faq;
+use Modules\Faq\Enums\FaqLevel;
 use Modules\MasterData\Models\Province;
 
 class FaqController extends Controller
@@ -16,9 +17,9 @@ class FaqController extends Controller
 
         if (!$user->hasRole('admin-pusat')) {
             if ($user->hasRole('admin-province')) {
-                $query->where('level', 'provinsi');
+                $query->where('level', FaqLevel::PROVINSI->value);
             } elseif ($user->hasRole('admin-kab-kota')) {
-                $query->where('level', 'kab_kota');
+                $query->where('level', FaqLevel::KAB_KOTA->value);
             } else {
                 $query->where('id', -1);
             }
@@ -47,7 +48,7 @@ class FaqController extends Controller
         $request->validate([
             'question' => 'required|string|max:255',
             'answer' => 'required|string',
-            'level' => 'required|in:pusat,provinsi,kab_kota',
+            'level' => 'required|in:' . FaqLevel::NASIONAL->value . ',' . FaqLevel::PROVINSI->value . ',' . FaqLevel::KAB_KOTA->value,
         ]);
 
         $user = auth()->user();
@@ -79,7 +80,7 @@ class FaqController extends Controller
         $request->validate([
             'question' => 'required|string|max:255',
             'answer' => 'required|string',
-            'level' => 'required|in:pusat,provinsi,kab_kota',
+            'level' => 'required|in:' . FaqLevel::NASIONAL->value . ',' . FaqLevel::PROVINSI->value . ',' . FaqLevel::KAB_KOTA->value,
         ]);
 
         $faq->update([

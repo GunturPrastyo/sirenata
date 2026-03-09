@@ -40,9 +40,9 @@
                         <select name="level" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
                             focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Semua Level</option>
-                            <option value="pusat" @selected(request('level') === 'pusat')>Pusat</option>
-                            <option value="provinsi" @selected(request('level') === 'provinsi')>Provinsi</option>
-                            <option value="kab_kota" @selected(request('level') === 'kab_kota')>Kab/Kota</option>
+                            <option value="Nasional" @selected(request('level') === 'Nasional')>Nasional</option>
+                            <option value="Provinsi" @selected(request('level') === 'Provinsi')>Provinsi</option>
+                            <option value="Kab/Kota" @selected(request('level') === 'Kab/Kota')>Kab/Kota</option>
                         </select>
                     </div>
 
@@ -146,13 +146,13 @@
                                     <p class="text-slate-600 font-medium">{{ Str::limit($faq->question, 60) }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
-                                    @if($faq->level === 'pusat')
+                                    @if($faq->level === 'Nasional')
                                         <span
-                                            class="px-2 py-1 bg-green-100 text-green-800 rounded border border-green-200 text-xs font-medium">Pusat</span>
-                                    @elseif($faq->level === 'provinsi')
+                                            class="px-2 py-1 bg-green-100 text-green-800 rounded border border-green-200 text-xs font-medium">Nasional</span>
+                                    @elseif($faq->level === 'Provinsi')
                                         <span
                                             class="px-2 py-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium">Provinsi</span>
-                                    @elseif($faq->level === 'kab_kota')
+                                    @elseif($faq->level === 'Kab/Kota')
                                         <span
                                             class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded border border-yellow-200 text-xs font-medium">Kab/Kota</span>
                                     @endif
@@ -204,7 +204,7 @@
 
     <!-- Create FAQ Modal -->
     <x-modal name="create-faq" title="Tambah FAQ Baru">
-        <form action="{{ route('faq.store') }}" method="POST" x-data="{ level: '{{ old('level', 'pusat') }}' }">
+        <form action="{{ route('faq.store') }}" method="POST" x-data="{ level: '{{ old('level', 'Nasional') }}' }">
             @csrf
             <div class="mb-4">
                 <label for="question" class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan</label>
@@ -215,9 +215,9 @@
                 <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Level</label>
                 <select name="level" id="level" required x-model="level"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                    <option value="pusat">Pusat (Tingkat Pusat)</option>
-                    <option value="provinsi">Provinsi</option>
-                    <option value="kab_kota">Kabupaten/Kota</option>
+                    <option value="Nasional">Nasional (Tingkat Pusat)</option>
+                    <option value="Provinsi">Provinsi</option>
+                    <option value="Kab/Kota">Kabupaten/Kota</option>
                 </select>
             </div>
 
@@ -248,13 +248,13 @@
                 </div>
                 <div>
                     <h4 class="text-sm font-medium text-gray-500 mb-1">Level</h4>
-                    @if($faq->level === 'pusat')
+                    @if($faq->level === 'Nasional')
                         <span
-                            class="px-2 py-1 bg-green-100 text-green-800 rounded border border-green-200 text-xs font-medium">Pusat</span>
-                    @elseif($faq->level === 'provinsi')
+                            class="px-2 py-1 bg-green-100 text-green-800 rounded border border-green-200 text-xs font-medium">Nasional</span>
+                    @elseif($faq->level === 'Provinsi')
                         <span
                             class="px-2 py-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium">Provinsi</span>
-                    @elseif($faq->level === 'kab_kota')
+                    @elseif($faq->level === 'Kab/Kota')
                         <span
                             class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded border border-yellow-200 text-xs font-medium">Kab/Kota</span>
                     @endif
@@ -292,9 +292,9 @@
                         class="block text-sm font-medium text-gray-700 mb-1">Level</label>
                     <select name="level" id="edit_level_{{ $faq->id }}" required x-model="level"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                        <option value="pusat">Pusat (Tingkat Pusat)</option>
-                        <option value="provinsi">Provinsi</option>
-                        <option value="kab_kota">Kabupaten/Kota</option>
+                        <option value="Nasional">Nasional (Tingkat Pusat)</option>
+                        <option value="Provinsi">Provinsi</option>
+                        <option value="Kab/Kota">Kabupaten/Kota</option>
                     </select>
                 </div>
 

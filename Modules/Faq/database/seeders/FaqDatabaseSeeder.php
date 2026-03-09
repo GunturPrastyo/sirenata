@@ -4,6 +4,7 @@ namespace Modules\Faq\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Faq\Models\Faq;
+use Modules\Faq\Enums\FaqLevel;
 use App\Models\User;
 
 class FaqDatabaseSeeder extends Seeder
@@ -34,7 +35,7 @@ class FaqDatabaseSeeder extends Seeder
             Faq::create([
                 'question' => $data['question'],
                 'answer' => $data['answer'],
-                'level' => 'pusat',
+                'level' => FaqLevel::NASIONAL->value,
                 'created_by' => $admin->id,
             ]);
         }
@@ -49,7 +50,7 @@ class FaqDatabaseSeeder extends Seeder
             Faq::create([
                 'question' => $data['question'],
                 'answer' => $data['answer'],
-                'level' => 'provinsi',
+                'level' => FaqLevel::PROVINSI->value,
                 'created_by' => $admin->id,
             ]);
         }
@@ -64,7 +65,7 @@ class FaqDatabaseSeeder extends Seeder
             Faq::create([
                 'question' => $data['question'],
                 'answer' => $data['answer'],
-                'level' => 'kab_kota',
+                'level' => FaqLevel::KAB_KOTA->value,
                 'created_by' => $admin->id,
             ]);
         }

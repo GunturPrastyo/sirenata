@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->integer('duration')->comment('Duration in months');
             $table->foreignUuid('team_leader')->constrained('users');
             $table->json('team_members')->nullable();
-            $table->string('type')->comment('RTKN, RTKD_PROV, RTKD_KAB');
+            $table->string('type')->comment('Nasional, Provinsi, Kab/Kota');
             $table->string('status')->nullable()->default('On Progress');
             $table->timestamps();
         });
