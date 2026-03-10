@@ -10,10 +10,12 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/', 'index')->name('index');
         Route::get('/kab-kota/{provinceCode}', 'kabKota')->name('kab-kota');
 
-
         Route::get('/rekap-user-province/{provinceCode}', 'rekapUserProvince')->name('rekap-user-province');
         Route::get('/rekap-user-kab-kota/{regencyCode}', 'rekapUserKabKota')->name('rekap-user-kab-kota');
     });
+
+    Route::resource('library-types', \Modules\LMS\Http\Controllers\AdminPusat\LibraryTypeController::class)->except('show');
+    Route::resource('libraries', \Modules\LMS\Http\Controllers\AdminPusat\LibraryController::class)->except('show');
 });
 
 Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->name('admin-province.')->group(function () {
@@ -23,9 +25,12 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
     });
 });
 
-
 Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->name('admin-kab-kota.')->group(function () {
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(AdminKabKotaRekapitulasiController::class)->group(function () {
         Route::get('/', 'index')->name('index');
     });
+});
+
+Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(function () {
+    Route::get('/library', [\Modules\LMS\Http\Controllers\User\LibraryController::class, 'index'])->name('library.index');
 });
