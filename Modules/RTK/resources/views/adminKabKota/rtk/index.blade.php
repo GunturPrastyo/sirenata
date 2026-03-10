@@ -57,7 +57,7 @@
                             <option value="">Semua Status</option>
                             @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
                                 <option value="{{ $status->value }}" @selected(request('status') === $status->value)>
-                                    {{ $status->value }}
+                                    {{ $status->label() }}
                                 </option>
                             @endforeach
                         </select>

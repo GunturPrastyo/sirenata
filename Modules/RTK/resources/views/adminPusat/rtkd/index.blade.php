@@ -40,7 +40,7 @@
                             <option value="">Semua Status</option>
                             @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
                                 <option value="{{ $status->value }}" @selected(request('status') === $status->value)>
-                                    {{ $status->value }}
+                                    {{ $status->label() }}
                                 </option>
                             @endforeach
                         </select>
@@ -62,7 +62,7 @@
                 </div>
 
                 <!-- Right: Search + Buttons -->
-                <div class="flex w-full lg:w-96 gap-2">
+                <div class="flex w-full  gap-2">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
@@ -123,157 +123,147 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+                <table class="min-w-full text-sm table-auto">
                     <thead class="bg-slate-100 border-b border-slate-200">
                         <tr class="text-slate-500 uppercase text-xs">
 
-                            <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Instansi (Provinsi)</th>
+                            <th class="px-4 md:px-6 py-3 text-center w-16">No</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-48">Instansi (Provinsi)</th>
                             <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Disetujui Oleh</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Tanggal Disetujui</th>
-                            {{-- <th class="px-4 md:px-6 py-3 text-left">Aktif</th> --}}
-                            <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-40">Periode Berlaku</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-36">Status</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-48">Diverifikasi Oleh</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-40">Tanggal Diverifikasi</th>
+                            <th class="px-4 md:px-6 py-3 text-center w-24">Aksi</th>
+
                         </tr>
                     </thead>
 
-                    <tbody id="admin-table-body" class="divide-y divide-slate-200">
+                    <tbody class="divide-y divide-slate-200">
                         @forelse ($rtkds as $key => $province)
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $key + $rtkds->firstItem() }}</p>
+                                <td class="px-4 md:px-6 py-3 text-center text-slate-600">
+                                    {{ $key + $rtkds->firstItem() }}
                                 </td>
+
                                 <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $province->name }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">
-                                        {{ optional($province->latest_rtk)->name ?? '-' }}
+                                    <p class="font-medium text-slate-700">
+                                        {{ $province->name }}
                                     </p>
                                 </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">
-                                        @if ($province->latest_rtk)
-                                            {{ $province->latest_rtk->start_date }} -
-                                            {{ $province->latest_rtk->end_date }}
-                                        @else
-                                            <span class="text-slate-400 italic">Belum ada</span>
-                                        @endif
-                                    </p>
-                                </td>
+
                                 <td class="px-4 md:px-6 py-3">
                                     @if ($province->latest_rtk)
+                                        <p class="font-semibold text-slate-700">
+                                            {{ $province->latest_rtk->name }}
+                                        </p>
+                                    @else
+                                        <span class="text-slate-400 italic">Belum ada dokumen</span>
+                                    @endif
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3">
+                                    @if ($province->latest_rtk)
+                                        <span class="text-slate-600">
+                                            {{ $province->latest_rtk->start_date }}
+                                            <span class="mx-1 text-slate-400">–</span>
+                                            {{ $province->latest_rtk->end_date }}
+                                        </span>
+                                    @else
+                                        <span class="text-slate-400 italic">-</span>
+                                    @endif
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3 text-center">
+                                    @if ($province->latest_rtk)
                                         <span
-                                            class="px-2 py-1 text-xs rounded-full font-semibold {{ $province->latest_rtk->status_color }}">
+                                            class="px-2.5 py-1 text-xs rounded-full font-semibold {{ $province->latest_rtk->status_color }}">
                                             {{ $province->latest_rtk->status_label }}
                                         </span>
                                     @else
-                                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
+                                        <span class="px-2.5 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
                                             Belum ada RTK
                                         </span>
                                     @endif
                                 </td>
 
-                                <td class="px-4 md:px-6 py-3">
+                                <td class="px-4 md:px-6 py-3 text-slate-600">
                                     {{ $province->latest_rtk?->approver?->name ?? '-' }}
                                 </td>
 
-                                <td class="px-4 md:px-6 py-3">
+                                <td class="px-4 md:px-6 py-3 text-slate-600">
                                     {{ $province->latest_rtk?->approved_at?->format('d M Y') ?? '-' }}
                                 </td>
-                                {{-- <td class="px-4 md:px-6 py-3">
-                                    @if ($province->latest_rtk)
-                                        @if ($province->latest_rtk->is_active)
-                                            <span
-                                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
-                                                <svg class="w-4 h-4 text-emerald-600" fill="none"
-                                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M5 13l4 4L19 7" />
-                                                </svg>
-                                            </span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
-                                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
-                                                    stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M6 6L18 18M6 18L18 6" />
-                                                </svg>
-                                            </span>
-                                        @endif
-                                    @else
-                                        <span class="text-slate-400 italic text-xs">Belum ada</span>
-                                    @endif
-                                </td> --}}
-                                <td class="px-4 md:px-6 py-3 text-left">
+
+                                <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
                                         <li>
                                             <a href="{{ route('admin-pusat.rtkd.kab-kota', $province->code) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Rekap
-                                                Kab/Kota</a>
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                Rekap Kab/Kota
+                                            </a>
                                         </li>
-
+                                        <li>
+                                            <a href="{{ route('admin-pusat.rtkd.show-province', $province->code) }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                Lihat RTK
+                                            </a>
+                                        </li>
                                         @if ($province->latest_rtk)
-                                            <li>
-                                                <a href="{{ route('admin-pusat.rtkd.show-province', $province->code) }}"
-                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                    Lihat RTK
-                                                </a>
-                                            </li>
                                             <li>
                                                 <a href="{{ Storage::url($province->latest_rtk->document_path) }}"
                                                     download="{{ $province->latest_rtk->name }}"
-                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Download</a>
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                    Download
+                                                </a>
                                             </li>
                                             <li>
                                                 <button type="button" x-data
                                                     @click="$dispatch('open-modal', 'open-document-province-{{ $province->code }}')"
                                                     class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                    Preview Dokumen RTK
+                                                    Preview Dokumen
                                                 </button>
-
-                                                <x-modal name="open-document-province-{{ $province->code }}"
-                                                    title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
-                                                    <h1>{{ $province->latest_rtk->name }}</h1>
-                                                    <div class="border border-gray-300 rounded-md overflow-hidden">
-                                                        @if ($province->latest_rtk->document_path && Storage::disk('public')->exists($province->latest_rtk->document_path))
-                                                            <iframe
-                                                                src="{{ Storage::url($province->latest_rtk->document_path) }}"
-                                                                class="w-full min-h-[500px] rounded-md border"></iframe>
-                                                        @else
-                                                            <div
-                                                                class="flex items-center justify-center min-h-[500px] text-gray-400 border rounded-md">
-                                                                Tidak ada dokumen tersimpan
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                    <x-slot:footer>
-                                                        <button
-                                                            @click="$dispatch('close-modal', 'open-document-province-{{ $province->code }}')"
-                                                            class="inline-flex items-center justify-center px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">
-                                                            Close
-                                                        </button>
-                                                    </x-slot:footer>
-                                                </x-modal>
                                             </li>
+
+                                            <x-modal name="open-document-province-{{ $province->code }}"
+                                                title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
+                                                <h1>{{ $province->latest_rtk->name }}</h1>
+                                                <div class="border border-gray-300 rounded-md overflow-hidden">
+                                                    @if ($province->latest_rtk->document_path && Storage::disk('public')->exists($province->latest_rtk->document_path))
+                                                        <iframe
+                                                            src="{{ Storage::url($province->latest_rtk->document_path) }}"
+                                                            class="w-full min-h-[500px] rounded-md border"></iframe>
+                                                    @else
+                                                        <div
+                                                            class="flex items-center justify-center min-h-[500px] text-gray-400 border rounded-md">
+                                                            Tidak ada dokumen tersimpan
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <x-slot:footer>
+                                                    <button
+                                                        @click="$dispatch('close-modal', 'open-document-province-{{ $province->code }}')"
+                                                        class="inline-flex items-center justify-center px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">
+                                                        Close
+                                                    </button>
+                                                </x-slot:footer>
+                                            </x-modal>
                                         @endif
                                     </x-table.action>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">Tidak ada data provinsi</p>
+                                <td colspan="8" class="px-6 py-12 text-center">
+                                    <p class="text-sm text-slate-500">
+                                        Tidak ada data provinsi
+                                    </p>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $rtkds->links() }}
             </div>

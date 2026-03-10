@@ -53,7 +53,7 @@
                             <option value="">Semua Status</option>
                             @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
                                 <option value="{{ $status->value }}" @selected(request('status') === $status->value)>
-                                    {{ $status->value }}
+                                    {{ $status->label() }}
                                 </option>
                             @endforeach
                         </select>
@@ -79,7 +79,7 @@
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari nama kab/kota"
+                            placeholder="Cari nama dokumen RTK"
                             class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
                     focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
@@ -191,19 +191,144 @@
                                     <x-table.action>
                                         @if ($rtk->status === 'pending')
                                             <li class="mb-2">
-                                                <form method="POST"
-                                                    action="{{ route('admin-pusat.rtkd.approveProvince', $rtk->id) }}">
-                                                    @csrf
-                                                    <button class="bg-green-600 text-white px-3 w-full py-1 rounded">
-                                                        Approve
-                                                    </button>
-                                                </form>
+                                                <button type="button" x-data
+                                                    @click="$dispatch('open-modal', 'approve-rtk-{{ $rtk->id }}')"
+                                                    class="w-full px-3 py-2 cursor-pointer text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700">
+                                                    Disetujui
+                                                </button>
+
+                                                <x-modal name="approve-rtk-{{ $rtk->id }}"
+                                                    title="Konfirmasi Persetujuan RTK" maxWidth="sm:max-w-md">
+                                                    <div class="p-6 text-center">
+                                                        <div class="flex justify-center mb-4">
+                                                            <div
+                                                                class="flex items-center justify-center w-12 h-12 rounded-full bg-green-100">
+                                                                <svg class="w-6 h-6 text-green-600"
+                                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                    viewBox="0 0 24 24" stroke-width="2"
+                                                                    stroke="currentColor">
+                                                                    <path stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        d="M9 12l2 2l4 -4m6 2a9 9 0 11-18 0a9 9 0 0118 0z" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+
+                                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                                                            Setujui Dokumen RTK
+                                                        </h3>
+
+                                                        <p class="text-sm text-gray-500 mb-6">
+                                                            Apakah Anda yakin ingin menyetujui dokumen berikut?
+                                                        </p>
+
+                                                        <div
+                                                            class="bg-gray-50 border rounded-md p-3 text-sm text-gray-600 mb-6">
+                                                            <p class="font-medium">{{ $rtk->name }}</p>
+                                                            <p class="text-xs text-gray-500">
+                                                                Periode {{ $rtk->start_date }} - {{ $rtk->end_date }}
+                                                            </p>
+                                                        </div>
+
+                                                        <form
+                                                            action="{{ route('admin-pusat.rtkd.approveProvince', $rtk->id) }}"
+                                                            method="POST" class="flex justify-center gap-3">
+
+                                                            @csrf
+
+                                                            <button type="submit"
+                                                                class="px-4 py-2 cursor-pointer text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700">
+                                                                Ya, Setujui
+                                                            </button>
+
+                                                            <button type="button"
+                                                                @click="$dispatch('close-modal', 'approve-rtk-{{ $rtk->id }}')"
+                                                                class="px-4 py-2 cursor-pointer text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200">
+                                                                Batal
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </x-modal>
+                                            </li>
+
+                                            <li class="mb-2">
+                                                <button type="button" x-data
+                                                    @click="$dispatch('open-modal', 'reject-rtk-{{ $rtk->id }}')"
+                                                    class="w-full px-3 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700">
+                                                    Tolak
+                                                </button>
+
+                                                <x-modal name="reject-rtk-{{ $rtk->id }}"
+                                                    title="Konfirmasi Penolakan RTK" maxWidth="sm:max-w-xl">
+                                                    <div class="p-6">
+                                                        <div class="flex justify-center mb-4">
+                                                            <div
+                                                                class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100">
+                                                                <svg class="w-6 h-6 text-red-600"
+                                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                    viewBox="0 0 24 24" stroke-width="2"
+                                                                    stroke="currentColor">
+                                                                    <path stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+
+                                                        <h3
+                                                            class="text-lg font-semibold text-gray-800 text-center mb-2">
+                                                            Tolak Dokumen RTK
+                                                        </h3>
+
+                                                        <p class="text-sm text-gray-500 text-center mb-6">
+                                                            Silakan berikan alasan penolakan dokumen berikut.
+                                                        </p>
+
+                                                        <div
+                                                            class="bg-gray-50 border rounded-md p-3 text-sm text-gray-600 mb-5">
+                                                            <p class="font-medium">{{ $rtk->name }}</p>
+                                                            <p class="text-xs text-gray-500">
+                                                                Periode {{ $rtk->start_date }} - {{ $rtk->end_date }}
+                                                            </p>
+                                                        </div>
+
+                                                        <form
+                                                            action="{{ route('admin-pusat.rtkd.rejectProvince', $rtk->id) }}"
+                                                            method="POST" class="space-y-4">
+                                                            @csrf
+                                                            <div>
+                                                                <label
+                                                                    class="block text-sm font-medium text-gray-700 mb-1">
+                                                                    Alasan Penolakan
+                                                                </label>
+
+                                                                <textarea name="reason" rows="3" required
+                                                                    class="w-full px-3 py-2 text-sm border rounded-md focus:ring focus:ring-red-200 focus:border-red-400"
+                                                                    placeholder="Contoh: Dokumen belum sesuai format yang ditetapkan"></textarea>
+                                                            </div>
+
+                                                            <div class="flex justify-end gap-3 pt-2">
+
+                                                                <button type="button"
+                                                                    @click="$dispatch('close-modal', 'reject-rtk-{{ $rtk->id }}')"
+                                                                    class="px-4 py-2 cursor-pointer text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200">
+                                                                    Batal
+                                                                </button>
+
+                                                                <button type="submit"
+                                                                    class="px-4 py-2 cursor-pointer text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700">
+                                                                    Ya, Tolak
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </x-modal>
                                             </li>
                                         @endif
                                         <li class="mb-2">
                                             <button type="button" x-data
                                                 @click="$dispatch('open-modal', 'open-document-province-{{ $rtk->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                class="inline-flex items-center cursor-pointer w-full p-2 hover:bg-slate-100 rounded">
                                                 Preview Dokumen RTK
                                             </button>
 

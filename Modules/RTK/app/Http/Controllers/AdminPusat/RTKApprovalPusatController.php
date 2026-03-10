@@ -5,6 +5,7 @@ namespace Modules\RTK\Http\Controllers\AdminPusat;
 use App\Http\Controllers\Controller;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\RTK\Enums\RTKStatus;
 use Modules\RTK\Enums\TypeRtk;
@@ -65,18 +66,33 @@ class RTKApprovalPusatController extends Controller
         return back();
     }
 
-    public function reject(Request $request, string $id)
+    public function rejectProvince(Request $request, RencanaTenagaKerja $rtk)
     {
-        $request->validate([
-            'reason' => 'required|string|max:500'
+        $validated = $request->validate([
+            'reason' => ['required', 'string', 'max:500']
         ]);
-
-        $rtk = RencanaTenagaKerja::findOrFail($id);
 
         $rtk->update([
             'status' => RTKStatus::REJECTED->value,
-            'rejected_reason' => $request->reason,
-            'approved_by' => auth()->id(),
+            'rejected_reason' => $validated['reason'],
+            'approved_by' => Auth::id(),
+            'approved_at' => now(),
+        ]);
+
+        ToastMagic::success('RTK berhasil ditolak');
+        return back();
+    }
+    
+    public function rejectKabKota(Request $request, RencanaTenagaKerja $rtk)
+    {
+        $validated = $request->validate([
+            'reason' => ['required', 'string', 'max:500']
+        ]);
+
+        $rtk->update([
+            'status' => RTKStatus::REJECTED->value,
+            'rejected_reason' => $validated['reason'],
+            'approved_by' => Auth::id(),
             'approved_at' => now(),
         ]);
 
