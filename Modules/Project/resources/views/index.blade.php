@@ -84,7 +84,7 @@
                     </button>
 
                     <!-- Reset -->
-                    <a href="{{ route('project.index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
+                    <a href="{{ route($routePrefix . 'index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium
                 hover:bg-slate-100 transition">
                         <i class="fas fa-rotate-left text-xs"></i>
@@ -108,7 +108,7 @@
 
                 <div class="flex items-center gap-2">
                     @can('project.create')
-                        <a href="{{ route('project.create') }}"
+                        <a href="{{ route($routePrefix . 'create') }}"
                             class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -183,19 +183,19 @@
                                     <x-table.action>
                                         @can('project.view')
                                             <li>
-                                                <a href="{{ route('project.show', $project->id) }}"
+                                                <a href="{{ route($routePrefix . 'show', $project->id) }}"
                                                     class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600">Detail</a>
                                             </li>
                                         @endcan
                                         @can('project.edit')
                                             <li>
-                                                <a href="{{ route('project.edit', $project->id) }}"
+                                                <a href="{{ route($routePrefix . 'edit', $project->id) }}"
                                                     class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600">Edit</a>
                                             </li>
                                         @endcan
                                         @can('project.delete')
                                             <li>
-                                                <form action="{{ route('project.destroy', $project->id) }}" method="POST"
+                                                <form action="{{ route($routePrefix . 'destroy', $project->id) }}" method="POST"
                                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');"
                                                     class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
                                                     @csrf

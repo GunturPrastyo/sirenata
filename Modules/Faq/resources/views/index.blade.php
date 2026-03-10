@@ -77,7 +77,7 @@
                     </button>
 
                     <!-- Reset -->
-                    <a href="{{ route('faq.index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
+                    <a href="{{ route($routePrefix . 'index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium
                 hover:bg-slate-100 transition">
                         <i class="fas fa-rotate-left text-xs"></i>
@@ -172,7 +172,7 @@
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600">Edit</button>
                                         </li>
                                         <li>
-                                            <form action="{{ route('faq.destroy', $faq->id) }}" method="POST"
+                                            <form action="{{ route($routePrefix . 'destroy', $faq->id) }}" method="POST"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus FAQ ini?');"
                                                 class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
                                                 @csrf
@@ -204,7 +204,8 @@
 
     <!-- Create FAQ Modal -->
     <x-modal name="create-faq" title="Tambah FAQ Baru">
-        <form action="{{ route('faq.store') }}" method="POST" x-data="{ level: '{{ old('level', 'Nasional') }}' }">
+        <form action="{{ route($routePrefix . 'store') }}" method="POST"
+            x-data="{ level: '{{ old('level', 'Nasional') }}' }">
             @csrf
             <div class="mb-4">
                 <label for="question" class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan</label>
@@ -276,7 +277,7 @@
     <!-- Edit FAQ Modals -->
     @foreach($faqs as $faq)
         <x-modal name="edit-faq-{{ $faq->id }}" title="Edit FAQ">
-            <form action="{{ route('faq.update', $faq->id) }}" method="POST"
+            <form action="{{ route($routePrefix . 'update', $faq->id) }}" method="POST"
                 x-data="{ level: '{{ old('level', $faq->level) }}' }">
                 @csrf
                 @method('PUT')

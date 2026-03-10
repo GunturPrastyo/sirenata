@@ -15,7 +15,7 @@
 </li>
 
 <li>
-    <a href="{{ route('project.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('admin-province.project.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('project.*')
     ? 'text-indigo-600 bg-purple-100'
     : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">

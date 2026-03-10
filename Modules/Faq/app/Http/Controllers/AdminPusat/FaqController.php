@@ -1,29 +1,20 @@
 <?php
 
-namespace Modules\Faq\Http\Controllers;
+namespace Modules\Faq\Http\Controllers\AdminPusat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Modules\Faq\Models\Faq;
 use Modules\Faq\Enums\FaqLevel;
-use Modules\MasterData\Models\Province;
 
 class FaqController extends Controller
 {
+    protected string $routePrefix = 'admin-pusat.faq.';
+
     public function index(Request $request)
     {
-        $user = auth()->user();
         $query = Faq::with('creator')->latest();
-
-        if (!$user->hasRole('admin-pusat')) {
-            if ($user->hasRole('admin-province')) {
-                $query->where('level', FaqLevel::PROVINSI->value);
-            } elseif ($user->hasRole('admin-kab-kota')) {
-                $query->where('level', FaqLevel::KAB_KOTA->value);
-            } else {
-                $query->where('id', -1);
-            }
-        }
 
         if ($request->filled('search')) {
             $searchTerm = '%' . $request->search . '%';
@@ -37,10 +28,10 @@ class FaqController extends Controller
             $query->where('level', $request->level);
         }
 
-        $perPage = $request->get('per_page', 10);
-        $faqs = $query->paginate($perPage)->withQueryString();
+        $faqs = $query->paginate($request->get('per_page', 10))->withQueryString();
+        $routePrefix = $this->routePrefix;
 
-        return view('faq::index', compact('faqs'));
+        return view('faq::index', compact('faqs', 'routePrefix'));
     }
 
     public function store(Request $request)
@@ -51,28 +42,23 @@ class FaqController extends Controller
             'level' => 'required|in:' . FaqLevel::NASIONAL->value . ',' . FaqLevel::PROVINSI->value . ',' . FaqLevel::KAB_KOTA->value,
         ]);
 
-        $user = auth()->user();
-
-        $faq = Faq::create([
+        Faq::create([
             'question' => $request->question,
             'answer' => $request->answer,
             'level' => $request->level,
-            'created_by' => $user->id,
+            'created_by' => Auth::id(),
         ]);
 
-        return redirect()->route('faq.index')->with('success', 'FAQ berhasil dibuat!');
+        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil dibuat!');
     }
 
     public function show($id)
     {
         $faq = Faq::with('creator')->findOrFail($id);
-        return view('faq::show', compact('faq'));
+        $routePrefix = $this->routePrefix;
+        return view('faq::show', compact('faq', 'routePrefix'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     * Only Admin Pusat can update FAQs.
-     */
     public function update(Request $request, $id)
     {
         $faq = Faq::findOrFail($id);
@@ -89,7 +75,7 @@ class FaqController extends Controller
             'level' => $request->level,
         ]);
 
-        return redirect()->route('faq.index')->with('success', 'FAQ berhasil diperbarui!');
+        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -97,6 +83,6 @@ class FaqController extends Controller
         $faq = Faq::findOrFail($id);
         $faq->delete();
 
-        return redirect()->route('faq.index')->with('success', 'FAQ berhasil dihapus!');
+        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil dihapus!');
     }
 }
