@@ -22,7 +22,8 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         
         Route::post('/province/{rtk}/approve', [RTKApprovalPusatController::class, 'approveProvince'])->name('approveProvince');
         Route::post('/regency/{rtk}/approve', [RTKApprovalPusatController::class, 'approveKabKota'])->name('approveKabKota');
-        // Route::post('/{rtk}/reject', [RTKApprovalPusatController::class, 'rejectProvince'])->name('reject');
+        Route::post('/province/{rtk}/reject', [RTKApprovalPusatController::class, 'rejectProvince'])->name('rejectProvince');
+        Route::post('/regency/{rtk}/reject', [RTKApprovalPusatController::class, 'rejectKabKota'])->name('rejectKabKota');
     });
 });
 

@@ -1,6 +1,6 @@
 <div x-data="{ open: false }" class="relative">
     <button @click="open = !open" x-ref="trigger"
-        class="inline-flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:ring-4 focus:ring-slate-200 rounded-lg text-sm p-2 focus:outline-none transition"
+        class="inline-flex items-center cursor-pointer justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:ring-4 focus:ring-slate-200 rounded-lg text-sm p-2 focus:outline-none transition"
         type="button">
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
             <path

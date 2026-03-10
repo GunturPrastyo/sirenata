@@ -37,6 +37,30 @@
                 </li>
             </ol>
         </nav>
+        @if ($rtkdp->status === \Modules\RTK\Enums\RTKStatus::REJECTED)
+            <div class="mb-6 border border-red-200 bg-red-50 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-red-600 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v3m0 3h.01M21 12a9 9 0 11-18 0a9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="text-sm font-semibold text-red-700">
+                            Dokumen RTK Ditolak
+                        </p>
+                        <p class="text-sm text-red-600 mt-1">
+                            Dokumen yang Anda ajukan ditolak oleh
+                            {{ $rtkdp->approver?->name ?? 'Admin Pusat/Admin Province' }}.
+                            Silakan perbaiki dokumen berdasarkan alasan berikut:
+                        </p>
+                        <div class="mt-3 bg-white border border-red-200 rounded-md p-3 text-sm text-gray-700">
+                            {{ $rtkdp->rejected_reason }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
         <x-validation-errors class="mb-3" />
         <div class="">
             <button type="button" x-data @click="$dispatch('open-modal', 'preview-document')"
@@ -164,7 +188,8 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Upload Dokumen Rencana Tenaga Kerja Daerah Provinsi
                             </label>
-                            <div class="file-upload-area rounded-md p-8 text-center cursor-pointer" id="fileUploadArea">
+                            <div class="file-upload-area rounded-md p-8 text-center cursor-pointer"
+                                id="fileUploadArea">
                                 <input type="file" id="fileInput" name="document_path" accept=".pdf"
                                     class="hidden">
                                 <div id="uploadPrompt">

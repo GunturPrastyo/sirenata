@@ -100,23 +100,59 @@
                     </p>
 
                     @if ($rtkKabKotaActive)
+
                         <div
-                            class="inline-flex items-center px-4 py-2 rounded-lg {{ $rtkKabKotaActive->status_color }}">
+                            class="inline-flex items-start gap-3 px-4 py-3 rounded-lg {{ $rtkKabKotaActive->status_color }}">
                             <div>
-                                <span class="font-semibold">
+
+                                <span class="font-semibold block">
                                     {{ $rtkKabKotaActive->status_label }}
                                 </span>
 
                                 @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::APPROVED)
-                                    <p class="text-xs">
+                                    <p class="text-xs mt-1">
                                         Berlaku hingga
                                         {{ \Carbon\Carbon::parse($rtkKabKotaActive->end_date)->format('d M Y') }}
                                     </p>
                                 @endif
 
                                 @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::PENDING)
-                                    <p class="text-xs">
+                                    <p class="text-xs mt-1">
                                         Dokumen sedang diverifikasi oleh Admin Provinsi
+                                    </p>
+                                @endif
+
+                                @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::REJECTED)
+                                    <p class="text-xs mt-1">
+                                        Dokumen ditolak oleh
+                                        <span class="font-medium">
+                                            {{ $rtkKabKotaActive->approver?->name ?? 'Admin Provinsi / Admin Pusat' }}
+                                        </span>.
+                                        Silakan perbaiki dokumen sesuai catatan yang diberikan.
+                                    </p>
+
+                                    @if ($rtkKabKotaActive->rejected_reason)
+                                        <div class="mt-2 text-xs bg-white/60 border border-red-200 rounded p-2">
+                                            <span class="font-medium">Alasan:</span>
+                                            {{ $rtkKabKotaActive->rejected_reason }}
+                                        </div>
+                                    @endif
+
+                                    <a href="{{ route('admin-kab-kota.rtkd.edit', $rtkKabKotaActive->id) }}"
+                                        class="inline-flex items-center gap-2 mt-3 px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213 3 21l1.787-4.5 12.075-12.013z" />
+                                        </svg>
+                                        Edit Dokumen
+                                    </a>
+                                @endif
+
+                                @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::EXPIRED)
+                                    <p class="text-xs mt-1">
+                                        Masa berlaku dokumen RTK telah berakhir.
                                     </p>
                                 @endif
                             </div>
@@ -125,7 +161,6 @@
                         <div class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">
                             <span class="font-semibold">RTK Belum Tersedia</span>
                         </div>
-
                     @endif
 
                 </div>

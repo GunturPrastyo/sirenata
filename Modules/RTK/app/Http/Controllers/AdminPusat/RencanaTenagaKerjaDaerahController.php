@@ -66,7 +66,8 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
                 limit: $limit,
                 status: $status
             );
-        return view('rtk::adminPusat.rtkd.kab-kota', compact('rtkds', 'provinceCode'));
+        $province = Province::find($provinceCode);
+        return view('rtk::adminPusat.rtkd.kab-kota', compact('rtkds', 'provinceCode', 'province'));
     }
 
     /**

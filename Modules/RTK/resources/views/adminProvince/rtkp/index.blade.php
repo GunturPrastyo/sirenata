@@ -55,7 +55,7 @@
                             <option value="">Semua Status</option>
                             @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
                                 <option value="{{ $status->value }}" @selected(request('status') === $status->value)>
-                                    {{ $status->value }}
+                                    {{ $status->label() }}
                                 </option>
                             @endforeach
                         </select>
@@ -93,7 +93,7 @@
                 </div>
 
                 <!-- Right: Search + Buttons -->
-                <div class="flex w-full lg:w-96 gap-2">
+                <div class="flex w-full gap-2">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
