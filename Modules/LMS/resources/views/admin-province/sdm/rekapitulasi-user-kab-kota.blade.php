@@ -103,7 +103,7 @@
                         Search
                     </button>
 
-                    <a href="{{ route('admin-pusat.rekapitulasi.rekap-user-kab-kota', $regencyCode) }}"
+                    <a href="{{ route('admin-province.rekapitulasi.rekap-user-kab-kota', $regencyCode) }}"
                         class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg
                     border border-slate-300 text-slate-600 text-sm font-medium
                     hover:bg-slate-100 transition">

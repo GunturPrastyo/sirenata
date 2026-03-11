@@ -7,6 +7,7 @@ use Modules\RTK\Http\Controllers\RencanaTenagaKerjaNasionalController;
 use Modules\RTK\Http\Controllers\AdminProvinsi\RencanaTenagaKerjaProvinceController;
 use Modules\RTK\Http\Controllers\AdminKabKota\RencanaTenagaKerjaKabKotaController as RencanaTenagaKerjaKabKotaControllerAdminKabKota;
 use Modules\RTK\Http\Controllers\AdminKabKota\RtkKabKotaDashboardController;
+use Modules\RTK\Http\Controllers\AdminProvinsi\RTKApprovalProvinceController;
 use Modules\RTK\Http\Controllers\AdminPusat\RTKApprovalPusatController;
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
@@ -35,6 +36,9 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
 
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaKabKotaController::class, 'index'])->name('index');
+        Route::get('/regency/{regencyCode}/show', [RencanaTenagaKerjaKabKotaController::class, 'showRegency'])->name('show-regency');
+        Route::post('/regency/{rtk}/approve', [RTKApprovalProvinceController::class, 'approveKabKota'])->name('approveKabKota');
+        Route::post('/regency/{rtk}/reject', [RTKApprovalProvinceController::class, 'rejectKabKota'])->name('rejectKabKota');
     });
 });
 

@@ -1,8 +1,9 @@
 <li>
-    <a href="{{ route('admin-province.dashboard') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('admin-province.dashboard') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-province.dashboard')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -15,10 +16,11 @@
 </li>
 
 <li>
-    <a href="{{ route('project.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('project.index') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('project.*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -28,14 +30,14 @@
     </a>
 </li>
 
-<li
-    x-data="{ open: {{ request()->routeIs('admin-province.rtkdp*,admin-province.laporan.index') ? 'true' : 'false' }} }">
-    <button @click="open = !open" class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
-        {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan.index')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
-        <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            fill="none" viewBox="0 0 24 24">
+<li x-data="{ open: {{ request()->routeIs('admin-province.rtkdp*,admin-province.laporan.index') ? 'true' : 'false' }} }">
+    <button @click="open = !open"
+        class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
+        {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan*')
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+        <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+            height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z" />
         </svg>
@@ -50,19 +52,21 @@
 
     <ul x-show="open" x-collapse class="mt-1 space-y-1">
         <li>
-            <a href="{{ route('admin-province.rtkdp.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+            <a href="{{ route('admin-province.rtkdp.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
                 {{ request()->routeIs('admin-province.rtkdp*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
                 Rekapitulasi Rencana Tenaga Kerja Provinsi
             </a>
         </li>
 
         <li>
-            <a href="{{ route('admin-province.laporan.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+            <a href="{{ route('admin-province.laporan.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
                 {{ request()->routeIs('admin-province.laporan*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
                 Rekapitulasi Rencana Tenaga Kerja
             </a>
         </li>
@@ -70,10 +74,11 @@
 </li>
 
 <li>
-    <a href="{{ route('admin-province.rekapitulasi.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('admin-province.rekapitulasi.index') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-province.rekapitulasi*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
@@ -84,10 +89,11 @@
 </li>
 
 <li>
-    <a href="#" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="#"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->is('admin-pusat/notification')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -98,10 +104,11 @@
 </li>
 
 <li>
-    <a href="{{ route('admin-province.help') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('admin-province.help') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-province.help')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
