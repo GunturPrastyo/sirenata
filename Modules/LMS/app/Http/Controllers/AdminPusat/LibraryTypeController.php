@@ -26,14 +26,6 @@ class LibraryTypeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('lms::admin-pusat.library-types.create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request) 
@@ -48,15 +40,6 @@ class LibraryTypeController extends Controller
 
         return redirect()->route('admin-pusat.library-types.index')
             ->with('success', 'Tipe Perpustakaan berhasil ditambahkan.');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $libraryType = LibraryType::findOrFail($id);
-        return view('lms::admin-pusat.library-types.edit', compact('libraryType'));
     }
 
     /**

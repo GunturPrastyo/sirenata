@@ -17,7 +17,7 @@ class LibraryController extends Controller
         $search = $request->input('search');
         $type = $request->input('type'); // slug of the library type
 
-        $query = Library::with('libraryType')->where('is_active', true);
+        $query = Library::with('libraryType');
 
         if ($search) {
             $query->where('title', 'like', "%{$search}%");

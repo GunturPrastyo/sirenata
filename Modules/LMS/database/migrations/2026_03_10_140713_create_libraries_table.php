@@ -18,9 +18,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('cover_image')->nullable();
             $table->string('file_path')->nullable();
+            $table->string('video_path')->nullable();
             $table->string('external_link')->nullable();
             $table->foreignUuid('created_by')->constrained('users')->cascadeOnDelete();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

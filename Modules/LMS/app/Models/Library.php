@@ -19,9 +19,9 @@ class Library extends Model
         'description',
         'cover_image',
         'file_path',
+        'video_path',
         'external_link',
         'created_by',
-        'is_active',
     ];
 
     public function libraryType()

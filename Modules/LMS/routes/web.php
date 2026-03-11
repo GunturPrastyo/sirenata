@@ -14,8 +14,8 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/rekap-user-kab-kota/{regencyCode}', 'rekapUserKabKota')->name('rekap-user-kab-kota');
     });
 
-    Route::resource('library-types', \Modules\LMS\Http\Controllers\AdminPusat\LibraryTypeController::class)->except('show');
-    Route::resource('libraries', \Modules\LMS\Http\Controllers\AdminPusat\LibraryController::class)->except('show');
+    Route::resource('library-types', \Modules\LMS\Http\Controllers\AdminPusat\LibraryTypeController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('libraries', \Modules\LMS\Http\Controllers\AdminPusat\LibraryController::class)->only(['index', 'store', 'update', 'destroy']);
 });
 
 Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->name('admin-province.')->group(function () {
