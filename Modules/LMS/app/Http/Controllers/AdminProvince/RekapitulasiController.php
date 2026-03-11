@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\LMS\Services\CourseService;
 use Modules\LMS\Services\RekapitulasiService;
+use Modules\MasterData\Models\Province;
 use Modules\MasterData\Models\Regency;
 
 class RekapitulasiController extends Controller
@@ -56,6 +57,32 @@ class RekapitulasiController extends Controller
             'data' => $data, 
             'regencyCode' => $regencyCode, 
             'regency' => $regency,
+            'courses' => $courses,
+        ]);
+    }
+
+    public function rekapUserProvince(Request $request) {
+        $user = Auth::user();
+        if (!$user->hasCompleteScope()) {
+            abort(403, 'Admin provinsi belum memiliki wilayah.');
+        }        
+        $provinceName = Province::find($user->scopeArea?->province_code)->name;
+        $limit   = $request->integer('per_page', 10);
+        $search  = $request->string('search')->toString();
+        $courseId = $request->string('course_id')->toString();
+
+        $courses = $this->courseService->getCoursesForFilter();
+        $data = $this->courseService->paginateCourseEnrollmentsByProvince(
+            provinceCode: $user->scopeArea->province_code,
+            search: $search,
+            limit: $limit,
+            courseId: $courseId,
+        );
+
+        return view('lms::admin-province.sdm.rekapitulasi-user-province', [
+            'data' => $data, 
+            'provinceCode' => $user->scopeArea->province_code, 
+            'provinceName' => $provinceName,
             'courses' => $courses,
         ]);
     }

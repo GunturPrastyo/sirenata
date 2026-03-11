@@ -73,9 +73,9 @@
     </ul>
 </li>
 
-<li>
-    <a href="{{ route('admin-province.rekapitulasi.index') }}"
-        class="flex items-center px-2 py-1.5 rounded-md transition
+<li x-data="{ open: {{ request()->routeIs('admin-province.rekapitulasi*') ? 'true' : 'false' }} }">
+    <button @click="open = !open"
+        class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-province.rekapitulasi*')
             ? 'text-indigo-600 bg-purple-100'
             : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
@@ -84,8 +84,35 @@
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
                 d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
         </svg>
-        <span class="flex-1 ms-3 whitespace-nowrap">Rekapitulasi SDM</span>
-    </a>
+
+        <span class="flex-1 ms-3 text-left">Rekapitulasi SDM</span>
+
+        <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+        </svg>
+    </button>
+
+    <ul x-show="open" x-collapse class="mt-1 space-y-1">
+        <li>
+            <a href="{{ route('admin-province.rekapitulasi.rekap-user-province') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+                {{ request()->routeIs('admin-province.rekapitulasi.rekap-user-province*')
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                Rekapitulasi SDM Provinsi
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('admin-province.rekapitulasi.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+                {{ request()->routeIs('admin-province.rekapitulasi.index*')
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                Rekapitulasi SDM Kab/Kota
+            </a>
+        </li>
+    </ul>
 </li>
 
 <li>

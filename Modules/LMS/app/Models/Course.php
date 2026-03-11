@@ -65,15 +65,11 @@ class Course extends Model
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
-    
+
     public function students()
     {
         return $this->belongsToMany(User::class, 'course_student')
-            ->withPivot([
-                'status',
-                'progress',
-                'completed_at'
-            ])
+            ->withPivot(['status', 'progress', 'completed_at', 'certificate_code', 'certificate_file', 'certificate_issued_at'])
             ->withTimestamps();
     }
 
