@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Rekapitulasi User Kab/Kota">
+<x-dashboard::layouts.dashboard title="Rekapitulasi User Provinsi">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
@@ -20,19 +20,7 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <a href="{{ route('admin-province.rekapitulasi.index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Rekapitulasi
-                            Kab/Kota</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Rekapitulasi User Kab/Kota</span>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Rekapitulasi User Provinsi</span>
                     </div>
                 </li>
             </ol>
@@ -51,7 +39,7 @@
                     </label>
                     <select name="per_page" onchange="this.form.submit()"
                         class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm
-                        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         @foreach ([10, 20, 50, 100] as $page)
                             <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
                                 {{ $page }}
@@ -67,7 +55,7 @@
                     </label>
                     <select name="course_id" onchange="this.form.submit()"
                         class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm
-                        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="">Semua Kursus</option>
                         @foreach ($courses as $course)
                             <option value="{{ $course->id }}"
@@ -88,7 +76,7 @@
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari nama user, instansi..."
                             class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
 
@@ -97,16 +85,16 @@
 
                     <button type="submit"
                         class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg
-                    bg-indigo-600 text-white text-sm font-medium
-                    hover:bg-indigo-700 transition">
+                bg-indigo-600 text-white text-sm font-medium
+                hover:bg-indigo-700 transition">
                         <i class="fas fa-search text-xs"></i>
                         Search
                     </button>
 
-                    <a href="{{ route('admin-province.rekapitulasi.rekap-user-kab-kota', $regencyCode) }}"
+                    <a href="{{ route('admin-province.rekapitulasi.rekap-user-province') }}"
                         class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg
-                    border border-slate-300 text-slate-600 text-sm font-medium
-                    hover:bg-slate-100 transition">
+                border border-slate-300 text-slate-600 text-sm font-medium
+                hover:bg-slate-100 transition">
                         <i class="fas fa-rotate-left text-xs"></i>
                         Reset
                     </a>
@@ -118,8 +106,7 @@
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Rekapitulasi User SDM
-                        {{ $regency->name }}</h2>
+                    <h2 class="text-base font-semibold text-slate-800">Rekapitulasi User SDM {{ $provinceName }}</h2>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -171,7 +158,6 @@
                                 <td class="px-4 md:px-6 py-3">
                                     <p class="text-slate-600">{{ $row->instansi }}</p>
                                 </td>
-
                                 <td class="px-4 md:px-6 py-3">
                                     <x-lms::enrollment.progressstatus :status="$row->status" :progress="$row->progress" />
                                 </td>

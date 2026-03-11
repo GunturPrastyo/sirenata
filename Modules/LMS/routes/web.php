@@ -22,6 +22,7 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(AdminProvinceRekapitulasiController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/rekap-user-kab-kota/{regencyCode}', 'rekapUserKabKota')->name('rekap-user-kab-kota');
+        Route::get('/rekap-user-province', 'rekapUserProvince')->name('rekap-user-province');
     });
 });
 

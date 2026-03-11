@@ -62,7 +62,7 @@
                 </div>
 
                 <!-- Right: Search + Buttons -->
-                <div class="flex w-full lg:w-96 gap-2">
+                <div class="flex w-full gap-2">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
@@ -81,7 +81,7 @@
                     </button>
 
                     <!-- Reset -->
-                    <a href="{{ route('admin-pusat.rtkn.index') }}"
+                    <a href="{{ route('admin-province.laporan.index') }}"
                         class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium
                 hover:bg-slate-100 transition">
@@ -124,69 +124,86 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+                <table class="min-w-full text-sm table-auto">
                     <thead class="bg-slate-100 border-b border-slate-200">
                         <tr class="text-slate-500 uppercase text-xs">
 
-                            <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Instansi (Kab/Kota)</th>
+                            <th class="px-4 md:px-6 py-3 text-center w-16">No</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-48">Instansi (Kab/Kota)</th>
                             <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Tahun Berlaku</th>
-                            {{-- <th class="px-4 md:px-6 py-3 text-left">Status</th> --}}
-                            <th class="px-4 md:px-6 py-3 text-left">Aktif</th>
-                            <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-40">Periode Berlaku</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-36">Status</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-48">Disetujui Oleh</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-40">Tanggal Disetujui</th>
+                            <th class="px-4 md:px-6 py-3 text-center w-24">Aksi</th>
+
                         </tr>
                     </thead>
 
-                    <tbody id="admin-table-body" class="divide-y divide-slate-200">
+                    <tbody class="divide-y divide-slate-200">
                         @forelse ($rtkds as $key => $regency)
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $key + $rtkds->firstItem() }}</p>
+                                <td class="px-4 md:px-6 py-3 text-center text-slate-600">
+                                    {{ $key + $rtkds->firstItem() }}
                                 </td>
+
                                 <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $regency->name }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $regency->latest_rtk->name ?? '-' }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">
-                                        @if ($regency->latest_rtk)
-                                            {{ $regency->latest_rtk->start_date }} -
-                                            {{ $regency->latest_rtk->end_date }}
-                                        @else
-                                            <span class="text-slate-400 italic">Belum ada</span>
-                                        @endif
+                                    <p class="font-medium text-slate-700">
+                                        {{ $regency->name }}
                                     </p>
                                 </td>
+
                                 <td class="px-4 md:px-6 py-3">
                                     @if ($regency->latest_rtk)
-                                        @if ($regency->latest_rtk->is_active)
-                                            <span
-                                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100">
-                                                <svg class="w-4 h-4 text-emerald-600" fill="none"
-                                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M5 13l4 4L19 7" />
-                                                </svg>
-                                            </span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-200">
-                                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
-                                                    stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M6 6L18 18M6 18L18 6" />
-                                                </svg>
-                                            </span>
-                                        @endif
+                                        <p class="font-semibold text-slate-700">
+                                            {{ $regency->latest_rtk->name }}
+                                        </p>
                                     @else
-                                        <span class="text-slate-400 italic text-xs">Belum ada</span>
+                                        <span class="text-slate-400 italic">Belum ada dokumen</span>
                                     @endif
                                 </td>
+
+                                <td class="px-4 md:px-6 py-3">
+                                    @if ($regency->latest_rtk)
+                                        <span class="text-slate-600">
+                                            {{ $regency->latest_rtk->start_date }}
+                                            <span class="mx-1 text-slate-400">–</span>
+                                            {{ $regency->latest_rtk->end_date }}
+                                        </span>
+                                    @else
+                                        <span class="text-slate-400 italic">-</span>
+                                    @endif
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3 text-center">
+                                    @if ($regency->latest_rtk)
+                                        <span
+                                            class="px-2.5 py-1 text-xs rounded-full font-semibold {{ $regency->latest_rtk->status_color }}">
+                                            {{ $regency->latest_rtk->status_label }}
+                                        </span>
+                                    @else
+                                        <span class="px-2.5 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
+                                            Belum ada RTK
+                                        </span>
+                                    @endif
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3 text-slate-600">
+                                    {{ $regency->latest_rtk?->approver?->name ?? '-' }}
+                                </td>
+
+                                <td class="px-4 md:px-6 py-3 text-slate-600">
+                                    {{ $regency->latest_rtk?->approved_at?->format('d M Y') ?? '-' }}
+                                </td>
+
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
+                                        <li>
+                                            <a href="{{ route('admin-province.laporan.show-regency', $regency->code) }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                Lihat RTK
+                                            </a>
+                                        </li>
                                         @if ($regency->latest_rtk)
                                             <li>
                                                 <a href="{{ Storage::url($regency->latest_rtk->document_path) }}"
@@ -196,8 +213,9 @@
                                             <li>
                                                 <button type="button" x-data
                                                     @click="$dispatch('open-modal', 'open-document-kab-kota-{{ $regency->code }}')"
-                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Lihat
-                                                    RTK</button>
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                    Preview Dokumen RTK
+                                                </button>
 
                                                 <x-modal name="open-document-kab-kota-{{ $regency->code }}"
                                                     title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
@@ -234,8 +252,10 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">Tidak ada data RTKD Kab/Kota</p>
+                                <td colspan="8" class="px-6 py-12 text-center">
+                                    <p class="text-sm text-slate-500">
+                                        Tidak ada data provinsi
+                                    </p>
                                 </td>
                             </tr>
                         @endforelse
