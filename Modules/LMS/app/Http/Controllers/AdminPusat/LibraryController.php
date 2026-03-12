@@ -35,6 +35,15 @@ class LibraryController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $libraryTypes = LibraryType::orderBy('name')->get();
+        return view('lms::admin-pusat.libraries.create', compact('libraryTypes'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -67,6 +76,16 @@ class LibraryController extends Controller
 
         return redirect()->route('admin-pusat.libraries.index')
             ->with('success', 'Materi Perpustakaan berhasil ditambahkan.');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $library = Library::findOrFail($id);
+        $libraryTypes = LibraryType::orderBy('name')->get();
+        return view('lms::admin-pusat.libraries.edit', compact('library', 'libraryTypes'));
     }
 
     /**
