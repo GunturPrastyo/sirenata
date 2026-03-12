@@ -199,7 +199,7 @@
             </div>
         </div>
     </div>
-    @if(!$profile || empty($profile->instansi))
+    @if (!$profile || empty($profile->instansi))
         <!-- Modal Card (Not Blurred) -->
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
             style="background-color: rgba(0, 0, 0, 0.3);">
@@ -207,8 +207,10 @@
                 <div class="p-8">
                     <!-- Header -->
                     <div class="text-center mb-8">
-                        <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div
+                            class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
@@ -218,7 +220,8 @@
                     </div>
 
                     <!-- Form -->
-                    <form id="instansiForm" method="POST" action="{{ route('user.update-instansi') }}" class="space-y-6">
+                    <form id="instansiForm" method="POST" action="{{ route('user.update-instansi') }}"
+                        class="space-y-6">
                         @csrf
 
                         <!-- Asal Instansi -->
@@ -253,6 +256,7 @@
                             <select id="kementerian" class="w-full">
                                 <option value="">Pilih Kementerian/Lembaga</option>
                             </select>
+                            <input type="hidden" name="instansi" id="finalInstansi">
                         </div>
 
                         <!-- Provinsi (Show if Provinsi or Kab/Kota) -->
@@ -260,10 +264,11 @@
                             <label for="provinsi" class="block text-sm font-medium text-gray-700 mb-2">
                                 Provinsi <span class="text-red-500">*</span>
                             </label>
-                            <select id="provinsi" class="w-full">
+                            <select id="provinsi" class="w-full" name="province_code">
                                 <option value="">Pilih Provinsi</option>
-                                @foreach($provinces as $prov)
-                                    <option value="{{ $prov->code }}" data-name="{{ $prov->name }}">{{ $prov->name }}</option>
+                                @foreach ($provinces as $prov)
+                                    <option value="{{ $prov->code }}" data-name="{{ $prov->name }}">
+                                        {{ $prov->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -273,7 +278,7 @@
                             <label for="kabkota" class="block text-sm font-medium text-gray-700 mb-2">
                                 Kabupaten/Kota <span class="text-red-500">*</span>
                             </label>
-                            <select id="kabkota" class="w-full">
+                            <select id="kabkota" class="w-full" name="regency_code">
                                 <option value="">Pilih Kabupaten/Kota</option>
                             </select>
                         </div>
@@ -286,7 +291,8 @@
                             <select id="instansi" class="w-full">
                                 <option value="">Pilih Instansi</option>
                             </select>
-                            <p class="mt-2 text-xs text-gray-500 italic">💡 Pilih Lainnya jika Instansi Anda tidak ada</p>
+                            <p class="mt-2 text-xs text-gray-500 italic">💡 Pilih Lainnya jika Instansi Anda tidak ada
+                            </p>
                         </div>
 
                         <!-- Custom Instansi Input (Show when "Lainnya" is selected) -->
@@ -294,13 +300,15 @@
                             <label for="customInstansi" class="block text-sm font-medium text-gray-700 mb-2">
                                 Nama Instansi <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="customInstansi" placeholder="Masukkan nama instansi"
+                            <input type="text" name="instansi_lainnya" id="customInstansi"
+                                placeholder="Masukkan nama instansi"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                                 <p class="text-xs text-blue-800 font-medium mb-1">📝 Cara Penulisan yang Tepat:</p>
                                 <ul class="text-xs text-blue-700 space-y-1 ml-4 list-disc">
                                     <li>Gunakan huruf kapital pada awal setiap kata (Title Case)</li>
-                                    <li>Contoh: <span class="font-semibold">"Dinas Pendidikan dan Kebudayaan"</span></li>
+                                    <li>Contoh: <span class="font-semibold">"Dinas Pendidikan dan Kebudayaan"</span>
+                                    </li>
                                     <li>Hindari singkatan kecuali nama resmi menggunakannya</li>
                                     <li>Pastikan ejaan sesuai dengan nama resmi instansi</li>
                                 </ul>
@@ -312,20 +320,19 @@
                             <label for="unitKerja" class="block text-sm font-medium text-gray-700 mb-2">
                                 Unit Kerja <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="unitKerja" placeholder="Contoh: Bagian SDM"
+                            <input type="text" name="unit_kerja" id="unitKerja" placeholder="Contoh: Bagian SDM"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
                         <!-- Hidden input to concatenate values -->
-                        <input type="hidden" name="instansi" id="finalInstansiValue">
-                        <input type="hidden" name="province_code" id="finalProvinceCode">
-                        <input type="hidden" name="regency_code" id="finalRegencyCode">
+                        {{-- <input type="hidden" name="instansi" id="finalInstansiValue"> --}}
 
                         <!-- Submit Button -->
                         <button type="submit"
                             class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
                             </svg>
                             Simpan & Lanjutkan
                         </button>
@@ -341,22 +348,25 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
             // --- Instansi Form Logic ---
-            @if(!$profile || empty($profile->instansi))
-                $(document).ready(function () {
+            @if (!$profile || empty($profile->instansi))
+                $(document).ready(function() {
                     // Data Kementerian/Lembaga
                     const kementerianList = [
                         "Kementerian Koordinator Bidang Infrastruktur dan Pengembangan Wilayah",
                         "Kementerian Dalam Negeri", "Kementerian Luar Negeri", "Kementerian Pertahanan",
                         "Kementerian Pekerjaan Umum", "Kementerian Perumahan dan Kawasan Permukiman",
                         "Kementerian Perhubungan", "Kementerian Kelautan dan Perikanan",
-                        "Kementerian Perlindungan Pekerja Migran Indonesia", "Kementerian Imigrasi dan Pemasyarakatan",
+                        "Kementerian Perlindungan Pekerja Migran Indonesia",
+                        "Kementerian Imigrasi dan Pemasyarakatan",
                         "Kementerian Keuangan", "Kementerian Pertanian", "Kementerian Koperasi",
-                        "Kementerian Usaha Kecil dan Menengah", "Kementerian Perdagangan", "Kementerian Lingkungan Hidup",
+                        "Kementerian Usaha Kecil dan Menengah", "Kementerian Perdagangan",
+                        "Kementerian Lingkungan Hidup",
                         "Kementerian Kehutanan", "Kementerian Agraria dan Tata Ruang/ Kepala Badan Pertahanan",
                         "Kementerian Pariwisata", "Kementerian Ekonomi Kreatif/Kepala Badan Ekonomi Kreatif",
                         "Kementerian Ketegakerjaan", "Kementerian Desa dan Pembangunan Daerah Tertingal",
                         "Kementarian Komunikasi dan Digitalisasi", "Kementerian Energi dan Sumber Daya Tertinggal",
-                        "Kementerian Pendidikan Dasar dan Menengah", "Kementerian Pendidikan Tinggi, Sains dan Teknologi",
+                        "Kementerian Pendidikan Dasar dan Menengah",
+                        "Kementerian Pendidikan Tinggi, Sains dan Teknologi",
                         "Kementerian Agama", "Kementerian Sosial", "Tentara Nasional Indonesia",
                         "Kepolisian Republik Indonesia", "Badan Informasi Geospasial", "Badan Kemanan Laut",
                         "Badan Karantina Indonesia", "Badan Narkotika Nasional", "Badan Pusat Statistik",
@@ -370,7 +380,7 @@
 
                     // Initialize Select2
                     $('#kementerian, #provinsi, #kabkota, #instansi').select2({
-                        placeholder: function () {
+                        placeholder: function() {
                             return $(this).find('option:first').text();
                         },
                         allowClear: true,
@@ -378,13 +388,14 @@
                     });
 
                     // Handle Asal Instansi Selection
-                    $('input[name="asalInstansi"]').on('change', function () {
+                    $('input[name="asalInstansi"]').on('change', function() {
                         const value = $(this).val();
 
                         // Reset all sections
-                        $('#kementerianSection, #provinsiSection, #kabkotaSection, #instansiSection, #customInstansiSection, #unitKerjaSection').addClass('hidden');
-                        $('#kementerian, #provinsi, #kabkota, #instansi, #customInstansi, #unitKerja').val('').trigger('change');
-                        $('#finalProvinceCode, #finalRegencyCode').val('');
+                        $('#kementerianSection, #provinsiSection, #kabkotaSection, #instansiSection, #customInstansiSection, #unitKerjaSection')
+                            .addClass('hidden');
+                        $('#kementerian, #provinsi, #kabkota, #instansi, #customInstansi, #unitKerja').val('')
+                            .trigger('change');
 
                         if (value === 'pusat') {
                             $('#kementerianSection, #unitKerjaSection').removeClass('hidden');
@@ -396,7 +407,7 @@
                     });
 
                     // Handle Provinsi Selection
-                    $('#provinsi').on('change', function () {
+                    $('#provinsi').on('change', function() {
                         const provinsiCode = $(this).val();
                         const asalInstansi = $('input[name="asalInstansi"]:checked').val();
 
@@ -404,20 +415,25 @@
                             if (asalInstansi === 'kabkota') {
                                 // Fetch Kab/Kota data via AJAX
                                 $.ajax({
-                                    url: '{{ route("user.get-regencies") }}',
+                                    url: '{{ route('user.get-regencies') }}',
                                     type: 'GET',
-                                    data: { province_code: provinsiCode },
-                                    success: function (response) {
+                                    data: {
+                                        province_code: provinsiCode
+                                    },
+                                    success: function(response) {
                                         if (response.success) {
-                                            $('#kabkota').empty().append(new Option('Pilih Kabupaten/Kota', ''));
+                                            $('#kabkota').empty().append(new Option(
+                                                'Pilih Kabupaten/Kota', ''));
                                             response.data.forEach(regency => {
-                                                $('#kabkota').append(new Option(regency.name, regency.code));
+                                                $('#kabkota').append(new Option(regency
+                                                    .name, regency.code));
                                             });
                                             $('#kabkotaSection').removeClass('hidden');
-                                            $('#instansiSection, #customInstansiSection, #unitKerjaSection').addClass('hidden');
+                                            $('#instansiSection, #customInstansiSection, #unitKerjaSection')
+                                                .addClass('hidden');
                                         }
                                     },
-                                    error: function (xhr) {
+                                    error: function(xhr) {
                                         console.error('Failed to load regencies');
                                     }
                                 });
@@ -451,7 +467,7 @@
                     }
 
                     // Handle Kab/Kota Selection
-                    $('#kabkota').on('change', function () {
+                    $('#kabkota').on('change', function() {
                         const kabkota = $(this).val();
                         if (kabkota) {
                             populateInstansi();
@@ -461,7 +477,7 @@
                     });
 
                     // Handle Instansi Selection
-                    $('#instansi').on('change', function () {
+                    $('#instansi').on('change', function() {
                         const value = $(this).val();
                         if (value === 'lainnya') {
                             $('#customInstansiSection').removeClass('hidden');
@@ -475,7 +491,7 @@
                     });
 
                     // Handle Custom Instansi Input
-                    $('#customInstansi').on('input', function () {
+                    $('#customInstansi').on('input', function() {
                         if ($(this).val().trim()) {
                             $('#unitKerjaSection').removeClass('hidden');
                         } else {
@@ -483,10 +499,8 @@
                         }
                     });
 
-                    // Form Submit Intercept
-                    $('#instansiForm').on('submit', function (e) {
+                    $('#instansiForm').on('submit', function(e) {
                         const asalInstansi = $('input[name="asalInstansi"]:checked').val();
-                        const unitKerja = $('#unitKerja').val().trim();
 
                         if (!asalInstansi) {
                             e.preventDefault();
@@ -494,76 +508,27 @@
                             return;
                         }
 
-                        if (!unitKerja) {
-                            e.preventDefault();
-                            alert('Unit Kerja harus diisi!');
-                            return;
-                        }
-
-                        let finalInstansiText = '';
-
+                        // Force sync Select2 values ke elemen asli sebelum submit
                         if (asalInstansi === 'pusat') {
-                            const kementerian = $('#kementerian').val();
-                            if (!kementerian) {
+                            const kemVal = $('#kementerian').val();
+                            if (!kemVal) {
                                 e.preventDefault();
                                 alert('Pilih Kementerian/Lembaga!');
                                 return;
                             }
-                            finalInstansiText = `${kementerian} - ${unitKerja}`;
-                            $('#finalProvinceCode').val('');
-                            $('#finalRegencyCode').val('');
-                        } else if (asalInstansi === 'provinsi') {
-                            // get text name for province instead of code
-                            const provinsi = $('#provinsi option:selected').data('name') || $('#provinsi option:selected').text();
-                            const instansi = $('#instansi').val();
-
-                            if (!provinsi || !instansi) {
-                                e.preventDefault();
-                                alert('Pilih Provinsi dan Instansi!');
-                                return;
-                            }
-
-                            let instansiName = instansi;
-                            if (instansi === 'lainnya') {
-                                instansiName = $('#customInstansi').val().trim();
-                                if (!instansiName) {
-                                    e.preventDefault();
-                                    alert('Masukkan nama instansi!');
-                                    return;
-                                }
-                            }
-                            finalInstansiText = `${provinsi} - ${instansiName} - ${unitKerja}`;
-                            $('#finalProvinceCode').val($('#provinsi').val());
-                            $('#finalRegencyCode').val('');
-                        } else if (asalInstansi === 'kabkota') {
-                            const provinsi = $('#provinsi option:selected').data('name') || $('#provinsi option:selected').text();
-                            const kabkota = $('#kabkota option:selected').text(); // Change to get the text name, since value is now the code
-                            const instansi = $('#instansi').val();
-
-                            if (!provinsi || !kabkota || !instansi || kabkota === 'Pilih Kabupaten/Kota') {
-                                e.preventDefault();
-                                alert('Lengkapi semua data daerah!');
-                                return;
-                            }
-
-                            let instansiName = instansi;
-                            if (instansi === 'lainnya') {
-                                instansiName = $('#customInstansi').val().trim();
-                                if (!instansiName) {
-                                    e.preventDefault();
-                                    alert('Masukkan nama instansi!');
-                                    return;
-                                }
-                            }
-                            finalInstansiText = `${provinsi} - ${kabkota} - ${instansiName} - ${unitKerja}`;
-                            $('#finalProvinceCode').val($('#provinsi').val());
-                            $('#finalRegencyCode').val($('#kabkota').val());
+                            // Pastikan select tidak disabled
+                            // $('#kementerian').prop('disabled', false);
+                            $('#finalInstansi').val(kemVal);
                         }
 
-                        // Set hidden input value
-                        $('#finalInstansiValue').val(finalInstansiText);
-
-                        // Allow form submission to proceed
+                        if (asalInstansi === 'provinsi' || asalInstansi === 'kabkota') {
+                            const instansiVal = $('#instansi').val();
+                            if (instansiVal === 'lainnya') {
+                                $('#finalInstansi').val($('#customInstansi').val().trim());
+                            } else {
+                                $('#finalInstansi').val(instansiVal);
+                            }
+                        }
                     });
                 });
             @endif
