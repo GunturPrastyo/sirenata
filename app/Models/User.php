@@ -119,6 +119,7 @@ class User extends Authenticatable
             $this->hasRole('admin-pusat') => 'admin-pusat.dashboard',
             $this->hasRole('admin-province') => 'admin-province.dashboard',
             $this->hasRole('admin-kab-kota') => 'admin-kab-kota.dashboard',
+            $this->hasRole('user') => 'user.dashboard',
             default => 'portal-dashboard',
         };
     }

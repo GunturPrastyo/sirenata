@@ -4,7 +4,11 @@ namespace Modules\Dashboard\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\MasterData\Models\Province;
+use Modules\User\Enums\InstitutionType;
 use Modules\User\Models\UserProfile;
+use Modules\User\Models\UserScope;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class UserDashboardController extends Controller
 {
@@ -14,12 +18,8 @@ class UserDashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
-
-        // Ensure user has a profile
         $profile = UserProfile::firstOrCreate(['user_id' => $user->id]);
-
-        // Fetch provinces from Creasi/Nusa
-        $provinces = \Creasi\Nusa\Models\Province::all();
+        $provinces = Province::all();
 
         return view('dashboard::user.index', compact('profile', 'provinces'));
     }
@@ -30,7 +30,7 @@ class UserDashboardController extends Controller
             'province_code' => 'required|string',
         ]);
 
-        $province = \Creasi\Nusa\Models\Province::where('code', $request->province_code)->firstOrFail();
+        $province = Province::where('code', $request->province_code)->firstOrFail();
 
         return response()->json([
             'success' => true,
@@ -41,21 +41,48 @@ class UserDashboardController extends Controller
     public function updateInstansi(Request $request)
     {
         $request->validate([
-            'instansi' => 'required|string|max:255',
+            'asalInstansi' => 'required|in:pusat,provinsi,kabkota',
+            'instansi' => 'nullable|string|max:255',
+            'instansi_lainnya' => 'nullable|string|max:255',
+            'unit_kerja' => 'required|string|max:255',
+            'province_code' => 'nullable|string',
+            'regency_code' => 'nullable|string',
         ]);
 
         $user = auth()->user();
-        $profile = UserProfile::where('user_id', $user->id)->first();
 
-        // Check if profile exists; if not, create one
-        if (!$profile) {
-            $profile = new UserProfile();
-            $profile->user_id = $user->id;
+        $profile = UserProfile::firstOrNew([
+            'user_id' => $user->id
+        ]);
+
+        $institutionType = match ($request->asalInstansi) {
+            'pusat' => InstitutionType::PUSAT,
+            'provinsi' => InstitutionType::PROVINSI,
+            'kabkota' => InstitutionType::KAB_KOTA,
+        };
+
+        $instansi = $request->instansi;
+
+        if ($request->instansi === 'lainnya') {
+            $instansi = $request->instansi_lainnya;
         }
 
-        $profile->instansi = $request->instansi;
+        $profile->institution_type = $institutionType->value;
+        $profile->instansi = $instansi;
+        $profile->unit_kerja = $request->unit_kerja;
         $profile->save();
 
-        return redirect()->route('user.dashboard')->with('success', 'Data instansi berhasil disimpan.');
+        // Simpan scope wilayah
+        UserScope::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'province_code' => $request->province_code,
+                'regency_code' => $request->regency_code,
+            ]
+        );
+        ToastMagic::success("Data instansi berhasil disimpan!");
+        return redirect()
+            ->route('user.dashboard')
+            ->with('success', 'Data instansi berhasil disimpan.');
     }
 }

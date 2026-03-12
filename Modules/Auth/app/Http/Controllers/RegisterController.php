@@ -34,7 +34,7 @@ class RegisterController extends Controller
         $request->session()->regenerate();
 
         ToastMagic::success('User registered successfully');
-        return redirect()->route('user.index');
+        return redirect()->route(Auth::user()->getRedirectRoute());
 
     } catch (\Exception $e) {
         ToastMagic::error('Failed to register user');
