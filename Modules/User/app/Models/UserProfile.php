@@ -21,7 +21,6 @@ class UserProfile extends Model
         'full_name',
         'institution_type',
         'instansi',
-        'jabatan',
         'unit_kerja',
         'nik',
         'phone',

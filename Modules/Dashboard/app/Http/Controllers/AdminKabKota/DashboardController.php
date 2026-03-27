@@ -6,9 +6,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Faq\Models\Faq;
+use Illuminate\Http\RedirectResponse;
+use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
+use Modules\Dashboard\Services\DashboardService;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private DashboardService $dashbordService
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -49,11 +57,27 @@ class DashboardController extends Controller
         $genderMale = $genders->get('male', 0);
         $genderFemale = $genders->get('female', 0);
 
-        return view('dashboard::admin-kab-kota.index', [
+        return view('dashboard::pages.admin-kab-kota.index', [
             'user' => $user,
             'sdmPerTahun' => $sdmPerTahun,
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
         ]);
+    }
+
+    public function profile(Request $request)
+    {
+        $user = Auth::user();
+        return view('dashboard::pages.admin-kab-kota.profile', [
+            'user' => $user,
+        ]);
+    }
+
+    public function storeOrUpdateProfile(UpdateProfileRequest $request) :RedirectResponse
+    {
+        $user = Auth::user();
+        $this->dashbordService->updateProfile($user, $request->validated());
+        ToastMagic::success("Profile berhasil diupdate!");
+        return to_route('admin-kab-kota.profile');
     }
 }

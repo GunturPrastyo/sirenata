@@ -10,9 +10,18 @@ use Illuminate\Support\Facades\DB;
 use Creasi\Nusa\Models\Province;
 use Modules\User\Models\UserProfile;
 use Spatie\Activitylog\Models\Activity;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Http\RedirectResponse;
+use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
+use Modules\Dashboard\Services\DashboardService;
 
 class DashbordController extends Controller
 {
+
+    public function __construct(
+        private DashboardService $dashbordService
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -61,7 +70,7 @@ class DashbordController extends Controller
             ];
         })->sortBy('province_name')->values();
 
-        return view('dashboard::admin-pusat.index', [
+        return view('dashboard::pages.admin-pusat.index', [
             'user' => $user,
             'totalAdminPusat' => $totalAdminPusat,
             'adminAktif' => $adminAktif,
@@ -70,5 +79,22 @@ class DashbordController extends Controller
             'genderFemale' => $genderFemale,
             'sdmPerProvinsi' => $sdmPerProvinsi,
         ]);
+    }
+
+    public function profile(Request $request)
+    {
+        $user = Auth::user();
+        return view('dashboard::pages.admin-pusat.profile', [
+            'user' => $user,
+        ]);
+    }
+
+    public function storeOrUpdateProfile(UpdateProfileRequest $request) :RedirectResponse
+    {
+        $user = Auth::user();
+
+        $this->dashbordService->updateProfile($user, $request->validated());
+        ToastMagic::success("Profile berhasil diupdate!");
+        return to_route('admin-pusat.profile');
     }
 }
