@@ -3,6 +3,7 @@
 namespace Modules\Auth\Services\Api;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -29,6 +30,7 @@ class AuthApiService
             ]);
 
             $user->assignRole('user');
+            $user->tokens()->delete();
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return [
@@ -38,19 +40,15 @@ class AuthApiService
         });
     }
 
-    /**
-     * Handle user login.
-     */
     public function login(array $credentials)
     {
         $user = User::where('email', $credentials['email'])->first();
 
+        // Pengecekan manual ini sudah sangat tepat dan efisien untuk sebuah API (Token-Based)
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return false;
         }
-
         $token = $user->createToken('auth_token')->plainTextToken;
-
         return [
             'user'  => $user,
             'token' => $token,
@@ -62,10 +60,6 @@ class AuthApiService
      */
     public function logout(User $user)
     {
-        /** @var \Laravel\Sanctum\PersonalAccessToken $token */
-        $token = $user->currentAccessToken();
-        if ($token) {
-            $token->delete();
-        }
+        $user->currentAccessToken()->delete();
     }
 }

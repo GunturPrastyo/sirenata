@@ -66,12 +66,12 @@ trait ProfileValidationRules {
      */
     protected function provinceRules(): array
     {
-        return ['nullable'];
+        return ['required_if:asal_instansi,provinsi,kabkota'];
     }
 
     protected function regencyRules(): array
     {
-        return ['nullable'];
+        return ['nullable|required_if:asal_instansi,kabkota'];
     }
 
 

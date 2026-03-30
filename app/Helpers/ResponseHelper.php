@@ -6,10 +6,10 @@ use Illuminate\Http\JsonResponse;
 
 class ResponseHelper
 {
-    public static function success($success, $message, $result, $statusCode): JsonResponse
+    public static function success($status, $message, $result, $statusCode): JsonResponse
     {
         return response()->json([
-            'success' => $success,
+            'status' => $status,
             'message' => $message,
             'result' => $result,
         ], $statusCode);

@@ -9,6 +9,7 @@ use Modules\Auth\Http\Requests\LoginRequest;
 use Modules\Auth\Http\Requests\RegisterRequest;
 use App\Helpers\ResponseHelper;
 use App\Http\Resources\PaginateResource;
+use Illuminate\Support\Facades\Auth;
 use Modules\Auth\Services\Api\AuthApiService;
 
 class AuthController extends Controller
@@ -22,18 +23,28 @@ class AuthController extends Controller
         $row_per_page = $request->input('page', 5);
         $users = $this->authApiService->getUsers($row_per_page);
     
-        return ResponseHelper::success(true, 'Users retrieved successfully', PaginateResource::make($users, UserResource::class), 200);
+        return ResponseHelper::success(
+            status: true, 
+            message: 'Users retrieved successfully', 
+            result: PaginateResource::make($users, UserResource::class), 
+            statusCode: 200
+        );
     }
 
     public function register(RegisterRequest $request)
     {
         $result = $this->authApiService->register($request->validated());
 
-        return ResponseHelper::success(true, 'Registration successful', [
-            'token_type'   => 'Bearer',
-            'access_token' => $result['token'],
-            'user'         => new UserResource($result['user']),
-        ], 201);
+        return ResponseHelper::success(
+            status: true, 
+            message: 'Registration successful', 
+            result: [
+                'token_type'   => 'Bearer',
+                'access_token' => $result['token'],
+                'user'         => new UserResource($result['user']),
+            ], 
+            statusCode: 201
+        );
     }
 
     public function login(LoginRequest $request)
@@ -42,25 +53,45 @@ class AuthController extends Controller
         $result = $this->authApiService->login($validated);
 
         if (!$result) {
-            return ResponseHelper::error('Kredensial salah atau tidak ditemukan di sistem', 401);
+            return ResponseHelper::error(
+                message: 'Kredensial salah atau tidak ditemukan di sistem', 
+                statusCode: 401
+            );
         }
 
-        return ResponseHelper::success(true, 'Login successful', [
-            'token_type'   => 'Bearer',
-            'access_token' => $result['token'],
-            'user'         => new UserResource($result['user']),
-        ], 200);
+        return ResponseHelper::success(
+            status: true, 
+            message: 'Login successful', 
+            result: [
+                'token_type'   => 'Bearer',
+                'access_token' => $result['token'],
+                'user'         => new UserResource($result['user']),
+            ], 
+            statusCode: 200
+        );
     }
 
     public function logout(Request $request)
     {
-        $this->authApiService->logout($request->user());
+        $user = Auth::user();
+        $this->authApiService->logout($user);
 
-        return ResponseHelper::success(true, 'Logout successful', null, 200);
+        return ResponseHelper::success(
+            status: true, 
+            message: 'Logout successful', 
+            result: null, 
+            statusCode: 200
+        );
     }
 
     public function me(Request $request)
     {
-        return ResponseHelper::success(true, 'Users retrieved successfully', UserResource::make($request->user()), 200);
+        $user = Auth::user();
+        return ResponseHelper::success(
+            status: true, 
+            message: 'Users retrieved successfully', 
+            result: UserResource::make($user), 
+            statusCode: 200
+        );
     }
 }
