@@ -110,6 +110,7 @@ class AuthController extends Controller
             'email' => 'required|email|exists:users,email',
         ]);
 
+    try {
         $status = Password::sendResetLink(
             $request->only('email')
         );
@@ -125,6 +126,12 @@ class AuthController extends Controller
             'success' => false,
             'message' => 'Gagal mengirim link, coba beberapa saat lagi.',
         ], 400);
+       } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: 'Gagal mengirim link reset password',
+                statusCode: 500
+            );
+       }
     }
 
     public function resetPassword(Request $request)

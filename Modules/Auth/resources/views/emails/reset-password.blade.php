@@ -60,7 +60,7 @@
 
         {{-- Footer --}}
         <div class="footer">
-            <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Sirenata. All rights reserved.</p>
             <p style="margin-top: 6px;">Email ini dikirim otomatis, mohon tidak membalas.</p>
         </div>
     </div>
