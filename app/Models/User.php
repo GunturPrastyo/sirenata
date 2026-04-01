@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -18,11 +19,13 @@ use Modules\User\Models\UserScope;
 use Modules\User\Traits\HasScopeAccess;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Modules\Auth\Notifications\Auth\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, HasUuids, LogsActivity, HasScopeAccess;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasUuids, LogsActivity, HasScopeAccess;
 
     protected $keyType = 'string';
 
@@ -63,9 +66,14 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name','email']);
+            ->logOnly(['name', 'email']);
     }
-    
+
+    public function sendPasswordResetNotification($token)
+    {
+        // $this->notify(new ResetPassword($token));
+        $this->notify(new ResetPasswordNotification($token));
+    }
 
     #[Scope]
     protected function search(Builder $query, string $keyword): void
@@ -74,7 +82,7 @@ class User extends Authenticatable
             $q->where('name', 'like', "%{$keyword}%")
                 ->orWhere('email', 'like', "%{$keyword}%")
                 ->orWhereHas('profile', fn($sub) => $sub->where('instansi', 'like', "%{$keyword}%"));
-                // ->orWhereHas('enrolledCourses', fn($sub) => $sub->where('name', 'like', "%{$keyword}%"));
+            // ->orWhereHas('enrolledCourses', fn($sub) => $sub->where('name', 'like', "%{$keyword}%"));
         });
     }
 
@@ -144,5 +152,4 @@ class User extends Authenticatable
             ])
             ->withTimestamps();
     }
-
 }

@@ -1,7 +1,8 @@
 <x-dashboard::layouts.dashboard title="Dashboard Pembelajaran">
     @push('styles')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    @endpush <div class="p-2 sm:p-6">
+    @endpush
+    <div class="p-2 sm:p-6">
 
         <!-- Breadcrumb -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">

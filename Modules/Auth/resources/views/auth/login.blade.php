@@ -6,6 +6,7 @@
                     alt="logo">
                 Flowbite
             </a>
+            <x-flash-message class="mb-2"/>
             <x-validation-errors class="mb-2" />
             <div class="w-full bg-white rounded-lg shadow-2xl  md:mt-0 sm:max-w-md xl:p-0">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -37,7 +38,8 @@
                                     <label for="remember" class="text-gray-500 ">Remember me</label>
                                 </div>
                             </div>
-                            <a href="#" class="text-sm font-medium text-neutral-600 hover:underline ">Forgot
+                            <a href="{{ route('forgot-password') }}"
+                                class="text-sm font-medium text-neutral-600 hover:underline ">Forgot
                                 password?</a>
                         </div>
                         <button type="submit"

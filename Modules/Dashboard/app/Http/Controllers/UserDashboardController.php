@@ -9,19 +9,29 @@ use Modules\User\Enums\InstitutionType;
 use Modules\User\Models\UserProfile;
 use Modules\User\Models\UserScope;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
+use Modules\Dashboard\Services\DashboardService;
+
 
 class UserDashboardController extends Controller
 {
+    public function __construct(
+        private DashboardService $dashbordService
+    ) {}
+
     /**
      * Display the User Dashboard.
      */
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $profile = UserProfile::firstOrCreate(['user_id' => $user->id]);
         $provinces = Province::all();
 
-        return view('dashboard::user.index', compact('profile', 'provinces'));
+        return view('dashboard::pages.user.index', compact('profile', 'provinces'));
     }
 
     public function getRegencies(Request $request)
@@ -49,7 +59,7 @@ class UserDashboardController extends Controller
             'regency_code' => 'nullable|string',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
 
         $profile = UserProfile::firstOrNew([
             'user_id' => $user->id
@@ -83,5 +93,25 @@ class UserDashboardController extends Controller
         return redirect()
             ->route('user.dashboard')
             ->with('success', 'Data instansi berhasil disimpan.');
+    }
+    
+    public function profile(Request $request)
+    {
+        $user = Auth::user();
+        $provinces = Province::all();
+        return view('dashboard::pages.user.profile', [
+            'user' => $user,
+            'provinces' => $provinces,
+        ]);
+    }
+
+    public function storeOrUpdateProfile(UpdateProfileRequest $request) :RedirectResponse
+    {
+        $user = Auth::user();
+        $validated = $request->validated();
+        $data = $this->dashbordService->updateProfile($user, $validated);
+        Log::info($data);
+        ToastMagic::success("Profile berhasil diupdate!");
+        return to_route('user.profile');
     }
 }

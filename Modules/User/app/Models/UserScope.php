@@ -3,8 +3,8 @@
 namespace Modules\User\Models;
 
 use App\Models\User;
-use Creasi\Nusa\Models\Province;
-use Creasi\Nusa\Models\Regency;
+use Modules\MasterData\Models\Province;
+use Modules\MasterData\Models\Regency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

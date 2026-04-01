@@ -1,8 +1,9 @@
 <li>
-    <a href="{{ route('admin-pusat.dashboard') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('admin-pusat.dashboard') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-pusat.dashboard')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -15,10 +16,11 @@
 </li>
 
 <li>
-    <a href="{{ route('admin-pusat.project.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('admin-pusat.project.index') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('project.*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -28,14 +30,14 @@
     </a>
 </li>
 
-<li
-    x-data="{ open: {{ request()->routeIs('admin-pusat.rtkn*', 'admin-pusat.rtkd.index*', 'admin-pusat.rtkd.kab-kota*') ? 'true' : 'false' }} }">
-    <button @click="open = !open" class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
+<li x-data="{ open: {{ request()->routeIs('admin-pusat.rtkn*', 'admin-pusat.rtkd.index*', 'admin-pusat.rtkd.kab-kota*') ? 'true' : 'false' }} }">
+    <button @click="open = !open"
+        class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-pusat.rtkn*', 'admin-pusat.rtkd.index*', 'admin-pusat.rtkd.kab-kota*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
-        <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            fill="none" viewBox="0 0 24 24">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+        <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+            height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z" />
         </svg>
@@ -50,18 +52,20 @@
 
     <ul x-show="open" x-collapse class="mt-1 space-y-1">
         <li>
-            <a href="{{ route('admin-pusat.rtkn.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+            <a href="{{ route('admin-pusat.rtkn.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
                 {{ request()->routeIs('admin-pusat.rtkn.index*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
                 Rekapitulasi Rencana Tenaga Kerja Nasional
             </a>
         </li>
         <li>
-            <a href="{{ route('admin-pusat.rtkd.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+            <a href="{{ route('admin-pusat.rtkd.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
                 {{ request()->routeIs('admin-pusat.rtkd*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
                 Rekapitulasi Rencana Tenaga Kerja Provinsi
             </a>
         </li>
@@ -69,10 +73,11 @@
 </li>
 
 <li>
-    <a href="{{ route('admin-pusat.rekapitulasi.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-pusat.rekapitulasi*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
@@ -83,10 +88,11 @@
 </li>
 
 <li>
-    <a href="#" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="#"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->is('admin-pusat/notification')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -96,14 +102,14 @@
     </a>
 </li>
 
-<li
-    x-data="{ open: {{ request()->routeIs('admin-pusat.library-types.*', 'admin-pusat.libraries.*') ? 'true' : 'false' }} }">
-    <button @click="open = !open" class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
+<li x-data="{ open: {{ request()->routeIs('admin-pusat.library-types.*', 'admin-pusat.libraries.*') ? 'true' : 'false' }} }">
+    <button @click="open = !open"
+        class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-pusat.library-types.*', 'admin-pusat.libraries.*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
-        <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            fill="none" viewBox="0 0 24 24">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+        <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+            height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 6v13m0-13c-2.819-.831-4.715-1-7-1v14c2.285 0 4.181.169 7 1m0-14c2.819-.831 4.715-1 7-1v14c-2.285 0-4.181.169-7 1" />
         </svg>
@@ -118,18 +124,20 @@
 
     <ul x-show="open" x-collapse class="mt-1 space-y-1">
         <li>
-            <a href="{{ route('admin-pusat.library-types.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+            <a href="{{ route('admin-pusat.library-types.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
                 {{ request()->routeIs('admin-pusat.library-types.*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
                 Tipe Perpustakaan
             </a>
         </li>
         <li>
-            <a href="{{ route('admin-pusat.libraries.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+            <a href="{{ route('admin-pusat.libraries.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
                 {{ request()->routeIs('admin-pusat.libraries.*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
                 Materi Perpustakaan
             </a>
         </li>
@@ -137,10 +145,11 @@
 </li>
 
 <li>
-    <a href="{{ route('admin-pusat.faq.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
+    <a href="{{ route('admin-pusat.faq.index') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('faq.*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

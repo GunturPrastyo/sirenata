@@ -26,7 +26,7 @@
                         <button @click="open = !open"
                             class="rounded-full overflow-hidden focus:outline-none cursor-pointer">
                             <img class="w-8 h-8 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}&background=6366f1&color=fff"
+                                src="https://ui-avatars.com/api/?name={{ auth()->user()->profile?->full_name ?? auth()->user()->name }}&background=6366f1&color=fff"
                                 alt="user">
                         </button>
                     </div>
@@ -38,10 +38,11 @@
                             <p class="text-sm font-medium">{{ auth()->user()->name }}</p>
                         </div>
                         <ul class="p-2 text-sm">
-                            <li>
-                                <a href="#" class="block p-2 rounded hover:bg-purple-200">Profil</a>
-                            </li>
                             @role('super-admin')
+                                <li>
+                                    <a href="{{ route('super-admin.profile') }}"
+                                        class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                </li>
                                 <li>
                                     <a href="{{ route('super-admin.dashboard') }}"
                                         class="block p-2 rounded hover:bg-purple-200">
@@ -51,13 +52,21 @@
                             @endrole
                             @role('admin-pusat')
                                 <li>
+                                    <a href="{{ route('admin-pusat.profile') }}"
+                                        class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                </li>
+                                <li>
                                     <a href="{{ route('admin-pusat.dashboard') }}"
                                         class="block p-2 rounded hover:bg-purple-200">
                                         Dashboard Admin Pusat
                                     </a>
                                 </li>
                             @endrole
-                            @role('admin-provinsi')
+                            @role('admin-province')
+                                <li>
+                                    <a href="{{ route('admin-province.profile') }}"
+                                        class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                </li>
                                 <li>
                                     <a href="{{ route('admin-province.dashboard') }}"
                                         class="block p-2 rounded hover:bg-purple-200">
@@ -67,6 +76,10 @@
                             @endrole
                             @role('admin-kab-kota')
                                 <li>
+                                    <a href="{{ route('admin-kab-kota.profile') }}"
+                                        class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                </li>
+                                <li>
                                     <a href="{{ route('admin-kab-kota.dashboard') }}"
                                         class="block p-2 rounded hover:bg-purple-200">
                                         Dashboard Admin Kab/Kota
@@ -74,6 +87,10 @@
                                 </li>
                             @endrole
                             @role('user')
+                                <li>
+                                    <a href="{{ route('user.profile') }}"
+                                        class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                </li>
                                 <li>
                                     <a href="#" class="block p-2 rounded hover:bg-purple-200">Dashboard
                                         User/Peserta</a>

@@ -5,9 +5,18 @@ namespace Modules\Dashboard\Http\Controllers\AdminProvinsi;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Modules\Faq\Models\Faq;
+use Illuminate\Http\RedirectResponse;
+use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
+use Modules\Dashboard\Services\DashboardService;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private DashboardService $dashbordService
+    ) {}
+    
     /**
      * Display a listing of the resource.
      */
@@ -55,11 +64,27 @@ class DashboardController extends Controller
         $genderMale = $genders->get('male', 0);
         $genderFemale = $genders->get('female', 0);
 
-        return view('dashboard::admin-provinsi.index', [
+        return view('dashboard::pages.admin-provinsi.index', [
             'user' => $user,
             'sdmPerKabKota' => $sdmPerKabKota,
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
         ]);
+    }
+
+    public function profile(Request $request)
+    {
+        $user = Auth::user();
+        return view('dashboard::pages.admin-provinsi.profile', [
+            'user' => $user,
+        ]);
+    }
+
+    public function storeOrUpdateProfile(UpdateProfileRequest $request) :RedirectResponse
+    {
+        $user = Auth::user();
+        $this->dashbordService->updateProfile($user, $request->validated());
+        ToastMagic::success("Profile berhasil diupdate!");
+        return to_route('admin-province.profile');
     }
 }
