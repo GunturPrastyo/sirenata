@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class AuthApiService
 {
@@ -61,5 +63,34 @@ class AuthApiService
     public function logout(User $user)
     {
         $user->currentAccessToken()->delete();
+    }
+
+    /**
+     * Send password reset link to user email.
+     */
+    public function forgotPassword(array $data): bool
+    {
+        $status = Password::broker()->sendResetLink($data);
+
+        return $status === Password::ResetLinkSent;
+    }
+
+    /**
+     * Reset the user's password.
+     */
+    public function resetPassword(array $data): bool
+    {
+        $status = Password::broker()->reset(
+            $data,
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET;
     }
 }
