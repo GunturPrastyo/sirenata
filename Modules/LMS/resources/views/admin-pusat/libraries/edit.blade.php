@@ -74,43 +74,7 @@
             </div>
             <div class="p-5">
                 <form action="{{ route('admin-pusat.libraries.update', $library->id) }}" method="POST" enctype="multipart/form-data"
-                    x-data="{
-                        fileType: '{{ $initialFileType }}',
-                        previewUrl: @json($initialPreviewUrl),
-                        videoPreviewUrl: @json($initialVideoPreviewUrl),
-                        linkUrl: '{{ $initialLinkUrl }}',
-                        handleFileChange(e) {
-                            const file = e.target.files[0];
-                            if (file) {
-                                this.previewUrl = URL.createObjectURL(file);
-                            }
-                        },
-                        handleVideoChange(e) {
-                            const file = e.target.files[0];
-                            if (file) {
-                                this.videoPreviewUrl = URL.createObjectURL(file);
-                            } else {
-                                this.videoPreviewUrl = null;
-                            }
-                        },
-                        getYoutubeEmbedUrl(url) {
-                            if (!url) return null;
-                            let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-                            return match ? 'https://www.youtube.com/embed/' + match[1] : null;
-                        },
-                        get previewContent() {
-                            if (this.fileType === 'document' && this.previewUrl) return { type: 'pdf', url: this.previewUrl };
-                            if (this.fileType === 'video') {
-                                if (this.videoPreviewUrl) return { type: 'videofile', url: this.videoPreviewUrl };
-                                let embed = this.getYoutubeEmbedUrl(this.linkUrl);
-                                if (embed) return { type: 'youtube', url: embed };
-                            }
-                            if (this.fileType === 'link' && this.linkUrl) {
-                                return { type: 'link', url: this.linkUrl };
-                            }
-                            return null;
-                        }
-                    }" class="space-y-6">
+                    x-data="editLibraryForm()" class="space-y-6">
                     @csrf
                     @method('PUT')
 
@@ -128,17 +92,17 @@
                                     placeholder="Judul buku / dokumen">
                             </div>
 
-                            {{-- Baris 2: Tipe + Sampul --}}
+                            {{-- Baris 2: Category + Sampul --}}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
-                                    <label for="edit-type" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Tipe Materi <span class="text-red-500">*</span>
+                                    <label for="edit-category" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Kategori <span class="text-red-500">*</span>
                                     </label>
-                                    <select id="edit-type" name="library_type_id" required
+                                    <select id="edit-category" name="library_category_id" required
                                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                        <option value="">Pilih Tipe</option>
-                                        @foreach($libraryTypes as $type)
-                                            <option value="{{ $type->id }}" {{ old('library_type_id', $library->library_type_id) == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                                        <option value="">Pilih Kategori</option>
+                                        @foreach($libraryCategories as $category)
+                                            <option value="{{ $category->id }}" {{ old('library_category_id', $library->library_category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -197,13 +161,13 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     File Dokumen PDF <span class="text-xs text-gray-500">(max 20MB, abaikan jika tidak ubah)</span>
                                 </label>
-                                <input type="file" name="file_path" accept=".pdf" @change="handleFileChange($event)"
-                                    class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
                                 @if($library->file_path)
-                                    <p class="text-xs text-indigo-600 mt-2 flex items-center gap-1 font-medium bg-indigo-50 px-3 py-2 rounded-md border border-indigo-100">
-                                        <i class="fas fa-check-circle"></i> File PDF sudah tersimpan: {{ basename($library->file_path) }}
+                                    <p class="text-xs text-indigo-600 mb-2 flex items-center gap-1 font-medium bg-indigo-50 px-3 py-2 rounded-md border border-indigo-100">
+                                        <i class="fas fa-check-circle"></i> File saat ini: {{ basename($library->file_path) }}
                                     </p>
                                 @endif
+                                <input type="file" name="file_path" accept=".pdf" @change="handleFileChange($event)"
+                                    class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
                             </div>
 
                             {{-- Input Video (File Upload atau Link YouTube) --}}
@@ -212,14 +176,14 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Upload File Video <span class="text-xs text-gray-500">(mp4, webm, max 50MB, abaikan jika tidak ubah)</span>
                                     </label>
+                                    @if($library->video_path)
+                                        <p class="text-xs text-indigo-600 mb-2 flex items-center gap-1 font-medium bg-indigo-50 px-3 py-2 rounded-md border border-indigo-100">
+                                            <i class="fas fa-check-circle"></i> Video saat ini: {{ basename($library->video_path) }}
+                                        </p>
+                                    @endif
                                     <input type="file" name="video_path" accept="video/mp4,video/webm" @change="handleVideoChange($event)"
                                         x-bind:disabled="fileType !== 'video'"
                                         class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
-                                    @if($library->video_path)
-                                        <p class="text-[10px] text-indigo-600 mt-1 flex items-center gap-1 font-medium">
-                                            <i class="fas fa-check-circle"></i> Video file sudah tersimpan.
-                                        </p>
-                                    @endif
                                 </div>
                                 <div class="relative mt-4 mb-4">
                                     <div class="absolute inset-0 flex items-center" aria-hidden="true">
@@ -292,4 +256,48 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function editLibraryForm() {
+            return {
+                fileType: @json($initialFileType),
+                previewUrl: @json($initialPreviewUrl),
+                videoPreviewUrl: @json($initialVideoPreviewUrl),
+                linkUrl: @json($initialLinkUrl),
+                handleFileChange(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.previewUrl = URL.createObjectURL(file);
+                    }
+                },
+                handleVideoChange(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.videoPreviewUrl = URL.createObjectURL(file);
+                    } else {
+                        this.videoPreviewUrl = null;
+                    }
+                },
+                getYoutubeEmbedUrl(url) {
+                    if (!url) return null;
+                    let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+                    return match ? 'https://www.youtube.com/embed/' + match[1] : null;
+                },
+                get previewContent() {
+                    if (this.fileType === 'document' && this.previewUrl) return { type: 'pdf', url: this.previewUrl };
+                    if (this.fileType === 'video') {
+                        if (this.videoPreviewUrl) return { type: 'videofile', url: this.videoPreviewUrl };
+                        let embed = this.getYoutubeEmbedUrl(this.linkUrl);
+                        if (embed) return { type: 'youtube', url: embed };
+                    }
+                    if (this.fileType === 'link' && this.linkUrl) {
+                        return { type: 'link', url: this.linkUrl };
+                    }
+                    return null;
+                }
+            };
+        }
+    </script>
+    @endpush
 </x-dashboard::layouts.dashboard>

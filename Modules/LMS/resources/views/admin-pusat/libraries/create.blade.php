@@ -52,43 +52,7 @@
             </div>
             <div class="p-5">
                 <form action="{{ route('admin-pusat.libraries.store') }}" method="POST" enctype="multipart/form-data"
-                    x-data="{
-                        fileType: 'document',
-                        previewUrl: null,
-                        videoPreviewUrl: null,
-                        linkUrl: '',
-                        handleFileChange(e) {
-                            const file = e.target.files[0];
-                            if (file) {
-                                this.previewUrl = URL.createObjectURL(file);
-                            } else {
-                                this.previewUrl = null;
-                            }
-                        },
-                        handleVideoChange(e) {
-                            const file = e.target.files[0];
-                            if (file) {
-                                this.videoPreviewUrl = URL.createObjectURL(file);
-                            } else {
-                                this.videoPreviewUrl = null;
-                            }
-                        },
-                        getYoutubeEmbedUrl(url) {
-                            if (!url) return null;
-                            let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-                            return match ? 'https://www.youtube.com/embed/' + match[1] : null;
-                        },
-                        get previewContent() {
-                            if (this.fileType === 'document' && this.previewUrl) return { type: 'pdf', url: this.previewUrl };
-                            if (this.fileType === 'video' && this.videoPreviewUrl) return { type: 'videofile', url: this.videoPreviewUrl };
-                            if (this.fileType === 'link' && this.linkUrl) {
-                                let embed = this.getYoutubeEmbedUrl(this.linkUrl);
-                                if (embed) return { type: 'youtube', url: embed };
-                                return { type: 'link', url: this.linkUrl };
-                            }
-                            return null;
-                        }
-                    }" class="space-y-6">
+                    x-data="createLibraryForm()" class="space-y-6">
                     @csrf
 
                     <div class="flex flex-col lg:flex-row gap-8">
@@ -104,17 +68,17 @@
                                     placeholder="Judul buku / dokumen">
                             </div>
 
-                            {{-- Baris 2: Tipe + Sampul --}}
+                            {{-- Baris 2: Category + Sampul --}}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
-                                    <label for="create-library-type" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Tipe Materi <span class="text-red-500">*</span>
+                                    <label for="create-library-category" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Kategori <span class="text-red-500">*</span>
                                     </label>
-                                    <select id="create-library-type" name="library_type_id" required
+                                    <select id="create-library-category" name="library_category_id" required
                                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                        <option value="">Pilih Tipe</option>
-                                        @foreach($libraryTypes as $type)
-                                            <option value="{{ $type->id }}" {{ old('library_type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                                        <option value="">Pilih Kategori</option>
+                                        @foreach($libraryCategories as $category)
+                                            <option value="{{ $category->id }}" {{ old('library_category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -261,4 +225,48 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function createLibraryForm() {
+            return {
+                fileType: 'document',
+                previewUrl: null,
+                videoPreviewUrl: null,
+                linkUrl: '',
+                handleFileChange(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.previewUrl = URL.createObjectURL(file);
+                    } else {
+                        this.previewUrl = null;
+                    }
+                },
+                handleVideoChange(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.videoPreviewUrl = URL.createObjectURL(file);
+                    } else {
+                        this.videoPreviewUrl = null;
+                    }
+                },
+                getYoutubeEmbedUrl(url) {
+                    if (!url) return null;
+                    let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+                    return match ? 'https://www.youtube.com/embed/' + match[1] : null;
+                },
+                get previewContent() {
+                    if (this.fileType === 'document' && this.previewUrl) return { type: 'pdf', url: this.previewUrl };
+                    if (this.fileType === 'video' && this.videoPreviewUrl) return { type: 'videofile', url: this.videoPreviewUrl };
+                    if (this.fileType === 'link' && this.linkUrl) {
+                        let embed = this.getYoutubeEmbedUrl(this.linkUrl);
+                        if (embed) return { type: 'youtube', url: embed };
+                        return { type: 'link', url: this.linkUrl };
+                    }
+                    return null;
+                }
+            };
+        }
+    </script>
+    @endpush
 </x-dashboard::layouts.dashboard>

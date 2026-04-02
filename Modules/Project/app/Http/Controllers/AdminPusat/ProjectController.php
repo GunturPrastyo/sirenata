@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Modules\Project\Models\Project;
 use Modules\Project\Enums\ProjectType;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class ProjectController extends Controller
 {
@@ -67,7 +68,8 @@ class ProjectController extends Controller
             'status' => 'On Progress',
         ]);
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil dibuat!');
+        ToastMagic::success('Proyek berhasil dibuat!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 
     public function show($id)
@@ -114,13 +116,15 @@ class ProjectController extends Controller
             'team_members' => $request->teamMembers,
         ]);
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil diperbarui!');
+        ToastMagic::success('Proyek berhasil diperbarui!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 
     public function destroy($id)
     {
         $project = Project::findOrFail($id);
         $project->delete();
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil dihapus!');
+        ToastMagic::success('Proyek berhasil dihapus!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 }

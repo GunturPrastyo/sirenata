@@ -20,7 +20,7 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $userScope = \Modules\User\Models\UserScope::where('user_id', $user->id)->first();
@@ -37,15 +37,31 @@ class DashboardController extends Controller
             ->where('roles.name', 'user')
             ->where('user_scopes.regency_code', $regencyCode);
 
-        // SDM per Tahun (based on user registration date)
+        // Period calculation (5-year blocks aligned: 2015-2019, 2020-2024, 2025-2029, ...)
+        $currentYear = (int) date('Y');
+        $currentPeriodStart = (int)(floor($currentYear / 5)) * 5;
+        $selectedPeriodStart = (int) $request->input('period_start', $currentPeriodStart);
+        $selectedPeriodEnd = $selectedPeriodStart + 4;
+
+        // Generate period options: 2 before, current, 2 after
+        $periods = [];
+        for ($i = -2; $i <= 2; $i++) {
+            $ps = $currentPeriodStart + ($i * 5);
+            $pe = $ps + 4;
+            $periods[] = ['start' => $ps, 'end' => $pe, 'label' => "$ps - $pe"];
+        }
+
+        // SDM per Tahun (filtered by selected period)
         $usersByYear = (clone $baseUserQuery)
             ->select(\Illuminate\Support\Facades\DB::raw('YEAR(users.created_at) as year'), \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy(\Illuminate\Support\Facades\DB::raw('YEAR(users.created_at)'))
             ->pluck('total', 'year');
 
-        // Note: For mock purposes, if no data exists, we pass an empty array
-        // We will handle the fallback or format in the blade template.
-        $sdmPerTahun = $usersByYear->toArray();
+        // Ensure all 5 years in the period appear (fill missing with 0)
+        $sdmPerTahun = [];
+        for ($y = $selectedPeriodStart; $y <= $selectedPeriodEnd; $y++) {
+            $sdmPerTahun[$y] = $usersByYear->get($y, 0);
+        }
 
         // Gender stats
         $genders = (clone $baseUserQuery)
@@ -62,6 +78,8 @@ class DashboardController extends Controller
             'sdmPerTahun' => $sdmPerTahun,
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
+            'periods' => $periods,
+            'selectedPeriodStart' => $selectedPeriodStart,
         ]);
     }
 

@@ -11,6 +11,8 @@ use Creasi\Nusa\Models\Province;
 use Modules\User\Models\UserProfile;
 use Spatie\Activitylog\Models\Activity;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Modules\RTK\Models\RencanaTenagaKerja;
+use Modules\RTK\Enums\TypeRtk;
 use Illuminate\Http\RedirectResponse;
 use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
 use Modules\Dashboard\Services\DashboardService;
@@ -70,6 +72,30 @@ class DashbordController extends Controller
             ];
         })->sortBy('province_name')->values();
 
+        // Masa Aktif RTK per Provinsi (active RTK per province with remaining years)
+        $rtkProvinsi = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->get();
+
+        $rtkProvinceCodes = $rtkProvinsi->pluck('province_code')->toArray();
+        $rtkProvinceNames = Province::whereIn('code', $rtkProvinceCodes)->pluck('name', 'code');
+
+        $rtkMasaAktifPerProvinsi = $rtkProvinsi->map(function ($rtk) use ($rtkProvinceNames) {
+            return (object) [
+                'province_name' => $rtkProvinceNames[$rtk->province_code] ?? 'Unknown',
+                'sisa_tahun' => max(0, (int) $rtk->end_date - (int) date('Y')),
+                'start_date' => $rtk->start_date,
+                'end_date' => $rtk->end_date,
+            ];
+        })->sortBy('province_name')->values();
+
+        // Status Distribusi RTK (all types)
+        $rtkStatusDistribution = DB::table('rencana_tenaga_kerjas')
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         return view('dashboard::pages.admin-pusat.index', [
             'user' => $user,
             'totalAdminPusat' => $totalAdminPusat,
@@ -78,6 +104,8 @@ class DashbordController extends Controller
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
             'sdmPerProvinsi' => $sdmPerProvinsi,
+            'rtkMasaAktifPerProvinsi' => $rtkMasaAktifPerProvinsi,
+            'rtkStatusDistribution' => $rtkStatusDistribution,
         ]);
     }
 

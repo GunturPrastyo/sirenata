@@ -10,6 +10,8 @@ use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
 use Modules\Dashboard\Services\DashboardService;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\Request;
+use Modules\RTK\Models\RencanaTenagaKerja;
+use Modules\RTK\Enums\TypeRtk;
 
 class DashboardController extends Controller
 {
@@ -64,11 +66,41 @@ class DashboardController extends Controller
         $genderMale = $genders->get('male', 0);
         $genderFemale = $genders->get('female', 0);
 
+        // Masa Aktif RTK per Kab/Kota (active RTK per regency with remaining years)
+        $rtkKabKota = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+            ->where('province_code', $provinceCode)
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->get();
+
+        $rtkRegencyCodes = $rtkKabKota->pluck('regency_code')->toArray();
+        $rtkRegencyNames = \Creasi\Nusa\Models\Regency::whereIn('code', $rtkRegencyCodes)->pluck('name', 'code');
+
+        $rtkMasaAktifPerKabKota = $rtkKabKota->map(function ($rtk) use ($rtkRegencyNames) {
+            $rawName = $rtkRegencyNames[$rtk->regency_code] ?? 'Unknown';
+            return (object) [
+                'regency_name' => collect(explode(' ', $rawName))->map(fn($w) => ucfirst(strtolower($w)))->join(' '),
+                'sisa_tahun' => max(0, (int) $rtk->end_date - (int) date('Y')),
+                'start_date' => $rtk->start_date,
+                'end_date' => $rtk->end_date,
+            ];
+        })->sortBy('regency_name')->values();
+
+        // Status Distribusi RTK di provinsi ini
+        $rtkStatusDistribution = \Illuminate\Support\Facades\DB::table('rencana_tenaga_kerjas')
+            ->where('province_code', $provinceCode)
+            ->where('type', TypeRtk::KAB_KOTA->value)
+            ->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         return view('dashboard::pages.admin-provinsi.index', [
             'user' => $user,
             'sdmPerKabKota' => $sdmPerKabKota,
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
+            'rtkMasaAktifPerKabKota' => $rtkMasaAktifPerKabKota,
+            'rtkStatusDistribution' => $rtkStatusDistribution,
         ]);
     }
 

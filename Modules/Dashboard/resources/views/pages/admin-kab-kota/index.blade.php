@@ -60,6 +60,15 @@
         <div class="bg-white rounded-lg p-3 sm:p-6 shadow-sm mb-4 sm:mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
                 <h2 class="text-base sm:text-xl font-bold text-gray-900">Jumlah SDM yang Mengambil Kursus per Tahun</h2>
+                <div class="flex items-center gap-2">
+                    <label for="periodFilter" class="text-sm font-medium text-gray-600">Periode:</label>
+                    <select id="periodFilter" onchange="window.location.href='{{ route('admin-kab-kota.dashboard') }}?period_start=' + this.value"
+                        class="px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        @foreach($periods as $period)
+                            <option value="{{ $period['start'] }}" {{ $selectedPeriodStart == $period['start'] ? 'selected' : '' }}>{{ $period['label'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             <div class="h-64 sm:h-96">
                 @if(empty($sdmPerTahun))

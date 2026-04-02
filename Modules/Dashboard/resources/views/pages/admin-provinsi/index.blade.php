@@ -78,18 +78,30 @@
         <div class="bg-white rounded-lg p-4 md:p-6 shadow-sm mb-4 md:mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
                 <h2 class="text-lg md:text-xl font-bold text-gray-900">Masa Aktif RTK per Kab/Kota</h2>
-                <div class="text-sm text-gray-600">
-                    <span class="font-medium">Tahun Sekarang:</span> {{ date('Y') }}
-                    <span class="mx-2">|</span>
-                    <span class="font-medium">Masa Berlaku:</span> 5 Tahun
+                <div class="flex items-center gap-2">
+                    <label for="rtkYearFilter" class="text-sm font-medium text-gray-600">Tahun:</label>
+                    <select id="rtkYearFilter" class="px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        @for($y = (int)date('Y') - 2; $y <= (int)date('Y') + 2; $y++)
+                            <option value="{{ $y }}" {{ $y == (int)date('Y') ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
                 </div>
             </div>
-            <div class="h-64 flex flex-col justify-center items-center text-gray-500">
-                <i class="fas fa-link-slash text-4xl mb-3 text-gray-300"></i>
-                <p class="font-medium">Belum Dihubungkan</p>
-                <p class="text-xs mt-1 text-center">Data Masa Aktif RTK belum tersedia / belum dihubungkan dengan
-                    database</p>
-            </div>
+            @if($rtkMasaAktifPerKabKota->count() > 0)
+                <div class="h-64 sm:h-80">
+                    <canvas id="rtkMasaAktifKabKotaChart"></canvas>
+                </div>
+            @else
+                <div class="h-64 flex flex-col justify-center items-center text-gray-500">
+                    <div class="text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-chart-bar text-5xl text-gray-300"></i>
+                        </div>
+                        <p class="text-lg font-semibold text-gray-400">Belum Ada Data</p>
+                        <p class="text-sm text-gray-400 mt-1">Belum ada RTK Kab/Kota yang aktif di provinsi ini</p>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <!-- Pie Charts Grid -->
@@ -99,15 +111,21 @@
                 <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Status Masa Berlaku RTK
                     ({{ date('Y') }})
                 </h2>
-                <div class="h-60 sm:h-80 flex flex-col justify-center items-center text-gray-500">
-                    <div class="text-center">
-                        <div class="mb-4">
-                            <i class="fas fa-link-slash text-5xl text-gray-300"></i>
-                        </div>
-                        <p class="text-lg font-semibold text-gray-400">Belum Dihubungkan</p>
-                        <p class="text-sm text-gray-400 mt-1">Data RTK belum tersedia</p>
+                @if($rtkStatusDistribution->sum() > 0)
+                    <div class="h-60 sm:h-80 flex items-center justify-center">
+                        <canvas id="rtkStatusPieChart"></canvas>
                     </div>
-                </div>
+                @else
+                    <div class="h-60 sm:h-80 flex flex-col justify-center items-center text-gray-500">
+                        <div class="text-center">
+                            <div class="mb-4">
+                                <i class="fas fa-chart-pie text-5xl text-gray-300"></i>
+                            </div>
+                            <p class="text-lg font-semibold text-gray-400">Belum Ada Data</p>
+                            <p class="text-sm text-gray-400 mt-1">Belum ada data RTK di provinsi ini</p>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <!-- Card 2: Gender Distribution Pie Chart -->
@@ -297,6 +315,162 @@
                     }
                 });
             }
+
+            // Bar Chart: Masa Aktif RTK per Kab/Kota
+            @if($rtkMasaAktifPerKabKota->count() > 0)
+                const currentYear = {{ date('Y') }};
+                let rtkBaseYear = currentYear;
+                let rtkMaxYear = rtkBaseYear + 4;
+                const rtkLabels = @json($rtkMasaAktifPerKabKota->pluck('regency_name'));
+                const rtkEndDatesRaw = @json($rtkMasaAktifPerKabKota->pluck('end_date'));
+                const rtkStartDates = @json($rtkMasaAktifPerKabKota->pluck('start_date'));
+                const rtkEndDates = rtkEndDatesRaw.map(ed => ed);
+
+                function getRtkBarData(baseYear) {
+                    const max = baseYear + 4;
+                    return rtkEndDatesRaw.map(ed => Math.max(baseYear, Math.min(parseInt(ed), max)));
+                }
+                function getRtkColors(prop) {
+                    return rtkEndDatesRaw.map(ed => {
+                        const sisa = parseInt(ed) - currentYear;
+                        const alpha = prop === 'bg' ? '0.8' : '1';
+                        if (sisa > 2) return `rgba(34, 197, 94, ${alpha})`;
+                        if (sisa >= 1) return `rgba(245, 158, 11, ${alpha})`;
+                        return `rgba(239, 68, 68, ${alpha})`;
+                    });
+                }
+
+                if (document.getElementById('rtkMasaAktifKabKotaChart')) {
+                    const rtkBarCtx = document.getElementById('rtkMasaAktifKabKotaChart').getContext('2d');
+                    const rtkMasaAktifChart = new Chart(rtkBarCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: rtkLabels,
+                            datasets: [{
+                                label: 'Masa Berlaku s/d',
+                                data: getRtkBarData(rtkBaseYear),
+                                backgroundColor: getRtkColors('bg'),
+                                borderColor: getRtkColors('border'),
+                                borderWidth: 1,
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(31, 41, 55, 0.95)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    callbacks: {
+                                        label: function(ctx) {
+                                            const i = ctx.dataIndex;
+                                            return [
+                                                `Periode: ${rtkStartDates[i]} - ${rtkEndDates[i]}`,
+                                                `Sisa Masa Berlaku: ${Math.max(0, parseInt(rtkEndDates[i]) - currentYear)} tahun`
+                                            ];
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: rtkBaseYear,
+                                    max: rtkMaxYear,
+                                    title: { display: true, text: 'Tahun', font: { size: 12 } },
+                                    ticks: { stepSize: 1, font: { size: 12 }, callback: v => v },
+                                    grid: { color: 'rgba(229, 231, 235, 0.8)' }
+                                },
+                                x: {
+                                    ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 },
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
+
+                    document.getElementById('rtkYearFilter').addEventListener('change', function() {
+                        rtkBaseYear = parseInt(this.value);
+                        rtkMaxYear = rtkBaseYear + 4;
+                        rtkMasaAktifChart.data.datasets[0].data = getRtkBarData(rtkBaseYear);
+                        rtkMasaAktifChart.options.scales.y.min = rtkBaseYear;
+                        rtkMasaAktifChart.options.scales.y.max = rtkMaxYear;
+                        rtkMasaAktifChart.update();
+                    });
+                }
+            @endif
+
+            // Pie Chart: Status Distribusi RTK
+            @if($rtkStatusDistribution->sum() > 0)
+                const statusLabels = {
+                    'pending': 'Menunggu Persetujuan',
+                    'approved': 'Disetujui',
+                    'rejected': 'Ditolak',
+                    'expired': 'Kadaluarsa'
+                };
+                const statusColors = {
+                    'pending': 'rgba(245, 158, 11, 0.8)',
+                    'approved': 'rgba(34, 197, 94, 0.8)',
+                    'rejected': 'rgba(239, 68, 68, 0.8)',
+                    'expired': 'rgba(156, 163, 175, 0.8)'
+                };
+                const statusBorders = {
+                    'pending': 'rgba(245, 158, 11, 1)',
+                    'approved': 'rgba(34, 197, 94, 1)',
+                    'rejected': 'rgba(239, 68, 68, 1)',
+                    'expired': 'rgba(156, 163, 175, 1)'
+                };
+
+                const rtkStatusRaw = @json($rtkStatusDistribution);
+                const rtkStatusKeys = Object.keys(rtkStatusRaw);
+                const rtkStatusData = Object.values(rtkStatusRaw);
+                const rtkStatusLabels = rtkStatusKeys.map(k => statusLabels[k] || k);
+                const rtkStatusBgColors = rtkStatusKeys.map(k => statusColors[k] || 'rgba(156, 163, 175, 0.8)');
+                const rtkStatusBorderColors = rtkStatusKeys.map(k => statusBorders[k] || 'rgba(156, 163, 175, 1)');
+
+                if (document.getElementById('rtkStatusPieChart')) {
+                    const rtkStatusCtx = document.getElementById('rtkStatusPieChart').getContext('2d');
+                    new Chart(rtkStatusCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: rtkStatusLabels,
+                            datasets: [{
+                                data: rtkStatusData,
+                                backgroundColor: rtkStatusBgColors,
+                                borderColor: rtkStatusBorderColors,
+                                borderWidth: 2,
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { padding: 20, font: { size: 13, weight: '500' } }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(31, 41, 55, 0.95)',
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    callbacks: {
+                                        label: function(ctx) {
+                                            const label = ctx.label || '';
+                                            const value = ctx.parsed || 0;
+                                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                            const pct = ((value / total) * 100).toFixed(1);
+                                            return `${label}: ${value} (${pct}%)`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            @endif
         </script>
     @endpush
 </x-dashboard::layouts.dashboard>

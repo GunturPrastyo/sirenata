@@ -26,12 +26,6 @@
             </ol>
         </nav>
 
-        @if(session('success'))
-            <div class="mt-2 mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-                role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
 
         @if ($errors->any())
             <div class="mt-2 mb-4 bg-red-50 text-red-600 p-4 rounded-lg border border-red-200">
@@ -49,10 +43,10 @@
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                     <div class="relative w-full sm:w-48">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <select name="library_type_id" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">Semua Tipe</option>
-                            @foreach($libraryTypes as $type)
-                                <option value="{{ $type->id }}" {{ ($libraryTypeId ?? '') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                        <select name="library_category_id" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua Kategori</option>
+                            @foreach($libraryCategories as $category)
+                                <option value="{{ $category->id }}" {{ ($libraryCategoryId ?? '') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -106,7 +100,7 @@
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
                             <th class="px-4 md:px-6 py-3 text-left">Sampul</th>
                             <th class="px-4 md:px-6 py-3 text-left">Judul</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Tipe</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Kategori</th>
                             <th class="px-4 md:px-6 py-3 text-left">Lampiran</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
@@ -131,23 +125,39 @@
                                     @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
-                                    <span class="px-2 py-1 bg-slate-100 text-slate-800 border border-slate-200 rounded text-xs">{{ $library->libraryType->name ?? '-' }}</span>
+                                    <span class="px-2 py-1 bg-slate-100 text-slate-800 border border-slate-200 rounded text-xs">{{ $library->libraryCategory->name ?? '-' }}</span>
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
                                     <div class="flex flex-col gap-1">
                                         @if($library->file_path)
-                                            <span class="inline-flex items-center text-xs text-blue-600">
+                                            <span class="inline-flex items-center text-xs text-blue-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ Storage::url($library->file_path) }}', type: 'pdf' })">
                                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
                                                 File PDF
                                             </span>
                                         @endif
-                                        @if($library->external_link)
-                                            <a href="{{ $library->external_link }}" target="_blank" class="inline-flex items-center text-xs text-indigo-600 hover:underline">
-                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                                                Link Eksternal
-                                            </a>
+                                        @if($library->video_path)
+                                            <span class="inline-flex items-center text-xs text-purple-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ Storage::url($library->video_path) }}', type: 'video' })">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                File Video
+                                            </span>
                                         @endif
-                                        @if(!$library->file_path && !$library->external_link)
+                                        @if($library->external_link)
+                                            @php
+                                                $isYoutube = str_contains($library->external_link, 'youtube.com') || str_contains($library->external_link, 'youtu.be');
+                                            @endphp
+                                            @if($isYoutube)
+                                                <span class="inline-flex items-center text-xs text-red-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ $library->external_link }}', type: 'youtube' })">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    Link YouTube
+                                                </span>
+                                            @else
+                                                <a href="{{ $library->external_link }}" target="_blank" class="inline-flex items-center text-xs text-indigo-600 hover:underline">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                                                    Link Eksternal
+                                                </a>
+                                            @endif
+                                        @endif
+                                        @if(!$library->file_path && !$library->video_path && !$library->external_link)
                                             <span class="text-xs text-slate-400">-</span>
                                         @endif
                                     </div>
@@ -185,4 +195,48 @@
             </div>
         </div>
     </div>
+
+    <!-- Preview Modal -->
+    <x-modal name="preview-modal" title="Preview Materi" maxWidth="sm:max-w-4xl">
+        <div x-data="{
+            url: '',
+            type: '',
+            init() {
+                window.addEventListener('open-preview', (e) => {
+                    this.url = e.detail.url;
+                    this.type = e.detail.type;
+                    if(this.type === 'youtube') {
+                        let match = this.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+                        this.url = match ? 'https://www.youtube.com/embed/' + match[1] : this.url;
+                    }
+                });
+                window.addEventListener('close-modal', (e) => {
+                    if (e.detail === 'preview-modal') {
+                        this.url = '';
+                        this.type = '';
+                    }
+                });
+            }
+        }">
+            <div class="mt-4 border border-gray-200 rounded-xl bg-gray-50 flex items-center justify-center overflow-hidden">
+                <template x-if="type === 'pdf'">
+                    <iframe :src="url" class="w-full h-[300px] sm:h-[500px] rounded-lg" frameborder="0"></iframe>
+                </template>
+                <template x-if="type === 'video'">
+                    <video :src="url" class="w-full h-[300px] sm:h-[500px] rounded-lg bg-black" controls autoplay></video>
+                </template>
+                <template x-if="type === 'youtube'">
+                    <iframe :src="url" class="w-full h-[300px] sm:h-[500px] rounded-lg bg-black" frameborder="0" allowfullscreen></iframe>
+                </template>
+                <template x-if="!url">
+                    <div class="p-8 text-center text-gray-500">
+                        Memuat konten...
+                    </div>
+                </template>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button type="button" @click="$dispatch('close-modal', 'preview-modal')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 text-sm font-medium transition">Tutup</button>
+            </div>
+        </div>
+    </x-modal>
 </x-dashboard::layouts.dashboard>

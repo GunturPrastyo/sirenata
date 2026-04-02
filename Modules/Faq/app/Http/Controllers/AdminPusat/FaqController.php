@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Faq\Models\Faq;
 use Modules\Faq\Enums\FaqLevel;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class FaqController extends Controller
 {
@@ -49,7 +50,8 @@ class FaqController extends Controller
             'created_by' => Auth::id(),
         ]);
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil dibuat!');
+        ToastMagic::success('FAQ berhasil dibuat!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 
     public function show($id)
@@ -75,7 +77,8 @@ class FaqController extends Controller
             'level' => $request->level,
         ]);
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil diperbarui!');
+        ToastMagic::success('FAQ berhasil diperbarui!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 
     public function destroy($id)
@@ -83,6 +86,7 @@ class FaqController extends Controller
         $faq = Faq::findOrFail($id);
         $faq->delete();
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil dihapus!');
+        ToastMagic::success('FAQ berhasil dihapus!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 }
