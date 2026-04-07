@@ -11,6 +11,8 @@ class RTKDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $this->call([]);
+        $this->call([
+            RTKDummySeeder::class,
+        ]);
     }
 }

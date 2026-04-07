@@ -55,103 +55,170 @@
             </ol>
         </nav>
 
-        <!-- Bar Chart: SDM per Kab/Kota -->
-        <div class="bg-white rounded-lg p-3 sm:p-6 shadow-sm mb-4 sm:mb-6">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
-                <h2 class="text-base sm:text-xl font-bold text-gray-900">Jumlah SDM yang Mengambil Kursus per
-                    Kabupaten/Kota</h2>
-            </div>
-            <div class="h-64 sm:h-96 flex justify-center items-center">
-                @if($sdmPerKabKota->isEmpty())
-                    <div class="flex flex-col justify-center items-center text-gray-500">
-                        <i class="fas fa-chart-bar text-4xl mb-3 text-gray-300"></i>
-                        <p class="font-medium">Belum Ada Data</p>
-                        <p class="text-xs mt-1 text-center">Belum ada user di provinsi ini</p>
-                    </div>
-                @else
-                    <canvas id="sdmBarChart"></canvas>
-                @endif
-            </div>
-        </div>
-
-        <!-- Bar Chart: Masa Aktif RTK per Kab/Kota -->
-        <div class="bg-white rounded-lg p-4 md:p-6 shadow-sm mb-4 md:mb-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
-                <h2 class="text-lg md:text-xl font-bold text-gray-900">Masa Aktif RTK per Kab/Kota</h2>
-                <div class="flex items-center gap-2">
-                    <label for="rtkYearFilter" class="text-sm font-medium text-gray-600">Tahun:</label>
-                    <select id="rtkYearFilter" class="px-3 py-1.5 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        @for($y = (int)date('Y') - 2; $y <= (int)date('Y') + 2; $y++)
-                            <option value="{{ $y }}" {{ $y == (int)date('Y') ? 'selected' : '' }}>{{ $y }}</option>
-                        @endfor
-                    </select>
-                </div>
-            </div>
-            @if($rtkMasaAktifPerKabKota->count() > 0)
-                <div class="h-64 sm:h-80">
-                    <canvas id="rtkMasaAktifKabKotaChart"></canvas>
-                </div>
-            @else
-                <div class="h-64 flex flex-col justify-center items-center text-gray-500">
-                    <div class="text-center">
-                        <div class="mb-4">
-                            <i class="fas fa-chart-bar text-5xl text-gray-300"></i>
-                        </div>
-                        <p class="text-lg font-semibold text-gray-400">Belum Ada Data</p>
-                        <p class="text-sm text-gray-400 mt-1">Belum ada RTK Kab/Kota yang aktif di provinsi ini</p>
-                    </div>
-                </div>
-            @endif
-        </div>
-
-        <!-- Pie Charts Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-            <!-- Card 1: RTK Validity Status Pie Chart -->
-            <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
-                <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Status Masa Berlaku RTK
-                    ({{ date('Y') }})
+        <!-- Card: Informasi RTK (Paling Atas) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 sm:mb-8 overflow-hidden transition-all hover:shadow-md">
+            <div class="bg-gradient-to-r from-blue-50/50 to-transparent px-5 sm:px-8 py-4 sm:py-5 border-b border-slate-100">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-3">
+                    <div class="p-2 bg-blue-100 text-blue-600 rounded-lg"><i class="fas fa-file-signature"></i></div>
+                    Informasi RTK
                 </h2>
-                @if($rtkStatusDistribution->sum() > 0)
-                    <div class="h-60 sm:h-80 flex items-center justify-center">
-                        <canvas id="rtkStatusPieChart"></canvas>
-                    </div>
-                @else
-                    <div class="h-60 sm:h-80 flex flex-col justify-center items-center text-gray-500">
-                        <div class="text-center">
-                            <div class="mb-4">
-                                <i class="fas fa-chart-pie text-5xl text-gray-300"></i>
-                            </div>
-                            <p class="text-lg font-semibold text-gray-400">Belum Ada Data</p>
-                            <p class="text-sm text-gray-400 mt-1">Belum ada data RTK di provinsi ini</p>
+            </div>
+            
+            <div class="p-5 sm:p-8">
+                <!-- Masa Aktif RTK (Top) -->
+                <div class="mb-8 bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-8 bg-blue-500 rounded-full"></div>
+                            <h3 class="text-lg font-bold text-slate-800">Masa Aktif RTK per Kab/Kota</h3>
+                        </div>
+                        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                            <label for="rtkYearFilter" class="text-sm font-semibold text-slate-600 pl-2 cursor-pointer">
+                                <i class="far fa-calendar-alt mr-1"></i> Tahun
+                            </label>
+                            <select id="rtkYearFilter" class="bg-white border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 rounded-md py-1.5 pl-3 pr-8 text-sm font-medium text-slate-700 cursor-pointer shadow-sm">
+                                @for($y = (int)date('Y') - 2; $y <= (int)date('Y') + 2; $y++)
+                                    <option value="{{ $y }}" {{ $y == (int)date('Y') ? 'selected' : '' }}>{{ $y }}</option>
+                                @endfor
+                            </select>
                         </div>
                     </div>
-                @endif
-            </div>
-
-            <!-- Card 2: Gender Distribution Pie Chart -->
-            <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
-                <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Perbandingan Jenis Kelamin
-                </h2>
-                <div class="h-60 sm:h-80 flex items-center justify-center">
-                    @if ($genderMale == 0 && $genderFemale == 0)
-                        <div class="flex flex-col justify-center items-center text-gray-500">
-                            <i class="fas fa-chart-pie text-4xl mb-3 text-gray-300"></i>
-                            <p class="font-medium">Belum Ada Data</p>
+                    
+                    @if($rtkMasaAktifPerKabKota->count() > 0)
+                        <div class="relative h-72 sm:h-[400px] w-full">
+                            <canvas id="rtkMasaAktifKabKotaChart"></canvas>
                         </div>
                     @else
-                        <canvas id="genderPieChart"></canvas>
+                        <div class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                <i class="fas fa-chart-bar text-2xl text-slate-300"></i>
+                            </div>
+                            <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
+                            <p class="text-sm mt-1">Belum ada RTK Kab/Kota yang aktif di provinsi ini</p>
+                        </div>
                     @endif
                 </div>
-            </div>
 
-            <!-- Card 3: Module Distribution Pie Chart -->
-            <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
-                <h2 class="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Perbandingan Modul yang
-                    Diambil</h2>
-                <div class="h-60 sm:h-80 flex flex-col justify-center items-center text-gray-500">
-                    <i class="fas fa-book-open text-4xl mb-3 text-gray-300"></i>
-                    <p class="font-medium">Belum Tersedia</p>
-                    <p class="text-xs mt-1 text-center">Data modul dan enrollment belum tersedia di database</p>
+                <!-- RTK Stats (Bottom Grid) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                    <!-- Status Masa Berlaku RTK -->
+                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="relative z-10 flex items-center gap-3 mb-6">
+                            <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
+                            <h3 class="text-base font-bold text-slate-800">Status Masa Berlaku RTK ({{ date('Y') }})</h3>
+                        </div>
+                        
+                        @if($rtkStatusDistribution->sum() > 0)
+                            <div class="relative h-64 sm:h-80 w-full flex items-center justify-center">
+                                <canvas id="rtkStatusPieChart"></canvas>
+                            </div>
+                        @else
+                            <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                    <i class="fas fa-chart-pie text-2xl text-slate-300"></i>
+                                </div>
+                                <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
+                                <p class="text-sm mt-1 text-center">Belum ada data RTK di provinsi ini</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- RTK Berlaku -->
+                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="relative z-10 flex items-center gap-3 mb-6">
+                            <div class="w-1.5 h-6 bg-emerald-500 rounded-full"></div>
+                            <h3 class="text-base font-bold text-slate-800">RTK Berlaku Saat Ini</h3>
+                        </div>
+                        
+                        <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                <i class="fas fa-file-contract text-2xl text-slate-300"></i>
+                            </div>
+                            <p class="text-base font-semibold text-slate-500">Belum Tersedia</p>
+                            <p class="text-sm mt-1 text-center">Data informasi RTK aktif belum tersedia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Informasi E-Learning -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 sm:mb-8 overflow-hidden transition-all hover:shadow-md">
+            <div class="bg-gradient-to-r from-emerald-50/50 to-transparent px-5 sm:px-8 py-4 sm:py-5 border-b border-slate-100">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-3">
+                    <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg"><i class="fas fa-laptop-code"></i></div>
+                    Informasi E-Learning
+                </h2>
+            </div>
+            
+            <div class="p-5 sm:p-8">
+                <!-- SDM User -->
+                <div class="mb-8 bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-8 bg-emerald-500 rounded-full"></div>
+                            <h3 class="text-lg font-bold text-slate-800">Jumlah SDM yang Mengambil Kursus per Kabupaten/Kota</h3>
+                        </div>
+                    </div>
+                    
+                    @if($sdmPerKabKota->isEmpty())
+                        <div class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                <i class="fas fa-chart-bar text-2xl text-slate-300"></i>
+                            </div>
+                            <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
+                            <p class="text-sm mt-1">Belum ada user di provinsi ini</p>
+                        </div>
+                    @else
+                        <div class="relative h-72 sm:h-[400px] w-full">
+                            <canvas id="sdmBarChart"></canvas>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- E-Learning Stats (Bottom Grid) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                    <!-- Gender -->
+                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-pink-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="relative z-10 flex items-center gap-3 mb-6">
+                            <div class="w-1.5 h-6 bg-pink-500 rounded-full"></div>
+                            <h3 class="text-base font-bold text-slate-800">Perbandingan Jenis Kelamin</h3>
+                        </div>
+                        
+                        @if ($genderMale == 0 && $genderFemale == 0)
+                            <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                    <i class="fas fa-venus-mars text-2xl text-slate-300"></i>
+                                </div>
+                                <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
+                                <p class="text-sm mt-1 text-center">Data jenis kelamin user belum diisi</p>
+                            </div>
+                        @else
+                            <div class="relative h-64 sm:h-80 w-full flex items-center justify-center">
+                                <canvas id="genderPieChart"></canvas>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Modul -->
+                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="relative z-10 flex items-center gap-3 mb-6">
+                            <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
+                            <h3 class="text-base font-bold text-slate-800">Perbandingan Modul yang Diambil</h3>
+                        </div>
+                        
+                        <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                <i class="fas fa-book-open text-2xl text-slate-300"></i>
+                            </div>
+                            <p class="text-base font-semibold text-slate-500">Belum Tersedia</p>
+                            <p class="text-sm mt-1 text-center">Data modul belum tersedia di sistem</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -164,24 +231,44 @@
             const sdmLabels = @json($sdmPerKabKota->pluck('regency_name'));
             const sdmData = @json($sdmPerKabKota->pluck('total'));
 
-            // Generate 3-color alternating pattern (Blue-Red-Green)
-            function generateAlternatingColors(dataLength) {
-                const colors = [
-                    { bg: 'rgba(59, 130, 246, 0.8)', border: 'rgba(59, 130, 246, 1)', hover: 'rgba(59, 130, 246, 1)' },   // Blue
-                    { bg: 'rgba(239, 68, 68, 0.8)', border: 'rgba(239, 68, 68, 1)', hover: 'rgba(239, 68, 68, 1)' },     // Red
-                    { bg: 'rgba(34, 197, 94, 0.8)', border: 'rgba(34, 197, 94, 1)', hover: 'rgba(34, 197, 94, 1)' }      // Green
-                ];
+            function generateGradientColors(data) {
+                if (data.length === 0) return { bgColors: [], borderColors: [], hoverColors: [] };
+                const total = data.reduce((a, b) => a + b, 0);
+                const avg = total / data.length;
 
-                const bgColors = [];
-                const borderColors = [];
-                const hoverColors = [];
+                const bgColors = [], borderColors = [], hoverColors = [];
 
-                for (let i = 0; i < dataLength; i++) {
-                    const colorIndex = i % 3;
-                    bgColors.push(colors[colorIndex].bg);
-                    borderColors.push(colors[colorIndex].border);
-                    hoverColors.push(colors[colorIndex].hover);
-                }
+                data.forEach(val => {
+                    const ratio = avg === 0 ? 1 : val / avg;
+                    let r, g, b;
+
+                    if (ratio <= 0.3) {
+                        // Sangat Sedikit -> Merah Pekat
+                        r = 220; g = 38; b = 38;
+                    } else if (ratio <= 0.6) {
+                        // Sedikit -> Merah Standard
+                        r = 239; g = 68; b = 68;
+                    } else if (ratio <= 0.9) {
+                        // Agak Sedikit -> Merah Pudar
+                        r = 248; g = 113; b = 113;
+                    } else if (ratio <= 1.1) {
+                        // Mendekati/Sama Rata-rata -> Biru
+                        r = 59; g = 130; b = 246;
+                    } else if (ratio <= 1.4) {
+                        // Agak Banyak -> Hijau Muda
+                        r = 74; g = 222; b = 128;
+                    } else if (ratio <= 1.7) {
+                        // Banyak -> Hijau Standard
+                        r = 34; g = 197; b = 94;
+                    } else {
+                        // Sangat Banyak -> Hijau Pekat
+                        r = 22; g = 163; b = 74;
+                    }
+
+                    bgColors.push(`rgba(${r}, ${g}, ${b}, 0.95)`);
+                    borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`);
+                    hoverColors.push(`rgba(${r}, ${g}, ${b}, 1)`);
+                });
 
                 return { bgColors, borderColors, hoverColors };
             }
@@ -189,7 +276,7 @@
             // Bar Chart: SDM per Kab/Kota
             if (document.getElementById('sdmBarChart')) {
                 const barCtx = document.getElementById('sdmBarChart').getContext('2d');
-                const initialColors = generateAlternatingColors(sdmData.length);
+                const initialColors = generateGradientColors(sdmData);
 
                 new Chart(barCtx, {
                     type: 'bar',
