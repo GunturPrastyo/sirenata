@@ -20,6 +20,7 @@ use Modules\User\Traits\HasScopeAccess;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Modules\Auth\Notifications\Auth\ResetPasswordNotification;
 
 class User extends Authenticatable
@@ -142,13 +143,16 @@ class User extends Authenticatable
         return $this->hasOne(UserScope::class);
     }
 
-    public function enrolledCourses()
+    public function enrolledCourses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_student')
             ->withPivot([
                 'status',
                 'progress',
-                'completed_at'
+                'completed_at',
+                'certificate_code',
+                'certificate_file',
+                'certificate_issued_at',
             ])
             ->withTimestamps();
     }

@@ -93,6 +93,7 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         $user = Auth::user();
+        $user->load(['roles.permissions']);
         return ResponseHelper::success(
             status: true,
             message: 'Users retrieved successfully',
