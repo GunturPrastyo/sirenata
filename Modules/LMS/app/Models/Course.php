@@ -90,10 +90,10 @@ class Course extends Model
         return $this->hasMany(CourseTestimoni::class);
     }
 
-    // public function sections(): HasMany
-    // {
-    //     return $this->hasMany(CourseSection::class)->orderBy('position');
-    // }
+    public function sections(): HasMany
+    {
+        return $this->hasMany(CourseSection::class)->orderBy('position');
+    }
 
     // public function students()
     // {
