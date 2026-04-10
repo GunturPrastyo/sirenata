@@ -137,21 +137,29 @@
                             <div class="w-2 h-8 bg-emerald-500 rounded-full"></div>
                             <h3 class="text-lg font-bold text-slate-800">Jumlah SDM (User) per Provinsi</h3>
                         </div>
+                        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                            <label for="sdmYearFilter" class="text-sm font-semibold text-slate-600 pl-2 cursor-pointer">
+                                <i class="far fa-calendar-alt mr-1"></i> Tahun
+                            </label>
+                            <select id="sdmYearFilter" onchange="fetchSdmPusatData(this.value)" class="bg-white border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-emerald-500 rounded-md py-1.5 pl-3 pr-8 text-sm font-medium text-slate-700 cursor-pointer shadow-sm">
+                                @foreach($sdmYears as $year)
+                                    <option value="{{ $year }}" {{ $selectedSdmYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     
-                    @if($sdmPerProvinsi->count() > 0)
-                        <div class="relative h-72 sm:h-[400px] w-full">
-                            <canvas id="sdmBarChart"></canvas>
+                    <div id="sdmChartContainer" class="relative h-72 sm:h-[400px] w-full {{ $sdmPerProvinsi->count() > 0 ? '' : 'hidden' }}">
+                        <canvas id="sdmBarChart"></canvas>
+                    </div>
+                    
+                    <div id="sdmEmptyState" class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200 {{ $sdmPerProvinsi->count() > 0 ? 'hidden' : '' }}">
+                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                            <i class="fas fa-users text-2xl text-slate-300"></i>
                         </div>
-                    @else
-                        <div class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                <i class="fas fa-users text-2xl text-slate-300"></i>
-                            </div>
-                            <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                            <p class="text-sm mt-1">Belum ada user dengan data provinsi</p>
-                        </div>
-                    @endif
+                        <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
+                        <p class="text-sm mt-1">Belum ada user dengan data provinsi di tahun terpilih</p>
+                    </div>
                 </div>
 
                 <!-- E-Learning Stats (Bottom Grid) -->
@@ -211,7 +219,7 @@
                     const sdmData = @json($sdmPerProvinsi->pluck('total'));
 
                     // Function to generate sharp colors based on average
-                    function generateGradientColors(data) {
+                    window.generateGradientColors = function(data) {
                         if (data.length === 0) return { bgColors: [], borderColors: [], hoverColors: [] };
                         const total = data.reduce((a, b) => a + b, 0);
                         const avg = total / data.length;
@@ -253,9 +261,9 @@
                         return { bgColors, borderColors, hoverColors };
                     }
 
-                    const barColors = generateGradientColors(sdmData);
+                    const barColors = window.generateGradientColors(sdmData);
 
-                    new Chart(barCtx, {
+                    window.sdmBarChartInstance = new Chart(barCtx, {
                         type: 'bar',
                         data: {
                             labels: sdmLabels,
@@ -299,6 +307,66 @@
                         }
                     });
                 @endif
+                
+                window.fetchSdmPusatData = function(year) {
+                    fetch(`{{ route('admin-pusat.dashboard') }}?sdm_year=${year}`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const sdmData = data.sdmPerProvinsi;
+                        const chartContainer = document.getElementById('sdmChartContainer');
+                        const emptyState = document.getElementById('sdmEmptyState');
+                        
+                        if (!sdmData || sdmData.length === 0) {
+                            chartContainer.classList.add('hidden');
+                            emptyState.classList.remove('hidden');
+                        } else {
+                            chartContainer.classList.remove('hidden');
+                            emptyState.classList.add('hidden');
+                            
+                            const labels = sdmData.map(item => item.province_name);
+                            const totals = sdmData.map(item => item.total);
+                            
+                            const colors = window.generateGradientColors ? window.generateGradientColors(totals) : { bgColors: Array(totals.length).fill('rgba(34, 197, 94, 0.95)'), borderColors: Array(totals.length).fill('rgba(34, 197, 94, 1)'), hoverColors: Array(totals.length).fill('rgba(34, 197, 94, 1)') };
+                            
+                            if (window.sdmBarChartInstance) {
+                                window.sdmBarChartInstance.data.labels = labels;
+                                window.sdmBarChartInstance.data.datasets[0].data = totals;
+                                window.sdmBarChartInstance.data.datasets[0].backgroundColor = colors.bgColors;
+                                window.sdmBarChartInstance.data.datasets[0].borderColor = colors.borderColors;
+                                window.sdmBarChartInstance.data.datasets[0].hoverBackgroundColor = colors.hoverColors;
+                                window.sdmBarChartInstance.update();
+                            } else {
+                                const barCtx = document.getElementById('sdmBarChart').getContext('2d');
+                                window.sdmBarChartInstance = new Chart(barCtx, {
+                                    type: 'bar',
+                                    data: {
+                                        labels: labels,
+                                        datasets: [{
+                                            label: 'Jumlah User',
+                                            data: totals,
+                                            backgroundColor: colors.bgColors,
+                                            borderColor: colors.borderColors,
+                                            borderWidth: 1,
+                                            borderRadius: 6,
+                                            hoverBackgroundColor: colors.hoverColors
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(31, 41, 55, 0.95)', padding: 12, cornerRadius: 8, titleFont: { size: 14, weight: 'bold' }, bodyFont: { size: 13 } } },
+                                        scales: { y: { beginAtZero: true, ticks: { font: { size: 12 }, stepSize: 1 }, grid: { color: 'rgba(229, 231, 235, 0.8)' } }, x: { ticks: { font: { size: 12 } }, grid: { display: false } } }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                };
+
 
                     @if($genderMale + $genderFemale > 0)
                         // Pie Chart: Gender Distribution (data dari database)

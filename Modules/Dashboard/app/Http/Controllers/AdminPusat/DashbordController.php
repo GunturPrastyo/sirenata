@@ -27,7 +27,7 @@ class DashbordController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -46,6 +46,15 @@ class DashbordController extends Controller
         $genderMale = UserProfile::where('gender', 'male')->count();
         $genderFemale = UserProfile::where('gender', 'female')->count();
 
+        // Filter by Year for SDM
+        $currentYear = (int) date('Y');
+        $selectedSdmYear = (int) $request->input('sdm_year', $currentYear);
+
+        $sdmYears = [];
+        for ($y = $currentYear; $y >= $currentYear - 15; $y--) {
+            $sdmYears[] = $y;
+        }
+
         // SDM per Provinsi: count users (role 'user') grouped by province
         // Note: roles table uses 'uuid' as PK, model_has_roles uses 'model_uuid' and 'role_id'
         $userCountsByProvince = DB::table('user_scopes')
@@ -56,6 +65,7 @@ class DashbordController extends Controller
             })
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.uuid')
             ->where('roles.name', 'user')
+            ->whereYear('users.created_at', $selectedSdmYear)
             ->whereNotNull('user_scopes.province_code')
             ->select('user_scopes.province_code', DB::raw('count(*) as total'))
             ->groupBy('user_scopes.province_code')
@@ -96,6 +106,12 @@ class DashbordController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
+        if ($request->ajax()) {
+            return response()->json([
+                'sdmPerProvinsi' => $sdmPerProvinsi,
+            ]);
+        }
+
         return view('dashboard::pages.admin-pusat.index', [
             'user' => $user,
             'totalAdminPusat' => $totalAdminPusat,
@@ -106,6 +122,8 @@ class DashbordController extends Controller
             'sdmPerProvinsi' => $sdmPerProvinsi,
             'rtkMasaAktifPerProvinsi' => $rtkMasaAktifPerProvinsi,
             'rtkStatusDistribution' => $rtkStatusDistribution,
+            'sdmYears' => $sdmYears,
+            'selectedSdmYear' => $selectedSdmYear,
         ]);
     }
 

@@ -22,7 +22,7 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $userScope = \Modules\User\Models\UserScope::where('user_id', $user->id)->first();
@@ -39,8 +39,18 @@ class DashboardController extends Controller
             ->where('roles.name', 'user')
             ->where('user_scopes.province_code', $provinceCode);
 
+        // Filter by Year for SDM
+        $currentYear = (int) date('Y');
+        $selectedSdmYear = (int) $request->input('sdm_year', $currentYear);
+
+        $sdmYears = [];
+        for ($y = $currentYear; $y >= $currentYear - 15; $y--) {
+            $sdmYears[] = $y;
+        }
+
         // SDM per Kab/Kota
         $userCountsByRegency = (clone $baseUserQuery)
+            ->whereYear('users.created_at', $selectedSdmYear)
             ->whereNotNull('user_scopes.regency_code')
             ->select('user_scopes.regency_code', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy('user_scopes.regency_code')
@@ -94,6 +104,12 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
+        if ($request->ajax()) {
+            return response()->json([
+                'sdmPerKabKota' => $sdmPerKabKota,
+            ]);
+        }
+
         return view('dashboard::pages.admin-provinsi.index', [
             'user' => $user,
             'sdmPerKabKota' => $sdmPerKabKota,
@@ -101,6 +117,8 @@ class DashboardController extends Controller
             'genderFemale' => $genderFemale,
             'rtkMasaAktifPerKabKota' => $rtkMasaAktifPerKabKota,
             'rtkStatusDistribution' => $rtkStatusDistribution,
+            'sdmYears' => $sdmYears,
+            'selectedSdmYear' => $selectedSdmYear,
         ]);
     }
 
