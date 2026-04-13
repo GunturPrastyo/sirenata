@@ -5,19 +5,21 @@ This is a modern E-Learning platform built using the Laravel framework with a mo
 ## 🚀 Tech Stack & Packages
 
 ### Backend
+
 - **Framework:** [Laravel 12.0](https://laravel.com/) (PHP ^8.3)
 - **Modular Structure:** [nwidart/laravel-modules](https://nwidart.com/laravel-modules/v6/introduction) - Used to separate functionalities into independent modules.
 - **Roles & Permissions:** [spatie/laravel-permission](https://spatie.be/docs/laravel-permission/) - Managing user access controls.
 - **Activity Logging:** [spatie/laravel-activitylog](https://spatie.be/docs/laravel-activitylog/) - Tracking user activities and system changes.
 - **REST API Docs:** [dedoc/scramble](https://scramble.dedoc.co/) - Automatic API documentation generation.
 - **Interactive UI (Backend):** [Livewire 3.7](https://livewire.laravel.com/) - Building dynamic interfaces without leaving PHP.
-- **Other Packages:** 
-  - `creasi/laravel-nusa` (Indonesian regional data)
-  - `cviebrock/eloquent-sluggable` (Generating slugs for Eloquent models)
-  - `devrabiul/laravel-toaster-magic` (Toast notifications)
-  - `laravel/sanctum` (API Authentication)
+- **Other Packages:**
+    - `creasi/laravel-nusa` (Indonesian regional data)
+    - `cviebrock/eloquent-sluggable` (Generating slugs for Eloquent models)
+    - `devrabiul/laravel-toaster-magic` (Toast notifications)
+    - `laravel/sanctum` (API Authentication)
 
 ### Frontend
+
 - **CSS Framework:** [Tailwind CSS 4](https://tailwindcss.com/)
 - **UI Components:** [Flowbite](https://flowbite.com/)
 - **Data Visualization:** [Chart.js](https://www.chartjs.org/)
@@ -47,13 +49,16 @@ The project follows the standard Laravel directory structure with the addition o
 ## 🛠️ Getting Started
 
 ### Prerequisites
+
 - PHP >= 8.3
 - Composer
 - Node.js & NPM
 - Database (MySQL, PostgreSQL, or SQLite)
 
 #### PHP Configuration (`php.ini`)
+
 To ensure file uploads (e.g., up to 10MB) work correctly, please verify that your `php.ini` has at least the following configuration:
+
 ```ini
 upload_max_filesize = 15M
 post_max_size = 16M
@@ -63,16 +68,25 @@ memory_limit = 256M
 ### Installation
 
 1. Clone the repository and navigate into the project directory:
-   ```bash
-   git clone <repository-url>
-   cd e-learning
-   ```
+
+    ```bash
+    git clone <repository-url>
+    cd e-learning
+    ```
 
 2. Run the automated setup script defined in `composer.json` to install dependencies, copy the `.env` file, generate an application key, migrate the database, and build frontend assets:
-   ```bash
-   composer setup
-   ```
-   *(Alternatively, you can run `composer install`, copy `.env`, generate the key, migrate, `npm install`, and `npm run build` manually).*
+
+    ```bash
+    composer setup
+    ```
+
+    *Alternatively, you can run the setup steps manually:*
+    - Install PHP dependencies: `composer install`
+    - Copy environment file: `cp .env.example .env`
+    - Generate application key: `php artisan key:generate`
+    - Run database migrations: `php artisan migrate`
+    - Install JS dependencies: `npm install`
+    - Build frontend assets: `npm run build`
 
 3. Configure your database and other environment variables in the `.env` file.
 
@@ -85,6 +99,7 @@ composer dev
 ```
 
 This will run:
+
 - `php artisan serve`
 - `php artisan queue:listen`
 - `npm run dev`
@@ -92,6 +107,7 @@ This will run:
 ### Testing
 
 Run the test suite using Pest/PHPUnit:
+
 ```bash
 composer test
 ```
@@ -117,20 +133,20 @@ This will generate a new migration file inside `Modules/RTK/Database/migrations/
 Here are some frequently used commands when developing within a module:
 
 - **Create a new module:**
-  ```bash
-  php artisan module:make ModuleName
-  ```
+    ```bash
+    php artisan module:make ModuleName
+    ```
 - **Create a controller in a module:**
-  ```bash
-  php artisan module:make-controller ControllerName ModuleName
-  ```
+    ```bash
+    php artisan module:make-controller ControllerName ModuleName
+    ```
 - **Create a model in a module (with migration):**
-  ```bash
-  php artisan module:make-model ModelName ModuleName -m
-  ```
+    ```bash
+    php artisan module:make-model ModelName ModuleName -m
+    ```
 - **Create a new migration in a module:**
-  ```bash
-  php artisan module:make-migration create_table_name_table ModuleName
-  ```
+    ```bash
+    php artisan module:make-migration create_table_name_table ModuleName
+    ```
 
 For a complete list of commands, refer to the [Laravel Modules Documentation](https://nwidart.com/laravel-modules/v11/introduction).
