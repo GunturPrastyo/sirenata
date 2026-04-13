@@ -77,17 +77,70 @@ class DashboardController extends Controller
         $genderFemale = $genders->get('female', 0);
 
         // Masa Aktif RTK per Kab/Kota (active RTK per regency with remaining years)
-        $rtkKabKota = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+        $availableRtkYears = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
             ->where('is_active', true)
             ->where('status', 'approved')
-            ->get();
+            ->pluck('start_date')
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->toArray();
+
+        $selectedRtkYear = $request->input('rtk_year', 'all');
+        
+        $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+            ->where('province_code', $provinceCode)
+            ->where('is_active', true)
+            ->where('status', 'approved');
+            
+        if ($selectedRtkYear !== 'all') {
+            $queryRtk->where('end_date', '>=', (int) $selectedRtkYear);
+        }
+        
+        $rtkKabKota = $queryRtk->get();
 
         $rtkRegencyCodes = $rtkKabKota->pluck('regency_code')->toArray();
         $rtkRegencyNames = \Creasi\Nusa\Models\Regency::whereIn('code', $rtkRegencyCodes)->pluck('name', 'code');
 
         $rtkMasaAktifPerKabKota = $rtkKabKota->map(function ($rtk) use ($rtkRegencyNames) {
             $rawName = $rtkRegencyNames[$rtk->regency_code] ?? 'Unknown';
+            return (object) [
+                'regency_name' => collect(explode(' ', $rawName))->map(fn($w) => ucfirst(strtolower($w)))->join(' '),
+                'sisa_tahun' => max(0, (int) $rtk->end_date - (int) date('Y')),
+                'start_date' => $rtk->start_date,
+                'end_date' => $rtk->end_date,
+            ];
+        })->sortBy('regency_name')->values();
+
+        // Data for second chart: RTK filtered by end_date
+        $availableRtkEndYears = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+            ->where('province_code', $provinceCode)
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->pluck('end_date')
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->toArray();
+
+        $selectedRtkEndYear = $request->input('rtk_end_year', 'all');
+        
+        $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+            ->where('province_code', $provinceCode)
+            ->where('is_active', true)
+            ->where('status', 'approved');
+            
+        if ($selectedRtkEndYear !== 'all') {
+            $queryRtkEnd->where('end_date', (int) $selectedRtkEndYear);
+        }
+        
+        $rtkKabKotaEnd = $queryRtkEnd->get();
+        $rtkEndRegencyCodes = $rtkKabKotaEnd->pluck('regency_code')->toArray();
+        $rtkEndRegencyNames = \Creasi\Nusa\Models\Regency::whereIn('code', $rtkEndRegencyCodes)->pluck('name', 'code');
+
+        $rtkMasaBerakhirPerKabKota = $rtkKabKotaEnd->map(function ($rtk) use ($rtkEndRegencyNames) {
+            $rawName = $rtkEndRegencyNames[$rtk->regency_code] ?? 'Unknown';
             return (object) [
                 'regency_name' => collect(explode(' ', $rawName))->map(fn($w) => ucfirst(strtolower($w)))->join(' '),
                 'sisa_tahun' => max(0, (int) $rtk->end_date - (int) date('Y')),
@@ -104,9 +157,41 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
+        $maxOptionYear = !empty($availableRtkEndYears) ? max($availableRtkEndYears) : $currentYear;
+        $minOptionYear = $currentYear;
+        
+        $rtkYearsOptions = [];
+        for ($y = $maxOptionYear; $y >= $minOptionYear; $y--) {
+            $rtkYearsOptions[] = $y;
+        }
+
+        $minAvailableEndYear = !empty($availableRtkEndYears) ? min($availableRtkEndYears) : $currentYear;
+        $maxAvailableEndYear = !empty($availableRtkEndYears) ? max($availableRtkEndYears) : $currentYear;
+        $rtkEndYearsOptions = [];
+        for ($y = $maxAvailableEndYear; $y >= $minAvailableEndYear; $y--) {
+            $rtkEndYearsOptions[] = $y;
+        }
+
         if ($request->ajax()) {
+            if ($request->has('rtk_end_year')) {
+                return response()->json([
+                    'rtkMasaBerakhirPerKabKota' => $rtkMasaBerakhirPerKabKota,
+                ]);
+            }
+            if ($request->has('rtk_year')) {
+                return response()->json([
+                    'rtkMasaAktifPerKabKota' => $rtkMasaAktifPerKabKota,
+                ]);
+            }
+            if ($request->has('sdm_year')) {
+                return response()->json([
+                    'sdmPerKabKota' => $sdmPerKabKota,
+                ]);
+            }
             return response()->json([
                 'sdmPerKabKota' => $sdmPerKabKota,
+                'rtkMasaAktifPerKabKota' => $rtkMasaAktifPerKabKota,
+                'rtkMasaBerakhirPerKabKota' => $rtkMasaBerakhirPerKabKota,
             ]);
         }
 
@@ -116,9 +201,14 @@ class DashboardController extends Controller
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
             'rtkMasaAktifPerKabKota' => $rtkMasaAktifPerKabKota,
+            'rtkMasaBerakhirPerKabKota' => $rtkMasaBerakhirPerKabKota,
             'rtkStatusDistribution' => $rtkStatusDistribution,
             'sdmYears' => $sdmYears,
             'selectedSdmYear' => $selectedSdmYear,
+            'selectedRtkYear' => $selectedRtkYear,
+            'selectedRtkEndYear' => $selectedRtkEndYear,
+            'rtkYearsOptions' => $rtkYearsOptions,
+            'rtkEndYearsOptions' => $rtkEndYearsOptions,
         ]);
     }
 

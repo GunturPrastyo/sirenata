@@ -37,9 +37,17 @@ class RTKDummySeeder extends Seeder
             // Membuat 1 sampai 3 data RTK level Provinsi
             $jmlProvRTK = rand(1, 3);
             for ($i = 0; $i < $jmlProvRTK; $i++) {
-                $startYear = rand(2015, 2030);
-                $endYear = rand($startYear + 1, 2035);
-                $statusCases = RTKStatus::cases();
+                // Ensure at least one RTK is explicitly approved & active for current year
+                if ($i === 0) {
+                    $startYear = (int) date('Y');
+                    $endYear = $startYear + rand(3, 5);
+                    $status = RTKStatus::APPROVED;
+                } else {
+                    $startYear = rand(2015, 2030);
+                    $endYear = rand($startYear + 1, 2035);
+                    $statusCases = RTKStatus::cases();
+                    $status = $statusCases[array_rand($statusCases)];
+                }
 
                 RencanaTenagaKerja::create([
                     'user_id' => $userProv->id,
@@ -47,9 +55,11 @@ class RTKDummySeeder extends Seeder
                     'name' => "Rencana Tenaga Kerja Provinsi {$province->name} $startYear-$endYear",
                     'start_date' => $startYear,
                     'end_date' => $endYear,
-                    'status' => $statusCases[array_rand($statusCases)],
+                    'status' => $status,
                     'is_active' => true,
                     'type' => TypeRtk::PROVINSI,
+                    'approved_by' => $status === RTKStatus::APPROVED ? User::first()->id : null,
+                    'approved_at' => $status === RTKStatus::APPROVED ? now() : null,
                 ]);
             }
 
@@ -65,9 +75,16 @@ class RTKDummySeeder extends Seeder
                 // Membuat 1 sampai 3 data RTK level Kab/Kota
                 $jmlKabRTK = rand(1, 3);
                 for ($i = 0; $i < $jmlKabRTK; $i++) {
-                    $startYear = rand(2015, 2030);
-                    $endYear = rand($startYear + 1, 2035);
-                    $statusCases = RTKStatus::cases();
+                    if ($i === 0) {
+                        $startYear = (int) date('Y');
+                        $endYear = $startYear + rand(3, 5);
+                        $status = RTKStatus::APPROVED;
+                    } else {
+                        $startYear = rand(2015, 2030);
+                        $endYear = rand($startYear + 1, 2035);
+                        $statusCases = RTKStatus::cases();
+                        $status = $statusCases[array_rand($statusCases)];
+                    }
 
                     RencanaTenagaKerja::create([
                         'user_id' => $userRegency->id,
@@ -76,9 +93,11 @@ class RTKDummySeeder extends Seeder
                         'name' => "Rencana Tenaga Kerja {$regency->name} $startYear-$endYear",
                         'start_date' => $startYear,
                         'end_date' => $endYear,
-                        'status' => $statusCases[array_rand($statusCases)],
+                        'status' => $status,
                         'is_active' => true,
                         'type' => TypeRtk::KAB_KOTA,
+                        'approved_by' => $status === RTKStatus::APPROVED ? User::first()->id : null,
+                        'approved_at' => $status === RTKStatus::APPROVED ? now() : null,
                     ]);
                 }
             }
