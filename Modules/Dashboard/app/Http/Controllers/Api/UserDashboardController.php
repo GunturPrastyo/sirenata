@@ -16,6 +16,13 @@ class UserDashboardController extends Controller
         private DashboardService $dashbordService
     ) {}
 
+    /**
+     * Get user profile
+     * 
+     * GET /api/user/profile
+     * 
+     * @authenticated
+     */
     public function profile(Request $request)
     {
         $user = Auth::User();
@@ -29,7 +36,11 @@ class UserDashboardController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Update user instansi
+     * 
+     * PUT /api/user/instansi
+     * 
+     * @authenticated
      */
     public function updateInstansi(UpdateInstansiRequest $request)
     {

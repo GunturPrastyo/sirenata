@@ -17,13 +17,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CourseController extends Controller
 {
     /**
+     * List semua course
+     * 
      * GET /api/courses
-     * List semua course, bisa filter by category
+     * Menampilkan daftar course yang tersedia. Bisa difilter berdasarkan
+     * category_id atau keyword pencarian.
+     * 
+     * @unauthenticated
      */
     public function index(Request $request): JsonResponse
     {
         try {
-            $row_per_page = $request->input('row_per_page', 5);
+            $row_per_page = $request->input('row_per_page', 10);
             $search = $request->input('search');
             $category_id = $request->input('category_id');
 
@@ -49,8 +54,13 @@ class CourseController extends Controller
     }
 
     /**
+     * Detail course
+     * 
      * GET /api/courses/{slug}
-     * Detail course beserta benefits dan testimonis
+     * Menampilkan detail satu course berdasarkan slug, lengkap dengan info
+     * category, mentor, benefits, dan testimonis.
+     * 
+     * @unauthenticated
      */
     public function show(string $slug): JsonResponse
     {
@@ -80,7 +90,13 @@ class CourseController extends Controller
     }
 
     /**
+     * Buat course baru
+     * 
      * POST /api/courses
+     * Membuat course baru. Hanya bisa diakses oleh admin-pusat.
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function store(StoreCourseRequest $request): JsonResponse
     {
@@ -102,7 +118,13 @@ class CourseController extends Controller
     }
 
     /**
+     * Update course
+     * 
      * PUT /api/courses/{slug}
+     * Mengupdate course berdasarkan slug. Hanya bisa diakses oleh admin-pusat.
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function update(UpdateCourseRequest $request, string $slug): JsonResponse
     {
@@ -141,7 +163,13 @@ class CourseController extends Controller
     }
 
     /**
+     * Hapus course
+     * 
      * DELETE /api/courses/{slug}
+     * Menghapus course berdasarkan slug. Hanya bisa diakses oleh admin-pusat.
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function destroy(string $slug): JsonResponse
     {

@@ -12,6 +12,7 @@
         "php": "^8.3",
         "creasi/laravel-nusa": "^0.1.16",
         "cviebrock/eloquent-sluggable": "^12.0",
+        "dedoc/scramble": "^0.13.17",
         "devrabiul/laravel-toaster-magic": "^1.5",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
