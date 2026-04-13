@@ -44,12 +44,18 @@ class Category extends Model
         ];
     }
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
+    protected static function boot()
+    {
+        parent::boot();
 
-    //     static::updating(function ($category) {
-    //         $category->slug = SlugService::createSlug($category, 'slug', $category->name);
-    //     });
-    // }
+        static::updating(function ($category) {
+            $category->slug = SlugService::createSlug($category, 'slug', $category->name);
+        });
+    }
+
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
+    }
 }

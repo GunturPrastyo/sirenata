@@ -18,14 +18,13 @@ class CourseResource extends JsonResource
             'slug'          => $this->slug,
             'thumbnail'     => $this->thumbnail,
             'description'   => $this->description,
-            'category'      => [
-                'id'   => $this->category?->id,
-                'name' => $this->category?->name,
-            ],
+            'category'         => CategoryResource::make($this->whenLoaded('category')),
             'benefits_count'   => $this->whenCounted('benefits'),
             'students_count'   => $this->whenCounted('students'),
+            'sections_count'   => $this->whenCounted('sections'),
             'benefits'         => CourseBenefitResource::collection($this->whenLoaded('benefits')),
             'testimonis'       => CourseTestimoniResource::collection($this->whenLoaded('testimonis')),
+            'sections'         => CourseSectionResource::collection($this->whenLoaded('sections')),
             'created_at'       => $this->created_at->toDateTimeString(),
         ];
     }

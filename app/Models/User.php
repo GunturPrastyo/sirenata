@@ -83,7 +83,6 @@ class User extends Authenticatable
             $q->where('name', 'like', "%{$keyword}%")
                 ->orWhere('email', 'like', "%{$keyword}%")
                 ->orWhereHas('profile', fn($sub) => $sub->where('instansi', 'like', "%{$keyword}%"));
-            // ->orWhereHas('enrolledCourses', fn($sub) => $sub->where('name', 'like', "%{$keyword}%"));
         });
     }
 

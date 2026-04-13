@@ -32,8 +32,8 @@ class CourseController extends Controller
             $search = $request->input('search');
             $category_id = $request->input('category_id');
 
-            $courses = Course::with(['category', 'benefits', 'testimonis'])
-                ->withCount(['benefits', 'students'])
+            $courses = Course::with(['category', 'benefits', 'testimonis', 'sections'])
+                ->withCount(['benefits', 'students', 'sections'])
                 ->when($category_id, fn($q) => $q->where('category_id', $category_id))
                 ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
                 ->latest()
