@@ -95,3 +95,42 @@ Run the test suite using Pest/PHPUnit:
 ```bash
 composer test
 ```
+
+## 🧩 Modular Development (Laravel Modules)
+
+This project uses `nwidart/laravel-modules` to separate functionalities into independent modules. Below are some useful commands for working with modules.
+
+### Modifying Existing Database Tables
+
+If you need to add or modify columns on an existing table that has already been migrated, **do not** modify the original migration file. Instead, create a new migration specifically for that module.
+
+For example, to add an `is_active` column to the `rencana_tenaga_kerjas` table in the `RTK` module:
+
+```bash
+php artisan module:make-migration add_is_active_to_rencana_tenaga_kerjas_table RTK
+```
+
+This will generate a new migration file inside `Modules/RTK/Database/migrations/`. You can then define your new columns in the `up()` method, drop them in the `down()` method, and apply the changes by running `php artisan migrate`.
+
+### Common Module Commands
+
+Here are some frequently used commands when developing within a module:
+
+- **Create a new module:**
+  ```bash
+  php artisan module:make ModuleName
+  ```
+- **Create a controller in a module:**
+  ```bash
+  php artisan module:make-controller ControllerName ModuleName
+  ```
+- **Create a model in a module (with migration):**
+  ```bash
+  php artisan module:make-model ModelName ModuleName -m
+  ```
+- **Create a new migration in a module:**
+  ```bash
+  php artisan module:make-migration create_table_name_table ModuleName
+  ```
+
+For a complete list of commands, refer to the [Laravel Modules Documentation](https://nwidart.com/laravel-modules/v11/introduction).
