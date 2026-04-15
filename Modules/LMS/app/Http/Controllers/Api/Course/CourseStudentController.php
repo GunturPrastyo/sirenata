@@ -11,8 +11,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CourseStudentController extends Controller
 {
     /**
-     * GET /api/courses/{slug}/students
-     * List semua student yang enroll (admin only)
+     * List semua student yang enroll / terdaftar (admin only)
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function index(string $slug): JsonResponse
     {
@@ -47,8 +49,12 @@ class CourseStudentController extends Controller
     }
  
     /**
-     * POST /api/courses/{slug}/enroll
-     * User mendaftar ke course
+     *  Menambahkan user ke course 
+     * 
+     * menambahkan user menjadi terdaftar di course yang sedang user login berdasarkan user_id user login
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function enroll(string $slug): JsonResponse
     {
@@ -80,8 +86,10 @@ class CourseStudentController extends Controller
     }
 
     /**
-     * PATCH /api/courses/{slug}/students/{userId}/status
-     * Admin update status enrollment student
+     *  Update status student di course
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function updateStatus(Request $request, string $slug, string $userId): JsonResponse
     {
@@ -131,8 +139,13 @@ class CourseStudentController extends Controller
     }
 
     /**
-     * GET /api/my-courses
+     * MyCourse 
+     * 
+     * 
      * Course yang diikuti oleh user yang login
+     * 
+     * @authenticated
+     * @role:user
      */
     public function myCourses(): JsonResponse
     {
@@ -175,8 +188,10 @@ class CourseStudentController extends Controller
     }
 
     /**
-     * DELETE /api/courses/{slug}/unenroll
-     * User keluar dari course
+     *  Unenroll dari course
+     * 
+     * @authenticated
+     * 
      */
     public function unenroll(string $slug): JsonResponse
     {
