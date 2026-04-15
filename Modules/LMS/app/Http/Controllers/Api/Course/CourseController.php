@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\LMS\Http\Controllers\Api;
+namespace Modules\LMS\Http\Controllers\Api\Course;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
@@ -141,13 +141,7 @@ class CourseController extends Controller
                     ->store('courses/thumbnails', 'public');
             }
 
-            // Re-generate slug jika name berubah
-            // if (isset($data['name'])) {
-            //     $data['slug'] = Str::slug($data['name']);
-            // }
-
             $course->update($data);
-
             return ResponseHelper::success(
                 status: true,
                 message: 'Course updated successfully',

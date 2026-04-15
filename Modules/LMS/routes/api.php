@@ -2,13 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\LMS\Http\Controllers\Api\Category\CategoryController;
-use Modules\LMS\Http\Controllers\Api\CourseBenefitController;
-use Modules\LMS\Http\Controllers\Api\CourseController;
-use Modules\LMS\Http\Controllers\Api\CourseMentorController;
-use Modules\LMS\Http\Controllers\Api\CourseSectionController;
-use Modules\LMS\Http\Controllers\Api\CourseStudentController;
-use Modules\LMS\Http\Controllers\Api\CourseTestimoniController;
-use Modules\LMS\Http\Controllers\Api\SectionContentController;
+use Modules\LMS\Http\Controllers\Api\Course\CourseBenefitController;
+use Modules\LMS\Http\Controllers\Api\Course\CourseController;
+use Modules\LMS\Http\Controllers\Api\Course\CourseMentorController;
+use Modules\LMS\Http\Controllers\Api\Course\CourseSectionController;
+use Modules\LMS\Http\Controllers\Api\Course\CourseStudentController;
+use Modules\LMS\Http\Controllers\Api\Course\CourseTestimoniController;
+use Modules\LMS\Http\Controllers\Api\Course\SectionContentController;
 
 Route::prefix('v1')->group(function () {
 
@@ -65,9 +65,9 @@ Route::prefix('v1')->group(function () {
                 Route::put('/{slug}', [CourseController::class, 'update']);
                 Route::delete('/{slug}', [CourseController::class, 'destroy']);
 
-                Route::post('/{slug}/benefits', [CourseBenefitController::class, 'store']);
-                Route::put('/benefits/{benefit}', [CourseBenefitController::class, 'update']);
-                Route::delete('/benefits/{benefit}', [CourseBenefitController::class, 'destroy']);
+                Route::post('/{slug}/benefits/', [CourseBenefitController::class, 'store']);
+                Route::put('/benefits/{benefitId}/update', [CourseBenefitController::class, 'update']);
+                Route::delete('/benefits/{benefitId}/delete', [CourseBenefitController::class, 'destroy']);
             });
 
             Route::prefix('courses/{slug}')->group(function () {

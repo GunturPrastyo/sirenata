@@ -1,8 +1,9 @@
 <?php
 
-namespace Modules\LMS\Http\Controllers\Api;
+namespace Modules\LMS\Http\Controllers\Api\Course;
 
 use App\Http\Controllers\Controller;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Http\Request;
 use Modules\LMS\Http\Requests\Api\StoreCourseBenefitRequest;
 use Modules\LMS\Models\Course;
@@ -13,7 +14,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CourseBenefitController extends Controller
 {
     /**
-     * GET /api/courses/{slug}/benefits
+     * List semua benefit
+     * 
+     * Menampilkan benefit berdasarkan slug course
+     * 
+     * @unauthenticated
      */
     public function index(string $slug)
     {
@@ -33,8 +38,14 @@ class CourseBenefitController extends Controller
     }
 
     /**
-     * POST /api/courses/{slug}/benefits
+     * Buat benefit baru
+     * 
+     * Buat benefit baru berdasarkan slug course. Hanya bisa diakses oleh admin-pusat.
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
+    #[BodyParameter('name', description: 'Name Benefit dari Course.', type: 'string', required: true, example: 'test-1')]
     public function store(StoreCourseBenefitRequest $request, string $slug): JsonResponse
     {
         $course  = Course::where('slug', $slug)->firstOrFail();
@@ -47,27 +58,41 @@ class CourseBenefitController extends Controller
     }
 
     /**
-     * PUT /api/courses/{slug}/benefits
+     * Update benefit
+     * 
+     * Update benefit berdasarkan slug course. Hanya bisa diakses oleh admin-pusat.
+     * 
+     * @body CourseBenefits
+     * @authenticated
+     * @role:admin-pusat
      */
-    public function update(StoreCourseBenefitRequest $request, CourseBenefits $benefit): JsonResponse
+    #[BodyParameter('name', description: 'Name Benefit dari Course.', type: 'string', required: true, example: 'test-1')]
+    public function update(StoreCourseBenefitRequest $request, CourseBenefits $benefitId): JsonResponse
     {
-        $benefit->update($request->validated());
+        $data   = $request->validated();
+        $benefitId->update($data);
 
         return response()->json([
             'message' => 'Benefit berhasil diupdate',
-            'data'    => new CourseBenefitResource($benefit),
+            'data'    => new CourseBenefitResource($benefitId),
         ], 201);
     }
 
     /**
-     * DELETE /api/courses/{slug}/benefits/{benefit}
+     * Hapus benefit
+     * 
+     * Hapus benefit berdasarkan slug course. Hanya bisa diakses oleh admin-pusat.
+     * 
+     * @body CourseBenefits
+     * @authenticated
+     * @role:admin-pusat
      */
-    public function destroy(CourseBenefits $benefit): JsonResponse
+    public function destroy(CourseBenefits $benefitId): JsonResponse
     {
         // Pastikan benefit milik course yang benar
-        $course = $benefit->course->id;
-        abort_if($benefit->course_id !== $course, 404, 'Benefit tidak ditemukan');
-        $benefit->delete();
+        $course = $benefitId->course->id;
+        abort_if($benefitId->course_id !== $course, 404, 'Benefit tidak ditemukan');
+        $benefitId->delete();
 
         return response()->json([
             'message' => 'Benefit berhasil dihapus',

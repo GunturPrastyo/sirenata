@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\LMS\Http\Controllers\Api;
+namespace Modules\LMS\Http\Controllers\Api\Course;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;

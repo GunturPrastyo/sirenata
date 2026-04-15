@@ -14,8 +14,8 @@ class StoreCourseRequest extends FormRequest
         return [
             'category_id' => ['required', 'exists:categories,id'],
             'name'        => ['required', 'string', 'max:255'],
-            'thumbnail'   => ['nullable', 'image', 'max:2048'],
-            'description' => ['nullable', 'string'],
+            'thumbnail'   => ['required', 'image',  'mimes:png,jpg', 'max:2048'],
+            'description' => ['required', 'string'],
         ];
     }
 

@@ -14,8 +14,8 @@ class UpdateCourseRequest extends FormRequest
         return [
             'category_id' => ['sometimes', 'exists:categories,id'],
             'name'        => ['sometimes', 'string', 'max:255'],
-            'thumbnail'   => ['nullable', 'image', 'max:2048'],
-            'about'       => ['nullable', 'string'],
+            'thumbnail'   => ['sometimes', 'image', 'mimes:png,jpg', 'max:2048'],
+            'description' => ['sometimes', 'string'],
         ];
     }
 
