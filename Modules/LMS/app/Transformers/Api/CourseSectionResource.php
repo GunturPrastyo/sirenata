@@ -17,7 +17,7 @@ class CourseSectionResource extends JsonResource
             'name'        => $this->name,
             'description' => $this->description,
             'position'    => $this->position,
-            'contents'    => SectionContentResource::make($this->whenLoaded('contents')),
+            'contents'    => SectionContentResource::collection($this->whenLoaded('contents')),
             'contents_count' => $this->whenCounted('contents'),
         ];
     }

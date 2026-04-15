@@ -14,16 +14,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CourseSectionController extends Controller
 {
     /**
-     * GET /api/v1/courses/{slug}/sections
-     * List semua section beserta contents (public)
+     * List section berdasarkan slug course
+     * 
+     * List section berdasarkan slug course
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function index(string $slug): JsonResponse
     {
         $course = Course::where('slug', $slug)->firstOrFail();
 
         $sections = $course->sections()
-            ->withCount('contents')
-            ->with('contents')
+            ->withCount(['contents'])
+            ->with(['contents'])
             ->orderBy('position')
             ->get();
 
@@ -34,8 +38,13 @@ class CourseSectionController extends Controller
     }
 
     /**
-     * POST /api/v1/courses/{slug}/sections
-     * Buat section baru (admin)
+     * Tambah section
+     * 
+     * Tambah section berdasarkan slug course
+     * 
+     * @body CourseSection
+     * @authenticated
+     * @role:admin-pusat
      */
     public function store(StoreCourseSectionRequest $request, string $slug): JsonResponse
     {
@@ -57,8 +66,13 @@ class CourseSectionController extends Controller
     }
  
     /**
-     * PUT /api/v1/sections/{section}
-     * Update section (admin)
+     * Update section
+     * 
+     * Update section berdasarkan id CourseSection
+     * 
+     * @body CourseSection
+     * @authenticated
+     * @role:admin-pusat
      */
     public function update(UpdateCourseSectionRequest $request, CourseSection $section): JsonResponse
     {
@@ -71,8 +85,12 @@ class CourseSectionController extends Controller
     }
  
     /**
-     * DELETE /api/v1/sections/{section}
-     * Hapus section beserta semua contents-nya (admin)
+     * Hapus section
+     * 
+     * Hapus section berdasarkan id CourseSection
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function destroy(CourseSection $section): JsonResponse
     {
@@ -85,15 +103,20 @@ class CourseSectionController extends Controller
     }
  
     /**
-     * PATCH /api/v1/courses/{slug}/sections/reorder
-     * Ubah urutan section (admin)
+     * Ubah urutan section
+     * 
+     * Ubah urutan section berdasarkan slug course
+     * 
+     * @body CourseSection
+     * @authenticated
+     * @role:admin-pusat
      */
     public function reorder(Request $request, string $slug): JsonResponse
     {
         $request->validate([
             'sections'          => ['required', 'array'],
             'sections.*.id'     => ['required', 'uuid', 'exists:course_sections,id'],
-            'sections.*.position' => ['required', 'integer', 'min:0'],
+            'sections.*.position' => ['required', 'integer', 'min:1'],
         ]);
  
         $course = Course::where('slug', $slug)->firstOrFail();

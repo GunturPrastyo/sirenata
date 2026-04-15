@@ -11,8 +11,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CourseMentorController extends Controller
 {
     /**
-     * GET /api/courses/{slug}/mentors
-     * List mentor course (public)
+     * List mentor course
+     * 
+     * List mentor berdasarkan slug course
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function index(string $slug): JsonResponse
     {
@@ -42,8 +46,13 @@ class CourseMentorController extends Controller
     }
  
     /**
-     * POST /api/courses/{slug}/mentors
-     * Assign mentor ke course (admin Pusat)
+     * Tambah mentor
+     * 
+     * Tambah mentor berdasarkan slug course
+     * 
+     * @body User
+     * @authenticated
+     * @role:admin-pusat
      */
     public function store(Request $request, string $slug): JsonResponse
     {
@@ -78,8 +87,13 @@ class CourseMentorController extends Controller
     }
  
     /**
-     * PATCH /api/courses/{slug}/mentors/{userId}/toggle
-     * Toggle is_active mentor (admin)
+     * Toggle status mentor
+     * 
+     * Toggle status mentor berdasarkan slug course
+     * 
+     * @body User
+     * @authenticated
+     * @role:admin-pusat
      */
     public function toggleMentorActivation(string $slug, string $userId): JsonResponse
     {
@@ -105,8 +119,13 @@ class CourseMentorController extends Controller
     }
 
     /**
-     * DELETE /api/courses/{slug}/mentors/{userId}
-     * Hapus mentor dari course (admin)
+     * Hapus mentor
+     * 
+     * Hapus mentor berdasarkan slug course
+     * 
+     * @body User
+     * @authenticated
+     * @role:admin-pusat
      */
     public function destroy(string $slug, string $userId): JsonResponse
     {

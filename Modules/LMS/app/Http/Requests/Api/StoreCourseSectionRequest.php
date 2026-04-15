@@ -14,7 +14,7 @@ class StoreCourseSectionRequest extends FormRequest
         return [
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'position'    => ['nullable', 'integer', 'min:0'],
+            // 'position'    => ['nullable', 'integer', 'min:1'],
         ];
     }
 

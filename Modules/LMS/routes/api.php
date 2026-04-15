@@ -78,7 +78,7 @@ Route::prefix('v1')->group(function () {
                 // Mentors management
                 Route::post('/mentors', [CourseMentorController::class, 'store']);
                 Route::patch('/mentors/{userId}/activate', [CourseMentorController::class, 'toggleMentorActivation']);
-                Route::delete('/mentors/{userId}', [CourseMentorController::class, 'destroy']);
+                Route::delete('/mentors/{userId}/delete', [CourseMentorController::class, 'destroy']);
             });
 
             // Sections
