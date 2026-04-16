@@ -104,6 +104,13 @@ This will run:
 - `php artisan queue:listen`
 - `npm run dev`
 
+### API Documentation
+
+When developing locally, you can view the automatically generated REST API documentation (powered by Scramble) by navigating to one of the following URLs based on your local setup:
+
+- **Laravel Herd / Valet:** [https://e-learning.test/docs/api#/](https://e-learning.test/docs/api#/)
+- **PHP Artisan Serve (Localhost):** [http://127.0.0.1:8000/docs/api#/](http://127.0.0.1:8000/docs/api#/) or [http://localhost:8000/docs/api#/](http://localhost:8000/docs/api#/)
+
 ### Testing
 
 Run the test suite using Pest/PHPUnit:
