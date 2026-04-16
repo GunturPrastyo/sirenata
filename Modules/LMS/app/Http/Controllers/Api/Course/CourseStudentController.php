@@ -139,7 +139,7 @@ class CourseStudentController extends Controller
     }
 
     /**
-     * MyCourse 
+     * MyCourse User Login
      * 
      * 
      * Course yang diikuti oleh user yang login

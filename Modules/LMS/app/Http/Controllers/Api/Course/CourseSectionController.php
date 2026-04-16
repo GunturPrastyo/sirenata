@@ -103,9 +103,9 @@ class CourseSectionController extends Controller
     }
  
     /**
-     * Ubah urutan section
+     * Ubah urutan Course section
      * 
-     * Ubah urutan section berdasarkan slug course
+     * Ubah urutan Course section berdasarkan slug course
      * 
      * @body CourseSection
      * @authenticated

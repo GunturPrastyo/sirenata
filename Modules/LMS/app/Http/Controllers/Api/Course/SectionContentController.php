@@ -5,6 +5,7 @@ namespace Modules\LMS\Http\Controllers\Api\Course;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Modules\LMS\Http\Requests\Api\StoreSectionContentRequest;
 use Modules\LMS\Http\Requests\Api\UpdateSectionContentRequest;
@@ -15,8 +16,14 @@ use Modules\LMS\Transformers\Api\SectionContentResource;
 class SectionContentController extends Controller
 {
     /**
-     * GET /api/v1/sections/{section}/contents
-     * List semua konten dalam section (harus sudah enroll)
+     * Menampilkan list konten dalam section
+     * 
+     * 
+     * List semua konten dalam section (harus sudah enroll / terdaftar),
+     * Menampilkan SectionContentCourse berdasarkan courseSection Id
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function index(CourseSection $courseSection): JsonResponse
     {
@@ -29,8 +36,12 @@ class SectionContentController extends Controller
     }
 
     /**
-     * GET /api/v1/contents/{content}
-     * Detail konten + video URL (harus sudah enroll)
+     * List konten dalam section detail
+     * 
+     * 
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function show(SectionContent $content): JsonResponse
     {
@@ -41,8 +52,12 @@ class SectionContentController extends Controller
     }
 
     /**
-     * POST /api/v1/sections/{section}/contents
-     * Upload konten baru (admin)
+     * Menambahkan konten baru dalam section
+     * 
+     * Create SectionContentCourse berdasarkan courseSection Id
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function store(StoreSectionContentRequest $request, CourseSection $courseSection): JsonResponse
     {
@@ -66,8 +81,11 @@ class SectionContentController extends Controller
     }
 
     /**
-     * PUT /api/v1/contents/{content}
      * Update konten — bisa ganti nama, video, atau position (admin)
+     * 
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function update(UpdateSectionContentRequest $request, SectionContent $content): JsonResponse
     {
@@ -92,8 +110,12 @@ class SectionContentController extends Controller
     }
 
     /**
-     * DELETE /api/v1/contents/{content}
-     * Hapus konten beserta file videonya (admin)
+     * Delete SectionContent
+     * 
+     * delete SectionContentCourse berdasarkan Id
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
     public function destroy(SectionContent $content): JsonResponse
     {
@@ -109,22 +131,27 @@ class SectionContentController extends Controller
     }
 
     /**
-     * PATCH /api/v1/sections/{section}/contents/reorder
-     * Ubah urutan konten dalam section (admin)
+     * Ubah urutan SectionContent
+     * 
+     * Ubah urutan SectionContent berdasarkan courseSection Id
+     * 
+     * @authenticated
+     * @role:admin-pusat
      */
-    public function reorder(Request $request, CourseSection $section): JsonResponse
+    public function reorder(Request $request, CourseSection $courseSection): JsonResponse
     {
         $request->validate([
             'contents'             => ['required', 'array'],
             'contents.*.id'        => ['required', 'uuid', 'exists:section_contents,id'],
             'contents.*.position'  => ['required', 'integer', 'min:0'],
         ]);
-
+        
         foreach ($request->contents as $item) {
-            $section->contents()
-                ->where('id', $item['id'])
-                ->update(['position' => $item['position']]);
+            $courseSection->contents()
+            ->where('id', $item['id'])
+            ->update(['position' => $item['position']]);
         }
+        
 
         return response()->json([
             'message' => 'Urutan konten berhasil diupdate',

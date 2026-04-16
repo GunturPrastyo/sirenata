@@ -54,8 +54,8 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::prefix('testimonis')->group(function () {
-            Route::put('/{testimoni}', [CourseTestimoniController::class, 'update']);
-            Route::delete('/{testimoni}', [CourseTestimoniController::class, 'destroy']);
+            Route::put('/{testimoniId:id}/update', [CourseTestimoniController::class, 'update']);
+            Route::delete('/{testimoniId}/delete', [CourseTestimoniController::class, 'destroy']);
         });
 
         // ── admin-pusat 
@@ -99,8 +99,8 @@ Route::prefix('v1')->group(function () {
             });
 
             Route::prefix('contents')->group(function () {
-                Route::put('/{content}', [SectionContentController::class, 'update']);
-                Route::delete('/{content}', [SectionContentController::class, 'destroy']);
+                Route::put('/{content}/update', [SectionContentController::class, 'update']);
+                Route::delete('/{content}/delete', [SectionContentController::class, 'destroy']);
             });
 
             Route::prefix('categories')->group(function () {

@@ -15,7 +15,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CourseTestimoniController extends Controller
 {
     /**
-     * GET /api/courses/{slug}/testimonis
+     *  Menampilkan semua testimoni dari course
+     * 
+     * Slug course digunakan untuk mencari course yang akan menampilkan testimoninya
+     * 
+     * @unauthenticated
+     * @role:admin-pusat    
      */
     public function index(string $slug): JsonResponse
     {
@@ -29,7 +34,12 @@ class CourseTestimoniController extends Controller
     } 
 
     /**
-     * POST /api/courses/{slug}/testimonis
+     * Menambahkan testimoni ke course
+     * 
+     * Slug course digunakan untuk create course
+     * 
+     * @authenticated
+     * @role:admin-pusat    
      */
     public function store(StoreCourseTestimoniRequest $request, string $slug): JsonResponse
     {
@@ -79,30 +89,39 @@ class CourseTestimoniController extends Controller
     }
 
     /**
-     * PUT /api/testimonis/{testimoni}
+     * update testimoni ke course
+     * 
+     * @authenticated
+     * @role:admin-pusat    
      */
-    public function update(UpdateCourseTestimoniRequest $request, CourseTestimoni $testimoni): JsonResponse
+    public function update(UpdateCourseTestimoniRequest $request, CourseTestimoni $testimoniId): JsonResponse
     {
         // Hanya pemilik testimoni yang bisa update
         abort_if(
-            $testimoni->user_id !== null && $testimoni->user_id !== Auth::user()->id,
+            $testimoniId->user_id !== null && $testimoniId->user_id !== Auth::user()->id,
             403,
             'Akses ditolak'
         );
+        $validated = $request->validated();
+        $validated['user_id'] = Auth::user()->id;
+        $validated['name'] = Auth::user()->profile->full_name ?? Auth::user()->name;
 
-        $testimoni->update($request->validated()); 
+        $testimoniId->update($validated); 
         return response()->json([
             'message' => 'Testimoni berhasil diupdate',
-            'data'    => new CourseTestimoniResource($testimoni),
+            'data'    => new CourseTestimoniResource($testimoniId),
         ]);
     }
 
     /**
-     * DELETE /api/testimonis/{testimoni}
+     * Menghapus testimoni
+     * 
+     * @authenticated
+     *
      */
-    public function destroy(CourseTestimoni $testimoni): JsonResponse
+    public function destroy(CourseTestimoni $testimoniId): JsonResponse
     {
-        $testimoni->delete(); 
+        $testimoniId->delete(); 
         return response()->json([
             'message' => 'Testimoni berhasil dihapus',
         ]);
