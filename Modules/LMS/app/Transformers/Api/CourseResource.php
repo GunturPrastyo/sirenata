@@ -24,7 +24,7 @@ class CourseResource extends JsonResource
             'sections_count'   => $this->whenCounted('sections'),
             'benefits'         => CourseBenefitResource::collection($this->whenLoaded('benefits')),
             'testimonis'       => CourseTestimoniResource::collection($this->whenLoaded('testimonis')),
-            'sections'         => CourseSectionResource::collection($this->whenLoaded('sections')),
+            'course_sections'  => CourseSectionResource::collection($this->whenLoaded('sections')),
             'created_at'       => $this->created_at->toDateTimeString(),
         ];
     }

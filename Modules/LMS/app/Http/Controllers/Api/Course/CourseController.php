@@ -5,17 +5,23 @@ namespace Modules\LMS\Http\Controllers\Api\Course;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PaginateResource;
+use Dedoc\Scramble\Attributes\Endpoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Modules\LMS\Http\Requests\Api\StoreCourseRequest;
 use Modules\LMS\Http\Requests\Api\UpdateCourseRequest;
 use Modules\LMS\Models\Course;
+use Modules\LMS\Services\Api\CourseService;
 use Modules\LMS\Transformers\Api\CourseResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CourseController extends Controller
 {
+    public function __construct(
+        private readonly CourseService $courseService
+    ) {}
+
     /**
      * List semua course
      * 
@@ -32,12 +38,10 @@ class CourseController extends Controller
             $search = $request->input('search');
             $category_id = $request->input('category_id');
 
-            $courses = Course::with(['category', 'benefits', 'testimonis', 'sections'])
-                ->withCount(['benefits', 'students', 'sections'])
-                ->when($category_id, fn($q) => $q->where('category_id', $category_id))
-                ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
-                ->latest()
-                ->paginate($row_per_page);
+            $courses = $this->courseService->queryCourses(
+                category_id: $category_id,
+                search: $search,
+            )->paginate($row_per_page);
                 
             return ResponseHelper::success(
                 status: true,
@@ -65,22 +69,13 @@ class CourseController extends Controller
     public function show(string $slug): JsonResponse
     {
         try {
-            $course = Course::with([
-            'category',
-            'user',
-            'benefits',
-            'testimonis',
-        ])
-        ->withCount('students')
-        ->where('slug', $slug)
-        ->firstOrFail();
-
-        return ResponseHelper::success(
-            status: true,
-            message: 'Course retrieved successfully',
-            result: new CourseResource($course),
-            statusCode: 200
-        );
+            $course = $this->courseService->queryCourseDetail($slug);
+            return ResponseHelper::success(
+                status: true,
+                message: 'Course retrieved successfully',
+                result: new CourseResource($course),
+                statusCode: 200
+            );
         } catch (\Exception $e) {
             return ResponseHelper::error(
                 message: $e->getMessage(),
@@ -95,26 +90,29 @@ class CourseController extends Controller
      * POST /api/courses
      * Membuat course baru. Hanya bisa diakses oleh admin-pusat.
      * 
+     * @requestMediaType multipart/form-data
      * @authenticated
      * @role:admin-pusat
      */
+    #[Endpoint(method: 'PATCH')]
     public function store(StoreCourseRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        try {
+            $data = $request->validated();
+            $course = $this->courseService->CourseStore($data);
 
-        if ($request->hasFile('thumbnail')) {
-            $data['thumbnail'] = $request->file('thumbnail')
-                ->store('courses/thumbnails', 'public');
+            return ResponseHelper::success(
+                status: true,
+                message: 'Course created successfully',
+                result: new CourseResource($course->load('category', 'user')),
+                statusCode: 201
+            );
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(
+                message: $th->getMessage(),
+                statusCode: 500
+            );
         }
-
-        $course = Course::create($data);
-
-        return ResponseHelper::success(
-            status: true,
-            message: 'Course created successfully',
-            result: new CourseResource($course->load('category', 'user')),
-            statusCode: 201
-        );
     }
 
     /**
@@ -177,11 +175,7 @@ class CourseController extends Controller
                 );
             }
 
-        if ($course->thumbnail) {
-            Storage::disk('public')->delete($course->thumbnail);
-        }
-
-        $course->delete();
+        $this->courseService->CourseDelete($course);
 
         return ResponseHelper::success(
             status: true,

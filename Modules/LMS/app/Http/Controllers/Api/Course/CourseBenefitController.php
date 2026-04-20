@@ -2,17 +2,24 @@
 
 namespace Modules\LMS\Http\Controllers\Api\Course;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use Dedoc\Scramble\Attributes\BodyParameter;
+use Exception;
 use Illuminate\Http\Request;
 use Modules\LMS\Http\Requests\Api\StoreCourseBenefitRequest;
 use Modules\LMS\Models\Course;
 use Modules\LMS\Models\CourseBenefits;
+use Modules\LMS\Services\Api\CourseBenefitsService;
 use Modules\LMS\Transformers\Api\CourseBenefitResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CourseBenefitController extends Controller
 {
+
+    public function __construct(
+        private readonly CourseBenefitsService $courseBenefitsService
+    ) {}
     /**
      * List semua benefit
      * 
@@ -23,17 +30,18 @@ class CourseBenefitController extends Controller
     public function index(string $slug)
     {
         try {
-            $course   = Course::where('slug', $slug)->firstOrFail();
-            $benefits = $course->benefits;
-
-            return response()->json([
-                'message' => 'Success',
-                'data'    => CourseBenefitResource::collection($benefits),
-            ]);
+            $benefits = $this->courseBenefitsService->queryBenefits($slug);
+            return ResponseHelper::success(
+                status: true,
+                message: 'Success',
+                result: CourseBenefitResource::collection($benefits),
+                statusCode: 200
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 500);
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
         }
     }
 
@@ -48,13 +56,23 @@ class CourseBenefitController extends Controller
     #[BodyParameter('name', description: 'Name Benefit dari Course.', type: 'string', required: true, example: 'test-1')]
     public function store(StoreCourseBenefitRequest $request, string $slug): JsonResponse
     {
-        $course  = Course::where('slug', $slug)->firstOrFail();
-        $benefit = $course->benefits()->create($request->validated());
-
-        return response()->json([
-            'message' => 'Benefit berhasil ditambahkan',
-            'data'    => new CourseBenefitResource($benefit),
-        ], 201);
+        try {
+            $benefit = $this->courseBenefitsService->CourseBenefitStore(
+                data: $request->validated(),
+                slug: $slug
+            );
+            return ResponseHelper::success(
+                status: true,
+                message: 'Success',
+                result: new CourseBenefitResource($benefit),
+                statusCode: 201
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 
     /**
@@ -70,12 +88,21 @@ class CourseBenefitController extends Controller
     public function update(StoreCourseBenefitRequest $request, CourseBenefits $benefitId): JsonResponse
     {
         $data   = $request->validated();
-        $benefitId->update($data);
 
-        return response()->json([
-            'message' => 'Benefit berhasil diupdate',
-            'data'    => new CourseBenefitResource($benefitId),
-        ], 201);
+        try {
+            $benefit = $this->courseBenefitsService->CourseBenefitUpdate(data: $data, benefitId: $benefitId);
+            return ResponseHelper::success(
+                status: true,
+                message: 'Success',
+                result: new CourseBenefitResource($benefit),
+                statusCode: 200
+            );
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(
+                message: $th->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 
     /**
@@ -89,13 +116,21 @@ class CourseBenefitController extends Controller
      */
     public function destroy(CourseBenefits $benefitId): JsonResponse
     {
-        // Pastikan benefit milik course yang benar
-        $course = $benefitId->course->id;
-        abort_if($benefitId->course_id !== $course, 404, 'Benefit tidak ditemukan');
-        $benefitId->delete();
-
-        return response()->json([
-            'message' => 'Benefit berhasil dihapus',
-        ]);
+        try {
+            $course = $benefitId->course->id;
+            abort_if($benefitId->course_id !== $course, 404, 'Benefit tidak ditemukan');
+            $benefit = $this->courseBenefitsService->CourseBenefitDelete(benefitId: $benefitId);
+            return ResponseHelper::success(
+                status: true,
+                message: 'Success',
+                result: null,
+                statusCode: 200
+            );
+        } catch (Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 }
