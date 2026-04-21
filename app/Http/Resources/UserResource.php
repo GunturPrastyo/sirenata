@@ -17,6 +17,9 @@ class UserResource extends JsonResource
         return [
             'id'    => $this->id,
             'name'  => $this->name,
+            /**
+             * @example "user@bestapi.dev"
+             */
             'email' => $this->email,
             'roles' => $this->whenLoaded('roles', fn() => $this->roles->map(fn($role) => [
                 'id'          => $role->uuid,

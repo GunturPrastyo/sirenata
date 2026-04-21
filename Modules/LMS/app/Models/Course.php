@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\LMS\Database\Factories\CourseFactory;
 
 // use Modules\LMS\Database\Factories\CourseFactory;
@@ -56,6 +58,18 @@ class Course extends Model
         });
     }
 
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        return $this->thumbnail
+            ? asset('storage/' . $this->thumbnail)
+            : null;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     /**
      * Get the category that owns the Course
      *
@@ -66,14 +80,49 @@ class Course extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function students()
+    public function benefits(): HasMany
+    {
+        return $this->hasMany(CourseBenefits::class);
+    }
+
+    public function testimonis(): HasMany
+    {
+        return $this->hasMany(CourseTestimoni::class);
+    }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(CourseSection::class)->orderBy('position');
+    }
+
+    // public function students()
+    // {
+    //     return $this->belongsToMany(User::class, 'course_student')
+    //         ->withPivot(['status', 'progress', 'completed_at', 'certificate_code', 'certificate_file', 'certificate_issued_at'])
+    //         ->withTimestamps();
+    // }
+
+    /**
+     * Pivot biasa — semua field di course_student diload lewat withPivot
+     */
+    public function students(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'course_student')
-            ->withPivot(['status', 'progress', 'completed_at', 'certificate_code', 'certificate_file', 'certificate_issued_at'])
+            ->withPivot([
+                'status',
+                'progress',
+                'completed_at',
+                'certificate_code',
+                'certificate_file',
+                'certificate_issued_at',
+            ])
             ->withTimestamps();
     }
 
-    public function mentors()
+    /**
+     * Custom pivot CourseMentor karena ada field is_active
+     */
+    public function mentors(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'course_mentors')
             ->using(CourseMentor::class)

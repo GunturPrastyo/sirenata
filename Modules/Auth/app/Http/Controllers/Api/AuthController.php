@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AuthController extends Controller
 {
@@ -24,21 +25,42 @@ class AuthController extends Controller
         private AuthApiService $authApiService
     ) {}
 
-    public function index(Request $request)
-    {
-        $row_per_page = $request->input('page', 5);
-        $users = $this->authApiService->getUsers($row_per_page);
 
-        return ResponseHelper::success(
-            status: true,
-            message: 'Users retrieved successfully',
-            result: PaginateResource::make($users, UserResource::class),
-            statusCode: 200
-        );
+    /**
+     *  List Users
+     *  @unauthenticated
+     */
+    public function index(Request $request): JsonResponse
+    {
+        try {
+            $row_per_page = $request->input('row_per_page', 10);
+            $search       = $request->input('search');
+            $users        = $this->authApiService->getUsers(
+                row_per_page: $row_per_page,
+                search: $search
+            );
+
+            return ResponseHelper::success(
+                status: true,
+                message: 'Users retrieved successfully',
+                result: PaginateResource::make($users, UserResource::class),
+                statusCode: 200
+            );
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(
+                message: $th->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 
-    public function register(RegisterRequest $request)
+    /**
+     *  Register User
+     *  @unauthenticated
+     */
+    public function register(RegisterRequest $request): JsonResponse
     {
+        try {
         $result = $this->authApiService->register($request->validated());
 
         return ResponseHelper::success(
@@ -51,58 +73,99 @@ class AuthController extends Controller
             ],
             statusCode: 201
         );
-    }
-
-    public function login(LoginRequest $request)
-    {
-        $validated = $request->validated();
-        $result = $this->authApiService->login($validated);
-
-        if (!$result) {
+        } catch (\Exception $e) {
             return ResponseHelper::error(
-                message: 'Kredensial salah atau tidak ditemukan di sistem',
-                statusCode: 401
+                message: $e->getMessage(),
+                statusCode: 500
             );
         }
-
-        return ResponseHelper::success(
-            status: true,
-            message: 'Login successful',
-            result: [
-                'token_type'   => 'Bearer',
-                'access_token' => $result['token'],
-                'user'         => new UserResource($result['user']),
-            ],
-            statusCode: 200
-        );
     }
 
-    public function logout(Request $request)
+    /**
+     *  Login User
+     *  @unauthenticated
+     */
+    public function login(LoginRequest $request): JsonResponse
     {
-        $user = Auth::user();
-        $this->authApiService->logout($user);
+        try {
+            $validated = $request->validated();
+            $result = $this->authApiService->login($validated);
 
-        return ResponseHelper::success(
-            status: true,
-            message: 'Logout successful',
-            result: null,
-            statusCode: 200
-        );
+            if (!$result) {
+                return ResponseHelper::error(
+                    message: 'Kredensial salah atau tidak ditemukan di sistem',
+                    statusCode: 401
+                );
+            }
+
+            return ResponseHelper::success(
+                status: true,
+                message: 'Login successful',
+                result: [
+                    'token_type'   => 'Bearer',
+                    'access_token' => $result['token'],
+                    'user'         => new UserResource($result['user']),
+                ],
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 
-    public function me(Request $request)
+     /**
+     *  Logout User
+     *  @authenticated
+     */
+    public function logout(Request $request): JsonResponse
     {
-        $user = Auth::user();
-        return ResponseHelper::success(
-            status: true,
-            message: 'Users retrieved successfully',
-            result: UserResource::make($user),
-            statusCode: 200
-        );
+        try {
+            $user = Auth::user();
+            $this->authApiService->logout($user);
+
+            return ResponseHelper::success(
+                status: true,
+                message: 'Logout successful',   
+                result: null,
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    /**
+     *  Get User
+     *  @authenticated
+     */
+    public function me(Request $request): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            $user->load(['roles.permissions']);
+            return ResponseHelper::success(
+                status: true,
+                message: 'Users retrieved successfully',
+                result: UserResource::make($user),
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 
     /**
      * Send reset password link to email
+     * @unauthenticated
      */
     public function sendResetLink(Request $request)
     {
@@ -133,7 +196,11 @@ class AuthController extends Controller
             );
        }
     }
-
+    
+    /**
+     * Reset the user's password
+     * @unauthenticated
+     */
     public function resetPassword(Request $request)
     {
         $request->validate([

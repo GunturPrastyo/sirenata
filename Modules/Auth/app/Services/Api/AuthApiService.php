@@ -14,9 +14,14 @@ class AuthApiService
     /**
      * Get paginated users.
      */
-    public function getUsers(int $perPage = 5)
+    public function getUsers(int $row_per_page = 5, ?string $search = null)
     {
-        return User::with(['roles.permissions'])->paginate($perPage);
+        return User::with(['roles.permissions'])
+            ->when($search, function ($q) use ($search) {
+                $q->search($search);
+            })
+            ->latest()
+            ->paginate($row_per_page);
     }
 
     /**

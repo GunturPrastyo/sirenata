@@ -63,51 +63,6 @@ class RTKNService
         });
     }
 
-    // public function updateRTKN(array $data, RencanaTenagaKerja $rtkn)
-    // {
-    //     return DB::transaction(function () use ($data, $rtkn) {
-
-    //         $documentPath = $rtkn->document_path;
-
-    //         if (!empty($data['document_path'])) {
-    //             $documentPath = $data['document_path']
-    //                 ->store('rtkn/documents', 'public');
-    //         }
-
-    //         $status = $data['status'] ?? $rtkn->status;
-    //         $isActive = $data['is_active'] ?? $rtkn->is_active;
-
-    //         if ($isActive) {
-    //             // Nonaktifkan semua RTK Nasional lain
-    //             RencanaTenagaKerja::where('type', TypeRtk::NASIONAL->value)
-    //                 ->where('is_active', true)
-    //                 ->where('id', '!=', $rtkn->id)
-    //                 ->update([
-    //                     'status' => RTKStatus::EXPIRED->value,
-    //                     'is_active' => false,
-    //                 ]);
-    //             // $isActive = true;
-    //         } 
-    //         else {
-    //             //     // Kalau bukan BERLAKU
-    //             //     // Jangan ubah is_active kalau dia memang versi aktif terakhir
-    //             $isActive = $rtkn->is_active;
-    //         }
-    //         $rtkn->update([
-    //             'name'          => $data['name'],
-    //             'start_date'    => $data['start_date'],
-    //             'end_date'      => $data['end_date'],
-    //             'status'        => $status,
-    //             'type'          => TypeRtk::NASIONAL->value,
-    //             'document_path' => $documentPath,
-    //             'is_active'     => $isActive,
-    //         ]);
-
-    //         ToastMagic::success("RTKN berhasil diupdate!");
-    //         return $rtkn;
-    //     });
-    // }
-
     public function updateRTKN(array $data, RencanaTenagaKerja $rtkn)
     {
         return DB::transaction(function () use ($data, $rtkn) {
