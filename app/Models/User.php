@@ -148,7 +148,10 @@ class User extends Authenticatable
             ->withPivot([
                 'status',
                 'progress',
-                'completed_at'
+                'completed_at',
+                'certificate_code',
+                'certificate_file',
+                'certificate_issued_at'
             ])
             ->withTimestamps();
     }
