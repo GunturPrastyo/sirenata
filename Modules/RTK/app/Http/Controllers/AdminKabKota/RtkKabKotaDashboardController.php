@@ -19,7 +19,7 @@ class RtkKabKotaDashboardController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware(PermissionMiddleware::using('rtkd-list|rtkd-view'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['index']),
         ];
     } 
 

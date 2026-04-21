@@ -24,7 +24,7 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
     public static function middleware(): array
     {
         return [
-            new Middleware(PermissionMiddleware::using('rtkd-list|rtkd-create|rtkd-edit|rtkd-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('rtkd-create|rtkd-edit|rtkd-delete|rtkd-view'), only: ['index']),
             new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['show']),
             new Middleware(PermissionMiddleware::using('rtkd-create'), only: ['create', 'store']),
             new Middleware(PermissionMiddleware::using('rtkd-edit'), only: ['edit', 'update']),

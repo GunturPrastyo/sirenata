@@ -10,6 +10,7 @@ use Creasi\Nusa\Models\Province;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Modules\User\Enums\InstitutionType;
 
 class RegionUserSeeder extends Seeder
 {
@@ -31,6 +32,7 @@ class RegionUserSeeder extends Seeder
                 "admin.{$slugProv}@example.com",
                 "Admin Prov {$province->name}",
                 "Dinas Tenaga Kerja {$province->name}",
+                InstitutionType::PROVINSI,
                 ['male', 'female'][array_rand(['male', 'female'])],
                 'admin-province',
                 $password,
@@ -42,6 +44,7 @@ class RegionUserSeeder extends Seeder
                 "user.{$slugProv}@example.com",
                 "User Prov {$province->name}",
                 "Instansi Prov {$province->name}",
+                InstitutionType::PROVINSI,
                 ['male', 'female'][array_rand(['male', 'female'])],
                 'user',
                 $password,
@@ -57,6 +60,7 @@ class RegionUserSeeder extends Seeder
                     "admin.{$slugRegency}@example.com",
                     "Admin {$regency->name}",
                     "Dinas Tenaga Kerja {$regency->name}",
+                    InstitutionType::KAB_KOTA,
                     ['male', 'female'][array_rand(['male', 'female'])],
                     'admin-kab-kota',
                     $password,
@@ -68,6 +72,7 @@ class RegionUserSeeder extends Seeder
                     "user.{$slugRegency}@example.com",
                     "User {$regency->name}",
                     "Instansi {$regency->name}",
+                    InstitutionType::KAB_KOTA,
                     ['male', 'female'][array_rand(['male', 'female'])],
                     'user',
                     $password,
@@ -82,7 +87,7 @@ class RegionUserSeeder extends Seeder
         $this->command->info('Semua data Admin & User Regional berhasil digenerate.');
     }
 
-    private function createUser($email, $name, $instansi, $gender, $role, $password, $provCode, $regCode)
+    private function createUser($email, $name, $instansi, $institutionType, $gender, $role, $password, $provCode, $regCode)
     {
         $user = User::firstOrCreate(
             ['email' => $email],
@@ -95,7 +100,7 @@ class RegionUserSeeder extends Seeder
 
         UserProfile::updateOrCreate(
             ['user_id' => $user->id],
-            ['full_name' => $name, 'instansi' => $instansi, 'gender' => $gender]
+            ['full_name' => $name, 'instansi' => $instansi, 'institution_type' => $institutionType, 'gender' => $gender]
         );
 
         UserScope::updateOrCreate(

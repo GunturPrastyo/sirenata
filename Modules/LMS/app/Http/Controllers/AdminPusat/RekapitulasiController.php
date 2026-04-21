@@ -24,7 +24,6 @@ class RekapitulasiController extends Controller
     {
         $limit   = $request->integer('per_page', 10);
         $search  = $request->string('search')->toString();
-
         $data = $this->rekapitulasiService->paginateFilteredRekapitulasiProvince(
             search: $search,
             limit: $limit
