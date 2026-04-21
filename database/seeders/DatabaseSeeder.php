@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             \Modules\Roles\Database\Seeders\RegionUserSeeder::class,
             \Modules\LMS\Database\Seeders\LMSDatabaseSeeder::class,
             \Modules\Faq\Database\Seeders\FaqDatabaseSeeder::class,
+
             \Modules\RTK\Database\Seeders\RTKDatabaseSeeder::class,
         ]);
     }

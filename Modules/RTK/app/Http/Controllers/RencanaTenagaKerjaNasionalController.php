@@ -23,7 +23,7 @@ class RencanaTenagaKerjaNasionalController extends Controller implements HasMidd
     public static function middleware(): array
     {
         return [
-            new Middleware(PermissionMiddleware::using('rtkn-list|rtkn-create|rtkn-edit|rtkn-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('rtkn-view|rtkn-create|rtkn-edit|rtkn-delete'), only: ['index']),
             new Middleware(PermissionMiddleware::using('rtkn-view'), only: ['show']),
             new Middleware(PermissionMiddleware::using('rtkn-create'), only: ['create', 'store']),
             new Middleware(PermissionMiddleware::using('rtkn-edit'), only: ['edit', 'update']),

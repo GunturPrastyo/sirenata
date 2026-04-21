@@ -20,7 +20,7 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
     public static function middleware(): array
     {
         return [
-            new Middleware(PermissionMiddleware::using('rtkd-list'), only: ['index']),
+
             new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['kabKota']),
         ];
     }   
