@@ -34,31 +34,29 @@ class RolesDatabaseSeeder extends Seeder
             'permission-delete',
 
             // Post Management
-            'post.view',
-            'post.create',
-            'post.edit',
-            'post.delete',
+            'post-view',
+            'post-create',
+            'post-edit',
+            'post-delete',
 
             // Project Management
-            'project.view',
-            'project.create',
-            'project.edit',
-            'project.delete',
+            'project-view',
+            'project-create',
+            'project-edit',
+            'project-delete',
 
             // Faq Management
-            'faq.view',
-            'faq.create',
-            'faq.edit',
-            'faq.delete',
+            'faq-view',
+            'faq-create',
+            'faq-edit',
+            'faq-delete',
 
             'rtkn-view',
-            'rtkn-list',
             'rtkn-create',
             'rtkn-edit',
             'rtkn-delete',
 
             'rtkd-view',
-            'rtkd-list',
             'rtkd-create',
             'rtkd-edit',
             'rtkd-delete',
@@ -132,7 +130,7 @@ class RolesDatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
         $normalUser->assignRole('user');
-        $normalUser->givePermissionTo('post.create');
+        $normalUser->givePermissionTo('post-create');
         // This user will purposely NOT have an instansi to test the modal
         \Modules\User\Models\UserProfile::firstOrCreate([
             'user_id' => $normalUser->id
