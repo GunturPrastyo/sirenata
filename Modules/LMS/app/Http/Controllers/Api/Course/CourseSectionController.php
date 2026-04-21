@@ -2,45 +2,53 @@
 
 namespace Modules\LMS\Http\Controllers\Api\Course;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\LMS\Http\Requests\Api\StoreCourseSectionRequest;
 use Modules\LMS\Http\Requests\Api\UpdateCourseSectionRequest;
 use Modules\LMS\Models\Course;
 use Modules\LMS\Models\CourseSection;
+use Modules\LMS\Services\Api\CourseSectionService;
 use Modules\LMS\Transformers\Api\CourseSectionResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CourseSectionController extends Controller
 {
+    public function __construct(
+        private readonly CourseSectionService $courseSectionService
+    ) {}
+
     /**
-     * List section berdasarkan slug course
+     * List Course section berdasarkan slug course
      * 
-     * List section berdasarkan slug course
+     * List Course section berdasarkan slug course
      * 
      * @authenticated
      * @role:admin-pusat
      */
     public function index(string $slug): JsonResponse
     {
-        $course = Course::where('slug', $slug)->firstOrFail();
-
-        $sections = $course->sections()
-            ->withCount(['contents'])
-            ->with(['contents'])
-            ->orderBy('position')
-            ->get();
-
-        return response()->json([
-            'message' => 'Success',
-            'data'    => CourseSectionResource::collection($sections),
-        ]);
+        try {
+            $sections = $this->courseSectionService->getSectionsBySlug(slug: $slug);
+            return ResponseHelper::success(
+                status: true,
+                message: 'Success',
+                result: CourseSectionResource::collection($sections),
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: 'Gagal mengambil data section',
+                statusCode: 500
+            );
+        }
     }
 
     /**
-     * Tambah section
+     * Tambah Course section
      * 
-     * Tambah section berdasarkan slug course
+     * Tambah Course section berdasarkan slug course
      * 
      * @body CourseSection
      * @authenticated
@@ -48,27 +56,31 @@ class CourseSectionController extends Controller
      */
     public function store(StoreCourseSectionRequest $request, string $slug): JsonResponse
     {
-        $course = Course::where('slug', $slug)->firstOrFail();
- 
-        // Auto-set position ke urutan terakhir kalau tidak diisi
-        $position = $request->position
-            ?? $course->sections()->max('position') + 1;
- 
-        $section = $course->sections()->create([
-            ...$request->validated(),
-            'position' => $position,
-        ]);
- 
-        return response()->json([
-            'message' => 'Section berhasil dibuat',
-            'data'    => new CourseSectionResource($section),
-        ], 201);
+        try {
+            $section = $this->courseSectionService->createSection(
+                slug: $slug,
+                data: $request->validated()
+            );
+
+            return ResponseHelper::success(
+                status: true,
+                message: 'Course Section berhasil dibuat',
+                result: new CourseSectionResource($section),
+                statusCode: 201
+            );
+
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
  
     /**
-     * Update section
+     * Update Course section
      * 
-     * Update section berdasarkan id CourseSection
+     * Update Course section berdasarkan id CourseSection
      * 
      * @body CourseSection
      * @authenticated
@@ -76,12 +88,25 @@ class CourseSectionController extends Controller
      */
     public function update(UpdateCourseSectionRequest $request, CourseSection $section): JsonResponse
     {
-        $section->update($request->validated());
- 
-        return response()->json([
-            'message' => 'Section berhasil diupdate',
-            'data'    => new CourseSectionResource($section->fresh('contents')),
-        ]);
+        try {
+            $section = $this->courseSectionService->updateSection(
+                section: $section,
+                data: $request->validated()
+            );
+
+            return ResponseHelper::success(
+                status: true,
+                message: 'Course Section berhasil diupdate',
+                result: new CourseSectionResource($section),
+                statusCode: 200
+            );
+
+        } catch (\Throwable $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
  
     /**
@@ -94,14 +119,23 @@ class CourseSectionController extends Controller
      */
     public function destroy(CourseSection $section): JsonResponse
     {
-        // Contents terhapus otomatis karena cascadeOnDelete di migration
-        $section->delete();
- 
-        return response()->json([
-            'message' => 'Section berhasil dihapus',
-        ]);
+        try {
+            $this->courseSectionService->deleteSection($section);
+
+            return ResponseHelper::success(
+                status: true,
+                message: 'Course Section berhasil dihapus',
+                result: null,
+                statusCode: 200
+            );
+
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
- 
     /**
      * Ubah urutan Course section
      * 
@@ -114,21 +148,29 @@ class CourseSectionController extends Controller
     public function reorder(Request $request, string $slug): JsonResponse
     {
         $request->validate([
-            'sections'          => ['required', 'array'],
-            'sections.*.id'     => ['required', 'uuid', 'exists:course_sections,id'],
-            'sections.*.position' => ['required', 'integer', 'min:1'],
+            'sections'              => ['required', 'array'],
+            'sections.*.id'         => ['required', 'uuid', 'exists:course_sections,id'],
+            'sections.*.position'   => ['required', 'integer', 'min:1'],
         ]);
- 
-        $course = Course::where('slug', $slug)->firstOrFail();
- 
-        foreach ($request->sections as $item) {
-            $course->sections()
-                ->where('id', $item['id'])
-                ->update(['position' => $item['position']]);
+
+        try {
+            $this->courseSectionService->reorderSections(
+                slug: $slug,
+                sections: $request->sections
+            );
+
+            return ResponseHelper::success(
+                status: true,
+                message: 'Urutan section berhasil diupdate',
+                result: null,
+                statusCode: 200
+            );
+
+        } catch (\Throwable $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: $e instanceof \Illuminate\Validation\ValidationException ? 422 : 500
+            );
         }
- 
-        return response()->json([
-            'message' => 'Urutan section berhasil diupdate',
-        ]);
     }
 }

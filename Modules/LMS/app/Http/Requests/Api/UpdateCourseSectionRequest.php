@@ -14,7 +14,6 @@ class UpdateCourseSectionRequest extends FormRequest
         return [
             'name'        => ['sometimes', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'position'    => ['sometimes', 'integer', 'min:0'],
         ];
     }
 
