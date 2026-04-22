@@ -76,7 +76,7 @@ class CourseStudentController extends Controller
             );
         } catch (\Exception $e) {
             return ResponseHelper::error(
-                message: 'Gagal enroll ke course',
+                message: $e->getMessage(),
                 statusCode: 500
             );
         }
@@ -116,7 +116,7 @@ class CourseStudentController extends Controller
             );
         } catch (\Exception $e) {
             return ResponseHelper::error(
-                message: 'Gagal update status student',
+                message: $e->getMessage(),
                 statusCode: 500
             );
         }
@@ -152,7 +152,7 @@ class CourseStudentController extends Controller
             );
         } catch (\Exception $e) {
             return ResponseHelper::error(
-                message: 'Gagal mengambil data course',
+                message: $e->getMessage(),
                 statusCode: 500
             );
         }
@@ -184,7 +184,7 @@ class CourseStudentController extends Controller
             );
         } catch (\Exception $e) {
             return ResponseHelper::error(
-                message: 'Gagal keluar dari course',
+                message: $e->getMessage(),
                 statusCode: 500
             );
         }
