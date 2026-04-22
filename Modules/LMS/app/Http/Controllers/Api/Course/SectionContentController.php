@@ -179,12 +179,12 @@ class SectionContentController extends Controller
             'contents.*.position'  => ['required', 'integer', 'min:0'],
         ]);
         
-         $result = $this->service->reorder(contents: $request->contents, courseSection: $courseSection);
+        $result = $this->service->reorder($request->contents, $courseSection);
 
         return ResponseHelper::success(
             status: true,
             message: $result['message'],
-            result: $result['result'],
+            result: null,
             statusCode: 200
         );
     }
