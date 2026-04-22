@@ -23,6 +23,7 @@ class MyCourseResource extends JsonResource
             'enrolled_at'   => $this->pivot->created_at,
             'benefits'      => CourseBenefitResource::collection($this->whenLoaded('benefits')),
             'testimonis'    => CourseTestimoniResource::collection($this->whenLoaded('testimonis')),
+            'course_sections'  => CourseSectionResource::collection($this->whenLoaded('sections')),
         ];
 
     }

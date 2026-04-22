@@ -98,7 +98,7 @@ class CourseStudentService
     {
         $courses = auth()->user()
             ->enrolledCourses()
-            ->with(['category', 'benefits', 'testimonis'])
+            ->with(['category', 'benefits', 'testimonis', 'sections', 'sections.contents'])
             ->paginate($perPage);
 
         return $courses;
