@@ -54,8 +54,8 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::prefix('testimonis')->group(function () {
-            Route::put('/{testimoniId:id}/update', [CourseTestimoniController::class, 'update']);
-            Route::delete('/{testimoniId}/delete', [CourseTestimoniController::class, 'destroy']);
+            Route::put('/{testimoni}/update', [CourseTestimoniController::class, 'update']);
+            Route::delete('/{testimoni}/delete', [CourseTestimoniController::class, 'destroy']);
         });
 
         // ── admin-pusat 
