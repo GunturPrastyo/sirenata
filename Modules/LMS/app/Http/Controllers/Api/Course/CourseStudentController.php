@@ -135,8 +135,10 @@ class CourseStudentController extends Controller
     {
         try {
             $row_per_page = $request->input('row_per_page', 12);
+            $status = $request->input('status', 'semua');
             $studentCourses = $this->courseStudentService->myCourses(
-                perPage: $row_per_page
+                perPage: $row_per_page,
+                status: $status
             );
             
             return ResponseHelper::success(

@@ -34,4 +34,9 @@ Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->na
 
 Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(function () {
     Route::get('/library', [\Modules\LMS\Http\Controllers\User\LibraryController::class, 'index'])->name('library.index');
+
+
+    Route::prefix('course')->name('course.')->group(function (){
+        Route::get('/my-course', [\Modules\LMS\Http\Controllers\User\CourseController::class, 'allMyCourse'])->name('my-course');
+    });
 });

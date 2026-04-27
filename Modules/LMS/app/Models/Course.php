@@ -60,9 +60,8 @@ class Course extends Model
 
     public function getThumbnailUrlAttribute(): ?string
     {
-        return $this->thumbnail
-            ? asset('storage/' . $this->thumbnail)
-            : null;
+        if (! $this->thumbnail) return null;
+        return str_starts_with($this->thumbnail, 'http') ? $this->thumbnail : asset('storage/' . $this->thumbnail);
     }
 
     public function user()

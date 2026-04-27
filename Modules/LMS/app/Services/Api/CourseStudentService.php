@@ -31,8 +31,9 @@ class CourseStudentService
  
         if ($alreadyEnrolled) {
             return [
-                'enrolled' => false,
-                'message'  => 'Kamu sudah terdaftar di course ini',
+                'success' => false,
+                'code'    => 422,
+                'message' => 'Kamu sudah terdaftar di course ini',
             ];
         }
  
@@ -43,6 +44,7 @@ class CourseStudentService
  
         return [
             'enrolled' => true,
+            'code'    => 201,
             'message'  => 'Berhasil enroll ke course',
         ];
     }
@@ -94,17 +96,33 @@ class CourseStudentService
     /**
      * Course yang diikuti user yang sedang login
      */
-    public function myCourses(int $perPage = 12)
-    {
-        $courses = auth()->user()
-            ->enrolledCourses()
-            ->with(['category', 'benefits', 'testimonis', 'sections', 'sections.contents'])
-            ->paginate($perPage);
+    // public function myCourses(int $perPage = 12)
+    // {
+    //     $courses = auth()->user()
+    //         ->enrolledCourses()
+    //         ->with(['category', 'benefits', 'testimonis'])
+    //         ->paginate($perPage);
 
-        return $courses;
+    //     return $courses;
+    // }
+
+    public function myCourses(int $perPage = 12, string $status = 'semua')
+    {
+        $query = auth()->user()->enrolledCourses()
+            ->with(['category', 'benefits', 'testimonis']);
+
+        if ($status === 'completed') {
+            $query->wherePivot('status', 'completed');
+        } elseif ($status === 'in_progress') {
+            $query->wherePivotIn('status', ['enrolled', 'in_progress']);
+        }
+
+        return $query->latest('course_student.created_at')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
-        /**
+    /**
      * Unenroll user yang sedang login dari course
      */
     public function unenroll(string $slug): array
