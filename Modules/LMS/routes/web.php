@@ -38,5 +38,7 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(f
 
     Route::prefix('course')->name('course.')->group(function (){
         Route::get('/my-course', [\Modules\LMS\Http\Controllers\User\CourseController::class, 'allMyCourse'])->name('my-course');
+        Route::get('/my-course/progress', [\Modules\LMS\Http\Controllers\User\CourseController::class, 'myCourseProgress'])->name('my-course.progress');
+        Route::get('/my-course/finish', [\Modules\LMS\Http\Controllers\User\CourseController::class, 'myCourseFinish'])->name('my-course.finish');
     });
 });

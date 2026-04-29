@@ -86,7 +86,7 @@ class CourseService
                         ->orWhere('user_profiles.instansi', 'like', "%{$search}%");
                 });
             })
-            ->select(
+            ->select([
                 'users.id',
                 'users.name as user_name',
                 'courses.name as course_name',
@@ -94,7 +94,7 @@ class CourseService
                 'user_profiles.full_name as user_full_name',
                 'course_student.status',
                 'course_student.progress'
-            );
+            ]);
     }
 
     public function paginateCourseEnrollmentsByProvince(
@@ -158,13 +158,13 @@ class CourseService
                         ->orWhere('user_profiles.instansi', 'like', "%{$search}%");
                 });
             })
-            ->select(
+            ->select([
                 'users.name as user_name',
                 'courses.name as course_name',
                 'user_profiles.instansi',
                 'course_student.status',
-                'course_student.progress'
-            );
+                'course_student.progress',
+            ]);
     }
 
     public function paginateCourseEnrollmentsByRegency(
@@ -185,12 +185,13 @@ class CourseService
      * Ambil course yang diikuti user yang sedang login
      * Saat ini fetch dari API sendiri, nanti diganti API KCLC
      */
-    public function myCourses(string $token, int $page = 1, int $perPage = 12): array
+    public function myCourses(string $token, int $page = 1, int $perPage = 12, ?string $status = null): array
     {
         try {
             $response = Http::withToken($token)
                 ->timeout(10)
                 ->get("{$this->baseUrl}/my-courses", [
+                    'status'        => $status,
                     'page'          => $page,
                     'row_per_page'  => $perPage,
                 ]);

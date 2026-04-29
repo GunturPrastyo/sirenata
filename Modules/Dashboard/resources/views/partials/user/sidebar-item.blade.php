@@ -12,17 +12,17 @@
         <span class="ms-3">Dashboard</span>
     </a>
 </li>
+
 <li>
     <a href="{{ route('user.course.my-course') }}"
-        class="flex items-center px-2 py-1.5 text-gray-500 rounded-lg hover:bg-purple-100 hover:text-indigo-600 transition-colors group">
-        <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M6 4h12M6 4v16M6 20h12M6 20H5m13 0h1m-1 0V4m0 0h1M6 4H5M9 8h1v1H9V8Zm5 0h1v1h-1V8Zm-5 4h1v1H9v-1Zm5 0h1v1h-1v-1Zm-3 4h2a1 1 0 0 1 1 1v4h-4v-4a1 1 0 0 1 1-1Z" />
+        class="flex items-center px-2 py-1.5 {{ request()->routeIs('user.course.my-course.*') ? 'text-indigo-600 bg-purple-100' : 'text-gray-500 hover:bg-purple-100 hover:text-indigo-600' }} rounded-lg group transition-colors">
+        <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('user.course.my-course.*') ? 'text-indigo-600' : 'group-hover:text-indigo-600' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h12M6 4v16M6 20h12M6 20H5m13 0h1m-1 0V4m0 0h1M6 4H5M9 8h1v1H9V8Zm5 0h1v1h-1V8Zm-5 4h1v1H9v-1Zm5 0h1v1h-1v-1Zm-3 4h2a1 1 0 0 1 1 1v4h-4v-4a1 1 0 0 1 1-1Z" />
         </svg>
-        <span class="flex-1 ms-3 whitespace-nowrap">Kursus Saya</span>
+        <span class="ms-3">Kursus Saya</span>
     </a>
 </li>
+
 <li>
     <a href="#"
         class="flex items-center px-2 py-1.5 text-gray-500 rounded-lg hover:bg-purple-100 hover:text-indigo-600 transition-colors group">
