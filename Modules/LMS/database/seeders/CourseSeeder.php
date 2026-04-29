@@ -5,6 +5,7 @@ namespace Modules\LMS\Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Modules\LMS\Models\Course;
+use Modules\LMS\Models\StudentContentProgress;
 
 class CourseSeeder extends Seeder
 {
@@ -12,10 +13,8 @@ class CourseSeeder extends Seeder
     {
         Course::factory(10)->create();
 
-        $courses = Course::all();
-
-        // Ambil hanya user dengan role 'user'
-        $users = User::role('user')->get();
+        $courses = Course::with(['sections.contents'])->get();
+        $users   = User::role('user')->get();
 
         if ($courses->isEmpty()) {
             $this->command->warn('Courses not found.');
@@ -29,7 +28,7 @@ class CourseSeeder extends Seeder
 
         foreach ($courses as $course) {
 
-            // Random Mentor (1–2 orang dari role user)
+            // ── Mentors (1–2 orang) ───────────────────────────────────────
             $mentors = $users->random(rand(1, min(2, $users->count())));
             foreach ($mentors as $mentor) {
                 $course->mentors()->syncWithoutDetaching([
@@ -41,18 +40,30 @@ class CourseSeeder extends Seeder
                 ]);
             }
 
-            // Random Student (10–30 orang dari role user)
-            // $students = $users->random(rand(10, min(30, $users->count())));
-            $students = $users;
-            // Semua user dengan role 'user' di-enroll ke course ini
+            // Ambil semua konten dalam course ini (flatten dari semua sections)
+            $allContents   = $course->sections->flatMap->contents;
+            $totalContents = $allContents->count();
+
+            // ── Students — semua user role 'user' ────────────────────────
             foreach ($users as $student) {
-                $progress = rand(0, 100);
-                $status   = match (true) {
+
+                // Random berapa konten yang sudah diselesaikan student ini
+                $completedCount = $totalContents > 0
+                    ? rand(0, $totalContents)
+                    : 0;
+
+                // Progress dihitung dari konten selesai / total konten
+                $progress = $totalContents > 0
+                    ? (int) round(($completedCount / $totalContents) * 100)
+                    : 0;
+
+                $status = match (true) {
                     $progress === 0 => 'enrolled',
                     $progress < 100 => 'in_progress',
                     default         => 'completed',
                 };
 
+                // Enroll student ke course
                 $course->students()->syncWithoutDetaching([
                     $student->id => [
                         'status'       => $status,
@@ -62,6 +73,27 @@ class CourseSeeder extends Seeder
                         'updated_at'   => now(),
                     ],
                 ]);
+
+                // Seed student_content_progress sesuai konten yang selesai
+                if ($totalContents > 0 && $completedCount > 0) {
+                    $contentsToComplete = $allContents
+                        ->shuffle()
+                        ->take($completedCount);
+
+                    foreach ($contentsToComplete as $content) {
+                        StudentContentProgress::firstOrCreate(
+                            [
+                                'user_id'            => $student->id,
+                                'section_content_id' => $content->id,
+                            ],
+                            [
+                                'completed_at' => now(),
+                                'created_at'   => now(),
+                                'updated_at'   => now(),
+                            ]
+                        );
+                    }
+                }
             }
         }
 

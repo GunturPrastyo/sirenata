@@ -25,7 +25,7 @@
                             ></path>
                         </svg>
                         <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">
-                            My Course
+                            Kursus Saya
                         </span>
                     </div>
                 </li>

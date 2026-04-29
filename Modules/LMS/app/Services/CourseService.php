@@ -234,4 +234,47 @@ class CourseService
             ];
         }
     }
+
+    public function getCourseDetailSlug(string $token, string $slug): array
+    {
+        try {
+            $response = Http::withToken($token)
+                ->timeout(10)
+                ->get("{$this->baseUrl}/courses/{$slug}/progress");
+
+            if ($response->failed()) {
+                Log::error('Failed to fetch course detail', [
+                    'status' => $response->status(),
+                    'body'   => $response->body(),
+                ]);
+
+                return [
+                    'success' => false,
+                    'message' => 'Gagal mengambil data course',
+                    'data'    => [],
+                    'meta'    => [],
+                ];
+            }
+
+            $data = $response->json();
+
+            return [
+                'success' => true,
+                'message' => $data['message'] ?? 'Success',
+                'data'    => $data['result']['data'] ?? [],
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('CourseService::getCourseDetailSlug error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan',
+                'data'    => [],
+                'meta'    => [],
+            ];
+        }
+    }
 }

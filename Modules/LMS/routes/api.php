@@ -9,6 +9,7 @@ use Modules\LMS\Http\Controllers\Api\Course\CourseSectionController;
 use Modules\LMS\Http\Controllers\Api\Course\CourseStudentController;
 use Modules\LMS\Http\Controllers\Api\Course\CourseTestimoniController;
 use Modules\LMS\Http\Controllers\Api\Course\SectionContentController;
+use Modules\LMS\Http\Controllers\Api\Course\CourseProgressController;
 
 Route::prefix('v1')->group(function () {
 
@@ -37,6 +38,12 @@ Route::prefix('v1')->group(function () {
         Route::prefix('sections/{courseSection}')->group(function () {
             Route::get('/contents', [SectionContentController::class, 'index']);
         });
+        
+        Route::post('/contents/{content}/complete', [CourseProgressController::class, 'complete']);
+        // Detail progress course — untuk halaman course detail
+        Route::get('/courses/{slug}/progress', [CourseProgressController::class, 'show']);
+        Route::get('/courses/{slug}', [CourseProgressController::class, 'show']);
+
 
         Route::prefix('contents')->group(function () {
             Route::get('/{content}', [SectionContentController::class, 'show']);

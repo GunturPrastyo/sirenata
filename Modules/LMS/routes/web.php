@@ -36,9 +36,10 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(f
     Route::get('/library', [\Modules\LMS\Http\Controllers\User\LibraryController::class, 'index'])->name('library.index');
 
 
-    Route::prefix('course')->name('course.')->group(function (){
-        Route::get('/my-course', [\Modules\LMS\Http\Controllers\User\CourseController::class, 'allMyCourse'])->name('my-course');
-        Route::get('/my-course/progress', [\Modules\LMS\Http\Controllers\User\CourseController::class, 'myCourseProgress'])->name('my-course.progress');
-        Route::get('/my-course/finish', [\Modules\LMS\Http\Controllers\User\CourseController::class, 'myCourseFinish'])->name('my-course.finish');
+    Route::prefix('course')->name('course.')->controller(\Modules\LMS\Http\Controllers\User\CourseController::class)->group(function () {
+        Route::get('/my-course', 'allMyCourse')->name('my-course');
+        Route::get('/my-course/progress', 'myCourseProgress')->name('my-course.progress');
+        Route::get('/my-course/finish', 'myCourseFinish')->name('my-course.finish');
+        Route::get('/my-course/{slug}', 'myCourseDetail')->name('my-course.detail');
     });
 });
