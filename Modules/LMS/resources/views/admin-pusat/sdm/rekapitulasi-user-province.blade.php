@@ -160,7 +160,7 @@
                                 </td>
 
                                 <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $row->user_name }}</p>
+                                    <p class="text-slate-600">{{ $row->user_full_name ?? $row->user_name }}</p>
                                 </td>
 
                                 <td class="px-4 md:px-6 py-3">

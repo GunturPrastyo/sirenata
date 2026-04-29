@@ -4,14 +4,24 @@ namespace Modules\LMS\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Modules\LMS\Models\Course;
 use Modules\User\Enums\InstitutionType;
+use Illuminate\Support\Facades\Http;
 
 class CourseService
 {
     private const DEFAULT_SORT = 'desc';
     private const DEFAULT_LIMIT = 10;
 
+    /**
+     * Base URL API — nanti tinggal ganti ke URL KCLC di .env
+     */
+    private string $baseUrl;
+    public function __construct()
+    {
+        $this->baseUrl = config('Lms.api_url', env('LMS_API_URL', 'https://e-learning.test/api/v1'));
+    }
 
     public function getCoursesForFilter()
     {
@@ -76,13 +86,15 @@ class CourseService
                         ->orWhere('user_profiles.instansi', 'like', "%{$search}%");
                 });
             })
-            ->select(
+            ->select([
+                'users.id',
                 'users.name as user_name',
                 'courses.name as course_name',
                 'user_profiles.instansi',
+                'user_profiles.full_name as user_full_name',
                 'course_student.status',
                 'course_student.progress'
-            );
+            ]);
     }
 
     public function paginateCourseEnrollmentsByProvince(
@@ -146,13 +158,13 @@ class CourseService
                         ->orWhere('user_profiles.instansi', 'like', "%{$search}%");
                 });
             })
-            ->select(
+            ->select([
                 'users.name as user_name',
                 'courses.name as course_name',
                 'user_profiles.instansi',
                 'course_student.status',
-                'course_student.progress'
-            );
+                'course_student.progress',
+            ]);
     }
 
     public function paginateCourseEnrollmentsByRegency(
@@ -166,5 +178,103 @@ class CourseService
             courseId: $courseId,
             search: $search,
         )->paginate($limit)->withQueryString();
+    }
+    
+
+    /**
+     * Ambil course yang diikuti user yang sedang login
+     * Saat ini fetch dari API sendiri, nanti diganti API KCLC
+     */
+    public function myCourses(string $token, int $page = 1, int $perPage = 12, ?string $status = null): array
+    {
+        try {
+            $response = Http::withToken($token)
+                ->timeout(10)
+                ->get("{$this->baseUrl}/my-courses", [
+                    'status'        => $status,
+                    'page'          => $page,
+                    'row_per_page'  => $perPage,
+                ]);
+
+            if ($response->failed()) {
+                Log::error('Failed to fetch my courses', [
+                    'status' => $response->status(),
+                    'body'   => $response->body(),
+                ]);
+
+                return [
+                    'success' => false,
+                    'message' => 'Gagal mengambil data course',
+                    'data'    => [],
+                    'meta'    => [],
+                ];
+            }
+
+            $data = $response->json();
+
+            return [
+                'success' => true,
+                'message' => $data['message'] ?? 'Success',
+                'data'    => $data['result']['data'] ?? [],
+                'meta'    => $data['result']['meta'] ?? [],
+                'links'   => $data['result']['links'] ?? [],
+                'auth'    => $data['auth'] ?? [],
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('CourseService::myCourses error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan',
+                'data'    => [],
+                'meta'    => [],
+            ];
+        }
+    }
+
+    public function getCourseDetailSlug(string $token, string $slug): array
+    {
+        try {
+            $response = Http::withToken($token)
+                ->timeout(10)
+                ->get("{$this->baseUrl}/courses/{$slug}/progress");
+
+            if ($response->failed()) {
+                Log::error('Failed to fetch course detail', [
+                    'status' => $response->status(),
+                    'body'   => $response->body(),
+                ]);
+
+                return [
+                    'success' => false,
+                    'message' => 'Gagal mengambil data course',
+                    'data'    => [],
+                    'meta'    => [],
+                ];
+            }
+
+            $data = $response->json();
+
+            return [
+                'success' => true,
+                'message' => $data['message'] ?? 'Success',
+                'data'    => $data['result']['data'] ?? [],
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('CourseService::getCourseDetailSlug error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan',
+                'data'    => [],
+                'meta'    => [],
+            ];
+        }
     }
 }

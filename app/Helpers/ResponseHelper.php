@@ -6,14 +6,25 @@ use Illuminate\Http\JsonResponse;
 
 class ResponseHelper
 {
-    public static function success($status, $message, $result, $statusCode): JsonResponse
-    {
-        return response()->json([
-            'status' => $status,
+    public static function success(
+        bool   $status,
+        string $message,
+        mixed  $result,
+        int    $statusCode = 200,
+        mixed  $auth = null
+    ): JsonResponse {
+        $response = [
+            'status'  => $status,
             'message' => $message,
-            'result' => $result,
-        ], $statusCode);
-}
+            'result'  => $result,
+        ];
+
+        if ($auth !== null) {
+            $response['auth'] = $auth;
+        }
+
+        return response()->json($response, $statusCode);
+    }
 
     public static function error($message, $statusCode = 400): JsonResponse
     {

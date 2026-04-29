@@ -92,7 +92,7 @@
                                         class="block p-2 rounded hover:bg-purple-200">Profil</a>
                                 </li>
                                 <li>
-                                    <a href="#" class="block p-2 rounded hover:bg-purple-200">Dashboard
+                                    <a href="{{ route('user.dashboard') }}" class="block p-2 rounded hover:bg-purple-200">Dashboard
                                         User/Peserta</a>
                                 </li>
                             @endrole

@@ -14,6 +14,7 @@ class LMSDatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             CourseSeeder::class,
+            CourseSectionSeeder::class,
         ]);
     }
 }

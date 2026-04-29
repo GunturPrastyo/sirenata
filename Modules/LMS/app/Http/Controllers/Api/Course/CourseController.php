@@ -129,17 +129,8 @@ class CourseController extends Controller
         try {
             $course = Course::where('slug', $slug)->firstOrFail();
             $data   = $request->validated();
+            $this->courseService->CourseUpdate(course: $course, data: $data);
 
-            if ($request->hasFile('thumbnail')) {
-                // Hapus thumbnail lama jika ada
-                if ($course->thumbnail) {
-                    Storage::disk('public')->delete($course->thumbnail);
-                }
-                $data['thumbnail'] = $request->file('thumbnail')
-                    ->store('courses/thumbnails', 'public');
-            }
-
-            $course->update($data);
             return ResponseHelper::success(
                 status: true,
                 message: 'Course updated successfully',

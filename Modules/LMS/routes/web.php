@@ -40,5 +40,10 @@ Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->na
 
 Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(function () {
     Route::get('/library', [\Modules\LMS\Http\Controllers\User\LibraryController::class, 'index'])->name('library.index');
-    Route::get('/my-course', [\Modules\LMS\Http\Controllers\User\MyCourseController::class, 'index'])->name('my-course');
+    Route::prefix('course')->name('course.')->controller(\Modules\LMS\Http\Controllers\User\CourseController::class)->group(function () {
+        Route::get('/my-course', 'allMyCourse')->name('my-course');
+        Route::get('/my-course/progress', 'myCourseProgress')->name('my-course.progress');
+        Route::get('/my-course/finish', 'myCourseFinish')->name('my-course.finish');
+        Route::get('/my-course/{slug}', 'myCourseDetail')->name('my-course.detail');
+    });
 });

@@ -47,6 +47,11 @@ class AuthService
      */
     public function logout(): void
     {
+        // Hapus token web-session
+        Auth::user()->tokens()->where('name', 'web-session')->delete();
+        // Hapus dari session
+        session()->forget('api_token');
+
         Auth::logout();
         session()->invalidate();
         session()->regenerateToken();

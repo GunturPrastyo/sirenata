@@ -13,8 +13,8 @@ class StoreSectionContentRequest extends FormRequest
     {
         return [
             'name'     => ['required', 'string', 'max:255'],
-            'video'    => ['nullable', 'file', 'mimetypes:video/mp4,video/mpeg,video/quicktime,video/webm', 'max:512000'], // max 500MB
-            'position' => ['nullable', 'integer', 'min:0'],
+            // 'video'    => ['nullable', 'file', 'mimetypes:video/mp4,video/mpeg,video/quicktime,video/webm', 'max:512000'], // max 500MB
+            // 'position' => ['nullable', 'integer', 'min:0'],
         ];
     }
 
