@@ -11,7 +11,10 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/kab-kota/{provinceCode}', 'kabKota')->name('kab-kota');
 
         Route::get('/rekap-user-province/{provinceCode}', 'rekapUserProvince')->name('rekap-user-province');
+        Route::get('/rekap-user-province/{provinceCode}/export', 'exportRekapUserProvince')->name('rekap-user-province.export');
+
         Route::get('/rekap-user-kab-kota/{regencyCode}', 'rekapUserKabKota')->name('rekap-user-kab-kota');
+        Route::get('/rekap-user-kab-kota/{regencyCode}/export', 'exportRekapUserRegency')->name('rekap-user-kab-kota.export');
     });
 
     Route::resource('library-types', \Modules\LMS\Http\Controllers\AdminPusat\LibraryTypeController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -23,12 +26,17 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
         Route::get('/', 'index')->name('index');
         Route::get('/rekap-user-kab-kota/{regencyCode}', 'rekapUserKabKota')->name('rekap-user-kab-kota');
         Route::get('/rekap-user-province', 'rekapUserProvince')->name('rekap-user-province');
+
+        Route::get('/rekap-user-kab-kota/{regencyCode}/export', 'exportRekapUserRegency')->name('rekap-user-kab-kota.export');
+        Route::get('/rekap-user-province/export', 'exportRekapUserProvince')->name('rekap-user-province.export');
     });
 });
 
 Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->name('admin-kab-kota.')->group(function () {
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(AdminKabKotaRekapitulasiController::class)->group(function () {
         Route::get('/', 'index')->name('index');
+
+        Route::get('/export', 'exportRekapUserRegency')->name('rekap-user-regency.export');
     });
 });
 

@@ -4,21 +4,37 @@
 ])
 
 @php
-    $statusColor = match ($status) {
-        'completed' => 'bg-green-100 text-green-700',
-        'ongoing' => 'bg-blue-100 text-blue-700',
-        'failed' => 'bg-red-100 text-red-700',
-        default => 'bg-gray-100 text-gray-700',
+    $statusConfig = match (strtolower($status)) {
+        'completed'   => [
+            'color' => 'bg-emerald-100 text-emerald-700',
+            'label' => 'Selesai',
+        ],
+        'in_progress' => [
+            'color' => 'bg-indigo-100 text-indigo-700',
+            'label' => 'Sedang Berjalan',
+        ],
+        'enrolled'    => [
+            'color' => 'bg-amber-100 text-amber-700',
+            'label' => 'Terdaftar',
+        ],
+        default       => [
+            'color' => 'bg-gray-100 text-gray-500',
+            'label' => 'Tidak Diketahui',
+        ],
     };
 
-    $progressColor = $progress == 100 ? 'bg-green-500' : 'bg-blue-500';
+    $progressColor = match (true) {
+        $progress === 100 => 'bg-emerald-500',
+        $progress >= 50   => 'bg-indigo-500',
+        $progress > 0     => 'bg-amber-500',
+        default           => 'bg-gray-300',
+    };
 @endphp
 
 <div class="space-y-2">
-
     {{-- Status Badge --}}
-    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $statusColor }}">
-        {{ ucfirst($status) }}
+    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $statusConfig['color'] }}">
+        {{ $statusConfig['label'] }}
     </span>
 
     {{-- Progress Bar --}}

@@ -3,6 +3,7 @@
 namespace Modules\LMS\Services;
 
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -36,20 +37,20 @@ class CourseService
         string $search = '',
         ?string $courseId = null,
     ) {
-    return User::query()
-        ->inProvince($provinceCode)
-        ->provinceInstitution()
-        ->whereHas('enrolledCourses') // wajib punya course
-        ->when($courseId, function ($q) use ($courseId) {
-            $q->whereHas('enrolledCourses', function ($sub) use ($courseId) {
-                $sub->where('courses.id', $courseId);
-            });
-        })
-        ->when($search, fn($q) => $q->search($search))
-        ->with([
-            'profile',
-            'scopeArea',
-            'enrolledCourses' => function ($q) use ($courseId) {
+        return User::query()
+            ->inProvince($provinceCode)
+            ->provinceInstitution()
+            ->whereHas('enrolledCourses') // wajib punya course
+            ->when($courseId, function ($q) use ($courseId) {
+                $q->whereHas('enrolledCourses', function ($sub) use ($courseId) {
+                    $sub->where('courses.id', $courseId);
+                });
+            })
+            ->when($search, fn($q) => $q->search($search))
+            ->with([
+                'profile',
+                'scopeArea',
+                'enrolledCourses' => function ($q) use ($courseId) {
                     if ($courseId) {
                         $q->where('courses.id', $courseId);
                     }
@@ -109,6 +110,18 @@ class CourseService
             courseId: $courseId,
             search: $search,
         )->paginate($limit)->withQueryString();
+    }
+
+    public function exportCourseEnrollmentsByProvince(
+        string $provinceCode,
+        ?string $courseId = null,
+        ?string $search = null,
+    ) {
+        return $this->baseEnrollmentsByProvinceQuery(
+            provinceCode: $provinceCode,
+            courseId: $courseId,
+            search: $search,
+        )->orderBy('users.name');
     }
 
     public function queryCourseByRegency(string $regencyCode, string $search = '', int $limit = self::DEFAULT_LIMIT, string $sort = self::DEFAULT_SORT)
@@ -181,6 +194,18 @@ class CourseService
         )->paginate($limit)->withQueryString();
     }
 
+    public function exportCourseEnrollmentsByRegency(
+        string $regencyCode,
+        ?string $courseId = null,
+        ?string $search = null,
+    ) {
+        return $this->baseEnrollmentsByRegencyQuery(
+            regencyCode: $regencyCode,
+            courseId: $courseId,
+            search: $search,
+        )->orderBy('users.name');
+    }
+
     public function myCourseStats(): array
     {
         $user    = Auth::user();
@@ -197,8 +222,8 @@ class CourseService
             //     ? (int) round($courses->where('pivot.progress', '>', 0)->avg('pivot.progress'))
             //     : 0,
             'avg_progress' => $startedCourses->count() > 0
-            ? (int) round($startedCourses->avg('pivot.progress'))
-            : 0,
+                ? (int) round($startedCourses->avg('pivot.progress'))
+                : 0,
         ];
     }
 
@@ -223,7 +248,7 @@ class CourseService
             'status'   => $course->pivot->status,
         ];
     }
-    
+
 
     /**
      * Ambil 3 course terbaru yang sedang diikuti user
@@ -277,7 +302,6 @@ class CourseService
                 'links'   => $data['result']['links'] ?? [],
                 'auth'    => $data['auth'] ?? [],
             ];
-
         } catch (\Exception $e) {
             Log::error('CourseService::myCourses error', [
                 'error' => $e->getMessage(),
@@ -320,7 +344,6 @@ class CourseService
                 'message' => $data['message'] ?? 'Success',
                 'data'    => $data['result']['data'] ?? [],
             ];
-
         } catch (\Exception $e) {
             Log::error('CourseService::getCourseDetailSlug error', [
                 'error' => $e->getMessage(),
