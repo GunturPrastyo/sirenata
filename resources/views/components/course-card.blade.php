@@ -4,6 +4,7 @@
     <img
         src="{{ $course->thumbnail_url }}"
         alt="{{ $course->name }}"
+        loading="lazy"
         class="w-full h-24 sm:h-40 object-cover"
     />
 
