@@ -9,9 +9,21 @@ use Modules\RTK\Http\Controllers\AdminKabKota\RencanaTenagaKerjaKabKotaControlle
 use Modules\RTK\Http\Controllers\AdminKabKota\RtkKabKotaDashboardController;
 use Modules\RTK\Http\Controllers\AdminProvinsi\RTKApprovalProvinceController;
 use Modules\RTK\Http\Controllers\AdminPusat\RTKApprovalPusatController;
+use Modules\RTK\Http\Controllers\AdminPusat\RtkSurveyPeriodController;
+use Modules\RTK\Http\Controllers\AdminPusat\HasilPemanfaatanRtkdController;
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::resource('rencana-tenaga-kerja-nasional', RencanaTenagaKerjaNasionalController::class)->names('rtkn');
+
+    // Periode Survei RTK Daerah
+    Route::resource('survey-periods', RtkSurveyPeriodController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('survey-periods/{survey_period}/activate', [RtkSurveyPeriodController::class, 'activate'])->name('survey-periods.activate');
+    Route::patch('survey-periods/{survey_period}/close', [RtkSurveyPeriodController::class, 'close'])->name('survey-periods.close');
+
+    // Hasil Pemanfaatan RTKD (Verifikasi)
+    Route::get('hasil-pemanfaatan-rtkd', [HasilPemanfaatanRtkdController::class, 'index'])->name('hasil-pemanfaatan-rtkd.index');
+    Route::get('hasil-pemanfaatan-rtkd/{id}', [HasilPemanfaatanRtkdController::class, 'show'])->name('hasil-pemanfaatan-rtkd.show');
+    Route::patch('hasil-pemanfaatan-rtkd/{id}/verify', [HasilPemanfaatanRtkdController::class, 'verify'])->name('hasil-pemanfaatan-rtkd.verify');
 
     Route::prefix('rencana-tenaga-kerja-daerah')->name('rtkd.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaDaerahController::class, 'index'])->name('index');
@@ -29,10 +41,14 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
 });
 
 
+use Modules\RTK\Http\Controllers\AdminProvinsi\PemanfaatanRtkdController;
+
 Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->name('admin-province.')->group(function () {
     Route::resource('rencana-tenaga-kerja-daerah-provinsi', RencanaTenagaKerjaProvinceController::class)
         ->parameters(['rencana-tenaga-kerja-daerah-provinsi' => 'rtkdp',])
         ->names('rtkdp');
+
+    Route::resource('pemanfaatan-rtkd', PemanfaatanRtkdController::class)->only(['index', 'create', 'store', 'edit', 'update']);
 
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaKabKotaController::class, 'index'])->name('index');

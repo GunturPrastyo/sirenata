@@ -153,7 +153,7 @@
                         class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center shadow-sm">
                         Kembali
                     </a>
-                    @can('project.edit')
+                    @can('project-edit')
                         <a href="{{ route($routePrefix . 'edit', $project->id) }}"
                             class="flex-1 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors text-center shadow-sm">
                             Edit Proyek

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21e18e41b556daeb4a646149c3207d04",
+    "content-hash": "dd51ddee2e33749bc24e3f22691ec664",
     "packages": [
         {
             "name": "brick/math",
@@ -360,16 +360,16 @@
         },
         {
             "name": "dedoc/scramble",
-            "version": "v0.13.17",
+            "version": "v0.13.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dedoc/scramble.git",
-                "reference": "f7b1652316e3ed0243389837158128c8c1c8bfda"
+                "reference": "55545987558fdd44d676831a41bf0a41365c5ab6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dedoc/scramble/zipball/f7b1652316e3ed0243389837158128c8c1c8bfda",
-                "reference": "f7b1652316e3ed0243389837158128c8c1c8bfda",
+                "url": "https://api.github.com/repos/dedoc/scramble/zipball/55545987558fdd44d676831a41bf0a41365c5ab6",
+                "reference": "55545987558fdd44d676831a41bf0a41365c5ab6",
                 "shasum": ""
             },
             "require": {
@@ -428,7 +428,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dedoc/scramble/issues",
-                "source": "https://github.com/dedoc/scramble/tree/v0.13.17"
+                "source": "https://github.com/dedoc/scramble/tree/v0.13.20"
             },
             "funding": [
                 {
@@ -436,7 +436,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-27T13:32:04+00:00"
+            "time": "2026-04-16T14:13:35+00:00"
         },
         {
             "name": "devrabiul/laravel-toaster-magic",
