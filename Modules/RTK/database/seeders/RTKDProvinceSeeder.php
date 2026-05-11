@@ -1,12 +1,15 @@
 <?php
+
 namespace Modules\RTK\Database\Seeders;
+
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Modules\MasterData\Models\Province;
-use Modules\RTK\Enums\RTKStatus;
+use Modules\RTK\Enums\RTKStatusVerification;
 use Modules\RTK\Enums\TypeRtk;
 use Modules\RTK\Models\RencanaTenagaKerja;
+use Modules\RTK\Enums\StatusDocument;
 
 class RTKDProvinceSeeder extends Seeder
 {
@@ -66,7 +69,8 @@ class RTKDProvinceSeeder extends Seeder
                         'name'          => $item['name'],
                         'start_date'    => $item['start_date'],
                         'end_date'      => $item['end_date'],
-                        'status'        => RTKStatus::PENDING->value,
+                        'status_verification'        => RTKStatusVerification::PENDING->value,
+                        'status_document' => StatusDocument::NA->value,
                         'type'          => TypeRtk::PROVINSI->value,
                         'is_active'     => $item['is_active'],
                         'document_path' => null,

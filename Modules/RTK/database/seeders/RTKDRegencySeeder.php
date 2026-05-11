@@ -1,12 +1,15 @@
 <?php
+
 namespace Modules\RTK\Database\Seeders;
+
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Modules\MasterData\Models\Regency;
-use Modules\RTK\Enums\RTKStatus;
+use Modules\RTK\Enums\RTKStatusVerification;
 use Modules\RTK\Enums\TypeRtk;
 use Modules\RTK\Models\RencanaTenagaKerja;
+use Modules\RTK\Enums\StatusDocument;
 
 class RTKDRegencySeeder extends Seeder
 {
@@ -27,7 +30,7 @@ class RTKDRegencySeeder extends Seeder
                 $user = User::role('admin-kab-kota')
                     ->whereHas('scopeArea', function ($query) use ($regency) {
                         $query->where('province_code', $regency->province_code)
-                              ->where('regency_code', $regency->code);
+                            ->where('regency_code', $regency->code);
                     })
                     ->first();
 
@@ -65,7 +68,8 @@ class RTKDRegencySeeder extends Seeder
                         'name'          => $item['name'],
                         'start_date'    => $item['start_date'],
                         'end_date'      => $item['end_date'],
-                        'status'        => RTKStatus::PENDING->value,
+                        'status_verification' => RTKStatusVerification::PENDING->value,
+                        'status_document' => StatusDocument::NA->value,
                         'type'          => TypeRtk::KAB_KOTA->value,
                         'is_active'     => $item['is_active'],
                         'document_path' => null,

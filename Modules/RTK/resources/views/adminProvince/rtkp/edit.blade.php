@@ -37,7 +37,7 @@
                 </li>
             </ol>
         </nav>
-        @if ($rtkdp->status === \Modules\RTK\Enums\RTKStatus::REJECTED)
+        @if ($rtkdp->status_verification === \Modules\RTK\Enums\RTKStatusVerification::REJECTED)
             <div class="mb-6 border border-red-200 bg-red-50 rounded-lg p-4">
                 <div class="flex items-start gap-3">
                     <svg class="w-5 h-5 text-red-600 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none"

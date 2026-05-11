@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\RTK\Http\Controllers;
+namespace Modules\RTK\Http\Controllers\AdminPusat\RtkNasional;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ class RencanaTenagaKerjaNasionalController extends Controller implements HasMidd
             new Middleware(PermissionMiddleware::using('rtkn-edit'), only: ['edit', 'update']),
             new Middleware(PermissionMiddleware::using('rtkn-delete'), only: ['destroy']),
         ];
-    }   
+    }
 
     /**
      * Display a listing of the resource.
@@ -38,12 +38,21 @@ class RencanaTenagaKerjaNasionalController extends Controller implements HasMidd
     {
         $limit = $request->per_page ?? 10;
         $search = $request->search;
-        $status = $request->status;
+        $statusVerification = $request->string('status_verifikasi')->toString();
+        $statusDocument = $request->string('status_document')->toString();
+        $isActive = $request->input('acuan');
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
             : 'desc';
 
-        $rtkns = $this->rtknService->paginateFilteredRTKN($search, $orderBy, $limit, $status);
+        $rtkns = $this->rtknService->paginateFilteredRTKN(
+            search: $search,
+            sortBy: $orderBy,
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive,
+            limit: $limit
+        );
         return view('rtk::adminPusat.rtkn.index', [
             'rtkns' => $rtkns
         ]);
@@ -63,7 +72,7 @@ class RencanaTenagaKerjaNasionalController extends Controller implements HasMidd
     public function store(RTKNStoreRequest $request)
     {
         $validated = $request->validated();
-        $this->rtknService->createRTKN($validated);
+        $this->rtknService->createRTKN(data: $validated);
         return redirect()->route('admin-pusat.rtkn.index')->with('success', 'RTKN berhasil ditambahkan');
     }
 
@@ -80,7 +89,7 @@ class RencanaTenagaKerjaNasionalController extends Controller implements HasMidd
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, RencanaTenagaKerja $rencanaTenagaKerjaNasional) 
+    public function edit(Request $request, RencanaTenagaKerja $rencanaTenagaKerjaNasional)
     {
         return view('rtk::adminPusat.rtkn.edit', [
             'rtkn' => $rencanaTenagaKerjaNasional
@@ -94,8 +103,12 @@ class RencanaTenagaKerjaNasionalController extends Controller implements HasMidd
     public function update(RTKNUpdateRequest $request, RencanaTenagaKerja $rencanaTenagaKerjaNasional)
     {
         $validated = $request->validated();
-        $this->rtknService->updateRTKN($validated, $rencanaTenagaKerjaNasional);
-        return redirect()->route('admin-pusat.rtkn.index')->with('success', 'RTKN berhasil diupdate');
+        try {
+            $this->rtknService->updateRTKN(rtk: $rencanaTenagaKerjaNasional, data: $validated);
+            return redirect()->route('admin-pusat.rtkn.index')->with('success', 'RTKN berhasil diupdate');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**

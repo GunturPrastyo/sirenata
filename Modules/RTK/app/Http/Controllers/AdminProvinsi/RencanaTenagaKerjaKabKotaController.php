@@ -23,7 +23,7 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
         return [
             new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['index']),
         ];
-    } 
+    }
 
     /**
      * Display a listing of the resource.
@@ -54,7 +54,8 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
         return view('rtk::adminProvince.rtkd.index', compact('rtkds'));
     }
 
-    public function showRegency(Request $request, string $regencyCode) {
+    public function showRegency(Request $request, string $regencyCode)
+    {
         $limit = $request->per_page ?? 10;
         $search = $request->search;
         $status = $request->status;
@@ -65,7 +66,7 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
         $user = Auth::user();
         $regency = Regency::find($regencyCode);
         $province = Province::find($regency->province_code);
-        
+
 
         $rtks = $this->rtkdService->paginateFilteredRTKDByKabKotaCode(
             provinceCode: $user->scopeArea->province_code,
@@ -73,7 +74,7 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
             search: $search,
             sortBy: $orderBy,
             limit: $limit,
-            status: $status
+            statusVerification: $status
         );
         return view('rtk::adminProvince.rtkd.show-kab-kota', [
             'rtks' => $rtks,

@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\MasterData\Models\Province;
 use Modules\MasterData\Models\Regency;
-use Modules\RTK\Enums\RTKStatus;
+use Modules\RTK\Enums\RTKStatusVerification;
 use Modules\RTK\Enums\TypeRtk;
 use Modules\RTK\Policies\RencanaTenagaKerjaPolicy;
+use Modules\RTK\Enums\StatusDocument;
 
 // use Modules\RTK\Database\Factories\RencanaTenagaKerjaFactory;
 
@@ -23,7 +24,8 @@ class RencanaTenagaKerja extends Model
     use HasFactory, HasUuids;
 
     protected $casts = [
-        'status' => RTKStatus::class,
+        'status_verification' => RTKStatusVerification::class,
+        'status_document' => StatusDocument::class,
         'type' => TypeRtk::class,
         'is_active' => 'boolean',
         'approved_at' => 'datetime',
@@ -39,7 +41,8 @@ class RencanaTenagaKerja extends Model
         'name',
         'start_date',
         'end_date',
-        'status',
+        'status_verification',
+        'status_document',
         'is_active',
         'type',
         'document_path',
@@ -48,20 +51,58 @@ class RencanaTenagaKerja extends Model
         'rejected_reason',
     ];
 
-    public function getStatusLabelAttribute(): string
+    public function getStatusVerificationLabelAttribute(): string
     {
-        return $this->status->label();
+        return $this->status_verification->label();
     }
 
-    public function getStatusColorAttribute(): string
+    public function getStatusVerificationColorAttribute(): string
     {
-        return $this->status->color();
+        return $this->status_verification->color();
     }
+
+    public function getStatusDocumentLabelAttribute(): string
+    {
+        return $this->status_document->label();
+    }
+
+    public function getStatusDocumentColorAttribute(): string
+    {
+        return $this->status_document->color();
+    }
+
+    /**
+     * RTK berlaku jika ketiga kondisi terpenuhi
+     */
+    public function getIsBerlakuAttribute(): bool
+    {
+        return $this->status_verification === RTKStatusVerification::APPROVED
+            && $this->status_document === StatusDocument::VALID
+            && $this->is_active === true;
+    }
+
+    /**
+     * Ambil nama lengkap dari profile, jika tidak ada pakai nama default
+     */
+    public function getDisplayNameApproverAttribute(): string
+    {
+        return $this->approver?->profile?->full_name ?? $this->approver?->name ?? '-';
+    }
+
 
     public function isExpired(): bool
     {
         return (int) $this->end_date < now()->year;
     }
+
+    public function scopeBerlaku($query)
+    {
+        return $query->where('status_verification', RTKStatusVerification::APPROVED->value)
+            ->where('status_document', StatusDocument::VALID->value)
+            ->where('is_active', true);
+    }
+
+
 
     /**
      * Get the user that owns the RencanaTenagaKerja
@@ -78,12 +119,12 @@ class RencanaTenagaKerja extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function province()
+    public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class, 'province_code', 'code');
     }
 
-    public function regency()
+    public function regency(): BelongsTo
     {
         return $this->belongsTo(Regency::class, 'regency_code', 'code');
     }

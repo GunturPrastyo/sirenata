@@ -12,23 +12,22 @@ class CourseStudentService
         $students = $course->students()
             ->select('users.id', 'users.name', 'users.email')
             ->paginate($perPage);
-            
-        return $students;
 
+        return $students;
     }
 
-        /**
+    /**
      * Enroll user yang sedang login ke course
      */
     public function enroll(string $slug): array
     {
         $course = Course::where('slug', $slug)->firstOrFail();
         $userId = auth()->id();
- 
+
         $alreadyEnrolled = $course->students()
             ->wherePivot('user_id', $userId)
             ->exists();
- 
+
         if ($alreadyEnrolled) {
             return [
                 'success' => false,
@@ -36,12 +35,12 @@ class CourseStudentService
                 'message' => 'Kamu sudah terdaftar di course ini',
             ];
         }
- 
+
         $course->students()->attach($userId, [
             'status'   => 'enrolled',
             'progress' => 0,
         ]);
- 
+
         return [
             'enrolled' => true,
             'code'    => 201,
@@ -59,7 +58,7 @@ class CourseStudentService
         $student = $course->students()
             ->wherePivot('user_id', $userId)
             ->first();
- 
+
         if (!$student) {
             return [
                 'success' => false,
@@ -67,7 +66,7 @@ class CourseStudentService
                 'message' => 'Student tidak ditemukan di course ini',
             ];
         }
- 
+
         if ($student->pivot->status === 'completed' && $student->pivot->progress === 100) {
             return [
                 'success' => false,
@@ -75,16 +74,16 @@ class CourseStudentService
                 'message' => 'Status student yang sudah completed tidak bisa diubah',
             ];
         }
- 
+
         $pivotData = ['status' => $status];
- 
+
         if ($status === 'completed') {
             $pivotData['completed_at'] = now();
             $pivotData['progress']     = 100;
         }
- 
+
         $course->students()->updateExistingPivot($userId, $pivotData);
- 
+
         return [
             'success' => true,
             'code'    => 200,
@@ -132,7 +131,7 @@ class CourseStudentService
         $student = $course->students()
             ->wherePivot('user_id', $userId)
             ->first();
- 
+
         if (! $student) {
             return [
                 'success' => false,
@@ -140,7 +139,7 @@ class CourseStudentService
                 'message' => 'Kamu tidak terdaftar di course ini',
             ];
         }
- 
+
         if ($student->pivot->status === 'completed') {
             return [
                 'success' => false,
@@ -157,5 +156,4 @@ class CourseStudentService
             'message' => 'Berhasil keluar dari course',
         ];
     }
-
 }

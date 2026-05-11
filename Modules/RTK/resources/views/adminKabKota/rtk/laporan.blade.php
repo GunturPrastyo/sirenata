@@ -25,7 +25,7 @@
             </ol>
         </nav>
 
-        @if ($rtkKabKotaActive && $rtkKabKotaActive->status === Modules\RTK\Enums\RTKStatus::EXPIRED->value)
+        @if ($rtkKabKotaActive && $rtkKabKotaActive->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED)
             <div class="mb-4 rounded-lg bg-yellow-50 border border-yellow-300 p-4">
                 <div class="flex items-start">
 
@@ -69,7 +69,7 @@
                             Saat ini belum ada RTK yang berstatus berlaku.
                         </p>
 
-                        {{-- Tombol hanya tampil kalau wilayah lengkap --}}
+
                         @if (auth()->user()->hasCompleteScope())
                             <a href="{{ route('admin-kab-kota.rtkd.create') }}"
                                 class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">
@@ -99,70 +99,10 @@
                         {{ $rtkKabKotaActive?->regency?->name ?? '' }}
                     </p>
 
-                    @if ($rtkKabKotaActive)
-
-                        <div
-                            class="inline-flex items-start gap-3 px-4 py-3 rounded-lg {{ $rtkKabKotaActive->status_color }}">
-                            <div>
-
-                                <span class="font-semibold block">
-                                    {{ $rtkKabKotaActive->status_label }}
-                                </span>
-
-                                @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::APPROVED)
-                                    <p class="text-xs mt-1">
-                                        Berlaku hingga
-                                        {{ \Carbon\Carbon::parse($rtkKabKotaActive->end_date)->format('d M Y') }}
-                                    </p>
-                                @endif
-
-                                @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::PENDING)
-                                    <p class="text-xs mt-1">
-                                        Dokumen sedang diverifikasi oleh Admin Provinsi
-                                    </p>
-                                @endif
-
-                                @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::REJECTED)
-                                    <p class="text-xs mt-1">
-                                        Dokumen ditolak oleh
-                                        <span class="font-medium">
-                                            {{ $rtkKabKotaActive->approver?->name ?? 'Admin Provinsi / Admin Pusat' }}
-                                        </span>.
-                                        Silakan perbaiki dokumen sesuai catatan yang diberikan.
-                                    </p>
-
-                                    @if ($rtkKabKotaActive->rejected_reason)
-                                        <div class="mt-2 text-xs bg-white/60 border border-red-200 rounded p-2">
-                                            <span class="font-medium">Alasan:</span>
-                                            {{ $rtkKabKotaActive->rejected_reason }}
-                                        </div>
-                                    @endif
-
-                                    <a href="{{ route('admin-kab-kota.rtkd.edit', $rtkKabKotaActive->id) }}"
-                                        class="inline-flex items-center gap-2 mt-3 px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700">
-
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213 3 21l1.787-4.5 12.075-12.013z" />
-                                        </svg>
-                                        Edit Dokumen
-                                    </a>
-                                @endif
-
-                                @if ($rtkKabKotaActive->status === \Modules\RTK\Enums\RTKStatus::EXPIRED)
-                                    <p class="text-xs mt-1">
-                                        Masa berlaku dokumen RTK telah berakhir.
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    @else
-                        <div class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">
-                            <span class="font-semibold">RTK Belum Tersedia</span>
-                        </div>
-                    @endif
-
+                    <x-rtk::status-card
+                        :rtk="$rtkKabKotaActive"
+                        edit-route="admin-kab-kota.rtkd.edit"
+                        create-route="admin-kab-kota.rtkd.create" />
                 </div>
 
                 <!-- Masa Berlaku RTK -->
@@ -245,15 +185,32 @@
                         @endif
                     </div>
                     @if ($rtkKabKotaActive)
-                        <div class="border rounded-lg overflow-hidden bg-gray-100" style="height: 400px;"
-                            class="sm:!h-[700px]">
+                        <div class="border rounded-lg overflow-hidden bg-gray-100" style="height: 400px;">
 
-                            <iframe src="{{ Storage::url($rtkKabKotaActive->document_path) }}" class="w-full h-full"
-                                frameborder="0"></iframe>
+                            @if ($rtkKabKotaActive->document_path && Storage::disk('public')->exists($rtkKabKotaActive->document_path))
+                                <iframe
+                                    src="{{ Storage::url($rtkKabKotaActive->document_path) }}"
+                                    class="w-full h-full"
+                                    frameborder="0">
+                                </iframe>
+                            @else
+                                <div class="flex flex-col items-center justify-center h-full text-gray-400 gap-3">
+                                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <p class="text-sm">Dokumen belum diupload</p>
+                                </div>
+                            @endif
+
                         </div>
                     @else
-                        <div class="flex items-center justify-center" style="height: 400px;" class="sm:!h-[700px]">
-                            <p>Belum ada RTK yang diupload</p>
+                        <div class="flex flex-col items-center justify-center bg-gray-100 border rounded-lg text-gray-400 gap-3" style="height: 400px;">
+                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="text-sm">Belum ada RTK yang diupload</p>
                         </div>
                     @endif
                 </div>

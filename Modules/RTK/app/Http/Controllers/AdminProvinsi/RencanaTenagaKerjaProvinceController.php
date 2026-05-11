@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Log;
-use Modules\RTK\Http\Requests\AdminPusat\RTKPStoreRequest;
+use Modules\RTK\Http\Requests\RTKPStoreRequest;
+use Modules\RTK\Http\Requests\RTKPUpdateRequest;
 use Modules\RTK\Models\RencanaTenagaKerja;
 use Modules\RTK\Services\RTKDService;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
-use Modules\RTK\Http\Requests\AdminPusat\RTKPUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +34,7 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
             new Middleware(PermissionMiddleware::using('rtkd-edit'), only: ['edit', 'update']),
             new Middleware(PermissionMiddleware::using('rtkd-delete'), only: ['destroy']),
         ];
-    }   
+    }
 
     /**
      * Display a listing of the resource.
@@ -42,12 +42,15 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
     public function index(Request $request)
     {
         $limit = $request->per_page ?? 10;
-        $search = $request->search;
-        $status = $request->status;
+        $search = $request->string('search')->toString();
         $orderBy = in_array($request->orderBy, ['asc', 'desc'])
             ? $request->orderBy
             : 'desc';
         $year = $request->year;
+
+        $statusVerification = $request->string('status_verifikasi')->toString();
+        $statusDocument = $request->string('status_document')->toString();
+        $isActive = $request->input('acuan');
 
         $user = Auth::user();
         if (!$user->hasCompleteScope()) {
@@ -58,8 +61,9 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
             search: $search,
             sortBy: $orderBy,
             limit: $limit,
-            status: $status,
-            year: $year
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive
         );
         return view('rtk::adminProvince.rtkp.index', compact('rtkdps'));
     }
@@ -73,7 +77,7 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
     {
         try {
             $validated = $request->validated();
-            $rtkdp = $this->rtkdService->createRTKProvince($validated);
+            $rtkdp = $this->rtkdService->createRTKProvince(data: $validated);
             return redirect()->route('admin-province.rtkdp.index')->with('success', 'RTK Provinsi berhasil ditambahkan');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -113,7 +117,7 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
     {
         try {
             $validated = $request->validated();
-            $rtkdp = $this->rtkdService->updateRTKProvince($rtkdp, $validated);
+            $rtkdp = $this->rtkdService->updateRTKProvince(rtk: $rtkdp, data: $validated);
             return redirect()->route('admin-province.rtkdp.index')->with('success', 'RTK Provinsi berhasil diupdate');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
