@@ -4,29 +4,46 @@ namespace Modules\Project\Http\Controllers\AdminProvince;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Modules\Project\Models\Project;
-use Modules\Project\Enums\ProjectType;
 
-class ProjectController extends Controller
+use Illuminate\Support\Facades\Auth;
+use Modules\Project\Enums\ProjectType;
+use Modules\Project\Http\Requests\ProjectStoreRequest;
+use Modules\Project\Http\Requests\ProjectUpdateRequest;
+use Modules\Project\Models\Project;
+use Modules\Project\Services\ProjectService;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+
+class ProjectController extends Controller implements HasMiddleware
 {
     protected string $routePrefix = 'admin-province.project.';
 
+    public function __construct(
+        private ProjectService $projectService
+    ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('project-view|project-create|project-edit|project-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('project-view'), only: ['show']),
+            new Middleware(PermissionMiddleware::using('project-create'), only: ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('project-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('project-delete'), only: ['destroy']),
+        ];
+    }
+
+
+
     public function index(Request $request)
     {
-        $query = Project::with('leader')->latest();
-        $query->where('type', ProjectType::PROVINSI->value);
-
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $projects = $query->paginate($request->get('per_page', 10))->withQueryString();
+        $projects = $this->projectService->paginateFiltered(
+            type: ProjectType::PROVINSI,
+            search: $request->search,
+            status: $request->status,
+            limit: $request->get('per_page', 10)
+        );
         $routePrefix = $this->routePrefix;
 
         return view('project::index', compact('projects', 'routePrefix'));
@@ -37,44 +54,17 @@ class ProjectController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $adminScope = $user->scopeArea;
-        
-        $usersQuery = User::role('user');
-        if ($adminScope && $adminScope->province_code) {
-            $usersQuery->whereHas('scopeArea', function ($q) use ($adminScope) {
-                $q->where('province_code', $adminScope->province_code)
-                  ->whereNull('regency_code');
-            });
-        } else {
-            $usersQuery->where('id', 0);
-        }
-        $users = $usersQuery->get();
-        
+
+        $users = $this->projectService->getUsersByScope(
+            provinceCode: $adminScope?->province_code
+        );
         $routePrefix = $this->routePrefix;
         return view('project::create', compact('users', 'routePrefix'));
     }
 
-    public function store(Request $request)
+    public function store(ProjectStoreRequest $request)
     {
-        $request->validate([
-            'proyekName' => 'required|string|max:255',
-            'startDate' => 'required|date',
-            'endDate' => 'required|date',
-            'duration' => 'nullable|integer',
-            'teamLeader' => 'required|exists:users,id',
-            'teamMembers' => 'nullable|array',
-            'teamMembers.*' => 'exists:users,id',
-        ]);
-
-        Project::create([
-            'name' => $request->proyekName,
-            'start_date' => $request->startDate,
-            'end_date' => $request->endDate,
-            'duration' => $request->duration,
-            'team_leader' => $request->teamLeader,
-            'team_members' => $request->teamMembers,
-            'type' => ProjectType::PROVINSI->value,
-            'status' => 'On Progress',
-        ]);
+        $this->projectService->createProject($request->validated(), ProjectType::PROVINSI);
 
         return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil dibuat!');
     }
@@ -89,47 +79,22 @@ class ProjectController extends Controller
     public function edit($id)
     {
         $project = Project::findOrFail($id);
-        
+
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $adminScope = $user->scopeArea;
-        $usersQuery = User::role('user');
-        if ($adminScope && $adminScope->province_code) {
-            $usersQuery->whereHas('scopeArea', function ($q) use ($adminScope) {
-                $q->where('province_code', $adminScope->province_code)
-                  ->whereNull('regency_code');
-            });
-        } else {
-            $usersQuery->where('id', 0);
-        }
-        $users = $usersQuery->get();
 
+        $users = $this->projectService->getUsersByScope(
+            provinceCode: $adminScope?->province_code
+        );
         $routePrefix = $this->routePrefix;
         return view('project::edit', compact('project', 'users', 'routePrefix'));
     }
 
-    public function update(Request $request, $id)
+    public function update(ProjectUpdateRequest $request, $id)
     {
         $project = Project::findOrFail($id);
-
-        $request->validate([
-            'proyekName' => 'required|string|max:255',
-            'startDate' => 'required|date',
-            'endDate' => 'required|date',
-            'duration' => 'nullable|integer',
-            'teamLeader' => 'required|exists:users,id',
-            'teamMembers' => 'nullable|array',
-            'teamMembers.*' => 'exists:users,id',
-        ]);
-
-        $project->update([
-            'name' => $request->proyekName,
-            'start_date' => $request->startDate,
-            'end_date' => $request->endDate,
-            'duration' => $request->duration,
-            'team_leader' => $request->teamLeader,
-            'team_members' => $request->teamMembers,
-        ]);
+        $this->projectService->updateProject($project, $request->validated());
 
         return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil diperbarui!');
     }
@@ -137,7 +102,8 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         $project = Project::findOrFail($id);
-        $project->delete();
+        $this->projectService->deleteProject($project);
+
         return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil dihapus!');
     }
 }

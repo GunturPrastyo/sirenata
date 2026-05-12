@@ -4,28 +4,45 @@ namespace Modules\Project\Http\Controllers\AdminPusat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Modules\Project\Models\Project;
-use Modules\Project\Enums\ProjectType;
 
-class ProjectController extends Controller
+use Modules\Project\Enums\ProjectType;
+use Modules\Project\Http\Requests\ProjectStoreRequest;
+use Modules\Project\Http\Requests\ProjectUpdateRequest;
+use Modules\Project\Models\Project;
+use Modules\Project\Services\ProjectService;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+
+class ProjectController extends Controller implements HasMiddleware
 {
     protected string $routePrefix = 'admin-pusat.project.';
 
+    public function __construct(
+        private ProjectService $projectService
+    ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('project-view|project-create|project-edit|project-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('project-view'), only: ['show']),
+            new Middleware(PermissionMiddleware::using('project-create'), only: ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('project-edit'), only: ['edit', 'update']),
+            new Middleware(PermissionMiddleware::using('project-delete'), only: ['destroy']),
+        ];
+    }
+
+
+
     public function index(Request $request)
     {
-        $query = Project::with('leader')->latest();
-        $query->where('type', ProjectType::NASIONAL->value);
-
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $projects = $query->paginate($request->get('per_page', 10))->withQueryString();
+        $projects = $this->projectService->paginateFiltered(
+            type: ProjectType::NASIONAL,
+            search: $request->search,
+            status: $request->status,
+            limit: $request->get('per_page', 10)
+        );
         $routePrefix = $this->routePrefix;
 
         return view('project::index', compact('projects', 'routePrefix'));
@@ -33,39 +50,14 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $users = User::role('user')->where(function ($query) {
-            $query->doesntHave('scopeArea')
-                ->orWhereHas('scopeArea', function ($q) {
-                    $q->whereNull('province_code')->whereNull('regency_code');
-                });
-        })->get();
-        
+        $users = $this->projectService->getUsersByScope();
         $routePrefix = $this->routePrefix;
         return view('project::create', compact('users', 'routePrefix'));
     }
 
-    public function store(Request $request)
+    public function store(ProjectStoreRequest $request)
     {
-        $request->validate([
-            'proyekName' => 'required|string|max:255',
-            'startDate' => 'required|date',
-            'endDate' => 'required|date',
-            'duration' => 'nullable|integer',
-            'teamLeader' => 'required|exists:users,id',
-            'teamMembers' => 'nullable|array',
-            'teamMembers.*' => 'exists:users,id',
-        ]);
-
-        Project::create([
-            'name' => $request->proyekName,
-            'start_date' => $request->startDate,
-            'end_date' => $request->endDate,
-            'duration' => $request->duration,
-            'team_leader' => $request->teamLeader,
-            'team_members' => $request->teamMembers,
-            'type' => ProjectType::NASIONAL->value,
-            'status' => 'On Progress',
-        ]);
+        $this->projectService->createProject($request->validated(), ProjectType::NASIONAL);
 
         return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil dibuat!');
     }
@@ -80,39 +72,15 @@ class ProjectController extends Controller
     public function edit($id)
     {
         $project = Project::findOrFail($id);
-        $users = User::role('user')->where(function ($query) {
-            $query->doesntHave('scopeArea')
-                ->orWhereHas('scopeArea', function ($q) {
-                    $q->whereNull('province_code')->whereNull('regency_code');
-                });
-        })->get();
-
+        $users = $this->projectService->getUsersByScope();
         $routePrefix = $this->routePrefix;
         return view('project::edit', compact('project', 'users', 'routePrefix'));
     }
 
-    public function update(Request $request, $id)
+    public function update(ProjectUpdateRequest $request, $id)
     {
         $project = Project::findOrFail($id);
-
-        $request->validate([
-            'proyekName' => 'required|string|max:255',
-            'startDate' => 'required|date',
-            'endDate' => 'required|date',
-            'duration' => 'nullable|integer',
-            'teamLeader' => 'required|exists:users,id',
-            'teamMembers' => 'nullable|array',
-            'teamMembers.*' => 'exists:users,id',
-        ]);
-
-        $project->update([
-            'name' => $request->proyekName,
-            'start_date' => $request->startDate,
-            'end_date' => $request->endDate,
-            'duration' => $request->duration,
-            'team_leader' => $request->teamLeader,
-            'team_members' => $request->teamMembers,
-        ]);
+        $this->projectService->updateProject($project, $request->validated());
 
         return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil diperbarui!');
     }
@@ -120,7 +88,8 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         $project = Project::findOrFail($id);
-        $project->delete();
+        $this->projectService->deleteProject($project);
+
         return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil dihapus!');
     }
 }

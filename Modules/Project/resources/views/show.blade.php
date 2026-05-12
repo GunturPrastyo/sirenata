@@ -4,7 +4,7 @@
     @endpush
 
     <div class="p-2 sm:p-6">
-        <!-- Breadcrumb -->
+
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -41,7 +41,6 @@
             </ol>
         </nav>
 
-        <!-- Detail Card -->
         <div class="bg-white rounded-lg shadow-sm p-4 sm:p-8 max-w-2xl mx-auto">
             <div class="flex justify-between items-center mb-6">
                 <div>
@@ -56,13 +55,12 @@
             </div>
 
             <div class="space-y-6">
-                <!-- Nama Proyek -->
+
                 <div class="border-b border-gray-100 pb-4">
                     <label class="block text-sm font-medium text-gray-500 mb-1">Nama Proyek</label>
                     <p class="text-lg font-semibold text-gray-900">{{ $project->name }}</p>
                 </div>
 
-                <!-- Tanggal & Durasi -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 border-b border-gray-100 pb-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-500 mb-1">Tanggal Mulai</label>
@@ -82,7 +80,6 @@
                     </div>
                 </div>
 
-                <!-- Progress & Tipe -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 border-b border-gray-100 pb-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-500 mb-1">Tipe Proyek</label>
@@ -103,7 +100,6 @@
                     </div>
                 </div>
 
-                <!-- Tim Proyek -->
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Tim Proyek</h3>
 
@@ -147,7 +143,6 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="flex gap-4 pt-6 mt-6 border-t border-gray-200">
                     <a href="{{ route($routePrefix . 'index') }}"
                         class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center shadow-sm">

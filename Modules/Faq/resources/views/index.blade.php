@@ -1,7 +1,7 @@
 <x-dashboard::layouts.dashboard title="FAQ - E-Learning">
-    <!-- Regions scripts removed -->
+
     <div class="p-2 sm:p-6">
-        <!-- Breadcrumb Navigation -->
+
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -27,14 +27,11 @@
             </ol>
         </nav>
 
-
-
         <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-                <!-- Left: Filter & Per Page -->
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    <!-- Filter Level -->
+
                     <div class="relative w-full sm:w-48">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <select name="level" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
@@ -46,7 +43,6 @@
                         </select>
                     </div>
 
-                    <!-- Per Page -->
                     <div class="relative w-full sm:w-44">
                         <select name="per_page" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
                             focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
@@ -59,7 +55,6 @@
                     </div>
                 </div>
 
-                <!-- Right: Search + Buttons -->
                 <div class="flex w-full lg:w-96 gap-2">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -68,7 +63,6 @@
                     focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
 
-                    <!-- Search -->
                     <button type="submit" class="inline-flex items-center gap-2 px-4 rounded-md
                 bg-indigo-600 text-white text-sm font-medium
                 hover:bg-indigo-700 transition">
@@ -76,7 +70,6 @@
                         <span class="hidden sm:inline">Search</span>
                     </button>
 
-                    <!-- Reset -->
                     <a href="{{ route($routePrefix . 'index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium
                 hover:bg-slate-100 transition">
@@ -202,7 +195,6 @@
         </div>
     </div>
 
-    <!-- Create FAQ Modal -->
     <x-modal name="create-faq" title="Tambah FAQ Baru">
         <form action="{{ route($routePrefix . 'store') }}" method="POST"
             x-data="{ level: '{{ old('level', 'Nasional') }}' }">
@@ -222,8 +214,6 @@
                 </select>
             </div>
 
-            <!-- Dynamic Dropdowns for regions removed -->
-
             <div class="mb-6">
                 <label for="answer" class="block text-sm font-medium text-gray-700 mb-1">Jawaban</label>
                 <textarea name="answer" id="answer" rows="5" required
@@ -239,7 +229,6 @@
         </form>
     </x-modal>
 
-    <!-- Show FAQ Modals -->
     @foreach($faqs as $faq)
         <x-modal name="show-faq-{{ $faq->id }}" title="Detail FAQ" maxWidth="sm:max-w-2xl">
             <div class="space-y-4">
@@ -260,7 +249,7 @@
                             class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded border border-yellow-200 text-xs font-medium">Kab/Kota</span>
                     @endif
                 </div>
-                <!-- Region display removed -->
+
                 <div>
                     <h4 class="text-sm font-medium text-gray-500 mb-1">Jawaban</h4>
                     <div class="prose max-w-none text-gray-800 text-sm">
@@ -274,7 +263,6 @@
         </x-modal>
     @endforeach
 
-    <!-- Edit FAQ Modals -->
     @foreach($faqs as $faq)
         <x-modal name="edit-faq-{{ $faq->id }}" title="Edit FAQ">
             <form action="{{ route($routePrefix . 'update', $faq->id) }}" method="POST"
@@ -299,8 +287,6 @@
                     </select>
                 </div>
 
-                <!-- Dynamic Dropdowns for Edit Form removed -->
-
                 <div class="mb-6">
                     <label for="edit_answer_{{ $faq->id }}"
                         class="block text-sm font-medium text-gray-700 mb-1">Jawaban</label>
@@ -318,5 +304,4 @@
         </x-modal>
     @endforeach
 
-    <!-- Scripts removed -->
 </x-dashboard::layouts.dashboard>
