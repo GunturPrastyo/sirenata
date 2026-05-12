@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use Modules\LMS\Http\Controllers\AdminProvince\RekapitulasiController as AdminProvinceRekapitulasiController;
 use Modules\LMS\Http\Controllers\AdminKabKota\RekapitulasiController as AdminKabKotaRekapitulasiController;
 use Modules\LMS\Http\Controllers\AdminPusat\RekapitulasiController;
+use Modules\LMS\Http\Controllers\AdminPusat\LibraryTypeController as AdminPusatLibraryTypeController;
+use Modules\LMS\Http\Controllers\AdminPusat\LibraryController as AdminPusatLibraryController;
+use Modules\LMS\Http\Controllers\User\LibraryController as UserLibraryController;
+use Modules\LMS\Http\Controllers\User\CourseController as UserCourseController;
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(RekapitulasiController::class)->group(function () {
@@ -17,8 +21,8 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/rekap-user-kab-kota/{regencyCode}/export', 'exportRekapUserRegency')->name('rekap-user-kab-kota.export');
     });
 
-    Route::resource('library-types', \Modules\LMS\Http\Controllers\AdminPusat\LibraryTypeController::class)->only(['index', 'store', 'update', 'destroy']);
-    Route::resource('libraries', \Modules\LMS\Http\Controllers\AdminPusat\LibraryController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('library-types', AdminPusatLibraryTypeController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('libraries', AdminPusatLibraryController::class)->only(['index', 'store', 'update', 'destroy']);
 });
 
 Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->name('admin-province.')->group(function () {
@@ -41,10 +45,9 @@ Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->na
 });
 
 Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(function () {
-    Route::get('/library', [\Modules\LMS\Http\Controllers\User\LibraryController::class, 'index'])->name('library.index');
+    Route::get('/library', [UserLibraryController::class, 'index'])->name('library.index');
 
-
-    Route::prefix('course')->name('course.')->controller(\Modules\LMS\Http\Controllers\User\CourseController::class)->group(function () {
+    Route::prefix('course')->name('course.')->controller(UserCourseController::class)->group(function () {
         Route::get('/my-course', 'allMyCourse')->name('my-course');
         Route::get('/my-course/progress', 'myCourseProgress')->name('my-course.progress');
         Route::get('/my-course/finish', 'myCourseFinish')->name('my-course.finish');

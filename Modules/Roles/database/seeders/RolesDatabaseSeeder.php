@@ -60,6 +60,24 @@ class RolesDatabaseSeeder extends Seeder
             'rtkd-create',
             'rtkd-edit',
             'rtkd-delete',
+
+            // Library Management
+            'library-view',
+            'library-create',
+            'library-edit',
+            'library-delete',
+
+            // Library Type Management
+            'library-type-view',
+            'library-type-create',
+            'library-type-edit',
+            'library-type-delete',
+
+            // Survey Period Management
+            'survey-period-view',
+            'survey-period-create',
+            'survey-period-edit',
+            'survey-period-delete',
         ];
 
         foreach ($permissions as $permission) {

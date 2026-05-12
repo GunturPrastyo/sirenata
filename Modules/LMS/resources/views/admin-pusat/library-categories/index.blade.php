@@ -1,6 +1,6 @@
 <x-dashboard::layouts.dashboard title="Kategori Perpustakaan - E-Learning">
     <div class="p-2 sm:p-6">
-        <!-- Breadcrumb Navigation -->
+
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -36,11 +36,9 @@
             </div>
         @endif
 
-        <!-- Search & Filter Bar -->
         <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-                <!-- Left: Per Page -->
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                     <div class="relative w-full sm:w-44">
                         <select name="per_page" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
@@ -54,7 +52,6 @@
                     </div>
                 </div>
 
-                <!-- Right: Search + Buttons -->
                 <div class="flex w-full lg:w-96 gap-2">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -79,7 +76,6 @@
             </div>
         </form>
 
-        <!-- Table Card -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

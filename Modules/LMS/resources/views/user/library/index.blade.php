@@ -1,6 +1,6 @@
 <x-dashboard::layouts.dashboard title="Perpustakaan | SIRENATA">
     <div class="p-2 sm:p-6">
-        <!-- Breadcrumb -->
+
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -26,7 +26,6 @@
             </ol>
         </nav>
 
-        <!-- Filter Tabs -->
         <div class="mb-4 sm:mb-6">
             <div class="border-b border-gray-200">
                 <nav class="flex space-x-2 sm:space-x-4 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2">
@@ -44,7 +43,6 @@
             </div>
         </div>
 
-        <!-- Library Grid -->
         <div id="library-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             @php
                 $gradients = [
@@ -82,7 +80,7 @@
 
                 <div
                     class="library-item bg-white rounded-lg shadow-sm border overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all">
-                    {{-- Cover Area --}}
+
                     @if($library->cover_image)
                         <div class="h-28 sm:h-48 overflow-hidden">
                             <img src="{{ Storage::url($library->cover_image) }}" alt="{{ $library->title }}"
@@ -113,7 +111,6 @@
                         </div>
                     @endif
 
-                    {{-- Card Body --}}
                     <div class="p-3 sm:p-4">
                         <span
                             class="text-[10px] sm:text-xs font-semibold {{ $badge['text'] }} {{ $badge['bg'] }} px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">{{ $library->libraryCategory->name ?? 'Materi' }}</span>
@@ -130,10 +127,9 @@
                     </div>
                 </div>
 
-                {{-- Modal for this library item --}}
                 <x-modal name="library-modal-{{ $library->id }}" title="{{ $library->title }}" maxWidth="sm:max-w-4xl">
                     <div class="flex flex-col lg:flex-row gap-4">
-                        {{-- Content Area (PDF or Video) --}}
+
                         <div class="flex-1 min-h-[300px] sm:min-h-[500px]">
                             @if($library->file_path)
                                 <iframe src="{{ Storage::url($library->file_path) }}"
@@ -170,7 +166,6 @@
                             @endif
                         </div>
 
-                        {{-- Sidebar Info (inside modal) --}}
                         <div class="lg:w-64 shrink-0 space-y-3">
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <h4 class="text-sm font-semibold text-gray-900 mb-2">Informasi</h4>
@@ -239,7 +234,6 @@
             @endforelse
         </div>
 
-        <!-- Pagination -->
         @if($libraries->hasPages())
             <div class="mt-6">
                 {{ $libraries->appends(['type' => $type, 'search' => $search])->links() }}
