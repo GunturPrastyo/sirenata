@@ -12,6 +12,9 @@ use Illuminate\Routing\Controllers\Middleware;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\MasterData\Models\Province;
 use Modules\MasterData\Models\Regency;
+use Modules\RTK\Models\RencanaTenagaKerja;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Http\RedirectResponse;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 
 class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddleware
@@ -86,6 +89,40 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
             'regencyCode' => $regencyCode,
         ]);
     }
+
+    public function editRegency(string $regencyCode, RencanaTenagaKerja $rtkdp)
+    {
+        $regency = Regency::find($regencyCode);
+        $province = Province::find($regency->province_code);
+        return view('rtk::adminProvince.rtkd.edit-kab-kota', [
+            'rtkdp'       => $rtkdp,
+            'regency'    => $regency,
+            'province' => $province,
+            'provinceCode' => $regency->province_code,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     * @param Request $request
+     * @param RencanaTenagaKerja $rtkdp
+     * @return RedirectResponse
+     */
+    public function updateRegency(Request $request, string $regencyCode, RencanaTenagaKerja $rtkdp)
+    {
+        try {
+            $validated = $request->validate([
+                'is_active' => ['required', 'boolean']
+            ]);
+
+            $this->rtkdService->updateIsActiveKabKota(rtk: $rtkdp, isActive: $validated['is_active']);
+            return redirect()->route('admin-province.laporan.show-regency', $regencyCode);
+        } catch (\Exception $e) {
+            ToastMagic::error('RTK Kabupaten/Kota gagal diupdate!', $e->getMessage());
+            return redirect()->route('admin-province.laporan.show-regency', $regencyCode);
+        }
+    }
+
     public function ExportRtkRegency(Request $request, string $regencyCode)
     {
         $regencyName = Regency::find($regencyCode)->name;

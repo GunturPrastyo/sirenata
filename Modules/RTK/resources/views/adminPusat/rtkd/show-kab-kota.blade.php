@@ -468,6 +468,32 @@
                                                 </span>
                                             </li>
                                         @endif
+
+                                        @if(
+                                            (
+                                                $rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING &&
+                                                $rtk->status_document === \Modules\RTK\Enums\StatusDocument::NA
+                                            )
+                                            ||
+                                            (
+                                                $rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED &&
+                                                $rtk->status_document === \Modules\RTK\Enums\StatusDocument::NA
+                                            )
+                                            ||
+                                            (
+                                                $rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::REJECTED &&
+                                                $rtk->is_active  
+                                                /* is_active true = masih bisa edit */
+                                            )
+                                        )
+                                            <li class="mb-2">
+                                                <a href="{{ route('admin-pusat.rtkd.edit-regency', [$regencyCode, $rtk->id]) }}"
+                                                    class="inline-flex items-center cursor-pointer w-full p-2 hover:bg-slate-100 rounded text-sm">
+                                                    Edit RTK
+                                                </a>
+                                            </li>
+                                        @endif
+
                                         <li class="mb-2">
                                             <button type="button" x-data
                                                 @click="$dispatch('open-modal', 'open-document-province-{{ $rtk->id }}')"

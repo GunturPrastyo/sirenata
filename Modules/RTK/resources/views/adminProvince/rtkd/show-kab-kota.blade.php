@@ -187,7 +187,7 @@
                         class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
                         <i class="fas fa-download text-xs"></i>
                         <span class="hidden sm:inline">Ekspor</span>
-                    </a>        
+                    </a>
                 </div>
             </div>
 
@@ -455,6 +455,32 @@
                                                 </span>
                                             </li>
                                         @endif
+
+                                        @if(
+                                            (
+                                                $rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING &&
+                                                $rtk->status_document === \Modules\RTK\Enums\StatusDocument::NA
+                                            )
+                                            ||
+                                            (
+                                                $rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED &&
+                                                $rtk->status_document === \Modules\RTK\Enums\StatusDocument::NA
+                                            )
+                                            ||
+                                            (
+                                                $rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::REJECTED &&
+                                                $rtk->is_active  
+                                                /* is_active true = masih bisa edit */
+                                            )
+                                        )
+                                            <li class="mb-2">
+                                                <a href="{{ route('admin-province.laporan.edit-regency', [$regencyCode, $rtk->id]) }}"
+                                                    class="inline-flex items-center cursor-pointer w-full p-2 hover:bg-slate-100 rounded text-sm">
+                                                    Edit RTK
+                                                </a>
+                                            </li>
+                                        @endif
+
                                         <li class="mb-2">
                                             <button type="button" x-data
                                                 @click="$dispatch('open-modal', 'open-document-province-{{ $rtk->id }}')"

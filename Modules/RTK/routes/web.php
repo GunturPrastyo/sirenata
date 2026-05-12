@@ -46,7 +46,24 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/', [RencanaTenagaKerjaDaerahController::class, 'index'])->name('index');
         Route::get('/{provinceCode}/kab-kota', [RencanaTenagaKerjaDaerahController::class, 'kabKota'])->name('kab-kota');
 
+        // show rtk province
         Route::get('/province/{provinceCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showProvince'])->name('show-province');
+
+        // Edit RTK province — admin pusat ubah is_active
+        Route::get('/province/{provinceCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaDaerahController::class, 'editProvince'])
+            ->name('edit-province');
+
+        // Edit RTK regency — admin pusat ubah is_active
+        Route::get('/regency/{regencyCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaDaerahController::class, 'editRegency'])
+            ->name('edit-regency');
+
+        // Update RTK province
+        Route::put('/province/{provinceCode}/rtk/{rtkdp}', [RencanaTenagaKerjaDaerahController::class, 'updateProvince'])
+            ->name('update-province');
+        // Update RTK regency
+        Route::put('/regency/{regencyCode}/rtk/{rtkdp}', [RencanaTenagaKerjaDaerahController::class, 'updateRegency'])
+            ->name('update-regency');
+        // export excel
         Route::get('/province/{provinceCode}/export', [RencanaTenagaKerjaDaerahController::class, 'ExportRtkProvince'])->name('show-province-export');
 
         Route::get('/regency/{regencyCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showRegency'])->name('show-regency');
@@ -81,6 +98,12 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
         Route::get('/', [RencanaTenagaKerjaKabKotaController::class, 'index'])->name('index');
         Route::get('/regency/{regencyCode}/show', [RencanaTenagaKerjaKabKotaController::class, 'showRegency'])->name('show-regency');
         Route::get('/regency/{regencyCode}/export', [RencanaTenagaKerjaKabKotaController::class, 'ExportRtkRegency'])->name('export-regency');
+
+        Route::get('/regency/{regencyCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaKabKotaController::class, 'editRegency'])
+            ->name('edit-regency');
+        // Update RTK regency
+        Route::put('/regency/{regencyCode}/rtk/{rtkdp}', [RencanaTenagaKerjaKabKotaController::class, 'updateRegency'])
+            ->name('update-regency');
 
         // approve verification
         Route::post('/regency/{rtk}/approve-verification', [RTKApprovalProvinceController::class, 'approveVerificationKabKota'])->name('approveVerificationKabKota');

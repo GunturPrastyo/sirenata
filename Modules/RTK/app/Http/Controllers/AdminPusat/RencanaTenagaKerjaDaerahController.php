@@ -5,6 +5,7 @@ namespace Modules\RTK\Http\Controllers\AdminPusat;
 use App\Exports\RtkProvinceExport;
 use App\Exports\RtkRegencyExport;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Modules\RTK\Services\RTKDService;
 use Illuminate\Routing\Controllers\Middleware;
@@ -13,6 +14,9 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\MasterData\Models\Province;
 use Modules\MasterData\Models\Regency;
+use Modules\RTK\Models\RencanaTenagaKerja;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Support\Facades\Log;
 
 class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddleware
 {
@@ -102,6 +106,37 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
         ]);
     }
 
+    public function editProvince(string $provinceCode, RencanaTenagaKerja $rtkdp)
+    {
+        $province = Province::find($provinceCode);
+        return view('rtk::adminPusat.rtkd.edit-province', [
+            'rtkdp'       => $rtkdp,
+            'province'    => $province,
+            'provinceCode' => $provinceCode,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     * @param Request $request
+     * @param RencanaTenagaKerja $rtkdp
+     * @return RedirectResponse
+     */
+    public function updateProvince(Request $request, string $provinceCode, RencanaTenagaKerja $rtkdp)
+    {
+        try {
+            $validated = $request->validate([
+                'is_active' => ['required', 'boolean']
+            ]);
+
+            $this->rtkdService->updateIsActiveProvince(rtk: $rtkdp, isActive: $validated['is_active']);
+            return redirect()->route('admin-pusat.rtkd.show-province', $provinceCode);
+        } catch (\Exception $e) {
+            ToastMagic::error('RTK Provinsi gagal diupdate!', $e->getMessage());
+            return redirect()->route('admin-pusat.rtkd.show-province', $provinceCode);
+        }
+    }
+
     public function ExportRtkProvince(Request $request, string $provinceCode)
     {
         $provinceName = Province::find($provinceCode)->name;
@@ -154,6 +189,39 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
             'province' => $province,
             'regencyCode' => $regencyCode,
         ]);
+    }
+
+    public function editRegency(string $regencyCode, RencanaTenagaKerja $rtkdp)
+    {
+        $regency = Regency::find($regencyCode);
+        $province = Province::find($regency->province_code);
+        return view('rtk::adminPusat.rtkd.edit-kab-kota', [
+            'rtkdp'       => $rtkdp,
+            'regency'    => $regency,
+            'province' => $province,
+            'provinceCode' => $regency->province_code,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     * @param Request $request
+     * @param RencanaTenagaKerja $rtkdp
+     * @return RedirectResponse
+     */
+    public function updateRegency(Request $request, string $regencyCode, RencanaTenagaKerja $rtkdp)
+    {
+        try {
+            $validated = $request->validate([
+                'is_active' => ['required', 'boolean']
+            ]);
+
+            $this->rtkdService->updateIsActiveKabKota(rtk: $rtkdp, isActive: $validated['is_active']);
+            return redirect()->route('admin-pusat.rtkd.show-regency', $regencyCode);
+        } catch (\Exception $e) {
+            ToastMagic::error('RTK Kabupaten/Kota gagal diupdate!', $e->getMessage());
+            return redirect()->route('admin-pusat.rtkd.show-regency', $regencyCode);
+        }
     }
 
     public function ExportRtkRegency(Request $request, string $regencyCode)

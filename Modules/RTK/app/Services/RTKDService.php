@@ -432,6 +432,46 @@ class RTKDService
         });
     }
 
+    /**
+     * Admin pusat — hanya update is_active (RTK acuan)
+     * Tidak reset status_verification, approved_by, dll
+     */
+    public function updateIsActiveProvince(RencanaTenagaKerja $rtk, bool $isActive): RencanaTenagaKerja
+    {
+        return DB::transaction(function () use ($rtk, $isActive) {
+
+            if ($isActive) {
+                $adaRtkBerlaku = RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                    ->where('type', TypeRtk::PROVINSI->value)
+                    ->where('id', '!=', $rtk->id)
+                    ->berlaku()
+                    ->exists();
+
+                if ($adaRtkBerlaku) {
+                    RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                        ->where('type', TypeRtk::PROVINSI->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->where(function ($q) {
+                            $q->where('status_verification', '!=', RTKStatusVerification::APPROVED->value)
+                                ->orWhere('status_document', '!=', StatusDocument::VALID->value);
+                        })
+                        ->update(['is_active' => false]);
+                } else {
+                    RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                        ->where('type', TypeRtk::PROVINSI->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+                }
+            }
+
+            $rtk->update(['is_active' => $isActive]);
+
+            return $rtk->fresh();
+        });
+    }
+
     // Admin Kab/kota
     /**
      * Get filtered query builder for RTKD by Kab/Kota Code
@@ -645,6 +685,46 @@ class RTKDService
             ]);
 
             ToastMagic::success('RTK Kab/Kota berhasil diupdate.');
+
+            return $rtk->fresh();
+        });
+    }
+
+    /**
+     * Admin pusat — hanya update is_active (RTK acuan)
+     * Tidak reset status_verification, approved_by, dll
+     */
+    public function updateIsActiveKabKota(RencanaTenagaKerja $rtk, bool $isActive): RencanaTenagaKerja
+    {
+        return DB::transaction(function () use ($rtk, $isActive) {
+
+            if ($isActive) {
+                $adaRtkBerlaku = RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                    ->where('type', TypeRtk::KAB_KOTA->value)
+                    ->where('id', '!=', $rtk->id)
+                    ->berlaku()
+                    ->exists();
+
+                if ($adaRtkBerlaku) {
+                    RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                        ->where('type', TypeRtk::KAB_KOTA->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->where(function ($q) {
+                            $q->where('status_verification', '!=', RTKStatusVerification::APPROVED->value)
+                                ->orWhere('status_document', '!=', StatusDocument::VALID->value);
+                        })
+                        ->update(['is_active' => false]);
+                } else {
+                    RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                        ->where('type', TypeRtk::KAB_KOTA->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+                }
+            }
+
+            $rtk->update(['is_active' => $isActive]);
 
             return $rtk->fresh();
         });
