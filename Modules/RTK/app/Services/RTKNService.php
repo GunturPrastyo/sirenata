@@ -19,11 +19,12 @@ class RTKNService
         string $sortBy = 'desc',
         ?string $statusVerification = null,
         ?string $statusDocument = null,
-        ?bool $isActive = null
+        ?string $isActive = null
     ) {
         return RencanaTenagaKerja::query()
+            ->with(['user'])
             ->where('type', TypeRtk::NASIONAL->value)
-            ->when($search, fn($query) => $query->where('nama', 'like', "%{$search}%"))
+            ->when($search, fn($query) => $query->where('name', 'like', "%{$search}%"))
             ->when($statusVerification, fn($q) => $q->where('status_verification', $statusVerification))
             ->when($statusDocument, fn($q) => $q->where('status_document', $statusDocument))
             ->when($isActive !== null && $isActive !== '', function ($q) use ($isActive) {
@@ -37,7 +38,7 @@ class RTKNService
         string $sortBy = 'desc',
         ?string $statusVerification = null,
         ?string $statusDocument = null,
-        ?bool $isActive = null,
+        ?string $isActive = null,
         int $limit = 15
     ) {
         return $this->getFilteredQueryBuilderRTKN(
@@ -48,6 +49,23 @@ class RTKNService
             isActive: $isActive
         )->paginate($limit)->withQueryString();
     }
+
+    public function exportUserRTKN(
+        ?string $search = null,
+        string $sortBy = 'desc',
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null
+    ) {
+        return $this->getFilteredQueryBuilderRTKN(
+            search: $search,
+            sortBy: $sortBy,
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive
+        );
+    }
+
 
     /**
      * Create RTKN baru

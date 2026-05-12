@@ -157,6 +157,24 @@ class RTKDService
         )->paginate($limit)->withQueryString();
     }
 
+    public function exportRtkProvince(
+        string $provinceCode,
+        ?string $search = null,
+        string $sortBy = self::DEFAULT_SORT,
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null,
+    ) {
+        return $this->getFilteredQueryBuilderRTKDByProvinceCode(
+            provinceCode: $provinceCode,
+            search: $search,
+            sortBy: $sortBy,
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive,
+        );
+    }
+
     /**
      * Build query for latest RTK Kab/Kota per regency in a province
      *
@@ -464,6 +482,26 @@ class RTKDService
             statusDocument: $statusDocument,
             isActive: $isActive,
         )->paginate($limit)->withQueryString();
+    }
+
+    public function exportRtkRegency(
+        string $provinceCode,
+        string $regencyCode,
+        ?string $search = null,
+        string $sortBy = self::DEFAULT_SORT,
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null,
+    ) {
+        return $this->getFilteredQueryBuilderRTKDByKabKotaCode(
+            provinceCode: $provinceCode,
+            regencyCode: $regencyCode,
+            search: $search,
+            sortBy: $sortBy,
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive,
+        );
     }
 
     public function createRTKKabKota(array $data): RencanaTenagaKerja
