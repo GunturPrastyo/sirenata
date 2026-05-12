@@ -37,7 +37,7 @@
                 </li>
             </ol>
         </nav>
-        @if ($rtkd->status === \Modules\RTK\Enums\RTKStatus::REJECTED)
+        @if ($rtkd->status_verification === \Modules\RTK\Enums\RTKStatusVerification::REJECTED)
             <div class="mb-6 border border-red-200 bg-red-50 rounded-lg p-4">
                 <div class="flex items-start gap-3">
                     <svg class="w-5 h-5 text-red-600 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -151,7 +151,9 @@
                                 </label>
                             </div>
                             <p class="text-xs text-gray-500 mt-4">
-                                Hanya satu RTK yang dapat dijadikan acuan pada setiap provinsi.
+                                Anda dapat mengajukan RTK baru meskipun sudah terdapat RTK yang sedang berlaku. RTK
+                                yang sedang berlaku akan digantikan secara otomatis setelah RTK baru disetujui oleh
+                                Admin Pusat / Admin Provinsi.
                             </p>
 
                             @error('is_active')

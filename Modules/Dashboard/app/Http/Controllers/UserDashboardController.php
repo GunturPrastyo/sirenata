@@ -14,12 +14,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
 use Modules\Dashboard\Services\DashboardService;
-
+use Modules\LMS\Services\CourseService;
 
 class UserDashboardController extends Controller
 {
     public function __construct(
-        private DashboardService $dashbordService
+        private DashboardService $dashbordService,
+        private CourseService $courseService,
     ) {}
 
     /**
@@ -30,8 +31,17 @@ class UserDashboardController extends Controller
         $user = Auth::user();
         $profile = UserProfile::firstOrCreate(['user_id' => $user->id]);
         $provinces = Province::all();
-
-        return view('dashboard::pages.user.index', compact('profile', 'provinces'));
+        $stats = $this->courseService->myCourseStats();
+        $lastCourse = $this->courseService->getLastAccessedCourse();
+        $recentCourses = $this->courseService->getRecentCourses();
+        
+        return view('dashboard::pages.user.index', [
+            'profile' => $profile,
+            'provinces' => $provinces,
+            'stats' => $stats,
+            'lastCourse' => $lastCourse,
+            'recentCourses' => $recentCourses,
+        ]);
     }
 
     public function getRegencies(Request $request)

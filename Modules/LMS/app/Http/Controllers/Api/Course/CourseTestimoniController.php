@@ -2,18 +2,25 @@
 
 namespace Modules\LMS\Http\Controllers\Api\Course;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PaginateResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\LMS\Http\Requests\Api\StoreCourseTestimoniRequest;
 use Modules\LMS\Http\Requests\Api\UpdateCourseTestimoniRequest;
 use Modules\LMS\Models\Course;
 use Modules\LMS\Models\CourseTestimoni;
+use Modules\LMS\Services\Api\CourseTestimoniService;
 use Modules\LMS\Transformers\Api\CourseTestimoniResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CourseTestimoniController extends Controller
 {
+    public function __construct(
+        private CourseTestimoniService $service
+    ) {}
+
     /**
      *  Menampilkan semua testimoni dari course
      * 
@@ -22,108 +29,125 @@ class CourseTestimoniController extends Controller
      * @unauthenticated
      * @role:admin-pusat    
      */
-    public function index(string $slug): JsonResponse
+    public function index(Request $request,string $slug): JsonResponse
     {
-        $course     = Course::where('slug', $slug)->firstOrFail();
-        $testimonis = $course->testimonis()->latest()->paginate(10);
+        try {
+            $row_per_page = $request->input('row_per_page', 20);
+            $testimonis   = $this->service->getTestimonis(
+                slug: $slug,
+                perPage: $row_per_page
+            );
 
-        return response()->json([
-            'message' => 'Success',
-            'data'    => CourseTestimoniResource::collection($testimonis),
-        ]);
+            return ResponseHelper::success(
+                status: true,
+                message: 'Testimonis retrieved successfully',
+                result: PaginateResource::make($testimonis, CourseTestimoniResource::class),
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     } 
 
     /**
      * Menambahkan testimoni ke course
-     * 
-     * Slug course digunakan untuk create course
-     * 
+     *
+     * @tags Testimonis
      * @authenticated
-     * @role:admin-pusat    
+     * @urlParam slug string required Slug course. Example: laravel-dasar
      */
     public function store(StoreCourseTestimoniRequest $request, string $slug): JsonResponse
     {
-        $userId = Auth::user()->id;
-        $course    = Course::where('slug', $slug)->firstOrFail();
-        $validated = $request->validated();
-        $validated['user_id'] = $userId;
-        $validated['name'] = Auth::user()->profile->full_name ?? Auth::user()->name;
-        // $testimoni = $course->testimonis()->create($validated);
+        try {
+            $result = $this->service->store($request->validated(), $slug);
 
-        
-        $isEnrolled = $course->students()
-            ->wherePivot('user_id', $userId)
-            ->wherePivotIn('status', ['enrolled', 'in_progress', 'completed'])
-            // ->wherePivot('status', 'completed')
-            ->exists();
+            if (! $result['success']) {
+                return ResponseHelper::error(
+                    message: $result['message'],
+                    statusCode: $result['code']
+                );
+            }
 
-        if (!$isEnrolled) {
-            return response()->json([
-                'message' => 'Kamu harus terdaftar di course ini untuk memberikan testimoni',
-            ], 403);
+            return ResponseHelper::success(
+                status: true,
+                message: $result['message'],
+                result: new CourseTestimoniResource($result['testimoni']),
+                statusCode: 201
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
         }
-
-        // Ketika coursenya completed baru bisa kasih testimoni
-        // if (!$isEnrolled) {
-        //     return response()->json([
-        //         'message' => 'Kamu harus menyelesaikan course ini untuk memberikan testimoni',
-        //     ], 403);
-        // }
-
-        // Cek sudah pernah testimoni belum
-        $alreadyReviewed = $course->testimonis()
-            ->where('user_id', $userId)
-            ->exists();
-
-        if ($alreadyReviewed) {
-            return response()->json([
-                'message' => 'Kamu sudah memberikan testimoni untuk course ini',
-            ], 422);
-        }
-
-        $testimoni = $course->testimonis()->create($validated); 
-        return response()->json([
-            'message' => 'Testimoni berhasil ditambahkan',
-            'data'    => new CourseTestimoniResource($testimoni),
-        ], 201);
     }
 
     /**
-     * update testimoni ke course
-     * 
+     * Update testimoni
+     *
+     * @tags Testimonis
      * @authenticated
-     * @role:admin-pusat    
+     * @urlParam testimoni string required ID testimoni. Example: uuid-xxx
      */
-    public function update(UpdateCourseTestimoniRequest $request, CourseTestimoni $testimoniId): JsonResponse
+    public function update(UpdateCourseTestimoniRequest $request, CourseTestimoni $testimoni): JsonResponse
     {
-        // Hanya pemilik testimoni yang bisa update
-        abort_if(
-            $testimoniId->user_id !== null && $testimoniId->user_id !== Auth::user()->id,
-            403,
-            'Akses ditolak'
-        );
-        $validated = $request->validated();
-        $validated['user_id'] = Auth::user()->id;
-        $validated['name'] = Auth::user()->profile->full_name ?? Auth::user()->name;
+        try {
+            $result = $this->service->update($request->validated(), $testimoni);
 
-        $testimoniId->update($validated); 
-        return response()->json([
-            'message' => 'Testimoni berhasil diupdate',
-            'data'    => new CourseTestimoniResource($testimoniId),
-        ]);
+            if (! $result['success']) {
+                return ResponseHelper::error(
+                    message: $result['message'],
+                    statusCode: $result['code']
+                );
+            }
+
+            return ResponseHelper::success(
+                status: true,
+                message: $result['message'],
+                result: new CourseTestimoniResource($result['testimoni']),
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
-
+    
     /**
      * Menghapus testimoni
-     * 
-     * @authenticated
      *
+     * @tags Testimonis
+     * @authenticated
+     * @urlParam testimoni string required ID testimoni. Example: uuid-xxx
      */
-    public function destroy(CourseTestimoni $testimoniId): JsonResponse
+    public function destroy(CourseTestimoni $testimoni): JsonResponse
     {
-        $testimoniId->delete(); 
-        return response()->json([
-            'message' => 'Testimoni berhasil dihapus',
-        ]);
+        try {
+            $result = $this->service->destroy($testimoni);
+
+            if (! $result['success']) {
+                return ResponseHelper::error(
+                    message: $result['message'],
+                    statusCode: $result['code']
+                );
+            }
+
+            return ResponseHelper::success(
+                status: true,
+                message: $result['message'],
+                result: null,
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: 'Gagal menghapus testimoni',
+                statusCode: 500
+            );
+        }
     }
 }

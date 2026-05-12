@@ -22,14 +22,20 @@ class RTKNStoreRequest extends FormRequest
                 'integer',
                 'digits:4',
                 function ($attribute, $value, $fail) {
-                    $expectedEndYear = (int) $this->start_date + 5;
+                    $startYear = (int) $this->start_date;
+                    $endYear = (int) $value;
 
-                    if ((int) $value !== $expectedEndYear) {
-                        $fail('Tahun akhir harus tepat 5 tahun setelah tahun mulai.');
+                    if ($endYear <= $startYear) {
+                        $fail('Tahun akhir harus lebih besar dari tahun mulai.');
                     }
+
+                    // if ($endYear > $startYear + 5) {
+                    //     $fail('Tahun akhir maksimal 5 tahun dari tahun mulai.');
+                    // }
                 },
             ],
             'document_path' => ['required', 'file', 'mimes:pdf', 'max:10240'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 
@@ -56,6 +62,4 @@ class RTKNStoreRequest extends FormRequest
             'document_path' => 'File Dokumen Rencana Tenaga Kerja',
         ];
     }
-
-    
 }

@@ -25,7 +25,7 @@ class CourseSectionService
         $course = Course::where('slug', $slug)->firstOrFail();
 
         // ambil posisi terakhir
-        $lastPosition = $course->sections()->max('position') ?? 1;
+        $lastPosition = $course->sections()->max('position') ?? 0;
 
         return $course->sections()->create([
             ...$data,

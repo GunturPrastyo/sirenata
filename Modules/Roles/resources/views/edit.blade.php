@@ -88,7 +88,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-4 py-3 text-left font-semibold text-gray-600">
-                                        Module
+                                        Permission Name
                                     </th>
                                     <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
                                         Create
@@ -98,9 +98,6 @@
                                     </th>
                                     <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
                                         View
-                                    </th>
-                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
-                                        List
                                     </th>
                                     <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
                                         Delete
@@ -115,7 +112,7 @@
                                             {{ $module }}
                                         </td>
 
-                                        @foreach (['create', 'edit', 'view', 'list', 'delete'] as $action)
+                                        @foreach (['create', 'edit', 'view', 'delete'] as $action)
                                             @php
                                                 $permissionName = $module . '-' . $action;
                                                 $exists = $modulePermissions->firstWhere('name', $permissionName);

@@ -101,7 +101,7 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    @can('project.create')
+                    @can('project-create')
                         <a href="{{ route($routePrefix . 'create') }}"
                             class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,19 +175,19 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        @can('project.view')
+                                        @can('project-view')
                                             <li>
                                                 <a href="{{ route($routePrefix . 'show', $project->id) }}"
                                                     class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600">Detail</a>
                                             </li>
                                         @endcan
-                                        @can('project.edit')
+                                        @can('project-edit')
                                             <li>
                                                 <a href="{{ route($routePrefix . 'edit', $project->id) }}"
                                                     class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600">Edit</a>
                                             </li>
                                         @endcan
-                                        @can('project.delete')
+                                        @can('project-delete')
                                             <li>
                                                 <form action="{{ route($routePrefix . 'destroy', $project->id) }}" method="POST"
                                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');"

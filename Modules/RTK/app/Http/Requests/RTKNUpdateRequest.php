@@ -3,9 +3,8 @@
 namespace Modules\RTK\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Modules\RTK\Enums\RTKStatus;
 use Illuminate\Validation\Rules\Enum;
-
+use Modules\RTK\Enums\RTKStatusVerification;
 
 class RTKNUpdateRequest extends FormRequest
 {
@@ -22,16 +21,21 @@ class RTKNUpdateRequest extends FormRequest
                 'integer',
                 'digits:4',
                 function ($attribute, $value, $fail) {
-                    $expectedEndYear = (int) $this->start_date + 5;
+                    $startYear = (int) $this->start_date;
+                    $endYear = (int) $value;
 
-                    if ((int) $value !== $expectedEndYear) {
-                        $fail('Tahun akhir harus tepat 5 tahun setelah tahun mulai.');
+                    if ($endYear <= $startYear) {
+                        $fail('Tahun akhir harus lebih besar dari tahun mulai.');
                     }
+
+                    // if ($endYear > $startYear + 5) {
+                    //     $fail('Tahun akhir maksimal 5 tahun dari tahun mulai.');
+                    // }
                 },
             ],
             'document_path' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'is_active' => ['required', 'boolean'],
-            'status' => ['required', new Enum(RTKStatus::class)],
+            // 'status_verification' => ['required', new Enum(RTKStatusVerification::class)],
         ];
     }
 

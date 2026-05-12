@@ -50,10 +50,10 @@ class CourseService
             $documentPath = $data['thumbnail']->store('courses/thumbnails', 'public');
         }
         return $course->update([
-            'category_id' => $data['category_id'],
-            'name'        => $data['name'],
-            'thumbnail'   => $documentPath,
-            'description' => $data['description'],
+                'category_id' => $data['category_id'] ?? $course->category_id,
+                'name'        => $data['name'] ?? $course->name,
+                'thumbnail'   => $documentPath,
+                'description' => $data['description'] ?? $course->description,
         ]);
     }
 

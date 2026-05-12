@@ -19,9 +19,9 @@ class RtkKabKotaDashboardController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware(PermissionMiddleware::using('rtkd-list|rtkd-view'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['index']),
         ];
-    } 
+    }
 
     /**
      * Display a listing of the resource.
@@ -29,7 +29,6 @@ class RtkKabKotaDashboardController extends Controller implements HasMiddleware
     public function index()
     {
         $rtkKabKotaActive = $this->rtkdService->rtkKabKotaActive();
-        // dd($rtkKabKotaActive->isExpired());
         return view('rtk::adminKabKota.rtk.laporan', compact('rtkKabKotaActive'));
     }
 }

@@ -20,10 +20,10 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
     public static function middleware(): array
     {
         return [
-            new Middleware(PermissionMiddleware::using('rtkd-list'), only: ['index']),
+
             new Middleware(PermissionMiddleware::using('rtkd-view'), only: ['kabKota']),
         ];
-    }   
+    }
 
     /**
      * List Active RTK Province (Admin Pusat)
@@ -43,14 +43,14 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
             limit: $limit,
             status: $status
         );
-        // dd($rtkds);
         return view('rtk::adminPusat.rtkd.index', compact('rtkds'));
     }
 
     /**
      * List Active RTK Kab/Kota by Province (Admin Pusat)
      */
-    public function kabKota(Request $request, string $provinceCode) {
+    public function kabKota(Request $request, string $provinceCode)
+    {
         $limit   = $request->per_page ?? 10;
         $search  = $request->search;
         $status  = $request->status;
@@ -73,7 +73,8 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
     /**
      * Show RTK province Document (Admin Pusat)
      */
-    public function showProvince(Request $request, string $provinceCode) {
+    public function showProvince(Request $request, string $provinceCode)
+    {
         $limit = $request->per_page ?? 10;
         $search = $request->search;
         $status = $request->status;
@@ -101,7 +102,8 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
     /**
      * Show RTK Document (Admin Pusat)
      */
-    public function showRegency(Request $request, string $regencyCode) {
+    public function showRegency(Request $request, string $regencyCode)
+    {
         $limit = $request->per_page ?? 10;
         $search = $request->search;
         $status = $request->status;
@@ -111,7 +113,7 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
         $year = $request->year;
         $regency = Regency::find($regencyCode);
         $province = Province::find($regency->province_code);
-        
+
 
         $rtks = $this->rtkdService->paginateFilteredRTKDByKabKotaCode(
             provinceCode: $regency->province_code,
@@ -119,7 +121,7 @@ class RencanaTenagaKerjaDaerahController extends Controller implements HasMiddle
             search: $search,
             sortBy: $orderBy,
             limit: $limit,
-            status: $status
+            statusVerification: $status
         );
         return view('rtk::adminPusat.rtkd.show-kab-kota', [
             'rtks' => $rtks,

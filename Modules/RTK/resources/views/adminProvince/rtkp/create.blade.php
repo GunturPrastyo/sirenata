@@ -62,6 +62,39 @@
                             @enderror
                         </div>
 
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                RTK Acuan <span class="text-red-500">*</span>
+                            </label>
+
+                            <div class="flex items-center gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="is_active" value="1"
+                                        class="text-green-600 border-gray-300 focus:ring-green-500 focus:ring-2"
+                                        @checked(old('is_active', 1) == 1)>
+
+                                    <span class="text-sm text-gray-700">
+                                        Ya <span class="text-gray-400">(Digunakan sebagai RTK Acuan)</span>
+                                    </span>
+                                </label>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="is_active" value="0"
+                                        class="text-red-600 border-gray-300 focus:ring-red-500 focus:ring-2"
+                                        @checked(old('is_active', $rtkdp->is_active ?? 0) == 0)>
+
+                                    <span class="text-sm text-gray-700">Tidak</span>
+                                </label>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4">
+                                Hanya satu RTK yang dapat dijadikan acuan pada setiap provinsi.
+                            </p>
+
+                            @error('is_active')
+                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Tahun Berlaku -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>

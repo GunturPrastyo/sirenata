@@ -2,6 +2,7 @@
 
 namespace Modules\LMS\Http\Controllers\Api\Course;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,10 +12,15 @@ use Modules\LMS\Http\Requests\Api\StoreSectionContentRequest;
 use Modules\LMS\Http\Requests\Api\UpdateSectionContentRequest;
 use Modules\LMS\Models\CourseSection;
 use Modules\LMS\Models\SectionContent;
+use Modules\LMS\Services\Api\SectionContentService;
 use Modules\LMS\Transformers\Api\SectionContentResource;
 
 class SectionContentController extends Controller
 {
+    public function __construct(
+        private SectionContentService $service
+    ) {}
+
     /**
      * Menampilkan list konten dalam section
      * 
@@ -27,12 +33,19 @@ class SectionContentController extends Controller
      */
     public function index(CourseSection $courseSection): JsonResponse
     {
-        $contents = $courseSection->contents()->orderBy('position')->get();
-
-        return response()->json([
-            'message' => 'Success',
-            'data'    => SectionContentResource::collection($contents),
-        ]);
+        try {
+            return ResponseHelper::success(
+                status: true,
+                message: 'Success',
+                result: $this->service->getContents($courseSection),
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 
     /**
@@ -45,10 +58,21 @@ class SectionContentController extends Controller
      */
     public function show(SectionContent $content): JsonResponse
     {
-        return response()->json([
-            'message' => 'Success',
-            'data'    => new SectionContentResource($content),
-        ]);
+        
+
+        try {
+            return ResponseHelper::success(
+                status: true,
+                message: 'Success',
+                result: $this->service->getContent($content),
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 
     /**
@@ -61,27 +85,29 @@ class SectionContentController extends Controller
      */
     public function store(StoreSectionContentRequest $request, CourseSection $courseSection): JsonResponse
     {
-        $data = $request->validated();
+        try {
+            $result = $this->service->store(
+                validated: $request->validated(),
+                courseSection: $courseSection,
+                // file: $request->file('video')
+            );
 
-        if ($request->hasFile('video')) {
-            $data['video'] = $request->file('video')
-                ->store("courses/contents/{$courseSection->course_id}", 'public');
+            return ResponseHelper::success(
+                status: true,
+                message: $result['message'],
+                result: new SectionContentResource($result['content']),
+                statusCode: 201
+        );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
         }
-
-        // Auto-set position ke urutan terakhir kalau tidak diisi
-        $data['position'] = $request->position
-            ?? $courseSection->contents()->max('position') + 1;
-
-        $content = $courseSection->contents()->create($data);
-
-        return response()->json([
-            'message' => 'Konten berhasil ditambahkan',
-            'data'    => new SectionContentResource($content),
-        ], 201);
     }
 
     /**
-     * Update konten — bisa ganti nama, video, atau position (admin)
+     * Update konten — bisa ganti nama
      * 
      * 
      * @authenticated
@@ -89,24 +115,25 @@ class SectionContentController extends Controller
      */
     public function update(UpdateSectionContentRequest $request, SectionContent $content): JsonResponse
     {
-        $data = $request->validated();
+        try {
+            $result = $this->service->update(
+                validated: $request->validated(),
+                content: $content,
+                // file: $request->file('video')
+            );
 
-        if ($request->hasFile('video')) {
-            // Hapus video lama
-            if ($content->video) {
-                Storage::disk('public')->delete($content->video);
-            }
-
-            $data['video'] = $request->file('video')
-                ->store("courses/contents/{$content->section->course_id}", 'public');
+            return ResponseHelper::success(
+            status: true,
+            message: $result['message'],
+            result: new SectionContentResource($result['content']),
+            statusCode: 200
+        );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
         }
-
-        $content->update($data);
-
-        return response()->json([
-            'message' => 'Konten berhasil diupdate',
-            'data'    => new SectionContentResource($content->fresh()),
-        ]);
     }
 
     /**
@@ -119,15 +146,21 @@ class SectionContentController extends Controller
      */
     public function destroy(SectionContent $content): JsonResponse
     {
-        if ($content->video) {
-            Storage::disk('public')->delete($content->video);
+        try {
+            $this->service->destroy($content);
+
+            return ResponseHelper::success(
+                status: true,
+                message: 'Konten berhasil dihapus',
+                result: null,
+                statusCode: 200
+            );
+        } catch (\Exception $e) {
+            return ResponseHelper::error(
+                message: $e->getMessage(),
+                statusCode: 500
+            );
         }
-
-        $content->delete();
-
-        return response()->json([
-            'message' => 'Konten berhasil dihapus',
-        ]);
     }
 
     /**
@@ -146,15 +179,13 @@ class SectionContentController extends Controller
             'contents.*.position'  => ['required', 'integer', 'min:0'],
         ]);
         
-        foreach ($request->contents as $item) {
-            $courseSection->contents()
-            ->where('id', $item['id'])
-            ->update(['position' => $item['position']]);
-        }
-        
+        $result = $this->service->reorder($request->contents, $courseSection);
 
-        return response()->json([
-            'message' => 'Urutan konten berhasil diupdate',
-        ]);
+        return ResponseHelper::success(
+            status: true,
+            message: $result['message'],
+            result: null,
+            statusCode: 200
+        );
     }
 }
