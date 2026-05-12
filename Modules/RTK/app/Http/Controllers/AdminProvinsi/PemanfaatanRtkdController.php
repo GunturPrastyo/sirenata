@@ -21,15 +21,39 @@ class PemanfaatanRtkdController extends Controller
         $user = Auth::user();
         $activePeriod = RtkSurveyPeriod::aktif()->first();
 
-        // Cari submission untuk user ini pada periode aktif
-        $submission = null;
+        // Ambil semua riwayat pengisian kuesioner user ini
+        $submissions = RtkPemanfaatanSubmission::with('period')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        // Tentukan data mana yang akan ditampilkan detailnya di bawah tabel
+        $detailSubmission = null;
+
         if ($activePeriod) {
-            $submission = RtkPemanfaatanSubmission::where('user_id', $user->id)
-                ->where('period_id', $activePeriod->id)
-                ->first();
+            // Cari kiriman di periode aktif ini saja
+            $currentPeriodSubmissions = $submissions->where('period_id', $activePeriod->id);
+
+            if ($currentPeriodSubmissions->isNotEmpty()) {
+                // Prioritas 1: Yang sudah diverifikasi (Verified)
+                $detailSubmission = $currentPeriodSubmissions->where('status_verifikasi', 'verified')->first();
+
+                // Prioritas 2: Jika belum ada yang verified, ambil yang terbaru dari periode ini
+                if (!$detailSubmission) {
+                    $detailSubmission = $currentPeriodSubmissions->first();
+                }
+            }
         }
 
-        return view('rtk::adminProvince.pemanfaatan-rtkd.index', compact('activePeriod', 'submission'));
+        // Tentukan data untuk kuesioner aktif (untuk tombol ajakan isi di tabel/banner)
+        $activeSubmission = $activePeriod ? $submissions->where('period_id', $activePeriod->id)->first() : null;
+
+        return view('rtk::adminProvince.pemanfaatan-rtkd.index', [
+            'activePeriod' => $activePeriod,
+            'submissions' => $submissions,
+            'detailSubmission' => $detailSubmission,
+            'activeSubmission' => $activeSubmission,
+        ]);
     }
 
     /**

@@ -3,119 +3,86 @@
 namespace Modules\RTK\Http\Controllers\AdminPusat;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\RTK\Models\RtkSurveyPeriod;
 
-class RtkSurveyPeriodController extends Controller
+use Modules\RTK\Http\Requests\SurveyPeriodStoreRequest;
+use Modules\RTK\Http\Requests\SurveyPeriodUpdateRequest;
+use Modules\RTK\Models\RtkSurveyPeriod;
+use Modules\RTK\Services\RtkSurveyPeriodService;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+
+class RtkSurveyPeriodController extends Controller implements HasMiddleware
 {
-    /**
-     * Display a listing of survey periods.
-     */
+    public function __construct(
+        private RtkSurveyPeriodService $surveyPeriodService
+    ) {}
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(PermissionMiddleware::using('survey-period-view|survey-period-create|survey-period-edit|survey-period-delete'), only: ['index']),
+            new Middleware(PermissionMiddleware::using('survey-period-create'), only: ['store']),
+            new Middleware(PermissionMiddleware::using('survey-period-edit'), only: ['update', 'activate', 'close']),
+            new Middleware(PermissionMiddleware::using('survey-period-delete'), only: ['destroy']),
+        ];
+    }
+
+
+
     public function index()
     {
-        // Auto-close periode yang tanggal selesainya sudah lewat
-        RtkSurveyPeriod::where('status', 'aktif')
-            ->whereNotNull('tanggal_selesai')
-            ->where('tanggal_selesai', '<', now()->toDateString())
-            ->update(['status' => 'tutup']);
-
-        $periods = RtkSurveyPeriod::orderByDesc('tahun')
-            ->orderByDesc('created_at')
-            ->paginate(10);
+        $periods = $this->surveyPeriodService->getPaginatedPeriods();
 
         return view('rtk::adminPusat.survey-periods.index', compact('periods'));
     }
 
-    /**
-     * Store a newly created survey period.
-     */
-    public function store(Request $request)
+    public function store(SurveyPeriodStoreRequest $request)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'tahun' => 'required|integer|min:2000|max:2100',
-            'tanggal_mulai' => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-            'deskripsi' => 'nullable|string|max:1000',
-        ]);
+        try {
+            $this->surveyPeriodService->createPeriod($request->validated());
 
-        // Cek apakah sudah ada periode aktif/draft untuk tahun tersebut
-        $exists = RtkSurveyPeriod::where('tahun', $validated['tahun'])
-            ->where('status', '!=', 'tutup')
-            ->exists();
-
-        if ($exists) {
             return redirect()->route('admin-pusat.survey-periods.index')
-                ->with('error', "Sudah ada periode aktif/draft untuk tahun {$validated['tahun']}.");
+                ->with('success', "Periode \"{$request->nama}\" berhasil dibuat.");
+        } catch (\LogicException $e) {
+            return redirect()->route('admin-pusat.survey-periods.index')
+                ->with('error', $e->getMessage());
         }
-
-        $validated['status'] = 'draft';
-
-        RtkSurveyPeriod::create($validated);
-
-        return redirect()->route('admin-pusat.survey-periods.index')
-            ->with('success', "Periode \"{$validated['nama']}\" berhasil dibuat.");
     }
 
-    /**
-     * Update the specified survey period.
-     */
-    public function update(Request $request, RtkSurveyPeriod $survey_period)
+    public function update(SurveyPeriodUpdateRequest $request, RtkSurveyPeriod $survey_period)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'tanggal_mulai' => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
-            'deskripsi' => 'nullable|string|max:1000',
-        ]);
-
-        $survey_period->update($validated);
+        $this->surveyPeriodService->updatePeriod($survey_period, $request->validated());
 
         return redirect()->route('admin-pusat.survey-periods.index')
-            ->with('success', "Periode \"{$validated['nama']}\" berhasil diperbarui.");
+            ->with('success', "Periode \"{$request->nama}\" berhasil diperbarui.");
     }
 
-    /**
-     * Activate a survey period (only one can be active at a time).
-     */
     public function activate(RtkSurveyPeriod $survey_period)
     {
-        // Cek apakah tanggal selesai sudah lewat
-        if ($survey_period->tanggal_selesai && $survey_period->tanggal_selesai->lt(now()->startOfDay())) {
+        try {
+            $this->surveyPeriodService->activatePeriod($survey_period);
+
             return redirect()->route('admin-pusat.survey-periods.index')
-                ->with('error', 'Tidak dapat mengaktifkan periode: tanggal selesai sudah lewat. Silakan edit tanggal selesai terlebih dahulu.');
+                ->with('success', "Periode \"{$survey_period->nama}\" berhasil diaktifkan.");
+        } catch (\LogicException $e) {
+            return redirect()->route('admin-pusat.survey-periods.index')
+                ->with('error', $e->getMessage());
         }
-
-        // Tutup semua periode aktif lainnya
-        RtkSurveyPeriod::where('status', 'aktif')
-            ->where('id', '!=', $survey_period->id)
-            ->update(['status' => 'tutup']);
-
-        // Aktifkan periode ini
-        $survey_period->update(['status' => 'aktif']);
-
-        return redirect()->route('admin-pusat.survey-periods.index')
-            ->with('success', "Periode \"{$survey_period->nama}\" berhasil diaktifkan.");
     }
 
-    /**
-     * Close a survey period.
-     */
     public function close(RtkSurveyPeriod $survey_period)
     {
-        $survey_period->update(['status' => 'tutup']);
+        $this->surveyPeriodService->closePeriod($survey_period);
 
         return redirect()->route('admin-pusat.survey-periods.index')
             ->with('success', "Periode \"{$survey_period->nama}\" berhasil ditutup.");
     }
 
-    /**
-     * Remove the specified survey period.
-     */
     public function destroy(RtkSurveyPeriod $survey_period)
     {
         $nama = $survey_period->nama;
-        $survey_period->delete();
+        $this->surveyPeriodService->deletePeriod($survey_period);
 
         return redirect()->route('admin-pusat.survey-periods.index')
             ->with('success', "Periode \"{$nama}\" berhasil dihapus.");

@@ -1,6 +1,6 @@
 <x-dashboard::layouts.dashboard title="Periode Survei RTK Daerah">
     <div class="p-2 sm:p-6">
-        {{-- Breadcrumb --}}
+
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -26,7 +26,6 @@
             </ol>
         </nav>
 
-        {{-- Flash Messages --}}
         @if (session('success'))
             <div class="mb-4 bg-emerald-50 text-emerald-700 p-4 rounded-lg border border-emerald-200 flex items-center gap-2">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,7 +54,6 @@
             </div>
         @endif
 
-        {{-- Table Card --}}
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -127,7 +125,7 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        {{-- Edit --}}
+
                                         <li>
                                             <button type="button" x-data
                                                 @click="$dispatch('open-modal', 'edit-survey-period-{{ $period->id }}')"
@@ -136,7 +134,6 @@
                                             </button>
                                         </li>
 
-                                        {{-- Activate (hanya jika bukan aktif) --}}
                                         @if ($period->status !== 'aktif')
                                             <li>
                                                 <form action="{{ route('admin-pusat.survey-periods.activate', $period->id) }}" method="POST"
@@ -151,7 +148,6 @@
                                             </li>
                                         @endif
 
-                                        {{-- Tutup (hanya jika aktif) --}}
                                         @if ($period->status === 'aktif')
                                             <li>
                                                 <form action="{{ route('admin-pusat.survey-periods.close', $period->id) }}" method="POST"
@@ -166,7 +162,6 @@
                                             </li>
                                         @endif
 
-                                        {{-- Hapus --}}
                                         <li>
                                             <form action="{{ route('admin-pusat.survey-periods.destroy', $period->id) }}" method="POST"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus periode ini?');"
@@ -202,7 +197,6 @@
         </div>
     </div>
 
-    {{-- Modal: Tambah Periode Survei --}}
     <x-modal name="create-survey-period" title="Tambah Periode Survei">
         <form action="{{ route('admin-pusat.survey-periods.store') }}" method="POST" class="space-y-4">
             @csrf
@@ -264,7 +258,6 @@
         </form>
     </x-modal>
 
-    {{-- Modal: Edit Periode Survei (satu modal per item) --}}
     @foreach($periods as $period)
         <x-modal name="edit-survey-period-{{ $period->id }}" title="Edit Periode Survei">
             <form action="{{ route('admin-pusat.survey-periods.update', $period->id) }}" method="POST" class="space-y-4">
