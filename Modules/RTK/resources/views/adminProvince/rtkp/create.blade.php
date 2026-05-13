@@ -87,7 +87,9 @@
                                 </label>
                             </div>
                             <p class="text-xs text-gray-500 mt-4">
-                                Hanya satu RTK yang dapat dijadikan acuan pada setiap provinsi.
+                                Anda dapat mengajukan RTK baru meskipun sudah terdapat RTK yang sedang berlaku. RTK
+                                yang sedang berlaku akan digantikan secara otomatis setelah RTK baru disetujui oleh
+                                Admin Pusat / Admin Provinsi.
                             </p>
 
                             @error('is_active')
