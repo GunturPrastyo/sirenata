@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Auth\Http\Controllers\LoginController;
 use Modules\Auth\Http\Controllers\PasswordResetController;
 use Modules\Auth\Http\Controllers\RegisterController;
+use Modules\Auth\Http\Controllers\SiapKerjaController;
 
 Route::prefix("auth")->group(function () {
 
@@ -23,5 +24,9 @@ Route::prefix("auth")->group(function () {
     Route::post("/logout", [LoginController::class, "logout"])
         ->middleware("auth")
         ->name("logout");
-});
 
+
+    Route::get('/siapkerja/redirect', [SiapKerjaController::class, 'redirect'])->name('siapkerja.redirect');
+    Route::get('/siapkerja/callback', [SiapKerjaController::class, 'callback'])->name('siapkerja.callback');
+    Route::post('/siapkerja/logout', [SiapKerjaController::class, 'logout'])->name('siapkerja.logout');
+});

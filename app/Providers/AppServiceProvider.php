@@ -9,6 +9,9 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
+use App\Socialite\SiapKerjaProvider;
+use Laravel\Socialite\Facades\Socialite;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -17,18 +20,18 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Scramble::configure()
-        ->routes(function (Route $route) {
-            return Str::startsWith($route->uri, 'api/');
-        });
-        
-        Scramble::configure()
-        ->withDocumentTransformers(function (OpenApi $openApi) {
-            $openApi->secure(
-                SecurityScheme::http('bearer')
-            );
+            ->routes(function (Route $route) {
+                return Str::startsWith($route->uri, 'api/');
+            });
 
-              $openApi->info->description = 'API Documentation untuk LMS PPSDM. Autentikasi menggunakan Laravel Sanctum (Bearer Token).';
-        });
+        Scramble::configure()
+            ->withDocumentTransformers(function (OpenApi $openApi) {
+                $openApi->secure(
+                    SecurityScheme::http('bearer')
+                );
+
+                $openApi->info->description = 'API Documentation untuk LMS PPSDM. Autentikasi menggunakan Laravel Sanctum (Bearer Token).';
+            });
     }
 
     /**
@@ -36,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Socialite::extend('siapkerja', function ($app) {
+            $config = $app['config']['services.siapkerja'];
+
+            return Socialite::buildProvider(SiapKerjaProvider::class, $config);
+        });
     }
 }
