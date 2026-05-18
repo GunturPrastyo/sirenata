@@ -4,46 +4,30 @@ namespace Modules\Project\Http\Controllers\AdminKabKota;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Modules\Project\Enums\ProjectType;
-use Modules\Project\Http\Requests\ProjectStoreRequest;
-use Modules\Project\Http\Requests\ProjectUpdateRequest;
 use Modules\Project\Models\Project;
-use Modules\Project\Services\ProjectService;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
-use Spatie\Permission\Middleware\PermissionMiddleware;
+use Modules\Project\Enums\ProjectType;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
-class ProjectController extends Controller implements HasMiddleware
+class ProjectController extends Controller
 {
     protected string $routePrefix = 'admin-kab-kota.project.';
 
-    public function __construct(
-        private ProjectService $projectService
-    ) {}
-
-    public static function middleware(): array
-    {
-        return [
-            new Middleware(PermissionMiddleware::using('project-view|project-create|project-edit|project-delete'), only: ['index']),
-            new Middleware(PermissionMiddleware::using('project-view'), only: ['show']),
-            new Middleware(PermissionMiddleware::using('project-create'), only: ['create', 'store']),
-            new Middleware(PermissionMiddleware::using('project-edit'), only: ['edit', 'update']),
-            new Middleware(PermissionMiddleware::using('project-delete'), only: ['destroy']),
-        ];
-    }
-
-
-
     public function index(Request $request)
     {
-        $projects = $this->projectService->paginateFiltered(
-            type: ProjectType::KAB_KOTA,
-            search: $request->search,
-            status: $request->status,
-            limit: $request->get('per_page', 10)
-        );
+        $query = Project::with('leader')->latest();
+        $query->where('type', ProjectType::KAB_KOTA->value);
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $projects = $query->paginate($request->get('per_page', 10))->withQueryString();
         $routePrefix = $this->routePrefix;
 
         return view('project::index', compact('projects', 'routePrefix'));
@@ -54,20 +38,46 @@ class ProjectController extends Controller implements HasMiddleware
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $adminScope = $user->scopeArea;
-
-        $users = $this->projectService->getUsersByScope(
-            provinceCode: $adminScope?->province_code,
-            regencyCode: $adminScope?->regency_code
-        );
+        
+        $usersQuery = User::role('user');
+        if ($adminScope && $adminScope->regency_code) {
+            $usersQuery->whereHas('scopeArea', function ($q) use ($adminScope) {
+                $q->where('regency_code', $adminScope->regency_code);
+            });
+        } else {
+            $usersQuery->where('id', 0);
+        }
+        $users = $usersQuery->get();
+        
         $routePrefix = $this->routePrefix;
         return view('project::create', compact('users', 'routePrefix'));
     }
 
-    public function store(ProjectStoreRequest $request)
+    public function store(Request $request)
     {
-        $this->projectService->createProject($request->validated(), ProjectType::KAB_KOTA);
+        $request->validate([
+            'proyekName' => 'required|string|max:255',
+            'startDate' => 'required|date',
+            'endDate' => 'required|date',
+            'duration' => 'nullable|integer',
+            'teamLeader' => 'required|exists:users,id',
+            'teamMembers' => 'nullable|array',
+            'teamMembers.*' => 'exists:users,id',
+        ]);
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil dibuat!');
+        Project::create([
+            'name' => $request->proyekName,
+            'start_date' => $request->startDate,
+            'end_date' => $request->endDate,
+            'duration' => $request->duration,
+            'team_leader' => $request->teamLeader,
+            'team_members' => $request->teamMembers,
+            'type' => ProjectType::KAB_KOTA->value,
+            'status' => 'On Progress',
+        ]);
+
+        ToastMagic::success('Proyek berhasil dibuat!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 
     public function show($id)
@@ -80,32 +90,56 @@ class ProjectController extends Controller implements HasMiddleware
     public function edit($id)
     {
         $project = Project::findOrFail($id);
-
+        
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $adminScope = $user->scopeArea;
+        $usersQuery = User::role('user');
+        if ($adminScope && $adminScope->regency_code) {
+            $usersQuery->whereHas('scopeArea', function ($q) use ($adminScope) {
+                $q->where('regency_code', $adminScope->regency_code);
+            });
+        } else {
+            $usersQuery->where('id', 0);
+        }
+        $users = $usersQuery->get();
 
-        $users = $this->projectService->getUsersByScope(
-            provinceCode: $adminScope?->province_code,
-            regencyCode: $adminScope?->regency_code
-        );
         $routePrefix = $this->routePrefix;
         return view('project::edit', compact('project', 'users', 'routePrefix'));
     }
 
-    public function update(ProjectUpdateRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $project = Project::findOrFail($id);
-        $this->projectService->updateProject($project, $request->validated());
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil diperbarui!');
+        $request->validate([
+            'proyekName' => 'required|string|max:255',
+            'startDate' => 'required|date',
+            'endDate' => 'required|date',
+            'duration' => 'nullable|integer',
+            'teamLeader' => 'required|exists:users,id',
+            'teamMembers' => 'nullable|array',
+            'teamMembers.*' => 'exists:users,id',
+        ]);
+
+        $project->update([
+            'name' => $request->proyekName,
+            'start_date' => $request->startDate,
+            'end_date' => $request->endDate,
+            'duration' => $request->duration,
+            'team_leader' => $request->teamLeader,
+            'team_members' => $request->teamMembers,
+        ]);
+
+        ToastMagic::success('Proyek berhasil diperbarui!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 
     public function destroy($id)
     {
         $project = Project::findOrFail($id);
-        $this->projectService->deleteProject($project);
-
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'Proyek berhasil dihapus!');
+        $project->delete();
+        ToastMagic::success('Proyek berhasil dihapus!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 }

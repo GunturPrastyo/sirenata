@@ -1,6 +1,6 @@
 <x-dashboard::layouts.dashboard title="Proyek - E-Learning">
     <div class="p-2 sm:p-6">
-
+        <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -26,18 +26,15 @@
             </ol>
         </nav>
 
-        @if(session('success'))
-            <div class="mt-2 mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-                role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
+
+
 
         <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
+                <!-- Left: Filter & Per Page -->
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
+                    <!-- Filter Status -->
                     <div class="relative w-full sm:w-48">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <select name="status" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
@@ -51,6 +48,7 @@
                         </select>
                     </div>
 
+                    <!-- Per Page -->
                     <div class="relative w-full sm:w-44">
                         <select name="per_page" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
                             focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
@@ -63,6 +61,7 @@
                     </div>
                 </div>
 
+                <!-- Right: Search + Buttons -->
                 <div class="flex w-full lg:w-96 gap-2">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -71,6 +70,7 @@
                     focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
 
+                    <!-- Search -->
                     <button type="submit" class="inline-flex items-center gap-2 px-4 rounded-md
                 bg-indigo-600 text-white text-sm font-medium
                 hover:bg-indigo-700 transition">
@@ -78,6 +78,7 @@
                         <span class="hidden sm:inline">Search</span>
                     </button>
 
+                    <!-- Reset -->
                     <a href="{{ route($routePrefix . 'index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium
                 hover:bg-slate-100 transition">
@@ -175,31 +176,33 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
+                                        {{-- 1. Detail --}}
                                         @can('project-view')
                                             <li>
                                                 <a href="{{ route($routePrefix . 'show', $project->id) }}"
                                                     class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600">Detail</a>
                                             </li>
                                         @endcan
+
+                                        {{-- 2. Ubah --}}
                                         @can('project-edit')
                                             <li>
                                                 <a href="{{ route($routePrefix . 'edit', $project->id) }}"
-                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600">Edit</a>
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600">Ubah</a>
                                             </li>
                                         @endcan
+
+                                        {{-- 3. Hapus --}}
                                         @can('project-delete')
                                             <li>
-                                                <form action="{{ route($routePrefix . 'destroy', $project->id) }}" method="POST"
-                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');"
-                                                    class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="w-full text-left p-2 text-red-600">Hapus</button>
-                                                </form>
+                                                <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                    <x-modal-delete :id="'delete-project-' . $project->id" message="Apakah Anda yakin ingin menghapus proyek ini?"
+                                                        :item-name="$project->name" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route($routePrefix . 'destroy', $project->id)" />
+                                                </div>
                                             </li>
                                         @endcan
                                     </x-table.action>
+
                                 </td>
                             </tr>
                         @empty

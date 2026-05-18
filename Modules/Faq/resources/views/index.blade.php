@@ -1,7 +1,7 @@
 <x-dashboard::layouts.dashboard title="FAQ - E-Learning">
-
+    <!-- Regions scripts removed -->
     <div class="p-2 sm:p-6">
-
+        <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -27,11 +27,15 @@
             </ol>
         </nav>
 
+
+
+
         <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
+                <!-- Left: Filter & Per Page -->
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
+                    <!-- Filter Level -->
                     <div class="relative w-full sm:w-48">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <select name="level" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
@@ -43,6 +47,7 @@
                         </select>
                     </div>
 
+                    <!-- Per Page -->
                     <div class="relative w-full sm:w-44">
                         <select name="per_page" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
                             focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
@@ -55,6 +60,7 @@
                     </div>
                 </div>
 
+                <!-- Right: Search + Buttons -->
                 <div class="flex w-full lg:w-96 gap-2">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -63,6 +69,7 @@
                     focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
 
+                    <!-- Search -->
                     <button type="submit" class="inline-flex items-center gap-2 px-4 rounded-md
                 bg-indigo-600 text-white text-sm font-medium
                 hover:bg-indigo-700 transition">
@@ -70,6 +77,7 @@
                         <span class="hidden sm:inline">Search</span>
                     </button>
 
+                    <!-- Reset -->
                     <a href="{{ route($routePrefix . 'index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium
                 hover:bg-slate-100 transition">
@@ -155,27 +163,27 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
+                                        {{-- 1. Detail --}}
                                         <li>
                                             <button x-data x-on:click="$dispatch('open-modal', 'show-faq-{{ $faq->id }}')"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600">Detail</button>
                                         </li>
                                         @role('admin-pusat')
+                                        {{-- 2. Ubah --}}
                                         <li>
                                             <button x-data x-on:click="$dispatch('open-modal', 'edit-faq-{{ $faq->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600">Edit</button>
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600">Ubah</button>
                                         </li>
+                                        {{-- 3. Hapus --}}
                                         <li>
-                                            <form action="{{ route($routePrefix . 'destroy', $faq->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus FAQ ini?');"
-                                                class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="w-full text-left p-2 text-red-600">Hapus</button>
-                                            </form>
+                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                <x-modal-delete :id="'delete-faq-' . $faq->id" message="Apakah Anda yakin ingin menghapus FAQ ini?"
+                                                    :item-name="Str::limit($faq->question, 40)" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route($routePrefix . 'destroy', $faq->id)" />
+                                            </div>
                                         </li>
                                         @endrole
                                     </x-table.action>
+
                                 </td>
                             </tr>
                         @empty
@@ -195,17 +203,18 @@
         </div>
     </div>
 
+    <!-- Create FAQ Modal -->
     <x-modal name="create-faq" title="Tambah FAQ Baru">
         <form action="{{ route($routePrefix . 'store') }}" method="POST"
             x-data="{ level: '{{ old('level', 'Nasional') }}' }">
             @csrf
             <div class="mb-4">
-                <label for="question" class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan</label>
+                <label for="question" class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan <span class="text-red-500">*</span></label>
                 <input type="text" name="question" id="question" value="{{ old('question') }}" required
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div class="mb-4">
-                <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Level</label>
+                <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Level <span class="text-red-500">*</span></label>
                 <select name="level" id="level" required x-model="level"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                     <option value="Nasional">Nasional (Tingkat Pusat)</option>
@@ -214,8 +223,10 @@
                 </select>
             </div>
 
+            <!-- Dynamic Dropdowns for regions removed -->
+
             <div class="mb-6">
-                <label for="answer" class="block text-sm font-medium text-gray-700 mb-1">Jawaban</label>
+                <label for="answer" class="block text-sm font-medium text-gray-700 mb-1">Jawaban <span class="text-red-500">*</span></label>
                 <textarea name="answer" id="answer" rows="5" required
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">{{ old('answer') }}</textarea>
             </div>
@@ -229,6 +240,7 @@
         </form>
     </x-modal>
 
+    <!-- Show FAQ Modals -->
     @foreach($faqs as $faq)
         <x-modal name="show-faq-{{ $faq->id }}" title="Detail FAQ" maxWidth="sm:max-w-2xl">
             <div class="space-y-4">
@@ -249,7 +261,7 @@
                             class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded border border-yellow-200 text-xs font-medium">Kab/Kota</span>
                     @endif
                 </div>
-
+                <!-- Region display removed -->
                 <div>
                     <h4 class="text-sm font-medium text-gray-500 mb-1">Jawaban</h4>
                     <div class="prose max-w-none text-gray-800 text-sm">
@@ -263,6 +275,7 @@
         </x-modal>
     @endforeach
 
+    <!-- Edit FAQ Modals -->
     @foreach($faqs as $faq)
         <x-modal name="edit-faq-{{ $faq->id }}" title="Edit FAQ">
             <form action="{{ route($routePrefix . 'update', $faq->id) }}" method="POST"
@@ -271,14 +284,14 @@
                 @method('PUT')
                 <div class="mb-4">
                     <label for="edit_question_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan</label>
+                        class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan <span class="text-red-500">*</span></label>
                     <input type="text" name="question" id="edit_question_{{ $faq->id }}"
                         value="{{ old('question', $faq->question) }}" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                 </div>
                 <div class="mb-4">
                     <label for="edit_level_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Level</label>
+                        class="block text-sm font-medium text-gray-700 mb-1">Level <span class="text-red-500">*</span></label>
                     <select name="level" id="edit_level_{{ $faq->id }}" required x-model="level"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                         <option value="Nasional">Nasional (Tingkat Pusat)</option>
@@ -287,9 +300,11 @@
                     </select>
                 </div>
 
+                <!-- Dynamic Dropdowns for Edit Form removed -->
+
                 <div class="mb-6">
                     <label for="edit_answer_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Jawaban</label>
+                        class="block text-sm font-medium text-gray-700 mb-1">Jawaban <span class="text-red-500">*</span></label>
                     <textarea name="answer" id="edit_answer_{{ $faq->id }}" rows="5" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">{{ old('answer', $faq->answer) }}</textarea>
                 </div>
@@ -304,4 +319,5 @@
         </x-modal>
     @endforeach
 
+    <!-- Scripts removed -->
 </x-dashboard::layouts.dashboard>

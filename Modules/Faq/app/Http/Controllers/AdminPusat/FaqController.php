@@ -4,53 +4,54 @@ namespace Modules\Faq\Http\Controllers\AdminPusat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-use Modules\Faq\Http\Requests\FaqStoreRequest;
-use Modules\Faq\Http\Requests\FaqUpdateRequest;
+use Illuminate\Support\Facades\Auth;
 use Modules\Faq\Models\Faq;
 use Modules\Faq\Enums\FaqLevel;
-use Modules\Faq\Services\FaqService;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
-use Spatie\Permission\Middleware\PermissionMiddleware;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
-
-class FaqController extends Controller implements HasMiddleware
+class FaqController extends Controller
 {
     protected string $routePrefix = 'admin-pusat.faq.';
 
-    public function __construct(
-        private FaqService $faqService
-    ) {}
-
-    public static function middleware(): array
-    {
-        return [
-            new Middleware(PermissionMiddleware::using('faq-view|faq-create|faq-edit|faq-delete'), only: ['index']),
-            new Middleware(PermissionMiddleware::using('faq-view'), only: ['show']),
-            new Middleware(PermissionMiddleware::using('faq-create'), only: ['store']),
-            new Middleware(PermissionMiddleware::using('faq-edit'), only: ['update']),
-            new Middleware(PermissionMiddleware::using('faq-delete'), only: ['destroy']),
-        ];
-    }
-
     public function index(Request $request)
     {
-        $faqs = $this->faqService->paginateFiltered(
-            search: $request->search,
-            level: $request->level,
-            limit: $request->get('per_page', 10)
-        );
+        $query = Faq::with('creator')->latest();
+
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('question', 'like', $searchTerm)
+                    ->orWhere('answer', 'like', $searchTerm);
+            });
+        }
+
+        if ($request->filled('level')) {
+            $query->where('level', $request->level);
+        }
+
+        $faqs = $query->paginate($request->get('per_page', 10))->withQueryString();
         $routePrefix = $this->routePrefix;
 
         return view('faq::index', compact('faqs', 'routePrefix'));
     }
 
-    public function store(FaqStoreRequest $request)
+    public function store(Request $request)
     {
-        $this->faqService->createFaq($request->validated());
+        $request->validate([
+            'question' => 'required|string|max:255',
+            'answer' => 'required|string',
+            'level' => 'required|in:' . FaqLevel::NASIONAL->value . ',' . FaqLevel::PROVINSI->value . ',' . FaqLevel::KAB_KOTA->value,
+        ]);
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil dibuat!');
+        Faq::create([
+            'question' => $request->question,
+            'answer' => $request->answer,
+            'level' => $request->level,
+            'created_by' => Auth::id(),
+        ]);
+
+        ToastMagic::success('FAQ berhasil dibuat!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 
     public function show($id)
@@ -60,19 +61,32 @@ class FaqController extends Controller implements HasMiddleware
         return view('faq::show', compact('faq', 'routePrefix'));
     }
 
-    public function update(FaqUpdateRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $faq = Faq::findOrFail($id);
-        $this->faqService->updateFaq($faq, $request->validated());
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil diperbarui!');
+        $request->validate([
+            'question' => 'required|string|max:255',
+            'answer' => 'required|string',
+            'level' => 'required|in:' . FaqLevel::NASIONAL->value . ',' . FaqLevel::PROVINSI->value . ',' . FaqLevel::KAB_KOTA->value,
+        ]);
+
+        $faq->update([
+            'question' => $request->question,
+            'answer' => $request->answer,
+            'level' => $request->level,
+        ]);
+
+        ToastMagic::success('FAQ berhasil diperbarui!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 
     public function destroy($id)
     {
         $faq = Faq::findOrFail($id);
-        $this->faqService->deleteFaq($faq);
+        $faq->delete();
 
-        return redirect()->route($this->routePrefix . 'index')->with('success', 'FAQ berhasil dihapus!');
+        ToastMagic::success('FAQ berhasil dihapus!');
+        return redirect()->route($this->routePrefix . 'index');
     }
 }

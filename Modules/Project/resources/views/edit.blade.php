@@ -4,7 +4,7 @@
     @endpush
 
     <div class="p-2 sm:p-6">
-
+        <!-- Breadcrumb -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -41,6 +41,7 @@
             </ol>
         </nav>
 
+        <!-- Form Card -->
         <div class="bg-white rounded-lg shadow-sm p-4 sm:p-8 max-w-2xl mx-auto">
             <div class="mb-4 sm:mb-6">
                 <h1 class="text-lg sm:text-2xl font-bold text-gray-900">Edit Proyek</h1>
@@ -61,7 +62,7 @@
                 class="space-y-4 sm:space-y-6">
                 @csrf
                 @method('PUT')
-
+                <!-- Nama Proyek -->
                 <div>
                     <label for="proyekName" class="block text-sm font-medium text-gray-700 mb-2">
                         Nama Proyek <span class="text-red-500">*</span>
@@ -71,6 +72,7 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
+                <!-- Tanggal & Durasi -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="startDate" class="block text-sm font-medium text-gray-700 mb-2">
@@ -99,6 +101,7 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
+                <!-- Ketua Tim -->
                 <div>
                     <label for="teamLeader" class="block text-sm font-medium text-gray-700 mb-2">
                         Ketua Tim <span class="text-red-500">*</span>
@@ -114,6 +117,7 @@
                     </select>
                 </div>
 
+                <!-- Anggota Tim -->
                 <div>
                     <label for="teamMembers" class="block text-sm font-medium text-gray-700 mb-2">
                         Anggota Tim <span class="text-gray-500 text-xs">(Opsional)</span>
@@ -128,6 +132,7 @@
                     </select>
                 </div>
 
+                <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
                     <a href="{{ route($routePrefix . 'index') }}"
                         class="flex-1 bg-gray-200 text-gray-700 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors text-center">

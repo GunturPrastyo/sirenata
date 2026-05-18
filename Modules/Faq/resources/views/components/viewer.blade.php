@@ -1,7 +1,7 @@
 @props(['faqs', 'backRoute'])
 
 <div class="p-2 sm:p-6">
-
+    <!-- Breadcrumb -->
     <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1">
             <li class="inline-flex items-center">
@@ -27,11 +27,13 @@
         </ol>
     </nav>
 
+    <!-- Search Bar -->
     <div class="mb-6">
         <input type="text" id="searchFaq" placeholder="Cari bantuan..."
             class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors shadow-sm">
     </div>
 
+    <!-- Help Category Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div
             class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all cursor-pointer group">
@@ -57,6 +59,7 @@
         </div>
     </div>
 
+    <!-- FAQ Accordion Section -->
     <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200">
         <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Pertanyaan Umum</h2>
         <div class="space-y-4" id="faqList">
@@ -84,6 +87,7 @@
             @endforelse
         </div>
 
+        <!-- No results message (hidden by default) -->
         <div class="hidden text-center py-8" id="noResults">
             <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
