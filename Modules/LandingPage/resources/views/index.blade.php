@@ -28,23 +28,11 @@
                 Platform terpadu untuk manajemen dan perencanaan ketenagakerjaan di Indonesia
             </p>
 
-            <!-- CTA Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fade-up"
-                style="animation-delay: 0.4s;">
-                <a href="auth/login.html"
-                    class="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-lg shadow-lg transition-all transform hover:scale-105">
-                    Masuk
-                </a>
-                <a href="auth/register.html"
-                    class="px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 font-bold rounded-lg border-2 border-gray-900 shadow-lg transition-all">
-                    Daftar
-                </a>
-            </div>
 
             <!-- Stats -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto animate-fade-up"
                 style="animation-delay: 0.5s;">
-                <x-landingpage::statcard title="Provinsi" value="34" />
+                <x-landingpage::statcard title="Provinsi" value="38" />
                 <x-landingpage::statcard title="Kab/Kota" value="514" />
                 <x-landingpage::statcard title="PTK" value="PTK" />
                 <x-landingpage::statcard title="LMS" value="LMS" />
@@ -116,25 +104,7 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="py-20 px-4 gradient-primary">
-        <div class="max-w-4xl mx-auto text-center text-white">
-            <h2 class="text-4xl font-bold mb-6">Siap Memulai Perjalanan Belajar?</h2>
-            <p class="text-xl mb-10 text-indigo-100">
-                Bergabunglah dengan platform LMS terintegrasi untuk pengembangan kompetensi SDM ketenagakerjaan
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="auth/login.html"
-                    class="px-10 py-4 bg-white text-indigo-600 font-bold rounded-lg shadow-xl hover:bg-gray-50 transition-all transform hover:scale-105">
-                    Masuk
-                </a>
-                <a href="auth/register.html"
-                    class="px-10 py-4 bg-transparent text-white font-bold rounded-lg border-2 border-white hover:bg-white/10 transition-all">
-                    Daftar Sekarang
-                </a>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Footer -->
     <x-landingpage::footer />

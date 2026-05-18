@@ -35,7 +35,6 @@ class ProjectController extends Controller
 
     public function create()
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         $adminScope = $user->scopeArea;
         
@@ -92,7 +91,6 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
         
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         $adminScope = $user->scopeArea;
         $usersQuery = User::role('user');

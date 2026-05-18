@@ -1,10 +1,10 @@
 <x-layouts.app title="Login">
     <section class="bg-gray-50">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0 ">
-            <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 ">
-                <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+            <a href="{{ url('/') }}" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 ">
+                <img class="h-10 mr-2" src="{{ asset('images/logo.png') }}"
                     alt="logo">
-                Flowbite
+                SIRENATA
             </a>
             <x-flash-message class="mb-2"/>
             <x-validation-errors class="mb-2" />

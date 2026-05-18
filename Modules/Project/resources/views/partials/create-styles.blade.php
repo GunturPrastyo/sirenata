@@ -1,8 +1,6 @@
-<!-- Select2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
-    /* Select2 Custom Styling - Single Select */
     .select2-container--default .select2-selection--single {
         height: 42px;
         border: 1px solid #d1d5db;
@@ -39,7 +37,6 @@
         background-color: #6366f1;
     }
 
-    /* Select2 Multiple Selection Styling - IMPROVED */
     .select2-container--default .select2-selection--multiple {
         min-height: 42px;
         border: 1px solid #d1d5db;
@@ -52,13 +49,11 @@
         box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
     }
 
-    /* FIXED: Choice items with better layout */
     .select2-container--default .select2-selection--multiple .select2-selection__choice {
         background-color: #6366f1;
         border: none;
         border-radius: 0.375rem;
         padding: 0.25rem 1.75rem 0.25rem 1.25rem;
-        /* Extra right padding for remove button */
         color: white;
         font-size: 0.875rem;
         position: relative;
@@ -73,7 +68,6 @@
         line-height: 1.4;
     }
 
-    /* FIXED: Remove button positioned absolutely on the right */
     .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
         color: white;
         position: absolute;
@@ -98,7 +92,6 @@
         background-color: rgba(255, 255, 255, 0.1);
     }
 
-    /* Ensure text doesn't overflow */
     .select2-container--default .select2-selection--multiple .select2-selection__choice span {
         display: block;
         overflow: hidden;
@@ -107,7 +100,6 @@
         padding-right: 0.5rem;
     }
 
-    /* Search field styling */
     .select2-container--default .select2-search--inline .select2-search__field {
         margin-top: 0.25rem;
         margin-left: 0.25rem;
@@ -115,7 +107,6 @@
         height: 26px;
     }
 
-    /* For longer text in choices */
     .select2-container--default .select2-selection--multiple .select2-selection__choice:hover {
         overflow: visible;
         white-space: normal;

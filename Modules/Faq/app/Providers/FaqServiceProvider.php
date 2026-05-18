@@ -16,9 +16,6 @@ class FaqServiceProvider extends ServiceProvider
 
     protected string $nameLower = 'faq';
 
-    /**
-     * Boot the application events.
-     */
     public function boot(): void
     {
         $this->registerCommands();
@@ -29,37 +26,20 @@ class FaqServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
     }
 
-    /**
-     * Register the service provider.
-     */
     public function register(): void
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
     }
 
-    /**
-     * Register commands in the format of Command::class
-     */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
     }
 
-    /**
-     * Register command Schedules.
-     */
     protected function registerCommandSchedules(): void
     {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
     }
 
-    /**
-     * Register translations.
-     */
     public function registerTranslations(): void
     {
         $langPath = resource_path('lang/modules/'.$this->nameLower);
@@ -73,9 +53,6 @@ class FaqServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register config.
-     */
     protected function registerConfig(): void
     {
         $configPath = module_path($this->name, config('modules.paths.generator.config.path'));
@@ -89,7 +66,6 @@ class FaqServiceProvider extends ServiceProvider
                     $config_key = str_replace([DIRECTORY_SEPARATOR, '.php'], ['.', ''], $config);
                     $segments = explode('.', $this->nameLower.'.'.$config_key);
 
-                    // Remove duplicated adjacent segments
                     $normalized = [];
                     foreach ($segments as $segment) {
                         if (end($normalized) !== $segment) {
@@ -106,9 +82,6 @@ class FaqServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Merge config from the given path recursively.
-     */
     protected function merge_config_from(string $path, string $key): void
     {
         $existing = config($key, []);
@@ -117,9 +90,6 @@ class FaqServiceProvider extends ServiceProvider
         config([$key => array_replace_recursive($existing, $module_config)]);
     }
 
-    /**
-     * Register views.
-     */
     public function registerViews(): void
     {
         $viewPath = resource_path('views/modules/'.$this->nameLower);
@@ -132,9 +102,6 @@ class FaqServiceProvider extends ServiceProvider
         Blade::componentNamespace(config('modules.namespace').'\\' . $this->name . '\\View\\Components', $this->nameLower);
     }
 
-    /**
-     * Get the services provided by the provider.
-     */
     public function provides(): array
     {
         return [];

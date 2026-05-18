@@ -9,9 +9,6 @@ use App\Models\User;
 
 class FaqDatabaseSeeder extends Seeder
 {
-    /**
-     * Seed structured FAQ data for testing visibility per user level.
-     */
     public function run()
     {
         $admin = User::whereHas('roles', function ($q) {

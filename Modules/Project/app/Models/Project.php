@@ -31,9 +31,6 @@ class Project extends Model
         return $this->belongsTo(\App\Models\User::class, 'team_leader');
     }
 
-    /**
-     * Get the progress percentage based on time elapsed.
-     */
     public function getProgressAttribute()
     {
         if (!$this->start_date || !$this->end_date) {

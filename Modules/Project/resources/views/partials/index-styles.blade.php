@@ -1,8 +1,6 @@
-<!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 
 <style>
-    /* DataTables Custom Styling */
     .dataTables_wrapper {
         padding: 0;
     }
@@ -73,7 +71,6 @@
         border-color: #6366f1 !important;
     }
 
-    /* Mobile responsive DataTables - only table scrolls, not controls */
     @media (max-width: 768px) {
 
         .dataTables_wrapper .dataTables_length,
@@ -98,7 +95,6 @@
         }
     }
 
-    /* Make header and body scroll together */
     .dataTables_scrollHead {
         overflow-x: auto !important;
     }
@@ -107,18 +103,15 @@
         overflow-x: auto !important;
     }
 
-    /* Sync header scroll with body scroll */
     .dataTables_scroll {
         overflow: hidden;
     }
 
-    /* Table scroll wrapper */
     .table-scroll-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
 
-    /* Three-dot menu dropdown */
     .dropdown-menu {
         position: relative;
         display: inline-block;
@@ -180,7 +173,6 @@
         box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
     }
 
-    /* Progress bar styling */
     .progress-bar {
         width: 100%;
         height: 8px;
@@ -199,7 +191,6 @@
         background-color: #6366f1;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 640px) {
         .dropdown-content {
             min-width: 100px;

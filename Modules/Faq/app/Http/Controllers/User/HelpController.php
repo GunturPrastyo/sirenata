@@ -12,7 +12,6 @@ class HelpController extends Controller
 {
     public function index(Request $request)
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         $query = Faq::with('creator')->latest();
         
