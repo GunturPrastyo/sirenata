@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Modules\LMS\Http\Controllers\AdminProvince\RekapitulasiController as AdminProvinceRekapitulasiController;
 use Modules\LMS\Http\Controllers\AdminKabKota\RekapitulasiController as AdminKabKotaRekapitulasiController;
 use Modules\LMS\Http\Controllers\AdminPusat\RekapitulasiController;
-use Modules\LMS\Http\Controllers\AdminPusat\LibraryTypeController as AdminPusatLibraryTypeController;
+use Modules\LMS\Http\Controllers\AdminPusat\CertificateController as AdminPusatCertificateController;
+use Modules\LMS\Http\Controllers\AdminPusat\LibraryCategoryController as AdminPusatLibraryCategoryController;
 use Modules\LMS\Http\Controllers\AdminPusat\LibraryController as AdminPusatLibraryController;
 use Modules\LMS\Http\Controllers\User\LibraryController as UserLibraryController;
 use Modules\LMS\Http\Controllers\User\CourseController as UserCourseController;
@@ -21,8 +22,11 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/rekap-user-kab-kota/{regencyCode}/export', 'exportRekapUserRegency')->name('rekap-user-kab-kota.export');
     });
 
-    Route::resource('library-types', AdminPusatLibraryTypeController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('library-categories', AdminPusatLibraryCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('libraries', AdminPusatLibraryController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    Route::resource('certificates', AdminPusatCertificateController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('certificates/{certificate}/activate', [AdminPusatCertificateController::class, 'activate'])->name('certificates.activate');
 });
 
 Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->name('admin-province.')->group(function () {

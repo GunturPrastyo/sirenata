@@ -39,34 +39,52 @@
 
                     <!-- Content -->
                     <div class="text-center p-4 md:p-5">
-                        <svg class="mx-auto mb-4 w-12 h-12 text-fg-disabled" xmlns="http://www.w3.org/2000/svg"
+                        <svg class="mx-auto mb-4 w-12 h-12 text-red-500" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
 
-                        <h3 class="mb-6 text-body">
-                            {!! $message !!}
+                        <div class="mb-6">
+                            {{-- Pesan Pertanyaan - Baris 1 (Font dipaksa mengecil agar tetap 1 baris) --}}
+                            <p x-init="$nextTick(() => { 
+                                    let el = $el;
+                                    let fontSize = 15; 
+                                    while (el.scrollWidth > el.clientWidth && fontSize > 9) {
+                                        fontSize -= 0.5;
+                                        el.style.fontSize = fontSize + 'px';
+                                    }
+                                })"
+                                class="text-slate-600 leading-tight whitespace-nowrap overflow-hidden text-ellipsis px-2" 
+                                style="font-size: 15px;">
+                                {!! $message !!}
+                            </p>
+
+                            
+                            {{-- Nama Item - Baris 2 (Bold, Maks 1 Baris, Truncate) --}}
                             @if ($itemName)
-                                <strong>{{ $itemName }}</strong>?
+                                <p class="text-slate-900 font-bold text-base truncate mt-1 px-4" title="{{ $itemName }}">
+                                    {{ $itemName }}?
+                                </p>
                             @endif
-                        </h3>
+                        </div>
 
                         <form action="{{ $route }}" method="POST" class="flex justify-center space-x-4">
                             @csrf
                             @method('DELETE')
 
                             <button type="submit"
-                                class="text-white cursor-pointer bg-danger hover:bg-danger-strong focus:ring-4 focus:ring-danger-medium rounded-base px-4 py-2.5 text-sm font-medium">
-                                Yes, I'm sure
+                                class="text-white cursor-pointer bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-200 rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors">
+                                Ya, Hapus
                             </button>
 
                             <button type="button" @click="open = false"
-                                class="text-body cursor-pointer bg-neutral-secondary-medium hover:bg-neutral-tertiary-medium rounded-base px-4 py-2.5 text-sm font-medium">
-                                No, cancel
+                                class="text-slate-600 cursor-pointer bg-slate-100 hover:bg-slate-200 rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors">
+                                Batal
                             </button>
                         </form>
                     </div>
+
                 </div>
             </div>
         </template>

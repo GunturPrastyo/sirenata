@@ -37,6 +37,8 @@
             </div>
         @endif
 
+
+
         <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
@@ -162,19 +164,20 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
+                                        {{-- 1. Ubah --}}
                                         <li>
                                             <button type="button" x-data @click="$dispatch('open-modal', 'edit-library-{{ $library->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600 cursor-pointer text-left">Edit</button>
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600 cursor-pointer text-left">Ubah</button>
                                         </li>
+                                        {{-- 2. Hapus --}}
                                         <li>
-                                            <form action="{{ route('admin-pusat.libraries.destroy', $library->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus materi ini?');"
-                                                class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="w-full text-left p-2 text-red-600">Hapus</button>
-                                            </form>
+                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                <x-modal-delete :id="'delete-library-' . $library->id" message="Apakah Anda yakin ingin menghapus materi ini?"
+                                                    :item-name="$library->title" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route('admin-pusat.libraries.destroy', $library->id)" />
+                                            </div>
                                         </li>
                                     </x-table.action>
+
                                 </td>
                             </tr>
                         @empty
@@ -206,20 +209,6 @@
                     if(this.type === 'youtube') {
                         let match = this.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
                         this.url = match ? 'https://www.youtube.com/embed/' + match[1] : this.url;
-
-    <x-modal name="create-library" title="Tambah Materi Perpustakaan" maxWidth="sm:max-w-4xl">
-        <form action="{{ route('admin-pusat.libraries.store') }}" method="POST" enctype="multipart/form-data"
-            x-data="{
-                fileType: 'document',
-                previewUrl: null,
-                videoPreviewUrl: null,
-                linkUrl: '',
-                handleFileChange(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        this.previewUrl = URL.createObjectURL(file);
-                    } else {
-                        this.previewUrl = null;
                     }
                 });
                 window.addEventListener('close-modal', (e) => {
@@ -227,7 +216,6 @@
                         this.url = '';
                         this.type = '';
                     }
-<<<<<<< Updated upstream
                 });
             }
         }">
@@ -252,7 +240,29 @@
             </div>
         </div>
     </x-modal>
-=======
+
+    <x-modal name="create-library" title="Tambah Materi Perpustakaan" maxWidth="sm:max-w-4xl">
+        <form action="{{ route('admin-pusat.libraries.store') }}" method="POST" enctype="multipart/form-data"
+            x-data="{
+                fileType: 'document',
+                previewUrl: null,
+                videoPreviewUrl: null,
+                linkUrl: '',
+                handleFileChange(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.previewUrl = URL.createObjectURL(file);
+                    } else {
+                        this.previewUrl = null;
+                    }
+                },
+                handleVideoChange(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.videoPreviewUrl = URL.createObjectURL(file);
+                    } else {
+                        this.videoPreviewUrl = null;
+                    }
                 },
                 getYoutubeEmbedUrl(url) {
                     if (!url) return null;
@@ -290,11 +300,11 @@
                             <label for="create-library-type" class="block text-sm font-medium text-gray-700 mb-1">
                                 Tipe Materi <span class="text-red-500">*</span>
                             </label>
-                            <select id="create-library-type" name="library_type_id" required
+                            <select id="create-library-type" name="library_category_id" required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                <option value="">Pilih Tipe</option>
-                                @foreach($libraryTypes as $type)
-                                    <option value="{{ $type->id }}" {{ old('library_type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                                <option value="">Pilih Kategori</option>
+                                @foreach($libraryCategories as $category)
+                                    <option value="{{ $category->id }}" {{ old('library_category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -491,13 +501,13 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="edit-type-{{ $library->id }}" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Tipe Materi <span class="text-red-500">*</span>
+                                    Kategori Materi <span class="text-red-500">*</span>
                                 </label>
-                                <select id="edit-type-{{ $library->id }}" name="library_type_id" required
+                                <select id="edit-type-{{ $library->id }}" name="library_category_id" required
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                    <option value="">Pilih Tipe</option>
-                                    @foreach($libraryTypes as $type)
-                                        <option value="{{ $type->id }}" {{ old('library_type_id', $library->library_type_id) == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                                    <option value="">Pilih Kategori</option>
+                                    @foreach($libraryCategories as $category)
+                                        <option value="{{ $category->id }}" {{ old('library_category_id', $library->library_category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -619,5 +629,4 @@
             </form>
         </x-modal>
     @endforeach
->>>>>>> Stashed changes
 </x-dashboard::layouts.dashboard>

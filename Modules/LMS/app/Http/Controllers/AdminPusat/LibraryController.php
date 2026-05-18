@@ -12,6 +12,7 @@ use Modules\LMS\Services\LibraryService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class LibraryController extends Controller implements HasMiddleware
 {
@@ -46,23 +47,23 @@ class LibraryController extends Controller implements HasMiddleware
     public function store(LibraryStoreRequest $request)
     {
         $this->libraryService->createLibrary($request->validated());
-        return redirect()->route('admin-pusat.libraries.index')
-            ->with('success', 'Materi Perpustakaan berhasil ditambahkan.');
+        ToastMagic::success('Materi Perpustakaan berhasil ditambahkan.');
+        return redirect()->route('admin-pusat.libraries.index');
     }
 
     public function update(LibraryUpdateRequest $request, string $id)
     {
         $library = Library::findOrFail($id);
         $this->libraryService->updateLibrary($library, $request->validated());
-        return redirect()->route('admin-pusat.libraries.index')
-            ->with('success', 'Materi Perpustakaan berhasil diperbarui.');
+        ToastMagic::success('Materi Perpustakaan berhasil diperbarui.');
+        return redirect()->route('admin-pusat.libraries.index');
     }
 
     public function destroy(string $id)
     {
         $library = Library::findOrFail($id);
         $this->libraryService->deleteLibrary($library);
-        return redirect()->route('admin-pusat.libraries.index')
-            ->with('success', 'Materi Perpustakaan berhasil dihapus.');
+        ToastMagic::success('Materi Perpustakaan berhasil dihapus.');
+        return redirect()->route('admin-pusat.libraries.index');
     }
 }

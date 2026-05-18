@@ -36,6 +36,8 @@
             </div>
         @endif
 
+
+
         <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
@@ -124,23 +126,22 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
+                                        {{-- 1. Ubah --}}
                                         <li>
                                             <button type="button"
                                                 x-data
                                                 @click="$dispatch('open-modal', 'edit-library-category-{{ $category->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600 cursor-pointer">Edit</button>
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600 cursor-pointer">Ubah</button>
                                         </li>
+                                        {{-- 2. Hapus --}}
                                         <li>
-                                            <form action="{{ route('admin-pusat.library-categories.destroy', $category->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori perpustakaan ini?');"
-                                                class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="w-full text-left p-2 text-red-600">Hapus</button>
-                                            </form>
+                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                <x-modal-delete :id="'delete-lib-cat-' . $category->id" message="Apakah Anda yakin ingin menghapus kategori perpustakaan ini?"
+                                                    :item-name="$category->name" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route('admin-pusat.library-categories.destroy', $category->id)" />
+                                            </div>
                                         </li>
                                     </x-table.action>
+
                                 </td>
                             </tr>
                         @empty

@@ -44,5 +44,10 @@ class AppServiceProvider extends ServiceProvider
 
             return Socialite::buildProvider(SiapKerjaProvider::class, $config);
         });
+
+        // Force HTTPS if APP_URL starts with https://
+        if (str_starts_with(config('app.url'), 'https://')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }
