@@ -23,30 +23,24 @@ jobs:
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
 
-            # Enter maintenance mode
-            php artisan down --retry=60
-
-            # Pull latest changes
+            # Pull kode terbaru dari GitHub
             git pull origin main
 
-            # Install PHP dependencies
-            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+            # Install dependensi PHP (tanpa dev dependencies)
+            docker exec elearning_app composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-            # Run database migrations
-            php artisan migrate --force
+            # Install dependensi Node dan build assets Vite
+            docker exec elearning_app npm install
+            docker exec elearning_app npm run build
 
-            # Clear and rebuild caches
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            php artisan event:cache
+            # Jalankan migrasi database
+            docker exec elearning_app php artisan migrate --force
 
-            # Install and build frontend assets
-            npm ci
-            npm run build
+            # Clear dan rebuild cache
+            docker exec elearning_app php artisan config:cache
+            docker exec elearning_app php artisan route:cache
+            docker exec elearning_app php artisan view:cache
+            docker exec elearning_app php artisan event:cache
 
-            # Restart queue workers
-            php artisan queue:restart
-
-            # Exit maintenance mode
-            php artisan up
+            # Restart queue workers (jika ada)
+            docker exec elearning_app php artisan queue:restart
