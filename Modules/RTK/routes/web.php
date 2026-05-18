@@ -1,26 +1,35 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\RTK\Http\Controllers\AdminKabKota\ExportRtkRegencyController;
 use Modules\RTK\Http\Controllers\AdminProvinsi\RencanaTenagaKerjaKabKotaController;
 use Modules\RTK\Http\Controllers\AdminPusat\RencanaTenagaKerjaDaerahController;
 use Modules\RTK\Http\Controllers\AdminPusat\RtkNasional\RencanaTenagaKerjaNasionalController;
 use Modules\RTK\Http\Controllers\AdminProvinsi\RencanaTenagaKerjaProvinceController;
 use Modules\RTK\Http\Controllers\AdminKabKota\RencanaTenagaKerjaKabKotaController as RencanaTenagaKerjaKabKotaControllerAdminKabKota;
 use Modules\RTK\Http\Controllers\AdminKabKota\RtkKabKotaDashboardController;
+use Modules\RTK\Http\Controllers\AdminProvinsi\ExportRtkProvinceController;
 use Modules\RTK\Http\Controllers\AdminProvinsi\RTKApprovalProvinceController;
 use Modules\RTK\Http\Controllers\AdminPusat\RTKApprovalPusatController;
 use Modules\RTK\Http\Controllers\AdminPusat\RtkSurveyPeriodController;
 use Modules\RTK\Http\Controllers\AdminPusat\HasilPemanfaatanRtkdController;
 use Modules\RTK\Http\Controllers\AdminProvinsi\PemanfaatanRtkdController;
+use Modules\RTK\Http\Controllers\AdminPusat\RtkNasional\ExportRtknController;
 use Modules\RTK\Http\Controllers\AdminPusat\RtkNasional\RTKNApprovalController;
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::resource('rencana-tenaga-kerja-nasional', RencanaTenagaKerjaNasionalController::class)->names('rtkn');
 
+    // Approval RTKN
     Route::controller(RTKNApprovalController::class)->name('rtkn.')->group(function () {
         Route::post('{rtkn}/approve-verification', 'approveVerification')->name('approve-verification');
         Route::post('{rtkn}/approve-document', 'approveDocument')->name('approve-document');
         Route::post('{rtkn}/reject', 'rejectRtkn')->name('reject-rtkn');
+    });
+
+    // Export Excel RTKN
+    Route::controller(ExportRtknController::class)->name('rtkn.')->group(function () {
+        Route::get('export', 'ExportRtkn')->name('export');
     });
 
     // Periode Survei RTK Daerah
@@ -37,9 +46,28 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/', [RencanaTenagaKerjaDaerahController::class, 'index'])->name('index');
         Route::get('/{provinceCode}/kab-kota', [RencanaTenagaKerjaDaerahController::class, 'kabKota'])->name('kab-kota');
 
+        // show rtk province
         Route::get('/province/{provinceCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showProvince'])->name('show-province');
 
+        // Edit RTK province — admin pusat ubah is_active
+        Route::get('/province/{provinceCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaDaerahController::class, 'editProvince'])
+            ->name('edit-province');
+
+        // Edit RTK regency — admin pusat ubah is_active
+        Route::get('/regency/{regencyCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaDaerahController::class, 'editRegency'])
+            ->name('edit-regency');
+
+        // Update RTK province
+        Route::put('/province/{provinceCode}/rtk/{rtkdp}', [RencanaTenagaKerjaDaerahController::class, 'updateProvince'])
+            ->name('update-province');
+        // Update RTK regency
+        Route::put('/regency/{regencyCode}/rtk/{rtkdp}', [RencanaTenagaKerjaDaerahController::class, 'updateRegency'])
+            ->name('update-regency');
+        // export excel
+        Route::get('/province/{provinceCode}/export', [RencanaTenagaKerjaDaerahController::class, 'ExportRtkProvince'])->name('show-province-export');
+
         Route::get('/regency/{regencyCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showRegency'])->name('show-regency');
+        Route::get('/regency/{regencyCode}/export', [RencanaTenagaKerjaDaerahController::class, 'ExportRtkRegency'])->name('show-regency-export');
 
         // verify
         Route::post('/province/{rtk}/approve-verification', [RTKApprovalPusatController::class, 'approveVerificationProvince'])->name('approveVerificationProvince');
@@ -62,11 +90,20 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
         ->parameters(['rencana-tenaga-kerja-daerah-provinsi' => 'rtkdp',])
         ->names('rtkdp');
 
+    Route::get('export-rtk-province', [ExportRtkProvinceController::class, 'ExportRtkProvince'])->name('rtkdp-export');
+
     Route::resource('pemanfaatan-rtkd', PemanfaatanRtkdController::class)->only(['index', 'create', 'store', 'edit', 'update']);
 
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaKabKotaController::class, 'index'])->name('index');
         Route::get('/regency/{regencyCode}/show', [RencanaTenagaKerjaKabKotaController::class, 'showRegency'])->name('show-regency');
+        Route::get('/regency/{regencyCode}/export', [RencanaTenagaKerjaKabKotaController::class, 'ExportRtkRegency'])->name('export-regency');
+
+        Route::get('/regency/{regencyCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaKabKotaController::class, 'editRegency'])
+            ->name('edit-regency');
+        // Update RTK regency
+        Route::put('/regency/{regencyCode}/rtk/{rtkdp}', [RencanaTenagaKerjaKabKotaController::class, 'updateRegency'])
+            ->name('update-regency');
 
         // approve verification
         Route::post('/regency/{rtk}/approve-verification', [RTKApprovalProvinceController::class, 'approveVerificationKabKota'])->name('approveVerificationKabKota');
@@ -81,6 +118,8 @@ Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->na
     Route::resource('rencana-tenaga-kerja-daerah-kab-kota', RencanaTenagaKerjaKabKotaControllerAdminKabKota::class)
         ->parameters(['rencana-tenaga-kerja-daerah-kab-kota' => 'rtkd',])
         ->names('rtkd');
+
+    Route::get('/regency/export', [ExportRtkRegencyController::class, 'ExportRtkRegency'])->name('export-regency');
 
     Route::prefix('laporan')->name('laporan.')->controller(RtkKabKotaDashboardController::class)->group(function () {
         Route::get('/', 'index')->name('index');

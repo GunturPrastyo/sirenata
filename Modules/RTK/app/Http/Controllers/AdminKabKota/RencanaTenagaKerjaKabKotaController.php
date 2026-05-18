@@ -37,12 +37,12 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
      */
     public function index(Request $request)
     {
-        $limit = $request->integer('per_page', 10);
-        $search = $request->string('search')->toString();
-        $statusVerification = $request->string('status_verifikasi')->toString();
-        $statusDocument = $request->string('status_document')->toString();
-        $isActive = $request->input('acuan');
-        $orderBy = in_array($request->orderBy, ['asc', 'desc']) ? $request->orderBy : 'desc';
+        $limit              = $request->integer('per_page', 10);
+        $search             = $request->string('search')->toString() ?: null;
+        $statusVerification = $request->string('status_verification')->toString() ?: null;
+        $statusDocument     = $request->string('status_document')->toString() ?: null;
+        $isActive           = $request->input('acuan');
+        $orderBy            = in_array($request->orderBy, ['asc', 'desc']) ? $request->orderBy : 'desc';
 
         $user = Auth::user();
 

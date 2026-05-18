@@ -82,10 +82,10 @@
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition" title="Ekspor Data">
+                    {{-- <button class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition" title="Ekspor Data">
                         <i class="fas fa-download text-xs"></i>
                         <span class="hidden sm:inline">Ekspor</span>
-                    </button>
+                    </button> --}}
                 </div>
             </div>
 

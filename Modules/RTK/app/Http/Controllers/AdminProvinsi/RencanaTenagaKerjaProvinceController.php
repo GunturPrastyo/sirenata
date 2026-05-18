@@ -41,16 +41,12 @@ class RencanaTenagaKerjaProvinceController extends Controller implements HasMidd
      */
     public function index(Request $request)
     {
-        $limit = $request->per_page ?? 10;
-        $search = $request->string('search')->toString();
-        $orderBy = in_array($request->orderBy, ['asc', 'desc'])
-            ? $request->orderBy
-            : 'desc';
-        $year = $request->year;
-
-        $statusVerification = $request->string('status_verifikasi')->toString();
-        $statusDocument = $request->string('status_document')->toString();
-        $isActive = $request->input('acuan');
+        $limit              = $request->integer('per_page', 10);
+        $search             = $request->string('search')->toString() ?: null;
+        $statusVerification = $request->string('status_verification')->toString() ?: null;
+        $statusDocument     = $request->string('status_document')->toString() ?: null;
+        $isActive           = $request->input('acuan');
+        $orderBy            = in_array($request->orderBy, ['asc', 'desc']) ? $request->orderBy : 'desc';
 
         $user = Auth::user();
         if (!$user->hasCompleteScope()) {

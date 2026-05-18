@@ -63,7 +63,7 @@
                                 class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
                             ></i>
                             <select
-                                name="status_verifikasi"
+                                name="status_verification"
                                 onchange="this.form.submit()"
                                 class="pl-8 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             >
@@ -71,7 +71,7 @@
                                 @foreach (\Modules\RTK\Enums\RTKStatusVerification::cases() as $statusVerifikasi)
                                     <option
                                         value="{{ $statusVerifikasi->value }}"
-                                        @selected(request('status_verifikasi') === $statusVerifikasi->value)
+                                        @selected(request('status_verification') === $statusVerifikasi->value)
                                     >
                                         {{ $statusVerifikasi->label() }}
                                     </option>
@@ -204,21 +204,12 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button
-                        class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                        title="Ekspor Data"
-                    >
+                     <a
+                        href="{{ route('admin-kab-kota.export-regency') }}?{{ http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan'])) }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
                         <i class="fas fa-download text-xs"></i>
                         <span class="hidden sm:inline">Ekspor</span>
-                    </button>
-
-                    <button
-                        class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                        title="Cetak"
-                    >
-                        <i class="fas fa-print text-xs"></i>
-                        <span class="hidden sm:inline">Cetak</span>
-                    </button>
+                    </a> 
                 </div>
             </div>
 
