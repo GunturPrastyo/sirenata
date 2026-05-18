@@ -29,6 +29,7 @@
 
 
 
+
         <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
@@ -162,27 +163,27 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
+                                        {{-- 1. Detail --}}
                                         <li>
                                             <button x-data x-on:click="$dispatch('open-modal', 'show-faq-{{ $faq->id }}')"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600">Detail</button>
                                         </li>
                                         @role('admin-pusat')
+                                        {{-- 2. Ubah --}}
                                         <li>
                                             <button x-data x-on:click="$dispatch('open-modal', 'edit-faq-{{ $faq->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600">Edit</button>
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600">Ubah</button>
                                         </li>
+                                        {{-- 3. Hapus --}}
                                         <li>
-                                            <form action="{{ route($routePrefix . 'destroy', $faq->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus FAQ ini?');"
-                                                class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="w-full text-left p-2 text-red-600">Hapus</button>
-                                            </form>
+                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                <x-modal-delete :id="'delete-faq-' . $faq->id" message="Apakah Anda yakin ingin menghapus FAQ ini?"
+                                                    :item-name="Str::limit($faq->question, 40)" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route($routePrefix . 'destroy', $faq->id)" />
+                                            </div>
                                         </li>
                                         @endrole
                                     </x-table.action>
+
                                 </td>
                             </tr>
                         @empty
@@ -208,12 +209,12 @@
             x-data="{ level: '{{ old('level', 'Nasional') }}' }">
             @csrf
             <div class="mb-4">
-                <label for="question" class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan</label>
+                <label for="question" class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan <span class="text-red-500">*</span></label>
                 <input type="text" name="question" id="question" value="{{ old('question') }}" required
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
             </div>
             <div class="mb-4">
-                <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Level</label>
+                <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Level <span class="text-red-500">*</span></label>
                 <select name="level" id="level" required x-model="level"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                     <option value="Nasional">Nasional (Tingkat Pusat)</option>
@@ -225,7 +226,7 @@
             <!-- Dynamic Dropdowns for regions removed -->
 
             <div class="mb-6">
-                <label for="answer" class="block text-sm font-medium text-gray-700 mb-1">Jawaban</label>
+                <label for="answer" class="block text-sm font-medium text-gray-700 mb-1">Jawaban <span class="text-red-500">*</span></label>
                 <textarea name="answer" id="answer" rows="5" required
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">{{ old('answer') }}</textarea>
             </div>
@@ -283,14 +284,14 @@
                 @method('PUT')
                 <div class="mb-4">
                     <label for="edit_question_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan</label>
+                        class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan <span class="text-red-500">*</span></label>
                     <input type="text" name="question" id="edit_question_{{ $faq->id }}"
                         value="{{ old('question', $faq->question) }}" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                 </div>
                 <div class="mb-4">
                     <label for="edit_level_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Level</label>
+                        class="block text-sm font-medium text-gray-700 mb-1">Level <span class="text-red-500">*</span></label>
                     <select name="level" id="edit_level_{{ $faq->id }}" required x-model="level"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                         <option value="Nasional">Nasional (Tingkat Pusat)</option>
@@ -303,7 +304,7 @@
 
                 <div class="mb-6">
                     <label for="edit_answer_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Jawaban</label>
+                        class="block text-sm font-medium text-gray-700 mb-1">Jawaban <span class="text-red-500">*</span></label>
                     <textarea name="answer" id="edit_answer_{{ $faq->id }}" rows="5" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">{{ old('answer', $faq->answer) }}</textarea>
                 </div>
