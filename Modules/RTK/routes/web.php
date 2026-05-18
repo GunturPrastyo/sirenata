@@ -46,7 +46,9 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
 
     Route::prefix('rencana-tenaga-kerja-daerah')->name('rtkd.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaDaerahController::class, 'index'])->name('index');
+        Route::get('/export-all-province', [RencanaTenagaKerjaDaerahController::class, 'exportAllProvince'])->name('export-all-province');
         Route::get('/{provinceCode}/kab-kota', [RencanaTenagaKerjaDaerahController::class, 'kabKota'])->name('kab-kota');
+        Route::get('/{provinceCode}/export-regency-by-province', [RencanaTenagaKerjaDaerahController::class, 'exportRegencyByProvince'])->name('export-regency-by-province');
 
         // show rtk province
         Route::get('/province/{provinceCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showProvince'])->name('show-province');
@@ -98,6 +100,7 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
 
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaKabKotaController::class, 'index'])->name('index');
+        Route::get('/export-regency-by-province', [RencanaTenagaKerjaKabKotaController::class, 'exportRegencyByProvince'])->name('export-regency-by-province');
         Route::get('/regency/{regencyCode}/show', [RencanaTenagaKerjaKabKotaController::class, 'showRegency'])->name('show-regency');
         Route::get('/regency/{regencyCode}/export', [RencanaTenagaKerjaKabKotaController::class, 'ExportRtkRegency'])->name('export-regency');
 
