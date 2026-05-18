@@ -11,6 +11,8 @@ use Creasi\Nusa\Models\Province;
 use Modules\User\Models\UserProfile;
 use Spatie\Activitylog\Models\Activity;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Modules\RTK\Models\RencanaTenagaKerja;
+use Modules\RTK\Enums\TypeRtk;
 use Illuminate\Http\RedirectResponse;
 use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
 use Modules\Dashboard\Services\DashboardService;
@@ -25,7 +27,7 @@ class DashbordController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -44,6 +46,15 @@ class DashbordController extends Controller
         $genderMale = UserProfile::where('gender', 'male')->count();
         $genderFemale = UserProfile::where('gender', 'female')->count();
 
+        // Filter by Year for SDM
+        $currentYear = (int) date('Y');
+        $selectedSdmYear = (int) $request->input('sdm_year', $currentYear);
+
+        $sdmYears = [];
+        for ($y = $currentYear; $y >= $currentYear - 15; $y--) {
+            $sdmYears[] = $y;
+        }
+
         // SDM per Provinsi: count users (role 'user') grouped by province
         // Note: roles table uses 'uuid' as PK, model_has_roles uses 'model_uuid' and 'role_id'
         $userCountsByProvince = DB::table('user_scopes')
@@ -54,6 +65,7 @@ class DashbordController extends Controller
             })
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.uuid')
             ->where('roles.name', 'user')
+            ->whereYear('users.created_at', $selectedSdmYear)
             ->whereNotNull('user_scopes.province_code')
             ->select('user_scopes.province_code', DB::raw('count(*) as total'))
             ->groupBy('user_scopes.province_code')
@@ -70,6 +82,117 @@ class DashbordController extends Controller
             ];
         })->sortBy('province_name')->values();
 
+        // Masa Aktif RTK per Provinsi (active RTK per province with remaining years)
+        $availableRtkYears = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->pluck('start_date')
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->toArray();
+
+        $selectedRtkYear = $request->input('rtk_year', 'all');
+        
+        $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
+            ->where('is_active', true)
+            ->where('status', 'approved');
+            
+        if ($selectedRtkYear !== 'all') {
+            $queryRtk->where('end_date', '>=', (int) $selectedRtkYear);
+        }
+        
+        $rtkProvinsi = $queryRtk->get();
+
+        $rtkProvinceCodes = $rtkProvinsi->pluck('province_code')->toArray();
+        $rtkProvinceNames = Province::whereIn('code', $rtkProvinceCodes)->pluck('name', 'code');
+
+        $rtkMasaAktifPerProvinsi = $rtkProvinsi->map(function ($rtk) use ($rtkProvinceNames) {
+            return (object) [
+                'province_name' => $rtkProvinceNames[$rtk->province_code] ?? 'Unknown',
+                'sisa_tahun' => max(0, (int) $rtk->end_date - (int) date('Y')),
+                'start_date' => $rtk->start_date,
+                'end_date' => $rtk->end_date,
+            ];
+        })->sortBy('province_name')->values();
+
+        // Data for second chart: RTK filtered by end_date
+        $availableRtkEndYears = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->pluck('end_date')
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->toArray();
+
+        $selectedRtkEndYear = $request->input('rtk_end_year', 'all');
+        
+        $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
+            ->where('is_active', true)
+            ->where('status', 'approved');
+            
+        if ($selectedRtkEndYear !== 'all') {
+            $queryRtkEnd->where('end_date', (int) $selectedRtkEndYear);
+        }
+        
+        $rtkProvinsiEnd = $queryRtkEnd->get();
+        $rtkEndProvinceCodes = $rtkProvinsiEnd->pluck('province_code')->toArray();
+        $rtkEndProvinceNames = Province::whereIn('code', $rtkEndProvinceCodes)->pluck('name', 'code');
+
+        $rtkMasaBerakhirPerProvinsi = $rtkProvinsiEnd->map(function ($rtk) use ($rtkEndProvinceNames) {
+            return (object) [
+                'province_name' => $rtkEndProvinceNames[$rtk->province_code] ?? 'Unknown',
+                'sisa_tahun' => max(0, (int) $rtk->end_date - (int) date('Y')),
+                'start_date' => $rtk->start_date,
+                'end_date' => $rtk->end_date,
+            ];
+        })->sortBy('province_name')->values();
+
+        // Status Distribusi RTK (all types)
+        $rtkStatusDistribution = DB::table('rencana_tenaga_kerjas')
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $maxOptionYear = !empty($availableRtkEndYears) ? max($availableRtkEndYears) : $currentYear;
+        $minOptionYear = $currentYear;
+        
+        $rtkYearsOptions = [];
+        for ($y = $maxOptionYear; $y >= $minOptionYear; $y--) {
+            $rtkYearsOptions[] = $y;
+        }
+
+        $minAvailableEndYear = !empty($availableRtkEndYears) ? min($availableRtkEndYears) : $currentYear;
+        $maxAvailableEndYear = !empty($availableRtkEndYears) ? max($availableRtkEndYears) : $currentYear;
+        $rtkEndYearsOptions = [];
+        for ($y = $maxAvailableEndYear; $y >= $minAvailableEndYear; $y--) {
+            $rtkEndYearsOptions[] = $y;
+        }
+
+        if ($request->ajax()) {
+            if ($request->has('rtk_end_year')) {
+                return response()->json([
+                    'rtkMasaBerakhirPerProvinsi' => $rtkMasaBerakhirPerProvinsi,
+                ]);
+            }
+            if ($request->has('rtk_year')) {
+                return response()->json([
+                    'rtkMasaAktifPerProvinsi' => $rtkMasaAktifPerProvinsi,
+                ]);
+            }
+            if ($request->has('sdm_year')) {
+                return response()->json([
+                    'sdmPerProvinsi' => $sdmPerProvinsi,
+                ]);
+            }
+            return response()->json([
+                'sdmPerProvinsi' => $sdmPerProvinsi,
+                'rtkMasaAktifPerProvinsi' => $rtkMasaAktifPerProvinsi,
+                'rtkMasaBerakhirPerProvinsi' => $rtkMasaBerakhirPerProvinsi,
+            ]);
+        }
+
         return view('dashboard::pages.admin-pusat.index', [
             'user' => $user,
             'totalAdminPusat' => $totalAdminPusat,
@@ -78,6 +201,15 @@ class DashbordController extends Controller
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
             'sdmPerProvinsi' => $sdmPerProvinsi,
+            'rtkMasaAktifPerProvinsi' => $rtkMasaAktifPerProvinsi,
+            'rtkMasaBerakhirPerProvinsi' => $rtkMasaBerakhirPerProvinsi,
+            'rtkStatusDistribution' => $rtkStatusDistribution,
+            'sdmYears' => $sdmYears,
+            'selectedSdmYear' => $selectedSdmYear,
+            'selectedRtkYear' => $selectedRtkYear,
+            'selectedRtkEndYear' => $selectedRtkEndYear,
+            'rtkYearsOptions' => $rtkYearsOptions,
+            'rtkEndYearsOptions' => $rtkEndYearsOptions,
         ]);
     }
 

@@ -1,0 +1,95 @@
+/* ══ step4-download.css ══ */
+.dl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin: 0 0 20px;
+}
+
+@media(max-width:900px) {
+  .dl-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media(max-width:580px) {
+  .dl-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dl-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow .2s;
+}
+
+.dl-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.dl-card-num {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.dl-card h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.dl-card p {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.dl-card .dl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  color: white;
+  transition: all .2s;
+  font-family: inherit;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+}
+
+.dl-card .dl-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.dl-card .dl-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
+}
+
+.dl-btn-prov {
+  background: linear-gradient(135deg, #0f2547, #1d4ed8);
+}
+
+.dl-btn-kab {
+  background: linear-gradient(135deg, #065f46, #16a34a);
+}
+
+.dl-btn-xls {
+  background: linear-gradient(135deg, #92400e, #d97706);
+}

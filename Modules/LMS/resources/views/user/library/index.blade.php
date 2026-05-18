@@ -34,10 +34,10 @@
                         class="{{ !$type ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold' : 'border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium' }} py-2 sm:py-3 px-1 text-xs sm:text-sm transition-colors whitespace-nowrap">
                         Semua
                     </a>
-                    @foreach($libraryTypes as $libraryType)
-                        <a href="{{ route('user.library.index', ['type' => $libraryType->slug, 'search' => $search]) }}"
-                            class="{{ $type == $libraryType->slug ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold' : 'border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium' }} py-2 sm:py-3 px-1 text-xs sm:text-sm transition-colors whitespace-nowrap">
-                            {{ $libraryType->name }}
+                    @foreach($libraryCategories as $libraryCategory)
+                        <a href="{{ route('user.library.index', ['type' => $libraryCategory->name, 'search' => $search]) }}"
+                            class="{{ $type == $libraryCategory->name ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold' : 'border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium' }} py-2 sm:py-3 px-1 text-xs sm:text-sm transition-colors whitespace-nowrap">
+                            {{ $libraryCategory->name }}
                         </a>
                     @endforeach
                 </nav>
@@ -71,8 +71,8 @@
 
             @forelse($libraries as $library)
                 @php
-                    $typeName = strtolower($library->libraryType->name ?? 'default');
-                    $colorIdx = abs(crc32($library->libraryType->name ?? 'default')) % count($gradients);
+                    $typeName = strtolower($library->libraryCategory->name ?? 'default');
+                    $colorIdx = abs(crc32($library->libraryCategory->name ?? 'default')) % count($gradients);
                     $gradient = $gradients[$colorIdx];
                     $badge = $badgeStyles[$colorIdx];
                     $isVideo = str_contains($typeName, 'video');
@@ -116,11 +116,11 @@
                     {{-- Card Body --}}
                     <div class="p-3 sm:p-4">
                         <span
-                            class="text-[10px] sm:text-xs font-semibold {{ $badge['text'] }} {{ $badge['bg'] }} px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">{{ $library->libraryType->name ?? 'Materi' }}</span>
-                        <h3 class="font-bold text-gray-900 mt-1 sm:mt-2 mb-1 text-xs sm:text-base line-clamp-2">
+                            class="text-[10px] sm:text-xs font-semibold {{ $badge['text'] }} {{ $badge['bg'] }} px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">{{ $library->libraryCategory->name ?? 'Materi' }}</span>
+                        <h3 class="font-bold text-gray-900 mt-1 sm:mt-2 mb-1 text-xs sm:text-base truncate">
                             {{ $library->title }}</h3>
                         @if($library->description)
-                            <p class="text-[10px] sm:text-sm text-gray-600 mb-2 sm:mb-3 hidden sm:block">
+                            <p class="text-[10px] sm:text-sm text-gray-600 mb-2 sm:mb-3 hidden sm:block truncate">
                                 {{ $library->description }}</p>
                         @endif
                         <button x-data @click="$dispatch('open-modal', 'library-modal-{{ $library->id }}')"
@@ -138,7 +138,9 @@
                             @if($library->file_path)
                                 <iframe src="{{ Storage::url($library->file_path) }}"
                                     class="w-full h-[300px] sm:h-[500px] rounded-lg border" frameborder="0"></iframe>
-                            @elseif($library->external_link && $isVideo)
+                            @elseif($library->video_path)
+                                <video src="{{ Storage::url($library->video_path) }}" class="w-full h-[300px] sm:h-[500px] rounded-lg bg-black" controls></video>
+                            @elseif($library->external_link && (str_contains($library->external_link, 'youtube.com') || str_contains($library->external_link, 'youtu.be')))
                                 @php
                                     $videoUrl = $library->external_link;
                                     // Convert YouTube watch URL to embed URL
@@ -151,6 +153,9 @@
                                 @endphp
                                 <iframe src="{{ $videoUrl }}" class="w-full h-[300px] sm:h-[500px] rounded-lg" frameborder="0"
                                     allowfullscreen></iframe>
+                            @elseif($library->external_link)
+                                <iframe src="{{ $library->external_link }}" class="w-full h-[300px] sm:h-[500px] rounded-lg border" frameborder="0"
+                                    allowfullscreen tabindex="0" title="Link Preview"></iframe>
                             @else
                                 <div class="flex items-center justify-center h-full bg-gray-50 rounded-lg border text-gray-400">
                                     <div class="text-center p-6">
@@ -171,8 +176,8 @@
                                 <h4 class="text-sm font-semibold text-gray-900 mb-2">Informasi</h4>
                                 <dl class="space-y-2 text-sm">
                                     <div>
-                                        <dt class="text-gray-500 text-xs">Tipe</dt>
-                                        <dd class="font-medium text-gray-900">{{ $library->libraryType->name ?? '-' }}</dd>
+                                        <dt class="text-gray-500 text-xs">Kategori</dt>
+                                        <dd class="font-medium text-gray-900">{{ $library->libraryCategory->name ?? '-' }}</dd>
                                     </div>
                                     @if($library->description)
                                         <div>
@@ -202,6 +207,17 @@
                                             d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                     Unduh File
+                                </a>
+                            @endif
+
+                            @if($library->video_path)
+                                <a href="{{ Storage::url($library->video_path) }}" target="_blank" download
+                                    class="flex items-center gap-2 w-full px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium transition-colors justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Unduh Video
                                 </a>
                             @endif
                         </div>

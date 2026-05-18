@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('libraries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('library_type_id')->constrained('library_types')->cascadeOnDelete();
+            $table->foreignUuid('library_category_id')->constrained('library_categories')->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('cover_image')->nullable();

@@ -64,7 +64,7 @@
     </button>
     <ul x-show="open" class="py-2 space-y-2" x-cloak>
         <li>
-            <a href="#"
+            <a href="/rtk-makro/index.html" target="_blank"
                 class="flex items-center w-full px-2 py-1.5 ps-10 text-gray-500 rounded-lg hover:bg-purple-100 hover:text-indigo-600 transition-colors">
                 Kalkulator RTK
             </a>

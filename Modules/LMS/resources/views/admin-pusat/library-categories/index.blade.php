@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Tipe Perpustakaan - E-Learning">
+<x-dashboard::layouts.dashboard title="Kategori Perpustakaan - E-Learning">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
@@ -20,18 +20,11 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Tipe Perpustakaan</span>
+                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Kategori Perpustakaan</span>
                     </div>
                 </li>
             </ol>
         </nav>
-
-        @if(session('success'))
-            <div class="mt-2 mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-                role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
 
         @if ($errors->any())
             <div class="mt-2 mb-4 bg-red-50 text-red-600 p-4 rounded-lg border border-red-200">
@@ -66,17 +59,17 @@
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ $search ?? '' }}"
-                            placeholder="Cari tipe perpustakaan..." class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
+                            placeholder="Cari kategori perpustakaan..." class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
                     focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
 
                     <button type="submit" class="inline-flex items-center gap-2 px-4 rounded-md
                 bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
                         <i class="fas fa-search text-xs"></i>
-                        <span class="hidden sm:inline">Search</span>
+                        <span class="hidden sm:inline">Cari</span>
                     </button>
 
-                    <a href="{{ route('admin-pusat.library-types.index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
+                    <a href="{{ route('admin-pusat.library-categories.index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
                 border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition">
                         <i class="fas fa-rotate-left text-xs"></i>
                         <span class="hidden sm:inline">Reset</span>
@@ -91,20 +84,20 @@
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar Tipe Perpustakaan</h2>
+                    <h2 class="text-base font-semibold text-slate-800">Daftar Kategori Perpustakaan</h2>
                     <p class="text-sm text-slate-500 mt-1">
-                        Total: <span class="font-medium text-slate-700">{{ $libraryTypes->total() }}</span>
-                        Tipe
+                        Total: <span class="font-medium text-slate-700">{{ $libraryCategories->total() }}</span>
+                        Kategori
                     </p>
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button type="button" x-data @click="$dispatch('open-modal', 'create-library-type')"
+                    <button type="button" x-data @click="$dispatch('open-modal', 'create-library-category')"
                         class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        <span class="hidden sm:inline">Tambah Tipe Baru</span>
+                        <span class="hidden sm:inline">Tambah Kategori Baru</span>
                         <span class="sm:hidden">Tambah</span>
                     </button>
                 </div>
@@ -115,35 +108,35 @@
                     <thead class="bg-slate-100 border-b border-slate-200">
                         <tr class="text-slate-500 uppercase text-xs">
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Nama Tipe</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Slug</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Nama Kategori</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Deskripsi</th>
                             <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody class="divide-y divide-slate-200">
-                        @forelse($libraryTypes as $key => $type)
+                        @forelse($libraryCategories as $key => $category)
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $key + $libraryTypes->firstItem() }}</p>
+                                    <p class="text-slate-600">{{ $key + $libraryCategories->firstItem() }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600 font-medium">{{ $type->name }}</p>
+                                    <p class="text-slate-600 font-medium">{{ $category->name }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
-                                    <span class="px-2 py-1 bg-slate-100 text-slate-800 border border-slate-200 rounded text-xs">{{ $type->slug }}</span>
+                                    <p class="text-slate-500 text-sm line-clamp-2">{{ $category->description ?? '-' }}</p>
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
                                         <li>
                                             <button type="button"
                                                 x-data
-                                                @click="$dispatch('open-modal', 'edit-library-type-{{ $type->id }}')"
+                                                @click="$dispatch('open-modal', 'edit-library-category-{{ $category->id }}')"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600 cursor-pointer">Edit</button>
                                         </li>
                                         <li>
-                                            <form action="{{ route('admin-pusat.library-types.destroy', $type->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus tipe perpustakaan ini?');"
+                                            <form action="{{ route('admin-pusat.library-categories.destroy', $category->id) }}" method="POST"
+                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori perpustakaan ini?');"
                                                 class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
                                                 @csrf
                                                 @method('DELETE')
@@ -157,7 +150,7 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">Tidak ada tipe perpustakaan yang ditemukan.</p>
+                                    <p class="text-sm text-slate-500">Tidak ada kategori perpustakaan yang ditemukan.</p>
                                 </td>
                             </tr>
                         @endforelse
@@ -166,26 +159,35 @@
             </div>
 
             <div class="px-5 py-4 border-t border-slate-200">
-                {{ $libraryTypes->links('pagination::tailwind') }}
+                {{ $libraryCategories->links('pagination::tailwind') }}
             </div>
         </div>
     </div>
 
-    {{-- Modal: Tambah Tipe Perpustakaan --}}
-    <x-modal name="create-library-type" title="Tambah Tipe Perpustakaan">
-        <form action="{{ route('admin-pusat.library-types.store') }}" method="POST" class="space-y-4">
+    {{-- Modal: Tambah Kategori Perpustakaan --}}
+    <x-modal name="create-library-category" title="Tambah Kategori Perpustakaan">
+        <form action="{{ route('admin-pusat.library-categories.store') }}" method="POST" class="space-y-4">
             @csrf
             <div>
                 <label for="create-name" class="block text-sm font-medium text-gray-700 mb-1">
-                    Nama Tipe <span class="text-red-500">*</span>
+                    Nama Kategori <span class="text-red-500">*</span>
                 </label>
                 <input type="text" id="create-name" name="name" required value="{{ old('name') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-sm"
                     placeholder="Contoh: Ebook, Peraturan, Video">
             </div>
 
+            <div>
+                <label for="create-description" class="block text-sm font-medium text-gray-700 mb-1">
+                    Deskripsi
+                </label>
+                <textarea id="create-description" name="description" rows="3"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-sm"
+                    placeholder="Deskripsi singkat kategori ini...">{{ old('description') }}</textarea>
+            </div>
+
             <div class="flex gap-3 pt-2">
-                <button type="button" x-data @click="$dispatch('close-modal', 'create-library-type')"
+                <button type="button" x-data @click="$dispatch('close-modal', 'create-library-category')"
                     class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm text-center cursor-pointer">
                     Batal
                 </button>
@@ -197,23 +199,32 @@
         </form>
     </x-modal>
 
-    {{-- Modal: Edit Tipe Perpustakaan (satu modal per item) --}}
-    @foreach($libraryTypes as $type)
-        <x-modal name="edit-library-type-{{ $type->id }}" title="Edit Tipe Perpustakaan">
-            <form action="{{ route('admin-pusat.library-types.update', $type->id) }}" method="POST" class="space-y-4">
+    {{-- Modal: Edit Kategori Perpustakaan (satu modal per item) --}}
+    @foreach($libraryCategories as $category)
+        <x-modal name="edit-library-category-{{ $category->id }}" title="Edit Kategori Perpustakaan">
+            <form action="{{ route('admin-pusat.library-categories.update', $category->id) }}" method="POST" class="space-y-4">
                 @csrf
                 @method('PUT')
                 <div>
-                    <label for="edit-name-{{ $type->id }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        Nama Tipe <span class="text-red-500">*</span>
+                    <label for="edit-name-{{ $category->id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Nama Kategori <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="edit-name-{{ $type->id }}" name="name" required value="{{ old('name', $type->name) }}"
+                    <input type="text" id="edit-name-{{ $category->id }}" name="name" required value="{{ old('name', $category->name) }}"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-sm"
                         placeholder="Contoh: Ebook">
                 </div>
 
+                <div>
+                    <label for="edit-description-{{ $category->id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Deskripsi
+                    </label>
+                    <textarea id="edit-description-{{ $category->id }}" name="description" rows="3"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-sm"
+                        placeholder="Deskripsi singkat kategori ini...">{{ old('description', $category->description) }}</textarea>
+                </div>
+
                 <div class="flex gap-3 pt-2">
-                    <button type="button" x-data @click="$dispatch('close-modal', 'edit-library-type-{{ $type->id }}')"
+                    <button type="button" x-data @click="$dispatch('close-modal', 'edit-library-category-{{ $category->id }}')"
                         class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm text-center cursor-pointer">
                         Batal
                     </button>

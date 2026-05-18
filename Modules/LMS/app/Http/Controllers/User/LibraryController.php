@@ -4,36 +4,31 @@ namespace Modules\LMS\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\LMS\Models\Library;
-use Modules\LMS\Models\LibraryType;
+use Modules\LMS\Models\LibraryCategory;
+use Modules\LMS\Services\LibraryService;
 
 class LibraryController extends Controller
 {
+    public function __construct(
+        private LibraryService $libraryService
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $type = $request->input('type'); // slug of the library type
+        $type = $request->input('type');
 
-        $query = Library::with('libraryType');
+        $libraries = $this->libraryService->paginateFiltered(
+            search: $search,
+            libraryCategoryName: $type,
+            limit: 12
+        );
 
-        if ($search) {
-            $query->where('title', 'like', "%{$search}%");
-        }
+        $libraryCategories = LibraryCategory::orderBy('name')->get();
 
-        if ($type) {
-            $query->whereHas('libraryType', function ($q) use ($type) {
-                $q->where('slug', $type);
-            });
-        }
-
-        $libraries = $query->latest()->paginate(12);
-        
-        // Fetch types for the filter tabs (only those that actually have active libraries might be ideal, but we'll fetch all active types)
-        $libraryTypes = LibraryType::orderBy('name')->get();
-
-        return view('lms::user.library.index', compact('libraries', 'libraryTypes', 'type', 'search'));
+        return view('lms::user.library.index', compact('libraries', 'libraryCategories', 'type', 'search'));
     }
 }

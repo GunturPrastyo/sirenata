@@ -4,7 +4,6 @@ namespace Modules\LMS\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\LMS\Database\Factories\LibraryFactory;
 
 class Library extends Model
 {
@@ -14,7 +13,7 @@ class Library extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'library_type_id',
+        'library_category_id',
         'title',
         'description',
         'cover_image',
@@ -24,18 +23,13 @@ class Library extends Model
         'created_by',
     ];
 
-    public function libraryType()
+    public function libraryCategory()
     {
-        return $this->belongsTo(LibraryType::class, 'library_type_id');
+        return $this->belongsTo(LibraryCategory::class, 'library_category_id');
     }
 
     public function creator()
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by');
     }
-
-    // protected static function newFactory(): LibraryFactory
-    // {
-    //     // return LibraryFactory::new();
-    // }
 }

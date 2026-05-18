@@ -20,7 +20,7 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $userScope = \Modules\User\Models\UserScope::where('user_id', $user->id)->first();
@@ -37,15 +37,31 @@ class DashboardController extends Controller
             ->where('roles.name', 'user')
             ->where('user_scopes.regency_code', $regencyCode);
 
-        // SDM per Tahun (based on user registration date)
+        // Filter by Year
+        $currentYear = (int) date('Y');
+        $selectedYear = (int) $request->input('year', $currentYear);
+
+        // Generate year options from (currentYear - 15) to currentYear
+        $years = [];
+        for ($y = $currentYear; $y >= $currentYear - 15; $y--) {
+            $years[] = $y;
+        }
+
+        $startYear = $selectedYear - 4;
+        $endYear = $selectedYear;
+
+        // SDM per Tahun (filtered by 5-year block ending at selectedYear)
         $usersByYear = (clone $baseUserQuery)
+            ->whereYear('users.created_at', '>=', $startYear)
+            ->whereYear('users.created_at', '<=', $endYear)
             ->select(\Illuminate\Support\Facades\DB::raw('YEAR(users.created_at) as year'), \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy(\Illuminate\Support\Facades\DB::raw('YEAR(users.created_at)'))
             ->pluck('total', 'year');
 
-        // Note: For mock purposes, if no data exists, we pass an empty array
-        // We will handle the fallback or format in the blade template.
-        $sdmPerTahun = $usersByYear->toArray();
+        $sdmPerTahun = [];
+        for ($y = $startYear; $y <= $endYear; $y++) {
+            $sdmPerTahun[$y] = $usersByYear->get($y, 0);
+        }
 
         // Gender stats
         $genders = (clone $baseUserQuery)
@@ -62,6 +78,8 @@ class DashboardController extends Controller
             'sdmPerTahun' => $sdmPerTahun,
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
+            'years' => $years,
+            'selectedYear' => $selectedYear,
         ]);
     }
 
