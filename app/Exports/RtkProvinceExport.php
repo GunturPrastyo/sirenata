@@ -87,7 +87,7 @@ class RtkProvinceExport implements
             $row->status_document?->label(),
             $row->is_active ? 'Ya' : 'Tidak',
             $row->type?->value,
-            $row->document_path ?? '-',
+            $row->document_url ?? '-',
         ];
     }
 
