@@ -36,6 +36,46 @@
             </div>
         @endif
 
+
+
+        {{-- Filter Bar --}}
+        <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                    {{-- Filter Status --}}
+                    <div class="relative w-full sm:w-48">
+                        <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <select name="status" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua Status</option>
+                            <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
+                            <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
+                        </select>
+                    </div>
+                    {{-- Per Page --}}
+                    <div class="relative w-full sm:w-44">
+                        <select name="per_page" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            @foreach ([10, 20, 50, 100] as $page)
+                                <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>{{ $page }} / Halaman</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="flex w-full lg:w-96 gap-2">
+                    <div class="relative flex-1">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari penandatangan..."
+                            class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button type="submit" class="inline-flex items-center gap-2 px-4 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
+                        <i class="fas fa-search text-xs"></i><span class="hidden sm:inline">Search</span>
+                    </button>
+                    <a href="{{ route('admin-pusat.certificates.index') }}" class="inline-flex items-center gap-2 px-4 rounded-md border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition">
+                        <i class="fas fa-rotate-left text-xs"></i><span class="hidden sm:inline">Reset</span>
+                    </a>
+                </div>
+            </div>
+        </form>
+
         <!-- Table Card -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -98,35 +138,43 @@
                                             Aktif
                                         </span>
                                     @else
-                                        <form action="{{ route('admin-pusat.certificates.activate', $setting->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit"
-                                                class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 text-slate-500 border border-slate-200 rounded-full text-xs font-medium hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition cursor-pointer"
-                                                title="Klik untuk mengaktifkan">
-                                                <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
-                                                Nonaktif
-                                            </button>
-                                        </form>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 text-slate-500 border border-slate-200 rounded-full text-xs font-medium">
+                                            <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                                            Nonaktif
+                                        </span>
                                     @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
+                                        {{-- 1. Aktifkan --}}
+                                        @if(!$setting->is_active)
+                                        <li>
+                                            <form action="{{ route('admin-pusat.certificates.activate', $setting->id) }}" method="POST" class="inline m-0 p-0">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-emerald-600 cursor-pointer">
+                                                    Aktifkan
+                                                </button>
+                                            </form>
+
+
+                                        </li>
+                                        @endif
+
+                                        {{-- 2. Ubah --}}
                                         <li>
                                             <button type="button"
                                                 x-data
                                                 @click="$dispatch('open-modal', 'edit-certificate-setting-{{ $setting->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600 cursor-pointer">Edit</button>
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600 cursor-pointer">Ubah</button>
                                         </li>
+
+                                        {{-- 3. Hapus --}}
                                         <li>
-                                            <form action="{{ route('admin-pusat.certificates.destroy', $setting->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus tanda tangan ini?');"
-                                                class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="w-full text-left p-2 text-red-600">Hapus</button>
-                                            </form>
+                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                <x-modal-delete :id="'delete-cert-' . $setting->id" message="Apakah Anda yakin ingin menghapus tanda tangan ini?"
+                                                    :item-name="$setting->signer_name" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route('admin-pusat.certificates.destroy', $setting->id)" />
+                                            </div>
                                         </li>
                                     </x-table.action>
                                 </td>

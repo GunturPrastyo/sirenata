@@ -6,15 +6,29 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Modules\LMS\Models\CertificateSetting;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class CertificateController extends Controller
 {
     /**
      * Display a listing of certificate signature settings.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $settings = CertificateSetting::latest()->paginate(10);
+        $query = CertificateSetting::query();
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('signer_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('signer_title', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active');
+        }
+
+        $settings = $query->latest()->paginate($request->input('per_page', 10));
 
         return view('lms::admin-pusat.certificates.index', compact('settings'));
     }
@@ -42,8 +56,9 @@ class CertificateController extends Controller
 
         $setting->save();
 
-        return redirect()->route('admin-pusat.certificates.index')
-            ->with('success', 'Tanda tangan sertifikat berhasil ditambahkan.');
+        ToastMagic::success('Tanda tangan sertifikat berhasil ditambahkan.');
+
+        return redirect()->route('admin-pusat.certificates.index');
     }
 
     /**
@@ -70,8 +85,9 @@ class CertificateController extends Controller
 
         $certificate->save();
 
-        return redirect()->route('admin-pusat.certificates.index')
-            ->with('success', 'Tanda tangan sertifikat berhasil diperbarui.');
+        ToastMagic::success('Tanda tangan sertifikat berhasil diperbarui.');
+
+        return redirect()->route('admin-pusat.certificates.index');
     }
 
     /**
@@ -86,8 +102,9 @@ class CertificateController extends Controller
         $certificate->is_active = true;
         $certificate->save();
 
-        return redirect()->route('admin-pusat.certificates.index')
-            ->with('success', 'Tanda tangan berhasil diaktifkan.');
+        ToastMagic::success('Tanda tangan berhasil diaktifkan.');
+
+        return redirect()->route('admin-pusat.certificates.index');
     }
 
     /**
@@ -101,7 +118,8 @@ class CertificateController extends Controller
 
         $certificate->delete();
 
-        return redirect()->route('admin-pusat.certificates.index')
-            ->with('success', 'Tanda tangan sertifikat berhasil dihapus.');
+        ToastMagic::success('Tanda tangan sertifikat berhasil dihapus.');
+
+        return redirect()->route('admin-pusat.certificates.index');
     }
 }
