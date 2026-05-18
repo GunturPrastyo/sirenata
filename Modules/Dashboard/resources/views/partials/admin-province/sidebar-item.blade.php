@@ -29,10 +29,10 @@
     </a>
 </li>
 
-<li x-data="{ open: {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan.index', 'admin-province.pemanfaatan-rtkd*') ? 'true' : 'false' }} }">
+<li x-data="{ open: {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan.index') ? 'true' : 'false' }} }">
     <button @click="open = !open"
         class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
-        {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan*', 'admin-province.pemanfaatan-rtkd*')
+        {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan*')
             ? 'text-indigo-600 bg-purple-100'
             : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -69,18 +69,10 @@
                 Rekapitulasi Rencana Tenaga Kerja
             </a>
         </li>
-
-        <li>
-            <a href="{{ route('admin-province.pemanfaatan-rtkd.index') }}"
-                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
-                {{ request()->routeIs('admin-province.pemanfaatan-rtkd*')
-                    ? 'text-indigo-600 bg-purple-100'
-                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
-                Pemanfaatan RTKD
-            </a>
-        </li>
     </ul>
 </li>
+
+
 
 <li x-data="{ open: {{ request()->routeIs('admin-province.rekapitulasi*') ? 'true' : 'false' }} }">
     <button @click="open = !open"
@@ -122,6 +114,21 @@
             </a>
         </li>
     </ul>
+</li>
+
+<li>
+    <a href="{{ route('admin-province.pemanfaatan-rtkd.index') }}"
+        class="flex items-center px-2 py-1.5 rounded-md transition
+        {{ request()->routeIs('admin-province.pemanfaatan-rtkd*')
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+        <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4" />
+        </svg>
+        <span class="ms-3">Pemanfaatan RTKD</span>
+    </a>
 </li>
 
 <li>

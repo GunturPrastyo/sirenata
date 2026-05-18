@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Modules\LMS\Http\Controllers\AdminProvince\RekapitulasiController as AdminProvinceRekapitulasiController;
 use Modules\LMS\Http\Controllers\AdminKabKota\RekapitulasiController as AdminKabKotaRekapitulasiController;
 use Modules\LMS\Http\Controllers\AdminPusat\RekapitulasiController;
+use Modules\LMS\Http\Controllers\AdminPusat\CertificateController as AdminPusatCertificateController;
+use Modules\LMS\Http\Controllers\AdminPusat\LibraryCategoryController as AdminPusatLibraryCategoryController;
+use Modules\LMS\Http\Controllers\AdminPusat\LibraryController as AdminPusatLibraryController;
+use Modules\LMS\Http\Controllers\User\LibraryController as UserLibraryController;
+use Modules\LMS\Http\Controllers\User\CourseController as UserCourseController;
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(RekapitulasiController::class)->group(function () {
@@ -17,14 +22,11 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/rekap-user-kab-kota/{regencyCode}/export', 'exportRekapUserRegency')->name('rekap-user-kab-kota.export');
     });
 
-    Route::resource('library-categories', \Modules\LMS\Http\Controllers\AdminPusat\LibraryCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
-    Route::resource('libraries', \Modules\LMS\Http\Controllers\AdminPusat\LibraryController::class);
+    Route::resource('library-categories', AdminPusatLibraryCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('libraries', AdminPusatLibraryController::class)->only(['index', 'store', 'update', 'destroy']);
 
-    Route::get('/certificates', [\Modules\LMS\Http\Controllers\AdminPusat\CertificateController::class, 'index'])->name('certificates.index');
-    Route::post('/certificates', [\Modules\LMS\Http\Controllers\AdminPusat\CertificateController::class, 'store'])->name('certificates.store');
-    Route::put('/certificates/{certificate}', [\Modules\LMS\Http\Controllers\AdminPusat\CertificateController::class, 'update'])->name('certificates.update');
-    Route::patch('/certificates/{certificate}/activate', [\Modules\LMS\Http\Controllers\AdminPusat\CertificateController::class, 'activate'])->name('certificates.activate');
-    Route::delete('/certificates/{certificate}', [\Modules\LMS\Http\Controllers\AdminPusat\CertificateController::class, 'destroy'])->name('certificates.destroy');
+    Route::resource('certificates', AdminPusatCertificateController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('certificates/{certificate}/activate', [AdminPusatCertificateController::class, 'activate'])->name('certificates.activate');
 });
 
 Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->name('admin-province.')->group(function () {
@@ -47,8 +49,9 @@ Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->na
 });
 
 Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(function () {
-    Route::get('/library', [\Modules\LMS\Http\Controllers\User\LibraryController::class, 'index'])->name('library.index');
-    Route::prefix('course')->name('course.')->controller(\Modules\LMS\Http\Controllers\User\CourseController::class)->group(function () {
+    Route::get('/library', [UserLibraryController::class, 'index'])->name('library.index');
+
+    Route::prefix('course')->name('course.')->controller(UserCourseController::class)->group(function () {
         Route::get('/my-course', 'allMyCourse')->name('my-course');
         Route::get('/my-course/progress', 'myCourseProgress')->name('my-course.progress');
         Route::get('/my-course/finish', 'myCourseFinish')->name('my-course.finish');

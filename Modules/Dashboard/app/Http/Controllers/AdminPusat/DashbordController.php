@@ -85,7 +85,7 @@ class DashbordController extends Controller
         // Masa Aktif RTK per Provinsi (active RTK per province with remaining years)
         $availableRtkYears = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
             ->where('is_active', true)
-            ->where('status', 'approved')
+            ->where('status_verification', 'approved')
             ->pluck('start_date')
             ->unique()
             ->sortDesc()
@@ -96,7 +96,7 @@ class DashbordController extends Controller
         
         $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
             ->where('is_active', true)
-            ->where('status', 'approved');
+            ->where('status_verification', 'approved');
             
         if ($selectedRtkYear !== 'all') {
             $queryRtk->where('end_date', '>=', (int) $selectedRtkYear);
@@ -119,7 +119,7 @@ class DashbordController extends Controller
         // Data for second chart: RTK filtered by end_date
         $availableRtkEndYears = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
             ->where('is_active', true)
-            ->where('status', 'approved')
+            ->where('status_verification', 'approved')
             ->pluck('end_date')
             ->unique()
             ->sortDesc()
@@ -130,7 +130,7 @@ class DashbordController extends Controller
         
         $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
             ->where('is_active', true)
-            ->where('status', 'approved');
+            ->where('status_verification', 'approved');
             
         if ($selectedRtkEndYear !== 'all') {
             $queryRtkEnd->where('end_date', (int) $selectedRtkEndYear);
@@ -151,8 +151,8 @@ class DashbordController extends Controller
 
         // Status Distribusi RTK (all types)
         $rtkStatusDistribution = DB::table('rencana_tenaga_kerjas')
-            ->select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
+            ->select('status_verification as status', DB::raw('count(*) as total'))
+            ->groupBy('status_verification')
             ->pluck('total', 'status');
 
         $maxOptionYear = !empty($availableRtkEndYears) ? max($availableRtkEndYears) : $currentYear;

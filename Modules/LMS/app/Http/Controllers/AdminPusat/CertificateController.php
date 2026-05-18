@@ -10,9 +10,6 @@ use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class CertificateController extends Controller
 {
-    /**
-     * Display a listing of certificate signature settings.
-     */
     public function index(Request $request)
     {
         $query = CertificateSetting::query();
@@ -33,9 +30,6 @@ class CertificateController extends Controller
         return view('lms::admin-pusat.certificates.index', compact('settings'));
     }
 
-    /**
-     * Store a newly created certificate setting.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -61,9 +55,6 @@ class CertificateController extends Controller
         return redirect()->route('admin-pusat.certificates.index');
     }
 
-    /**
-     * Update the specified certificate setting.
-     */
     public function update(Request $request, CertificateSetting $certificate)
     {
         $validated = $request->validate([
@@ -90,15 +81,10 @@ class CertificateController extends Controller
         return redirect()->route('admin-pusat.certificates.index');
     }
 
-    /**
-     * Set a certificate setting as active.
-     */
     public function activate(CertificateSetting $certificate)
     {
-        // Deactivate all
         CertificateSetting::where('is_active', true)->update(['is_active' => false]);
 
-        // Activate selected
         $certificate->is_active = true;
         $certificate->save();
 
@@ -107,9 +93,6 @@ class CertificateController extends Controller
         return redirect()->route('admin-pusat.certificates.index');
     }
 
-    /**
-     * Remove the specified certificate setting.
-     */
     public function destroy(CertificateSetting $certificate)
     {
         if ($certificate->signature_image) {

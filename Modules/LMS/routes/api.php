@@ -13,7 +13,6 @@ use Modules\LMS\Http\Controllers\Api\Course\CourseProgressController;
 
 Route::prefix('v1')->group(function () {
 
-    // ── Public ──
     Route::prefix('courses')->group(function () {
         Route::get('/', [CourseController::class, 'index']);
         Route::get('/{slug}', [CourseController::class, 'show']);
@@ -30,9 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/{category:slug}', [CategoryController::class, 'show']);
     });
 
-    // ── Auth ──
     Route::middleware('auth:sanctum')->group(function () {
-        // My courses — course yang diikuti user yang login
         Route::get('/my-courses', [CourseStudentController::class, 'myCourses']);
         
         Route::prefix('sections/{courseSection}')->group(function () {
@@ -40,10 +37,8 @@ Route::prefix('v1')->group(function () {
         });
         
         Route::post('/contents/{content}/complete', [CourseProgressController::class, 'complete']);
-        // Detail progress course — untuk halaman course detail
         Route::get('/courses/{slug}/progress', [CourseProgressController::class, 'show']);
         Route::get('/courses/{slug}', [CourseProgressController::class, 'show']);
-
 
         Route::prefix('contents')->group(function () {
             Route::get('/{content}', [SectionContentController::class, 'show']);
@@ -52,11 +47,9 @@ Route::prefix('v1')->group(function () {
         Route::prefix('courses/{slug}')->group(function () {
             Route::post('/testimonis', [CourseTestimoniController::class, 'store']);
 
-            // Student enroll / unenroll
             Route::post('/enroll', [CourseStudentController::class, 'enroll']);
             Route::delete('/unenroll', [CourseStudentController::class, 'unenroll']);
 
-            // Mentors (public read)
             Route::get('/mentors', [CourseMentorController::class, 'index']);
         });
 
@@ -65,7 +58,6 @@ Route::prefix('v1')->group(function () {
             Route::delete('/{testimoni}/delete', [CourseTestimoniController::class, 'destroy']);
         });
 
-        // ── admin-pusat 
         Route::middleware('role:admin-pusat')->group(function () {
             Route::prefix('courses')->group(function () {
                 Route::post('/', [CourseController::class, 'store']);
@@ -78,17 +70,14 @@ Route::prefix('v1')->group(function () {
             });
 
             Route::prefix('courses/{slug}')->group(function () {
-                // Students management
                 Route::get('/students', [CourseStudentController::class, 'index']);
                 Route::patch('/students/{userId}/status', [CourseStudentController::class, 'updateStatus']);
 
-                // Mentors management
                 Route::post('/mentors', [CourseMentorController::class, 'store']);
                 Route::patch('/mentors/{userId}/activate', [CourseMentorController::class, 'toggleMentorActivation']);
                 Route::delete('/mentors/{userId}/delete', [CourseMentorController::class, 'destroy']);
             });
 
-            // Sections
             Route::prefix('courses/{slug}/sections')->group(function () {
                 Route::post('/', [CourseSectionController::class, 'store']);
                 Route::patch('/reorder', [CourseSectionController::class, 'reorder']);
@@ -99,7 +88,6 @@ Route::prefix('v1')->group(function () {
                 Route::delete('/{section}', [CourseSectionController::class, 'destroy']);
             });
 
-            // Contents
             Route::prefix('sections/{courseSection}/contents')->group(function () {
                 Route::post('/', [SectionContentController::class, 'store']);
                 Route::patch('/reorder', [SectionContentController::class, 'reorder']);

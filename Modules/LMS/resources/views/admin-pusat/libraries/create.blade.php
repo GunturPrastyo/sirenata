@@ -1,6 +1,5 @@
 <x-dashboard::layouts.dashboard title="Tambah Materi Perpustakaan - E-Learning">
     <div class="p-2 sm:p-6">
-        <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -56,9 +55,7 @@
                     @csrf
 
                     <div class="flex flex-col lg:flex-row gap-8">
-                        {{-- Left: Form Inputs --}}
                         <div class="flex-1 space-y-5">
-                            {{-- Baris 1: Judul --}}
                             <div>
                                 <label for="create-title" class="block text-sm font-medium text-gray-700 mb-1">
                                     Judul Materi <span class="text-red-500">*</span>
@@ -68,7 +65,6 @@
                                     placeholder="Judul buku / dokumen">
                             </div>
 
-                            {{-- Baris 2: Category + Sampul --}}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
                                     <label for="create-library-category" class="block text-sm font-medium text-gray-700 mb-1">
@@ -91,7 +87,6 @@
                                 </div>
                             </div>
 
-                            {{-- Deskripsi --}}
                             <div>
                                 <label for="create-description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat</label>
                                 <textarea id="create-description" name="description" rows="3"
@@ -99,7 +94,6 @@
                                     placeholder="Deskripsi materi...">{{ old('description') }}</textarea>
                             </div>
 
-                            {{-- Baris 3: Jenis File --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Jenis File <span class="text-red-500">*</span></label>
                                 <div class="flex gap-4">
@@ -127,7 +121,6 @@
                                 </div>
                             </div>
 
-                            {{-- Input Dokumen --}}
                             <div x-show="fileType === 'document'">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     File Dokumen PDF <span class="text-xs text-gray-500">(max 20MB)</span>
@@ -136,7 +129,6 @@
                                     class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
                             </div>
 
-                            {{-- Input Video (File Upload) --}}
                             <div x-show="fileType === 'video'">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     File Video <span class="text-xs text-gray-500">(mp4, webm, max 50MB)</span>
@@ -144,7 +136,7 @@
                                 <input type="file" name="video_path" accept="video/mp4,video/webm" @change="handleVideoChange($event)"
                                     x-bind:disabled="fileType !== 'video'"
                                     class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
-                                
+
                                 <div class="relative mt-4 mb-4">
                                     <div class="absolute inset-0 flex items-center" aria-hidden="true">
                                         <div class="w-full border-t border-gray-200"></div>
@@ -161,7 +153,6 @@
                                 </div>
                             </div>
 
-                            {{-- Input Link --}}
                             <div x-show="fileType === 'link'">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     URL Link Eksternal <span class="text-red-500">*</span>
@@ -172,26 +163,21 @@
                             </div>
                         </div>
 
-                        {{-- Right: Preview Panel --}}
                         <div class="lg:w-96 shrink-0">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Preview</label>
                             <div class="border border-gray-200 rounded-xl bg-gray-50 min-h-[350px] flex items-center justify-center overflow-hidden">
-                                {{-- PDF Preview --}}
                                 <template x-if="previewContent && previewContent.type === 'pdf'">
                                     <iframe :src="previewContent.url" class="w-full h-[400px] rounded-lg" frameborder="0"></iframe>
                                 </template>
 
-                                {{-- Video File Preview --}}
                                 <template x-if="previewContent && previewContent.type === 'videofile'">
                                     <video :src="previewContent.url" class="w-full rounded-lg" controls></video>
                                 </template>
 
-                                {{-- YouTube Preview --}}
                                 <template x-if="previewContent && previewContent.type === 'youtube'">
                                     <iframe :src="previewContent.url" class="w-full h-[250px] rounded-lg" frameborder="0" allowfullscreen></iframe>
                                 </template>
 
-                                {{-- Link Preview --}}
                                 <template x-if="previewContent && previewContent.type === 'link'">
                                     <div class="p-6 text-center w-full">
                                         <svg class="mx-auto w-12 h-12 text-indigo-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -200,7 +186,6 @@
                                     </div>
                                 </template>
 
-                                {{-- Empty State --}}
                                 <template x-if="!previewContent">
                                     <div class="text-center p-8">
                                         <svg class="mx-auto w-14 h-14 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>

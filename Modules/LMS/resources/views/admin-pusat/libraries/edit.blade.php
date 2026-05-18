@@ -1,5 +1,4 @@
 @php
-    // Determine initial file type for edit form
     $initialFileType = 'document';
     $initialLinkUrl = '';
     $initialPreviewUrl = null;
@@ -22,7 +21,6 @@
 @endphp
 <x-dashboard::layouts.dashboard title="Edit Materi Perpustakaan - E-Learning">
     <div class="p-2 sm:p-6">
-        <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -79,9 +77,7 @@
                     @method('PUT')
 
                     <div class="flex flex-col lg:flex-row gap-8">
-                        {{-- Left: Form Inputs --}}
                         <div class="flex-1 space-y-5">
-                            {{-- Baris 1: Judul --}}
                             <div>
                                 <label for="edit-title" class="block text-sm font-medium text-gray-700 mb-1">
                                     Judul Materi <span class="text-red-500">*</span>
@@ -92,7 +88,6 @@
                                     placeholder="Judul buku / dokumen">
                             </div>
 
-                            {{-- Baris 2: Category + Sampul --}}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
                                     <label for="edit-category" class="block text-sm font-medium text-gray-700 mb-1">
@@ -120,7 +115,6 @@
                                 </div>
                             </div>
 
-                            {{-- Deskripsi --}}
                             <div>
                                 <label for="edit-desc" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat</label>
                                 <textarea id="edit-desc" name="description" rows="3"
@@ -128,7 +122,6 @@
                                     placeholder="Deskripsi materi...">{{ old('description', $library->description) }}</textarea>
                             </div>
 
-                            {{-- Baris 3: Jenis File --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Jenis File <span class="text-red-500">*</span></label>
                                 <div class="flex gap-4">
@@ -156,7 +149,6 @@
                                 </div>
                             </div>
 
-                            {{-- Input Dokumen --}}
                             <div x-show="fileType === 'document'">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     File Dokumen PDF <span class="text-xs text-gray-500">(max 20MB, abaikan jika tidak ubah)</span>
@@ -170,7 +162,6 @@
                                     class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
                             </div>
 
-                            {{-- Input Video (File Upload atau Link YouTube) --}}
                             <div x-show="fileType === 'video'" class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -201,7 +192,6 @@
                                 </div>
                             </div>
 
-                            {{-- Input Link --}}
                             <div x-show="fileType === 'link'">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     URL Link Eksternal <span class="text-red-500">*</span>
@@ -212,7 +202,6 @@
                             </div>
                         </div>
 
-                        {{-- Right: Preview Panel --}}
                         <div class="lg:w-96 shrink-0">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Preview Konten Saat Ini / Baru</label>
                             <div class="border border-gray-200 rounded-xl bg-gray-50 min-h-[350px] flex items-center justify-center overflow-hidden">

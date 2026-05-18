@@ -9,9 +9,6 @@ class Library extends Model
 {
     use HasFactory, \Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-    /**
-     * The attributes that are mass assignable.
-     */
     protected $fillable = [
         'library_category_id',
         'title',

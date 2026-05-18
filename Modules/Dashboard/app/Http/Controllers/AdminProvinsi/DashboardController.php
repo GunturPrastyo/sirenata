@@ -80,7 +80,7 @@ class DashboardController extends Controller
         $availableRtkYears = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
             ->where('is_active', true)
-            ->where('status', 'approved')
+            ->where('status_verification', 'approved')
             ->pluck('start_date')
             ->unique()
             ->sortDesc()
@@ -92,7 +92,7 @@ class DashboardController extends Controller
         $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
             ->where('is_active', true)
-            ->where('status', 'approved');
+            ->where('status_verification', 'approved');
             
         if ($selectedRtkYear !== 'all') {
             $queryRtk->where('end_date', '>=', (int) $selectedRtkYear);
@@ -117,7 +117,7 @@ class DashboardController extends Controller
         $availableRtkEndYears = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
             ->where('is_active', true)
-            ->where('status', 'approved')
+            ->where('status_verification', 'approved')
             ->pluck('end_date')
             ->unique()
             ->sortDesc()
@@ -129,7 +129,7 @@ class DashboardController extends Controller
         $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
             ->where('is_active', true)
-            ->where('status', 'approved');
+            ->where('status_verification', 'approved');
             
         if ($selectedRtkEndYear !== 'all') {
             $queryRtkEnd->where('end_date', (int) $selectedRtkEndYear);
@@ -153,8 +153,8 @@ class DashboardController extends Controller
         $rtkStatusDistribution = \Illuminate\Support\Facades\DB::table('rencana_tenaga_kerjas')
             ->where('province_code', $provinceCode)
             ->where('type', TypeRtk::KAB_KOTA->value)
-            ->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
-            ->groupBy('status')
+            ->select('status_verification as status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('status_verification')
             ->pluck('total', 'status');
 
         $maxOptionYear = !empty($availableRtkEndYears) ? max($availableRtkEndYears) : $currentYear;

@@ -9,9 +9,6 @@ use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class LibraryCategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -25,9 +22,6 @@ class LibraryCategoryController extends Controller
         return view('lms::admin-pusat.library-categories.index', compact('libraryCategories', 'search'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request) 
     {
         $validated = $request->validate([
@@ -42,9 +36,6 @@ class LibraryCategoryController extends Controller
         return redirect()->route('admin-pusat.library-categories.index');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id) 
     {
         $libraryCategory = LibraryCategory::findOrFail($id);
@@ -61,9 +52,6 @@ class LibraryCategoryController extends Controller
         return redirect()->route('admin-pusat.library-categories.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id) 
     {
         $libraryCategory = LibraryCategory::findOrFail($id);
