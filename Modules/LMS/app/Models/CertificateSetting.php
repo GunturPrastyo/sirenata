@@ -17,9 +17,6 @@ class CertificateSetting extends Model
         'is_active' => 'boolean',
     ];
 
-    /**
-     * Get the current active certificate setting.
-     */
     public static function getActive(): ?self
     {
         return static::where('is_active', true)->first();

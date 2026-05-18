@@ -11,14 +11,6 @@ use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class LibraryService
 {
-    /**
-     * Build filtered query builder for Library
-     *
-     * @param string|null $search
-     * @param string|null $libraryCategoryId
-     * @param string|null $libraryCategoryName
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function getFilteredQueryBuilder(
         ?string $search = null,
         ?string $libraryCategoryId = null,
@@ -33,9 +25,6 @@ class LibraryService
             ->latest();
     }
 
-    /**
-     * Get paginated filtered Library data
-     */
     public function paginateFiltered(
         ?string $search = null,
         ?string $libraryCategoryId = null,
@@ -47,9 +36,6 @@ class LibraryService
             ->withQueryString();
     }
 
-    /**
-     * Create a new Library
-     */
     public function createLibrary(array $data): Library
     {
         return DB::transaction(function () use ($data) {
@@ -86,9 +72,6 @@ class LibraryService
         });
     }
 
-    /**
-     * Update an existing Library
-     */
     public function updateLibrary(Library $library, array $data): Library
     {
         return DB::transaction(function () use ($library, $data) {
@@ -133,9 +116,6 @@ class LibraryService
         });
     }
 
-    /**
-     * Delete a Library and its associated files
-     */
     public function deleteLibrary(Library $library): void
     {
         if ($library->cover_image) {

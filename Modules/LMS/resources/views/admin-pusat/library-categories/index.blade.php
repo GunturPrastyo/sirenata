@@ -38,45 +38,6 @@
 
 
 
-        <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-
-                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    <div class="relative w-full sm:w-44">
-                        <select name="per_page" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            @foreach ([10, 20, 50, 100] as $page)
-                                <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
-                                    {{ $page }} / Halaman
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex w-full lg:w-96 gap-2">
-                    <div class="relative flex-1">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" name="search" value="{{ $search ?? '' }}"
-                            placeholder="Cari kategori perpustakaan..." class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                    focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-
-                    <button type="submit" class="inline-flex items-center gap-2 px-4 rounded-md
-                bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
-                        <i class="fas fa-search text-xs"></i>
-                        <span class="hidden sm:inline">Cari</span>
-                    </button>
-
-                    <a href="{{ route('admin-pusat.library-categories.index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
-                border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition">
-                        <i class="fas fa-rotate-left text-xs"></i>
-                        <span class="hidden sm:inline">Reset</span>
-                    </a>
-                </div>
-
-            </div>
-        </form>
 
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div
@@ -126,14 +87,12 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        {{-- 1. Ubah --}}
                                         <li>
                                             <button type="button"
                                                 x-data
                                                 @click="$dispatch('open-modal', 'edit-library-category-{{ $category->id }}')"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600 cursor-pointer">Ubah</button>
                                         </li>
-                                        {{-- 2. Hapus --}}
                                         <li>
                                             <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
                                                 <x-modal-delete :id="'delete-lib-cat-' . $category->id" message="Apakah Anda yakin ingin menghapus kategori perpustakaan ini?"
@@ -161,7 +120,6 @@
         </div>
     </div>
 
-    {{-- Modal: Tambah Kategori Perpustakaan --}}
     <x-modal name="create-library-category" title="Tambah Kategori Perpustakaan">
         <form action="{{ route('admin-pusat.library-categories.store') }}" method="POST" class="space-y-4">
             @csrf
@@ -196,7 +154,6 @@
         </form>
     </x-modal>
 
-    {{-- Modal: Edit Kategori Perpustakaan (satu modal per item) --}}
     @foreach($libraryCategories as $category)
         <x-modal name="edit-library-category-{{ $category->id }}" title="Edit Kategori Perpustakaan">
             <form action="{{ route('admin-pusat.library-categories.update', $category->id) }}" method="POST" class="space-y-4">

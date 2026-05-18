@@ -164,12 +164,10 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        {{-- 1. Ubah --}}
                                         <li>
                                             <button type="button" x-data @click="$dispatch('open-modal', 'edit-library-{{ $library->id }}')"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600 cursor-pointer text-left">Ubah</button>
                                         </li>
-                                        {{-- 2. Hapus --}}
                                         <li>
                                             <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
                                                 <x-modal-delete :id="'delete-library-' . $library->id" message="Apakah Anda yakin ingin menghapus materi ini?"
@@ -197,7 +195,6 @@
         </div>
     </div>
 
-    <!-- Preview Modal -->
     <x-modal name="preview-modal" title="Preview Materi" maxWidth="sm:max-w-4xl">
         <div x-data="{
             url: '',
@@ -427,7 +424,6 @@
 
     @foreach($libraries as $library)
         @php
-            // Determine initial file type for edit form
             $initialFileType = 'document';
             $initialLinkUrl = '';
             $initialPreviewUrl = null;
