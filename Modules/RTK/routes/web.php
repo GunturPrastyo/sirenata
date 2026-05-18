@@ -41,6 +41,8 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
     Route::get('hasil-pemanfaatan-rtkd', [HasilPemanfaatanRtkdController::class, 'index'])->name('hasil-pemanfaatan-rtkd.index');
     Route::get('hasil-pemanfaatan-rtkd/{id}', [HasilPemanfaatanRtkdController::class, 'show'])->name('hasil-pemanfaatan-rtkd.show');
     Route::patch('hasil-pemanfaatan-rtkd/{id}/verify', [HasilPemanfaatanRtkdController::class, 'verify'])->name('hasil-pemanfaatan-rtkd.verify');
+    Route::get('hasil-pemanfaatan-rtkd/{id}/ubah-sendiri', [HasilPemanfaatanRtkdController::class, 'editOnBehalf'])->name('hasil-pemanfaatan-rtkd.edit-on-behalf');
+    Route::post('hasil-pemanfaatan-rtkd/{id}/ubah-sendiri', [HasilPemanfaatanRtkdController::class, 'storeOnBehalf'])->name('hasil-pemanfaatan-rtkd.store-on-behalf');
 
     Route::prefix('rencana-tenaga-kerja-daerah')->name('rtkd.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaDaerahController::class, 'index'])->name('index');

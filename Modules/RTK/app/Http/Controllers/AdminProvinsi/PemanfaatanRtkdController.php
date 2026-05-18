@@ -21,15 +21,20 @@ class PemanfaatanRtkdController extends Controller
         $user = Auth::user();
         $activePeriod = RtkSurveyPeriod::aktif()->first();
 
-        // Cari submission untuk user ini pada periode aktif
-        $submission = null;
+        // Cari semua submission untuk user ini pada periode aktif
+        $submissions = collect();
         if ($activePeriod) {
-            $submission = RtkPemanfaatanSubmission::where('user_id', $user->id)
+            $submissions = RtkPemanfaatanSubmission::where('user_id', $user->id)
                 ->where('period_id', $activePeriod->id)
-                ->first();
+                ->latest()
+                ->get();
         }
 
-        return view('rtk::adminProvince.pemanfaatan-rtkd.index', compact('activePeriod', 'submission'));
+        return view('rtk::adminProvince.pemanfaatan-rtkd.index', [
+            'activePeriod' => $activePeriod,
+            'submissions' => $submissions,
+            'submission' => $submissions->first() // Tetap kirim satu untuk detail di bawah tabel
+        ]);
     }
 
     /**
@@ -99,6 +104,7 @@ class PemanfaatanRtkdController extends Controller
         $data = new RtkPemanfaatanSubmission();
         $data->user_id = $user->id;
         $data->period_id = $activePeriod->id;
+        $data->created_by = auth()->id();
 
         $this->processFormData($request, $data, $latestRtk);
 
@@ -173,21 +179,15 @@ class PemanfaatanRtkdController extends Controller
      */
     private function processFormData(Request $request, RtkPemanfaatanSubmission $data, ?RencanaTenagaKerja $latestRtk)
     {
-        // 1. Auto-fill data RTKD dari sistem utama
+        // 1. Link data RTKD dari sistem utama jika ada
         if ($latestRtk) {
-            $data->q1_punya_rtkd = 'ya';
-            $data->tahun_dari = $latestRtk->start_date;
-            $data->tahun_sampai = $latestRtk->end_date;
             $data->rtk_document_id = $latestRtk->id;
         } else {
-            $data->q1_punya_rtkd = 'tidak';
-            $data->tahun_dari = null;
-            $data->tahun_sampai = null;
             $data->rtk_document_id = null;
         }
 
-        // 2. Jika Tidak Punya RTKD
-        if ($data->q1_punya_rtkd === 'tidak') {
+        // 2. Jika Tidak Punya RTKD (rtk_document_id null)
+        if (!$data->rtk_document_id) {
             $data->q2_jadi_acuan = null;
             $data->dokumen_acuan = null;
             $data->komponen_acuan = null;
