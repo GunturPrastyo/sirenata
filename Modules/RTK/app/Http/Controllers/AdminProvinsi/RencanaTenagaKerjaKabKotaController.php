@@ -2,6 +2,7 @@
 
 namespace Modules\RTK\Http\Controllers\AdminProvinsi;
 
+use App\Exports\RtkRegencyByProvinceExport;
 use App\Exports\RtkRegencyExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -35,13 +36,12 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
      */
     public function index(Request $request)
     {
-        $limit = $request->per_page ?? 10;
-        $search = $request->search;
-        $status = $request->status;
-        $orderBy = in_array($request->orderBy, ['asc', 'desc'])
-            ? $request->orderBy
-            : 'desc';
-        $year = $request->year;
+        $limit              = $request->integer('per_page', 10);
+        $search             = $request->string('search')->toString() ?: null;
+        $statusVerification = $request->string('status_verification')->toString() ?: null;
+        $statusDocument     = $request->string('status_document')->toString() ?: null;
+        $isActive           = $request->input('acuan');
+        $orderBy            = in_array($request->orderBy, ['asc', 'desc']) ? $request->orderBy : 'desc';
 
         $user = Auth::user();
         if (!$user->hasCompleteScope()) {
@@ -53,10 +53,37 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
             search: $search,
             sortBy: $orderBy,
             limit: $limit,
-            status: $status
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive,
         );
 
         return view('rtk::adminProvince.rtkd.index', compact('rtkds'));
+    }
+
+    public function exportRegencyByProvince(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user->hasCompleteScope()) {
+            abort(403, 'Admin provinsi belum memiliki wilayah.');
+        }
+        $provinceCode = $user->scopeArea->province_code;
+        $province = Province::find($provinceCode);
+        $filename = 'RTK-Kab-Kota-' . $province->name . ' - ' . now()->format('Y-m-d') . '.xlsx';
+
+        $isActive = $request->input('acuan');
+        $isActive = ($isActive !== null && $isActive !== '') ? $isActive : null;
+
+        return Excel::download(
+            new RtkRegencyByProvinceExport(
+                provinceCode: $provinceCode,
+                search: $request->string('search')->toString() ?: null,
+                statusVerification: $request->string('status_verification')->toString() ?: null,
+                statusDocument: $request->string('status_document')->toString() ?: null,
+                isActive: $isActive,
+            ),
+            $filename
+        );
     }
 
     public function showRegency(Request $request, string $regencyCode)

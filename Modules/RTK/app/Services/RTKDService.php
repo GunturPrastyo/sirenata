@@ -34,7 +34,9 @@ class RTKDService
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
-        ?string $status = null
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null
     ): LengthAwarePaginator {
         $provinceQuery = $search
             ? Province::search($search)->orderBy('name')
@@ -53,7 +55,11 @@ class RTKDService
             ->where('type', TypeRtk::PROVINSI->value)
             ->whereIn('province_code', $provinceCodes)
             ->where('is_active', true)
-            ->when($status, fn($q) => $q->where('status_verification', $status))
+            ->when($statusVerification, fn($q) => $q->where('status_verification', $statusVerification))
+            ->when($statusDocument, fn($q) => $q->where('status_document', $statusDocument))
+            ->when($isActive !== null && $isActive !== '', function ($q) use ($isActive) {
+                $q->where('is_active', (bool) $isActive);
+            })
             ->orderByDesc('end_date')
             ->get()
             ->groupBy('province_code');
@@ -103,13 +109,17 @@ class RTKDService
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
-        ?string $status = null
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null
     ): LengthAwarePaginator {
         return $this->queryActiveRTKProvince(
             search: $search,
             sortBy: $sortBy,
             limit: $limit,
-            status: $status
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive
         )->withQueryString();
     }
 
@@ -188,7 +198,9 @@ class RTKDService
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
-        ?string $status = null
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null
     ) {
         // 1️⃣ Regency (SQLite - nusa)
         $regencyQuery = $search
@@ -209,7 +221,11 @@ class RTKDService
             ->where('province_code', $provinceCode)
             ->whereIn('regency_code', $regencyCodes)
             ->where('is_active', true)
-            ->when($status, fn($q) => $q->where('status_verification', $status))
+            ->when($statusVerification, fn($q) => $q->where('status_verification', $statusVerification))
+            ->when($statusDocument, fn($q) => $q->where('status_document', $statusDocument))
+            ->when($isActive !== null && $isActive !== '', function ($q) use ($isActive) {
+                $q->where('is_active', (bool) $isActive);
+            })
             ->orderByDesc('end_date')
             ->get()
             ->groupBy('regency_code');
@@ -263,14 +279,18 @@ class RTKDService
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
-        ?string $status = null
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null
     ): LengthAwarePaginator {
         return $this->queryLatestRTKKabKotaByProvince(
             provinceCode: $provinceCode,
             search: $search,
             sortBy: $sortBy,
             limit: $limit,
-            status: $status
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive
         );
     }
 
