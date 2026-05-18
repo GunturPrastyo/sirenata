@@ -3,88 +3,121 @@
 namespace Modules\RTK\Http\Controllers\AdminPusat;
 
 use App\Http\Controllers\Controller;
-
-use Modules\RTK\Http\Requests\SurveyPeriodStoreRequest;
-use Modules\RTK\Http\Requests\SurveyPeriodUpdateRequest;
+use Illuminate\Http\Request;
 use Modules\RTK\Models\RtkSurveyPeriod;
-use Modules\RTK\Services\RtkSurveyPeriodService;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
-use Spatie\Permission\Middleware\PermissionMiddleware;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
-class RtkSurveyPeriodController extends Controller implements HasMiddleware
+class RtkSurveyPeriodController extends Controller
 {
-    public function __construct(
-        private RtkSurveyPeriodService $surveyPeriodService
-    ) {}
-
-    public static function middleware(): array
-    {
-        return [
-            new Middleware(PermissionMiddleware::using('survey-period-view|survey-period-create|survey-period-edit|survey-period-delete'), only: ['index']),
-            new Middleware(PermissionMiddleware::using('survey-period-create'), only: ['store']),
-            new Middleware(PermissionMiddleware::using('survey-period-edit'), only: ['update', 'activate', 'close']),
-            new Middleware(PermissionMiddleware::using('survey-period-delete'), only: ['destroy']),
-        ];
-    }
-
-
-
+    /**
+     * Display a listing of survey periods.
+     */
     public function index()
     {
-        $periods = $this->surveyPeriodService->getPaginatedPeriods();
+        // Auto-close periode yang tanggal selesainya sudah lewat
+        RtkSurveyPeriod::where('status', 'aktif')
+            ->whereNotNull('tanggal_selesai')
+            ->where('tanggal_selesai', '<', now()->toDateString())
+            ->update(['status' => 'tutup']);
+
+        $periods = RtkSurveyPeriod::withCount(['submissions' => function ($query) {
+            $query->where('status_verifikasi', 'verified');
+        }])
+            ->orderByDesc('tahun')
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
 
         return view('rtk::adminPusat.survey-periods.index', compact('periods'));
     }
 
-    public function store(SurveyPeriodStoreRequest $request)
+    /**
+     * Store a newly created survey period.
+     */
+    public function store(Request $request)
     {
-        try {
-            $this->surveyPeriodService->createPeriod($request->validated());
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'tahun' => 'required|integer|min:2000|max:2100',
+            'tanggal_mulai' => 'nullable|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'deskripsi' => 'nullable|string|max:1000',
+        ]);
 
-            return redirect()->route('admin-pusat.survey-periods.index')
-                ->with('success', "Periode \"{$request->nama}\" berhasil dibuat.");
-        } catch (\LogicException $e) {
-            return redirect()->route('admin-pusat.survey-periods.index')
-                ->with('error', $e->getMessage());
+        // Cek apakah sudah ada periode aktif/draft untuk tahun tersebut
+        $exists = RtkSurveyPeriod::where('tahun', $validated['tahun'])
+            ->where('status', '!=', 'tutup')
+            ->exists();
+
+        if ($exists) {
+            ToastMagic::error("Sudah ada periode aktif/draft untuk tahun {$validated['tahun']}.");
+            return redirect()->route('admin-pusat.survey-periods.index');
         }
+
+        $validated['status'] = 'draft';
+
+        RtkSurveyPeriod::create($validated);
+        ToastMagic::success("Periode \"{$validated['nama']}\" berhasil dibuat.");
+        return redirect()->route('admin-pusat.survey-periods.index');
     }
 
-    public function update(SurveyPeriodUpdateRequest $request, RtkSurveyPeriod $survey_period)
+    /**
+     * Update the specified survey period.
+     */
+    public function update(Request $request, RtkSurveyPeriod $survey_period)
     {
-        $this->surveyPeriodService->updatePeriod($survey_period, $request->validated());
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'tanggal_mulai' => 'nullable|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'deskripsi' => 'nullable|string|max:1000',
+        ]);
 
-        return redirect()->route('admin-pusat.survey-periods.index')
-            ->with('success', "Periode \"{$request->nama}\" berhasil diperbarui.");
+        $survey_period->update($validated);
+        ToastMagic::success("Periode \"{$validated['nama']}\" berhasil diperbarui.");
+        return redirect()->route('admin-pusat.survey-periods.index');
     }
 
+    /**
+     * Activate a survey period (only one can be active at a time).
+     */
     public function activate(RtkSurveyPeriod $survey_period)
     {
-        try {
-            $this->surveyPeriodService->activatePeriod($survey_period);
-
-            return redirect()->route('admin-pusat.survey-periods.index')
-                ->with('success', "Periode \"{$survey_period->nama}\" berhasil diaktifkan.");
-        } catch (\LogicException $e) {
-            return redirect()->route('admin-pusat.survey-periods.index')
-                ->with('error', $e->getMessage());
+        // Cek apakah tanggal selesai sudah lewat
+        if ($survey_period->tanggal_selesai && $survey_period->tanggal_selesai->lt(now()->startOfDay())) {
+            ToastMagic::error('Tidak dapat mengaktifkan periode: tanggal selesai sudah lewat. Silakan edit tanggal selesai terlebih dahulu.');
+            return redirect()->route('admin-pusat.survey-periods.index');
         }
+
+        // Tutup semua periode aktif lainnya
+        RtkSurveyPeriod::where('status', 'aktif')
+            ->where('id', '!=', $survey_period->id)
+            ->update(['status' => 'tutup']);
+
+        // Aktifkan periode ini
+        $survey_period->update(['status' => 'aktif']);
+        ToastMagic::success("Periode \"{$survey_period->nama}\" berhasil diaktifkan.");
+        return redirect()->route('admin-pusat.survey-periods.index');
     }
 
+    /**
+     * Close a survey period.
+     */
     public function close(RtkSurveyPeriod $survey_period)
     {
-        $this->surveyPeriodService->closePeriod($survey_period);
-
-        return redirect()->route('admin-pusat.survey-periods.index')
-            ->with('success', "Periode \"{$survey_period->nama}\" berhasil ditutup.");
+        $survey_period->update(['status' => 'tutup']);
+        ToastMagic::success("Periode \"{$survey_period->nama}\" berhasil ditutup.");
+        return redirect()->route('admin-pusat.survey-periods.index');
     }
 
+    /**
+     * Remove the specified survey period.
+     */
     public function destroy(RtkSurveyPeriod $survey_period)
     {
         $nama = $survey_period->nama;
-        $this->surveyPeriodService->deletePeriod($survey_period);
-
-        return redirect()->route('admin-pusat.survey-periods.index')
-            ->with('success', "Periode \"{$nama}\" berhasil dihapus.");
+        $survey_period->delete();
+        ToastMagic::success("Periode \"{$nama}\" berhasil dihapus.");
+        return redirect()->route('admin-pusat.survey-periods.index');
     }
 }

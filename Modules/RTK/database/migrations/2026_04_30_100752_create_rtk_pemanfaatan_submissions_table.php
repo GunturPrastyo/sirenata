@@ -16,13 +16,15 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('period_id')->constrained('rtk_survey_periods')->cascadeOnDelete();
             
-            // Auto-filled dari RencanaTenagaKerja Provinsi (jika ada)
-            $table->string('q1_punya_rtkd')->default('draft'); // ya, tidak, draft
-            $table->year('tahun_dari')->nullable();
-            $table->year('tahun_sampai')->nullable();
-            $table->uuid('rtk_document_id')->nullable(); // referensi ke RencanaTenagaKerja Provinsi
+            // Mencatat siapa yang menginput data ini (bisa Admin Pusat atau User Provinsi itu sendiri)
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
 
-            // Field lanjutan (hanya diisi jika punya rtkd)
+            // Referensi ke RencanaTenagaKerja Provinsi (jika ada)
+            // Jika isi: Punya RTKD (Data tahun ambil dari relasi ini)
+            // Jika kosong/null: Tidak punya RTKD
+            $table->uuid('rtk_document_id')->nullable(); 
+
+            // Field lanjutan (hanya diisi jika punya rtkd / rtk_document_id != null)
             $table->string('q2_jadi_acuan')->nullable(); // ya, tidak
             
             // JSON Columns untuk checkbox/opsi multi-select

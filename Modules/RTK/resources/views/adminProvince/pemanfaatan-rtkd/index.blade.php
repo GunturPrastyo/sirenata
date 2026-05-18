@@ -26,21 +26,42 @@
             </ol>
         </nav>
 
-        @if($activePeriod && !$activeSubmission)
-            <div class="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm">
-                <div class="flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
+
+        {{-- Notification Banner for Active Survey --}}
+        @if ($activePeriod && !$submission)
+            <div class="mb-6 relative overflow-hidden bg-white border border-indigo-100 rounded-2xl shadow-sm">
+                {{-- Decorative pattern --}}
+                <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-50 rounded-full opacity-50"></div>
+                <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-indigo-50 rounded-full opacity-30"></div>
+
+                <div class="relative p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-start sm:items-center gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-200">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">Survei Pemanfaatan RTKD Periode {{ $activePeriod->tahun }} Telah Dibuka!</h3>
+                            <div class="text-sm text-slate-600 mt-1 space-y-1">
+                                <p>Silakan lakukan pengisian kuesioner pemanfaatan Rencana Tenaga Kerja Daerah.</p>
+                                <p>Pengisian berlangsung dari 
+                                    <span class="font-semibold text-indigo-600">{{ $activePeriod->tanggal_mulai ? $activePeriod->tanggal_mulai->format('d M Y') : '-' }}</span> 
+                                    sampai dengan 
+                                    <span class="font-semibold text-indigo-600">{{ $activePeriod->tanggal_selesai ? $activePeriod->tanggal_selesai->format('d M Y') : '-' }}</span>
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="flex-1">
-                        <h3 class="text-sm font-semibold text-amber-800">Periode Survei Sedang Aktif</h3>
-                        <p class="mt-1 text-sm text-amber-700">
-                            Periode <span class="font-bold">{{ $activePeriod->nama }}</span> sedang berlangsung hingga
-                            <span class="font-bold">{{ $activePeriod->tanggal_selesai ? $activePeriod->tanggal_selesai->format('d M Y') : '-' }}</span>.
-                            Anda belum mengisi kuesioner pemanfaatan RTKD untuk periode ini. Silakan segera mengisi kuesioner.
-                        </p>
+                    <div class="flex-shrink-0">
+                        <a href="{{ route('admin-province.pemanfaatan-rtkd.create') }}" 
+                            class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200 hover:-translate-y-0.5 active:translate-y-0">
+                            Isi Kuesioner Sekarang
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -52,64 +73,50 @@
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <h2 class="text-base font-semibold text-slate-800">Status Pemanfaatan Rencana Tenaga Kerja Daerah</h2>
-                    @if(!$activeSubmission && $activePeriod)
-                        <a href="{{ route('admin-province.pemanfaatan-rtkd.create') }}" class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition shadow-sm">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                            Isi Kuesioner
-                        </a>
-                    @endif
                 </div>
+
                 
                 <div class="p-0 overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-200">
                                 <th class="px-6 py-3 font-medium">Periode</th>
-                                <th class="px-6 py-3 font-medium text-center">Status Periode</th>
                                 <th class="px-6 py-3 font-medium">Tanggal Pengisian</th>
                                 <th class="px-6 py-3 font-medium">Status Verifikasi</th>
+                                <th class="px-6 py-3 font-medium">Oleh</th>
                                 <th class="px-6 py-3 font-medium text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 bg-white">
-                            @if ($submissions->isEmpty())
+                            @if (!$activePeriod)
                                 <tr>
-                                    <td colspan="5" class="px-6 py-8 text-center text-slate-500">
-                                        @if($activePeriod)
-                                            Belum ada kuesioner yang diisi untuk periode aktif. Silakan mengisi kuesioner untuk mulai melihat riwayat.
-                                        @else
-                                            Belum ada kuesioner yang pernah diisi sebelumnya.
-                                        @endif
+                                    <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+                                        Admin Pusat belum membuka periode survei pemanfaatan RTKD saat ini. Silakan kembali lagi nanti.
+                                    </td>
+                                </tr>
+                            @elseif($submissions->isEmpty())
+                                <tr>
+                                    <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+                                        Belum ada kuesioner yang diisi untuk periode aktif.
                                     </td>
                                 </tr>
                             @else
-                                @foreach($submissions as $sub)
-                                    <tr class="hover:bg-slate-50 transition">
+                                @foreach($submissions as $item)
+                                    <tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0">
                                         <td class="px-6 py-4">
-                                            <div class="text-sm font-semibold text-slate-900">{{ $sub->period->nama }}</div>
-                                            <div class="text-xs text-slate-500">Batas: {{ $sub->period->tanggal_selesai ? $sub->period->tanggal_selesai->format('d M Y') : '-' }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 text-center">
-                                            @if($sub->period->status === 'aktif')
-                                                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                                    Aktif
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                                                    Ditutup
-                                                </span>
-                                            @endif
+                                            <div class="text-sm font-semibold text-slate-900">{{ $activePeriod->nama }}</div>
+                                            <div class="text-xs text-slate-500">Batas: {{ $activePeriod->tanggal_selesai ? $activePeriod->tanggal_selesai->format('d M Y') : '-' }}</div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-slate-600">
-                                            {{ $sub->created_at->format('d M Y, H:i') }}
+                                            {{ $item->created_at->format('d M Y, H:i') }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            @if($sub->status_verifikasi === 'verified')
+                                            @if($item->status_verifikasi === 'verified')
                                                 <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">
                                                     <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                                     Sudah Disetujui
                                                 </span>
-                                            @elseif($sub->status_verifikasi === 'rejected')
+                                            @elseif($item->status_verifikasi === 'rejected')
                                                 <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">
                                                     <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                     Revisi Diperlukan
@@ -121,31 +128,40 @@
                                                 </span>
                                             @endif
                                         </td>
+                                        <td class="px-6 py-4">
+                                            @if($item->creator && $item->creator->hasRole('admin-pusat'))
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-100">
+                                                    Admin Pusat
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-slate-500">Mandiri</span>
+                                            @endif
+                                        </td>
                                         <td class="px-6 py-4 text-right">
                                             @php
-                                                $hasNotes = false;
-                                                if (is_array($sub->field_verifications)) {
-                                                    foreach ($sub->field_verifications as $v) {
+                                                $itemHasNotes = false;
+                                                if (is_array($item->field_verifications)) {
+                                                    foreach ($item->field_verifications as $v) {
                                                         if (!empty($v['catatan'])) {
-                                                            $hasNotes = true;
+                                                            $itemHasNotes = true;
                                                             break;
                                                         }
                                                     }
                                                 }
                                             @endphp
                                             
-                                            @if($sub->period->status === 'aktif' && $sub->status_verifikasi === 'pending' && !$hasNotes)
-                                                <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $sub->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition shadow-sm">
+                                            @if($item->status_verifikasi === 'pending' && !$itemHasNotes)
+                                                <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition shadow-sm">
                                                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                                    Edit
+                                                    Edit / Isi Ulang
                                                 </a>
-                                            @elseif($sub->period->status === 'aktif' && $sub->status_verifikasi === 'rejected')
-                                                <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $sub->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
+                                            @elseif($item->status_verifikasi === 'rejected')
+                                                <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
                                                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                                     Revisi
                                                 </a>
                                             @else
-                                                <span class="text-sm text-slate-400 italic">Selesai</span>
+                                                <span class="text-sm text-slate-400 italic">Kuesioner Selesai</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -157,30 +173,30 @@
             </div>
 
             {{-- Detail Data Kuesioner (Read-Only) --}}
-            @if($detailSubmission)
+            @if($submission)
                 <div class="mt-8 space-y-6">
-                    <h2 class="text-lg font-bold text-slate-800">Detail Kuesioner Terpilih (Periode Aktif)</h2>
+                    <h2 class="text-lg font-bold text-slate-800">Detail Kuesioner yang Diisi</h2>
                     
                     {{-- 1. Kepemilikan RTKD --}}
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                             <h3 class="text-base font-semibold text-slate-800">1. Kepemilikan Dokumen RTK Provinsi</h3>
-                            @if(isset($detailSubmission->field_verifications['q1_punya_rtkd']) && $detailSubmission->field_verifications['q1_punya_rtkd']['status'] === 'rejected')
+                            @if(isset($submission->field_verifications['q1_punya_rtkd']) && $submission->field_verifications['q1_punya_rtkd']['status'] === 'rejected')
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
-                            @elseif(isset($detailSubmission->field_verifications['q1_punya_rtkd']) && $detailSubmission->field_verifications['q1_punya_rtkd']['status'] === 'verified')
+                            @elseif(isset($submission->field_verifications['q1_punya_rtkd']) && $submission->field_verifications['q1_punya_rtkd']['status'] === 'verified')
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
                             @endif
                         </div>
                         <div class="p-4">
-                            @if(isset($detailSubmission->field_verifications['q1_punya_rtkd']) && $detailSubmission->field_verifications['q1_punya_rtkd']['status'] === 'rejected')
+                            @if(isset($submission->field_verifications['q1_punya_rtkd']) && $submission->field_verifications['q1_punya_rtkd']['status'] === 'rejected')
                                 <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start gap-2">
                                     <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $detailSubmission->field_verifications['q1_punya_rtkd']['catatan'] }}</div>
+                                    <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $submission->field_verifications['q1_punya_rtkd']['catatan'] }}</div>
                                 </div>
                             @endif
                             <div class="flex items-start gap-4">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 {{ $detailSubmission->q1_punya_rtkd === 'ya' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600' }}">
-                                    @if($detailSubmission->q1_punya_rtkd === 'ya')
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 {{ $submission->rtk_document_id ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600' }}">
+                                    @if($submission->rtk_document_id)
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                     @else
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -188,15 +204,15 @@
                                 </div>
                                 <div class="flex-1">
                                     <p class="text-sm text-slate-500 font-medium">Apakah Memiliki RTKD?</p>
-                                    <p class="text-lg font-bold {{ $detailSubmission->q1_punya_rtkd === 'ya' ? 'text-emerald-700' : 'text-red-700' }}">
-                                        {{ $detailSubmission->q1_punya_rtkd === 'ya' ? 'YA, MEMILIKI' : 'TIDAK MEMILIKI' }}
+                                    <p class="text-lg font-bold {{ $submission->rtk_document_id ? 'text-emerald-700' : 'text-red-700' }}">
+                                        {{ $submission->rtk_document_id ? 'YA, MEMILIKI' : 'TIDAK MEMILIKI' }}
                                     </p>
                                     
-                                    @if($detailSubmission->q1_punya_rtkd === 'ya')
+                                    @if($submission->rtk_document_id)
                                         <div class="mt-4 grid grid-cols-2 gap-4">
                                             <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
                                                 <p class="text-xs text-slate-500 mb-1">Masa Berlaku Dokumen</p>
-                                                <p class="text-sm font-semibold text-slate-800">{{ $detailSubmission->tahun_dari }} - {{ $detailSubmission->tahun_sampai }}</p>
+                                                <p class="text-sm font-semibold text-slate-800">{{ $submission->rtkDocument->start_date }} - {{ $submission->rtkDocument->end_date }}</p>
                                             </div>
                                         </div>
                                     @endif
@@ -206,26 +222,26 @@
                     </div>
 
                     {{-- 1B. Alasan Tidak Punya RTKD --}}
-                    @if($detailSubmission->q1_punya_rtkd === 'tidak')
+                    @if(!$submission->rtk_document_id)
                         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                             <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                                 <h3 class="text-base font-semibold text-slate-800">Alasan Tidak Memiliki RTKD</h3>
-                                @if(isset($detailSubmission->field_verifications['alasan_tidak_punya']) && $detailSubmission->field_verifications['alasan_tidak_punya']['status'] === 'rejected')
+                                @if(isset($submission->field_verifications['alasan_tidak_punya']) && $submission->field_verifications['alasan_tidak_punya']['status'] === 'rejected')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
-                                @elseif(isset($detailSubmission->field_verifications['alasan_tidak_punya']) && $detailSubmission->field_verifications['alasan_tidak_punya']['status'] === 'verified')
+                                @elseif(isset($submission->field_verifications['alasan_tidak_punya']) && $submission->field_verifications['alasan_tidak_punya']['status'] === 'verified')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
                                 @endif
                             </div>
                             <div class="p-4">
-                                @if(isset($detailSubmission->field_verifications['alasan_tidak_punya']) && $detailSubmission->field_verifications['alasan_tidak_punya']['status'] === 'rejected')
+                                @if(isset($submission->field_verifications['alasan_tidak_punya']) && $submission->field_verifications['alasan_tidak_punya']['status'] === 'rejected')
                                     <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start gap-2">
                                         <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $detailSubmission->field_verifications['alasan_tidak_punya']['catatan'] }}</div>
+                                        <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $submission->field_verifications['alasan_tidak_punya']['catatan'] }}</div>
                                     </div>
                                 @endif
                                 <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
-                                    @if(is_array($detailSubmission->alasan_tidak_punya))
-                                        @foreach($detailSubmission->alasan_tidak_punya as $alasan)
+                                    @if(is_array($submission->alasan_tidak_punya))
+                                        @foreach($submission->alasan_tidak_punya as $alasan)
                                             <li>
                                                 {{ $alasan['alasan'] }}
                                                 @if($alasan['alasan'] === 'Lainnya' && !empty($alasan['keterangan_lainnya']))
@@ -242,26 +258,26 @@
                     @endif
 
                     {{-- 2. Pemanfaatan Dokumen --}}
-                    @if($detailSubmission->q1_punya_rtkd === 'ya')
+                    @if($submission->rtk_document_id)
                         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                             <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                                 <h3 class="text-base font-semibold text-slate-800">2. Menjadi Acuan Perencanaan Pembangunan</h3>
-                                @if(isset($detailSubmission->field_verifications['q2_jadi_acuan']) && $detailSubmission->field_verifications['q2_jadi_acuan']['status'] === 'rejected')
+                                @if(isset($submission->field_verifications['q2_jadi_acuan']) && $submission->field_verifications['q2_jadi_acuan']['status'] === 'rejected')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
-                                @elseif(isset($detailSubmission->field_verifications['q2_jadi_acuan']) && $detailSubmission->field_verifications['q2_jadi_acuan']['status'] === 'verified')
+                                @elseif(isset($submission->field_verifications['q2_jadi_acuan']) && $submission->field_verifications['q2_jadi_acuan']['status'] === 'verified')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
                                 @endif
                             </div>
                             <div class="p-4">
-                                @if(isset($detailSubmission->field_verifications['q2_jadi_acuan']) && $detailSubmission->field_verifications['q2_jadi_acuan']['status'] === 'rejected')
+                                @if(isset($submission->field_verifications['q2_jadi_acuan']) && $submission->field_verifications['q2_jadi_acuan']['status'] === 'rejected')
                                     <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start gap-2">
                                         <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $detailSubmission->field_verifications['q2_jadi_acuan']['catatan'] }}</div>
+                                        <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $submission->field_verifications['q2_jadi_acuan']['catatan'] }}</div>
                                     </div>
                                 @endif
                                 <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 {{ $detailSubmission->q2_jadi_acuan === 'ya' ? 'bg-indigo-100 text-indigo-600' : 'bg-amber-100 text-amber-600' }}">
-                                        @if($detailSubmission->q2_jadi_acuan === 'ya')
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 {{ $submission->q2_jadi_acuan === 'ya' ? 'bg-indigo-100 text-indigo-600' : 'bg-amber-100 text-amber-600' }}">
+                                        @if($submission->q2_jadi_acuan === 'ya')
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                                         @else
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
@@ -269,8 +285,8 @@
                                     </div>
                                     <div>
                                         <p class="text-sm text-slate-500 font-medium">Apakah telah dijadikan acuan?</p>
-                                        <p class="text-lg font-bold {{ $detailSubmission->q2_jadi_acuan === 'ya' ? 'text-indigo-700' : 'text-amber-700' }}">
-                                            {{ $detailSubmission->q2_jadi_acuan === 'ya' ? 'YA, MENJADI ACUAN' : 'BELUM MENJADI ACUAN' }}
+                                        <p class="text-lg font-bold {{ $submission->q2_jadi_acuan === 'ya' ? 'text-indigo-700' : 'text-amber-700' }}">
+                                            {{ $submission->q2_jadi_acuan === 'ya' ? 'YA, MENJADI ACUAN' : 'BELUM MENJADI ACUAN' }}
                                         </p>
                                     </div>
                                 </div>
@@ -278,20 +294,20 @@
                         </div>
 
                         {{-- JIKA JADI ACUAN --}}
-                        @if($detailSubmission->q2_jadi_acuan === 'ya')
+                        @if($submission->q2_jadi_acuan === 'ya')
                             @php
                                 $docLabels = ['rpjmd' => 'RPJMD', 'renstra' => 'RENSTRA Disnaker', 'lainnya' => 'Dokumen Lainnya'];
                                 $docDescriptions = ['rpjmd' => 'Rencana Pembangunan Jangka Menengah Daerah', 'renstra' => 'Rencana Strategis Perangkat Daerah', 'lainnya' => ''];
-                                $submittedDocs = is_array($detailSubmission->dokumen_acuan) ? collect($detailSubmission->dokumen_acuan)->pluck('doc_type')->toArray() : [];
+                                $submittedDocs = is_array($submission->dokumen_acuan) ? collect($submission->dokumen_acuan)->pluck('doc_type')->toArray() : [];
                                 $komponenByDoc = [];
-                                if (is_array($detailSubmission->komponen_acuan)) {
-                                    foreach ($detailSubmission->komponen_acuan as $k) {
+                                if (is_array($submission->komponen_acuan)) {
+                                    foreach ($submission->komponen_acuan as $k) {
                                         $komponenByDoc[$k['doc_type']][] = $k;
                                     }
                                 }
                                 $uploadsByDoc = [];
-                                if (is_array($detailSubmission->dokumen_uploads)) {
-                                    foreach ($detailSubmission->dokumen_uploads as $u) {
+                                if (is_array($submission->dokumen_uploads)) {
+                                    foreach ($submission->dokumen_uploads as $u) {
                                         $uploadsByDoc[$u['doc_type']] = $u;
                                     }
                                 }
@@ -302,7 +318,7 @@
                                     $fieldKey = 'dok_' . $docType;
                                     $docLabel = $docLabels[$docType] ?? strtoupper($docType);
                                     $docDesc = $docDescriptions[$docType] ?? '';
-                                    $docAcuanEntry = collect($detailSubmission->dokumen_acuan)->firstWhere('doc_type', $docType);
+                                    $docAcuanEntry = collect($submission->dokumen_acuan)->firstWhere('doc_type', $docType);
                                     $kompList = $komponenByDoc[$docType] ?? [];
                                     $uploadEntry = $uploadsByDoc[$docType] ?? null;
                                 @endphp
@@ -319,17 +335,17 @@
                                                 <p class="text-sm text-slate-500 mt-0.5">Nama Dokumen: <strong>{{ $docAcuanEntry['nama_lainnya'] }}</strong></p>
                                             @endif
                                         </div>
-                                        @if(isset($detailSubmission->field_verifications[$fieldKey]) && $detailSubmission->field_verifications[$fieldKey]['status'] === 'rejected')
+                                        @if(isset($submission->field_verifications[$fieldKey]) && $submission->field_verifications[$fieldKey]['status'] === 'rejected')
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
-                                        @elseif(isset($detailSubmission->field_verifications[$fieldKey]) && $detailSubmission->field_verifications[$fieldKey]['status'] === 'verified')
+                                        @elseif(isset($submission->field_verifications[$fieldKey]) && $submission->field_verifications[$fieldKey]['status'] === 'verified')
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
                                         @endif
                                     </div>
                                     <div class="p-4 space-y-4">
-                                        @if(isset($detailSubmission->field_verifications[$fieldKey]) && $detailSubmission->field_verifications[$fieldKey]['status'] === 'rejected')
+                                        @if(isset($submission->field_verifications[$fieldKey]) && $submission->field_verifications[$fieldKey]['status'] === 'rejected')
                                             <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start gap-2">
                                                 <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $detailSubmission->field_verifications[$fieldKey]['catatan'] }}</div>
+                                                <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $submission->field_verifications[$fieldKey]['catatan'] }}</div>
                                             </div>
                                         @endif
 
@@ -385,22 +401,22 @@
                             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                                 <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                                     <h3 class="text-base font-semibold text-slate-800">Alasan Belum Menjadi Acuan</h3>
-                                    @if(isset($detailSubmission->field_verifications['alasan_belum_acuan']) && $detailSubmission->field_verifications['alasan_belum_acuan']['status'] === 'rejected')
+                                    @if(isset($submission->field_verifications['alasan_belum_acuan']) && $submission->field_verifications['alasan_belum_acuan']['status'] === 'rejected')
                                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
-                                    @elseif(isset($detailSubmission->field_verifications['alasan_belum_acuan']) && $detailSubmission->field_verifications['alasan_belum_acuan']['status'] === 'verified')
+                                    @elseif(isset($submission->field_verifications['alasan_belum_acuan']) && $submission->field_verifications['alasan_belum_acuan']['status'] === 'verified')
                                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
                                     @endif
                                 </div>
                                 <div class="p-4">
-                                    @if(isset($detailSubmission->field_verifications['alasan_belum_acuan']) && $detailSubmission->field_verifications['alasan_belum_acuan']['status'] === 'rejected')
+                                    @if(isset($submission->field_verifications['alasan_belum_acuan']) && $submission->field_verifications['alasan_belum_acuan']['status'] === 'rejected')
                                         <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start gap-2">
                                             <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $detailSubmission->field_verifications['alasan_belum_acuan']['catatan'] }}</div>
+                                            <div><span class="font-semibold block">Catatan Verifikator Pusat:</span>{{ $submission->field_verifications['alasan_belum_acuan']['catatan'] }}</div>
                                         </div>
                                     @endif
                                     <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
-                                        @if(is_array($detailSubmission->alasan_belum_acuan))
-                                            @foreach($detailSubmission->alasan_belum_acuan as $alasan)
+                                        @if(is_array($submission->alasan_belum_acuan))
+                                            @foreach($submission->alasan_belum_acuan as $alasan)
                                                 <li>
                                                     {{ $alasan['alasan'] }}
                                                     @if($alasan['alasan'] === 'Lainnya' && !empty($alasan['keterangan_lainnya']))

@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\RTK\Models\RtkPemanfaatanSubmission;
 use Modules\RTK\Models\RtkSurveyPeriod;
+use Modules\RTK\Models\RencanaTenagaKerja;
 use Illuminate\Support\Facades\Storage;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use App\Models\User;
 
 class HasilPemanfaatanRtkdController extends Controller
 {
@@ -35,7 +37,11 @@ class HasilPemanfaatanRtkdController extends Controller
 
         // Filter berdasarkan Kepemilikan RTKD
         if ($request->filled('q1_punya_rtkd')) {
-            $query->where('q1_punya_rtkd', $request->input('q1_punya_rtkd'));
+            if ($request->input('q1_punya_rtkd') === 'ya') {
+                $query->whereNotNull('rtk_document_id');
+            } else {
+                $query->whereNull('rtk_document_id');
+            }
         }
 
         // Filter berdasarkan Pemanfaatan Acuan
@@ -104,6 +110,193 @@ class HasilPemanfaatanRtkdController extends Controller
 
         ToastMagic::success($statusMsg);
 
-        return redirect()->route('admin-pusat.hasil-pemanfaatan-rtkd.show', $submission->id);
+        return redirect()->route('admin-pusat.hasil-pemanfaatan-rtkd.index');
+    }
+
+    /**
+     * Form untuk Admin Pusat mengisi kuesioner atas nama provinsi (Ubah Sendiri).
+     */
+    public function editOnBehalf($id)
+    {
+        $submission = RtkPemanfaatanSubmission::with(['user', 'period'])->findOrFail($id);
+        
+        // Cari data RTK Provinsi aktif milik USER PROVINSI tersebut
+        $targetUser = $submission->user;
+        $latestRtk = null;
+        if ($targetUser->hasCompleteScope()) {
+            $latestRtk = RencanaTenagaKerja::where('province_code', $targetUser->scopeArea->province_code)
+                ->where('type', \Modules\RTK\Enums\TypeRtk::PROVINSI)
+                ->where('is_active', true)
+                ->latest()
+                ->first();
+        }
+
+        return view('rtk::adminPusat.hasil-pemanfaatan.edit-on-behalf', [
+            'activePeriod' => $submission->period,
+            'latestRtk' => $latestRtk,
+            'submission' => $submission,
+            'targetUser' => $targetUser
+        ]);
+    }
+
+    /**
+     * Simpan kuesioner baru hasil koreksi Admin Pusat.
+     */
+    public function storeOnBehalf(Request $request, $id)
+    {
+        $oldSubmission = RtkPemanfaatanSubmission::findOrFail($id);
+        $targetUser = User::findOrFail($oldSubmission->user_id);
+        
+        // Cari data RTK Provinsi aktif milik USER PROVINSI tersebut
+        $latestRtk = null;
+        if ($targetUser->hasCompleteScope()) {
+            $latestRtk = RencanaTenagaKerja::where('province_code', $targetUser->scopeArea->province_code)
+                ->where('type', \Modules\RTK\Enums\TypeRtk::PROVINSI)
+                ->where('is_active', true)
+                ->latest()
+                ->first();
+        }
+
+        // Buat record baru
+        $data = new RtkPemanfaatanSubmission();
+        $data->user_id = $targetUser->id;
+        $data->period_id = $oldSubmission->period_id;
+
+        // Proses data (sama dengan logika di PemanfaatanRtkdController)
+        $data->created_by = auth()->id();
+        $this->processFormData($request, $data, $latestRtk);
+
+        // Langsung disetujui
+        $data->status_verifikasi = 'verified';
+        $data->catatan_verifikasi = 'Diisi/Dikoreksi langsung oleh Admin Pusat.';
+        $data->save();
+
+        ToastMagic::success('Kuesioner berhasil diperbarui oleh Admin Pusat.');
+        return redirect()->route('admin-pusat.hasil-pemanfaatan-rtkd.index');
+    }
+
+    /**
+     * Duplikasi logika pemrosesan form dari PemanfaatanRtkdController
+     */
+    private function processFormData(Request $request, RtkPemanfaatanSubmission $data, ?RencanaTenagaKerja $latestRtk)
+    {
+        // 1. Link data RTKD dari sistem utama jika ada
+        if ($latestRtk) {
+            $data->rtk_document_id = $latestRtk->id;
+        } else {
+            $data->rtk_document_id = null;
+        }
+
+        // 2. Jika Tidak Punya RTKD (rtk_document_id null)
+        if (!$data->rtk_document_id) {
+            $data->q2_jadi_acuan = null;
+            $data->dokumen_acuan = null;
+            $data->komponen_acuan = null;
+            $data->alasan_belum_acuan = null;
+
+            $alasanTidakPunya = [];
+            if ($request->has('alasan_tidak_punya')) {
+                foreach ($request->input('alasan_tidak_punya') as $alasan) {
+                    $keterangan = ($alasan === 'Lainnya') ? $request->input('alasan_tidak_punya_lainnya') : null;
+                    $alasanTidakPunya[] = [
+                        'alasan' => $alasan,
+                        'keterangan_lainnya' => $keterangan
+                    ];
+                }
+            }
+            $data->alasan_tidak_punya = $alasanTidakPunya;
+        } 
+        else {
+            $data->alasan_tidak_punya = null;
+            $data->q2_jadi_acuan = $request->input('q2_jadi_acuan', 'tidak');
+
+            if ($data->q2_jadi_acuan === 'ya') {
+                $data->alasan_belum_acuan = null;
+
+                $dokumenAcuan = [];
+                if ($request->has('dokumen_acuan')) {
+                    foreach ($request->input('dokumen_acuan') as $docType) {
+                        $namaLainnya = ($docType === 'lainnya') ? $request->input('dokumen_acuan_lainnya') : null;
+                        $dokumenAcuan[] = [
+                            'doc_type' => $docType,
+                            'nama_lainnya' => $namaLainnya
+                        ];
+                    }
+                }
+                $data->dokumen_acuan = $dokumenAcuan;
+
+                $komponenAcuan = [];
+                if ($request->has('dokumen_acuan')) {
+                    foreach ($request->input('dokumen_acuan') as $docType) {
+                        $komps = $request->input("komponen_{$docType}", []);
+                        $halms = $request->input("halaman_{$docType}", []);
+                        $ketLain = $request->input("lainnya_{$docType}");
+                        
+                        foreach ($komps as $komp) {
+                            $komponenAcuan[] = [
+                                'doc_type' => $docType,
+                                'komponen' => $komp,
+                                'halaman_acuan' => $halms[$komp] ?? null,
+                                'keterangan_lainnya' => ($komp === 'Lainnya') ? $ketLain : null
+                            ];
+                        }
+                    }
+                }
+                $data->komponen_acuan = $komponenAcuan;
+
+                $uploads = $data->dokumen_uploads ?? [];
+                $uploadsByDocType = [];
+                foreach ($uploads as $u) {
+                    $uploadsByDocType[$u['doc_type']] = $u;
+                }
+
+                if ($request->has('dokumen_acuan')) {
+                    foreach ($request->input('dokumen_acuan') as $docType) {
+                        $fileInputName = "upload_{$docType}";
+                        if ($request->hasFile($fileInputName)) {
+                            $file = $request->file($fileInputName);
+                            if ($file->isValid()) {
+                                $path = $file->store('rtkd-pemanfaatan/uploads', 'public');
+                                $uploadsByDocType[$docType] = [
+                                    'doc_type' => $docType,
+                                    'file_path' => $path,
+                                    'original_name' => $file->getClientOriginalName()
+                                ];
+                            }
+                        }
+                    }
+                    
+                    $newUploads = [];
+                    foreach ($request->input('dokumen_acuan') as $docType) {
+                        if (isset($uploadsByDocType[$docType])) {
+                            $newUploads[] = $uploadsByDocType[$docType];
+                        }
+                    }
+                    $uploads = $newUploads;
+                } else {
+                    $uploads = [];
+                }
+                $data->dokumen_uploads = $uploads;
+
+            } 
+            else {
+                $data->dokumen_acuan = null;
+                $data->komponen_acuan = null;
+                $data->dokumen_uploads = null;
+
+                $alasanBelumAcuan = [];
+                if ($request->has('alasan_belum_acuan')) {
+                    foreach ($request->input('alasan_belum_acuan') as $alasan) {
+                        $keterangan = ($alasan === 'Lainnya') ? $request->input('alasan_belum_acuan_lainnya') : null;
+                        $alasanBelumAcuan[] = [
+                            'alasan' => $alasan,
+                            'keterangan_lainnya' => $keterangan
+                        ];
+                    }
+                }
+                $data->alasan_belum_acuan = $alasanBelumAcuan;
+            }
+        }
     }
 }
+

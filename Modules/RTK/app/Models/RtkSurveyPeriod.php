@@ -47,8 +47,17 @@ class RtkSurveyPeriod extends Model
     }
 
     /**
+     * Relasi ke hasil kuesioner
+     */
+    public function submissions()
+    {
+        return $this->hasMany(RtkPemanfaatanSubmission::class, 'period_id');
+    }
+
+    /**
      * Label teks status
      */
+
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {

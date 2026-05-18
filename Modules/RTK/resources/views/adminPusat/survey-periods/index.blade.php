@@ -1,6 +1,6 @@
 <x-dashboard::layouts.dashboard title="Periode Survei RTK Daerah">
     <div class="p-2 sm:p-6">
-
+        {{-- Breadcrumb --}}
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -26,36 +26,12 @@
             </ol>
         </nav>
 
-        @if (session('success'))
-            <div class="mb-4 bg-emerald-50 text-emerald-700 p-4 rounded-lg border border-emerald-200 flex items-center gap-2">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="text-sm font-medium">{{ session('success') }}</span>
-            </div>
-        @endif
 
-        @if (session('error'))
-            <div class="mb-4 bg-red-50 text-red-700 p-4 rounded-lg border border-red-200 flex items-center gap-2">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="text-sm font-medium">{{ session('error') }}</span>
-            </div>
-        @endif
 
-        @if ($errors->any())
-            <div class="mb-4 bg-red-50 text-red-600 p-4 rounded-lg border border-red-200">
-                <ul class="list-disc list-inside text-sm">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
+        {{-- Table Card --}}
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div
+                class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h2 class="text-base font-semibold text-slate-800">Daftar Periode Survei</h2>
                     <p class="text-sm text-slate-500 mt-1">
@@ -78,21 +54,18 @@
                 <table class="min-w-full text-sm">
                     <thead class="bg-slate-100 border-b border-slate-200">
                         <tr class="text-slate-500 uppercase text-xs">
-                            <th class="px-4 md:px-6 py-3 text-center w-16">No</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Nama Periode</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Nama</th>
                             <th class="px-4 md:px-6 py-3 text-center w-24">Tahun</th>
-                            <th class="px-4 md:px-6 py-3 text-left w-48">Tanggal Pengisian</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-40">Tanggal Mulai</th>
+                            <th class="px-4 md:px-6 py-3 text-left w-40">Tanggal Selesai</th>
+                            <th class="px-4 md:px-6 py-3 text-center w-32">Total Verifikasi</th>
                             <th class="px-4 md:px-6 py-3 text-center w-28">Status</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Deskripsi</th>
                             <th class="px-4 md:px-6 py-3 text-center w-24">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         @forelse($periods as $key => $period)
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3 text-center text-slate-600">
-                                    {{ $key + $periods->firstItem() }}
-                                </td>
                                 <td class="px-4 md:px-6 py-3">
                                     <p class="font-medium text-slate-800">{{ $period->nama }}</p>
                                 </td>
@@ -100,44 +73,52 @@
                                     <span class="font-semibold text-slate-700">{{ $period->tahun }}</span>
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
-                                    @if ($period->tanggal_mulai && $period->tanggal_selesai)
+                                    @if ($period->tanggal_mulai)
                                         <span class="text-slate-600">
                                             {{ $period->tanggal_mulai->format('d M Y') }}
-                                            <span class="mx-1 text-slate-400">–</span>
+                                        </span>
+                                    @else
+                                        <span class="text-slate-400 italic">Belum diatur</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    @if ($period->tanggal_selesai)
+                                        <span class="text-slate-600">
                                             {{ $period->tanggal_selesai->format('d M Y') }}
                                         </span>
-                                    @elseif ($period->tanggal_mulai)
-                                        <span class="text-slate-600">{{ $period->tanggal_mulai->format('d M Y') }} – <span class="italic text-slate-400">Belum ditentukan</span></span>
                                     @else
                                         <span class="text-slate-400 italic">Belum diatur</span>
                                     @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 border rounded-full text-xs font-semibold {{ $period->status_color }}">
-                                        <span class="w-1.5 h-1.5 rounded-full {{ $period->status === 'aktif' ? 'bg-emerald-500' : ($period->status === 'tutup' ? 'bg-red-500' : 'bg-slate-400') }}"></span>
+                                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg font-bold text-sm">
+                                        {{ $period->submissions_count }}
+                                        <span class="text-[10px] uppercase tracking-wider font-medium text-indigo-400">Provinsi</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 md:px-6 py-3 text-center">
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 border rounded-full text-xs font-semibold {{ $period->status_color }}">
+                                        <span
+                                            class="w-1.5 h-1.5 rounded-full {{ $period->status === 'aktif' ? 'bg-emerald-500' : ($period->status === 'tutup' ? 'bg-red-500' : 'bg-slate-400') }}"></span>
                                         {{ $period->status_label }}
                                     </span>
                                 </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600 text-xs truncate max-w-[200px]" title="{{ $period->deskripsi }}">
-                                        {{ $period->deskripsi ?: '-' }}
-                                    </p>
-                                </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-
+                                        {{-- 1. Detail --}}
                                         <li>
-                                            <button type="button" x-data
-                                                @click="$dispatch('open-modal', 'edit-survey-period-{{ $period->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600 cursor-pointer">
-                                                Edit
+                                            <button x-data x-on:click="$dispatch('open-modal', 'show-survey-period-{{ $period->id }}')"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600 cursor-pointer">
+                                                Detail
                                             </button>
                                         </li>
 
+                                        {{-- 2. Aktifkan / Tutup --}}
                                         @if ($period->status !== 'aktif')
                                             <li>
-                                                <form action="{{ route('admin-pusat.survey-periods.activate', $period->id) }}" method="POST"
-                                                    onsubmit="return confirm('Aktifkan periode ini? Periode aktif lainnya akan otomatis ditutup.');"
+                                                <form action="{{ route('admin-pusat.survey-periods.activate', $period->id) }}"
+                                                    method="POST"
                                                     class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
                                                     @csrf
                                                     @method('PATCH')
@@ -146,32 +127,40 @@
                                                     </button>
                                                 </form>
                                             </li>
-                                        @endif
-
-                                        @if ($period->status === 'aktif')
+                                        @else
                                             <li>
-                                                <form action="{{ route('admin-pusat.survey-periods.close', $period->id) }}" method="POST"
+                                                <form action="{{ route('admin-pusat.survey-periods.close', $period->id) }}"
+                                                    method="POST"
                                                     onsubmit="return confirm('Tutup periode ini?');"
                                                     class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
                                                     @csrf
                                                     @method('PATCH')
-                                                    <button type="submit" class="w-full text-left p-2 text-amber-600">
+                                                    <button type="submit" class="w-full text-left p-2 text-red-600">
                                                         Tutup
                                                     </button>
+
                                                 </form>
                                             </li>
                                         @endif
 
+                                        {{-- 3. Ubah --}}
                                         <li>
-                                            <form action="{{ route('admin-pusat.survey-periods.destroy', $period->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus periode ini?');"
-                                                class="inline-flex items-center w-full hover:bg-slate-100 rounded m-0 p-0">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="w-full text-left p-2 text-red-600">
-                                                    Hapus
-                                                </button>
-                                            </form>
+                                            <button type="button" x-data
+                                                @click="$dispatch('open-modal', 'edit-survey-period-{{ $period->id }}')"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600 cursor-pointer">
+                                                Ubah
+                                            </button>
+                                        </li>
+
+                                        {{-- 4. Hapus --}}
+                                        <li>
+                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                <x-modal-delete :id="'delete-period-' . $period->id"
+                                                    message="Apakah Anda yakin ingin menghapus periode survei ini?"
+                                                    :item-name="$period->nama" buttonText="Hapus"
+                                                    buttonClass="w-full text-left text-red-600 outline-none cursor-pointer"
+                                                    :route="route('admin-pusat.survey-periods.destroy', $period->id)" />
+                                            </div>
                                         </li>
                                     </x-table.action>
                                 </td>
@@ -179,11 +168,13 @@
                         @empty
                             <tr>
                                 <td colspan="7" class="px-6 py-12 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                    <p class="text-sm text-slate-500">Belum ada periode survei. Klik tombol "Tambah Periode" untuk membuat periode baru.</p>
+                                    <p class="text-sm text-slate-500">Belum ada periode survei. Klik tombol "Tambah Periode"
+                                        untuk membuat periode baru.</p>
                                 </td>
                             </tr>
                         @endforelse
@@ -197,6 +188,7 @@
         </div>
     </div>
 
+    {{-- Modal: Tambah Periode Survei --}}
     <x-modal name="create-survey-period" title="Tambah Periode Survei">
         <form action="{{ route('admin-pusat.survey-periods.store') }}" method="POST" class="space-y-4">
             @csrf
@@ -231,7 +223,8 @@
                     <label for="create-tanggal-selesai" class="block text-sm font-medium text-gray-700 mb-1">
                         Tanggal Selesai
                     </label>
-                    <input type="date" id="create-tanggal-selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}"
+                    <input type="date" id="create-tanggal-selesai" name="tanggal_selesai"
+                        value="{{ old('tanggal_selesai') }}"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                 </div>
             </div>
@@ -258,6 +251,7 @@
         </form>
     </x-modal>
 
+    {{-- Modal: Edit Periode Survei (satu modal per item) --}}
     @foreach($periods as $period)
         <x-modal name="edit-survey-period-{{ $period->id }}" title="Edit Periode Survei">
             <form action="{{ route('admin-pusat.survey-periods.update', $period->id) }}" method="POST" class="space-y-4">
@@ -274,7 +268,8 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="edit-tanggal-mulai-{{ $period->id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        <label for="edit-tanggal-mulai-{{ $period->id }}"
+                            class="block text-sm font-medium text-gray-700 mb-1">
                             Tanggal Mulai
                         </label>
                         <input type="date" id="edit-tanggal-mulai-{{ $period->id }}" name="tanggal_mulai"
@@ -282,7 +277,8 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                     </div>
                     <div>
-                        <label for="edit-tanggal-selesai-{{ $period->id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        <label for="edit-tanggal-selesai-{{ $period->id }}"
+                            class="block text-sm font-medium text-gray-700 mb-1">
                             Tanggal Selesai
                         </label>
                         <input type="date" id="edit-tanggal-selesai-{{ $period->id }}" name="tanggal_selesai"
