@@ -37,7 +37,7 @@
                 </li>
             </ol>
         </nav>
-        @if ($rtkdp->status === \Modules\RTK\Enums\RTKStatus::REJECTED)
+        @if ($rtkdp->status_verification === \Modules\RTK\Enums\RTKStatusVerification::REJECTED)
             <div class="mb-6 border border-red-200 bg-red-50 rounded-lg p-4">
                 <div class="flex items-start gap-3">
                     <svg class="w-5 h-5 text-red-600 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -108,22 +108,7 @@
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        {{-- <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Status <span class="text-red-500">*</span>
-                            </label>
-                            <select name="status" class="w-full rounded-md border-gray-300">
-                                @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
-                                    <option value="{{ $status->value }}" @selected(old('status', $rtkdp->status?->value ?? $rtkdp->status) == $status->value)>
-                                        {{ $status->value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('status')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div> --}}
-
+                    
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">
                                 RTK Acuan <span class="text-red-500">*</span>
@@ -149,7 +134,9 @@
                                 </label>
                             </div>
                             <p class="text-xs text-gray-500 mt-4">
-                                Hanya satu RTK yang dapat dijadikan acuan pada setiap provinsi.
+                                Anda dapat mengajukan RTK baru meskipun sudah terdapat RTK yang sedang berlaku. RTK
+                                yang sedang berlaku akan digantikan secara otomatis setelah RTK baru disetujui oleh
+                                Admin Pusat / Admin Provinsi.
                             </p>
 
                             @error('is_active')

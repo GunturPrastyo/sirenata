@@ -13,19 +13,22 @@ use Illuminate\Support\Facades\Storage;
 use Modules\MasterData\Models\Province;
 use Modules\MasterData\Models\Regency;
 use Modules\RTK\Enums\RTKStatus;
+use Modules\RTK\Enums\RTKStatusVerification;
+use Modules\RTK\Enums\StatusDocument;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class RTKDService
 {
     private const DEFAULT_SORT = 'desc';
     private const DEFAULT_LIMIT = 10;
-    
+
     /**
      * Build query for active RTK Province per province
      *
-     * - Returns only the most recent RTK for each province
-     * - Supports search by RTK name or province name
-     * - Can be filtered by RTK status
-     * - Used by Admin Pusat
+     * - Prioritaskan RTK berlaku (APPROVED + VALID + is_active)
+     * - Kalau tidak ada berlaku, tampilkan is_active = true lainnya
+     * - Tambahkan count RTK yang ingin diubah (pending_count)
+     * - Used by Admin Pusat halaman 1
      */
     public function queryActiveRTKProvince(
         ?string $search = null,
@@ -33,29 +36,60 @@ class RTKDService
         int $limit = self::DEFAULT_LIMIT,
         ?string $status = null
     ): LengthAwarePaginator {
-
         $provinceQuery = $search
             ? Province::search($search)->orderBy('name')
             : Province::query()->orderBy('name');
 
-        $provinces = $provinceQuery->paginate($limit);
+        $provinces     = $provinceQuery->paginate($limit);
         $provinceCodes = $provinces->getCollection()->pluck('code')->toArray();
 
         if (empty($provinceCodes)) {
             return $provinces;
         }
-        
-        $rtks = RencanaTenagaKerja::query()
+
+        // Ambil semua RTK is_active = true per provinsi
+        $allActiveRtks = RencanaTenagaKerja::query()
+            ->with(['approver.profile', 'province', 'regency'])
             ->where('type', TypeRtk::PROVINSI->value)
             ->whereIn('province_code', $provinceCodes)
             ->where('is_active', true)
-            ->when($status, fn($q) => $q->where('status', $status))
+            ->when($status, fn($q) => $q->where('status_verification', $status))
             ->orderByDesc('end_date')
             ->get()
-            ->keyBy('province_code');
+            ->groupBy('province_code');
 
-        $provinces->getCollection()->transform(function ($province) use ($rtks) {
-            $province->latest_rtk = $rtks[$province->code] ?? null;
+        // Count RTK yang is_active = true dan bukan berlaku penuh (untuk tooltip)
+        // Kondisi: pending + is_active ATAU approved + NA + is_active
+        $pendingCounts = RencanaTenagaKerja::query()
+            ->where('type', TypeRtk::PROVINSI->value)
+            ->whereIn('province_code', $provinceCodes)
+            ->where('is_active', true)
+            ->where(function ($q) {
+                $q->where('status_verification', RTKStatusVerification::PENDING->value)
+                    ->orWhere(function ($q2) {
+                        $q2->where('status_verification', RTKStatusVerification::APPROVED->value)
+                            ->where('status_document', StatusDocument::NA->value);
+                    });
+            })
+            ->selectRaw('province_code, COUNT(*) as count')
+            ->groupBy('province_code')
+            ->pluck('count', 'province_code');
+
+        $provinces->getCollection()->transform(function ($province) use ($allActiveRtks, $pendingCounts) {
+            $rtksByProvince = $allActiveRtks[$province->code] ?? collect();
+
+            // Prioritaskan RTK berlaku penuh (APPROVED + VALID + is_active)
+            $rtkBerlaku = $rtksByProvince->first(function ($rtk) {
+                return $rtk->status_verification->value === RTKStatusVerification::APPROVED->value
+                    && $rtk->status_document->value === StatusDocument::VALID->value;
+            });
+
+            // Kalau tidak ada berlaku, ambil yang is_active = true lainnya
+            $province->latest_rtk = $rtkBerlaku ?? $rtksByProvince->first();
+
+            // Count RTK yang ingin diubah (untuk tooltip)
+            $province->pending_rtk_count = $pendingCounts[$province->code] ?? 0;
+
             return $province;
         });
 
@@ -88,15 +122,19 @@ class RTKDService
         string $provinceCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
-        ?string $status = null,
-        ?string $year = null
-    ): Builder {
-        return DB::table('rencana_tenaga_kerjas')
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null,
+    ) {
+        return RencanaTenagaKerja::query()
             ->where('type', TypeRtk::PROVINSI->value)
             ->where('province_code', $provinceCode)
             ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
-            ->when($status, fn($q) => $q->where('status', $status))
-            ->when($year, fn($q) => $q->whereYear('start_date', $year))
+            ->when($statusVerification, fn($q) => $q->where('status_verification', $statusVerification))
+            ->when($statusDocument, fn($q) => $q->where('status_document', $statusDocument))
+            ->when($isActive !== null && $isActive !== '', function ($q) use ($isActive) {
+                $q->where('is_active', (bool) $isActive);
+            })
             ->orderBy('created_at', $sortBy);
     }
 
@@ -105,16 +143,36 @@ class RTKDService
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
-        ?string $status = null,
-        ?string $year = null
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null,
     ): LengthAwarePaginator {
         return $this->getFilteredQueryBuilderRTKDByProvinceCode(
             provinceCode: $provinceCode,
             search: $search,
             sortBy: $sortBy,
-            status: $status,
-            year: $year
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive,
         )->paginate($limit)->withQueryString();
+    }
+
+    public function exportRtkProvince(
+        string $provinceCode,
+        ?string $search = null,
+        string $sortBy = self::DEFAULT_SORT,
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null,
+    ) {
+        return $this->getFilteredQueryBuilderRTKDByProvinceCode(
+            provinceCode: $provinceCode,
+            search: $search,
+            sortBy: $sortBy,
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive,
+        );
     }
 
     /**
@@ -145,21 +203,51 @@ class RTKDService
             return $regencies;
         }
 
-        $rtks = RencanaTenagaKerja::query()
+        // 2️⃣ Ambil semua RTK is_active = true per kabupaten/kota
+        $allActiveRtks = RencanaTenagaKerja::query()
             ->where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
             ->whereIn('regency_code', $regencyCodes)
             ->where('is_active', true)
-            // ->where('end_date', '>=', Carbon::now()->year)
-            ->when($status, fn($q) => $q->where('status', $status))
+            ->when($status, fn($q) => $q->where('status_verification', $status))
             ->orderByDesc('end_date')
             ->get()
-            ->unique('regency_code')
-            ->keyBy('regency_code');
+            ->groupBy('regency_code');
 
-        // 3️⃣ Attach RTK ke Regency
-        $regencies->getCollection()->transform(function ($regency) use ($rtks) {
-            $regency->latest_rtk = $rtks[$regency->code] ?? null;
+        // 3️⃣ Count RTK yang is_active = true dan bukan berlaku penuh (untuk tooltip)
+        // Kondisi: pending + is_active ATAU approved + NA + is_active
+        $pendingCounts = RencanaTenagaKerja::query()
+            ->where('type', TypeRtk::KAB_KOTA->value)
+            ->where('province_code', $provinceCode)
+            ->whereIn('regency_code', $regencyCodes)
+            ->where('is_active', true)
+            ->where(function ($q) {
+                $q->where('status_verification', RTKStatusVerification::PENDING->value)
+                    ->orWhere(function ($q2) {
+                        $q2->where('status_verification', RTKStatusVerification::APPROVED->value)
+                            ->where('status_document', StatusDocument::NA->value);
+                    });
+            })
+            ->selectRaw('regency_code, COUNT(*) as count')
+            ->groupBy('regency_code')
+            ->pluck('count', 'regency_code');
+
+        // 4️⃣ Transformasi data collection
+        $regencies->getCollection()->transform(function ($regency) use ($allActiveRtks, $pendingCounts) {
+            $rtksByRegency = $allActiveRtks[$regency->code] ?? collect();
+
+            // Prioritaskan RTK berlaku penuh (APPROVED + VALID + is_active)
+            $rtkBerlaku = $rtksByRegency->first(function ($rtk) {
+                return $rtk->status_verification->value === RTKStatusVerification::APPROVED->value
+                    && $rtk->status_document->value === StatusDocument::VALID->value;
+            });
+
+            // Kalau tidak ada berlaku, ambil yang is_active = true lainnya
+            $regency->latest_rtk = $rtkBerlaku ?? $rtksByRegency->first();
+
+            // Count RTK yang ingin diubah (untuk tooltip)
+            $regency->pending_rtk_count = $pendingCounts[$regency->code] ?? 0;
+
             return $regency;
         });
 
@@ -202,106 +290,187 @@ class RTKDService
         return $rencanaTenagaKerja;
     }
 
-    /**
-     * create RTK Provinsi
-     * 
-     * @param array $data
-     * @return RencanaTenagaKerja
-     */
     public function createRTKProvince(array $data): RencanaTenagaKerja
     {
         $user = Auth::user();
+
         return DB::transaction(function () use ($data, $user) {
             $provinceCode = $user->scopeArea->province_code;
+            $isActive     = (bool) ($data['is_active'] ?? false);
 
-            // Nonaktifkan RTK lama di provinsi yang sama
-            RencanaTenagaKerja::query()
-                ->where('province_code', $provinceCode)
-                ->where('type', TypeRtk::PROVINSI->value)
-                ->where('is_active', true)
-                ->update([
-                    'is_active' => false
-                ]);
+            // Kalau user set is_active = true
+            if ($isActive) {
+                // Cek apakah ada RTK yang berlaku penuh
+                $rtkBerlaku = RencanaTenagaKerja::where('province_code', $provinceCode)
+                    ->where('type', TypeRtk::PROVINSI->value)
+                    ->berlaku() // APPROVED + VALID + is_active
+                    ->exists();
+
+                if (! $rtkBerlaku) {
+                    // Tidak ada yang berlaku penuh — non-aktifkan yang lama
+                    RencanaTenagaKerja::where('province_code', $provinceCode)
+                        ->where('type', TypeRtk::PROVINSI->value)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+                }
+                // Kalau ada yang berlaku penuh — biarkan, is_active tetap true untuk RTK baru
+                // Penggantian RTK acuan dihandle admin pusat
+            }
 
             $documentPath = null;
-
             if (isset($data['document_path'])) {
                 $documentPath = $data['document_path']->store(
-                    'rtkd/documents/province',
+                    'rtk/documents/province',
                     'public'
                 );
             }
 
-            $rtkdProvince = RencanaTenagaKerja::create([
-                'user_id' => $user->id,
-                'province_code' => $provinceCode,
-                'regency_code' => null,
-                'name' => $data['name'],
-                'start_date' => $data['start_date'],
-                'end_date' => $data['end_date'],
-                'status' => RTKStatus::PENDING->value,
-                'type' => TypeRtk::PROVINSI->value,
-                'is_active' => true,
-                'document_path' => $documentPath,
+            $rtk = RencanaTenagaKerja::create([
+                'user_id'             => $user->id,
+                'province_code'       => $provinceCode,
+                'regency_code'        => null,
+                'name'                => $data['name'],
+                'start_date'          => $data['start_date'],
+                'end_date'            => $data['end_date'],
+                'status_verification' => RTKStatusVerification::PENDING->value,
+                'status_document'     => StatusDocument::NA->value,
+                'type'                => TypeRtk::PROVINSI->value,
+                'is_active'           => $isActive,
+                'document_path'       => $documentPath,
             ]);
 
-            ToastMagic::success("RTKD Provinsi berhasil ditambahkan!");
+            ToastMagic::success('RTK Provinsi berhasil diajukan.');
 
-            return $rtkdProvince;
+            return $rtk;
         });
     }
 
-    public function updateRTKProvince(RencanaTenagaKerja $rtkdProvince, array $data): RencanaTenagaKerja {
+    public function updateRTKProvince(RencanaTenagaKerja $rtk, array $data): RencanaTenagaKerja
+    {
+        return DB::transaction(function () use ($data, $rtk) {
 
-        $user = Auth::user();
-        return DB::transaction(function () use ($rtkdProvince, $data, $user) {
-            $documentPath = $rtkdProvince->document_path;
-
-            if (!empty($data['document_path'])) {
-                $documentPath = $data['document_path']->store(
-                    'rtkd/documents/province',
-                    'public'
-                );
+            // Tidak boleh edit kalau RTK ini sendiri sudah berlaku penuh
+            if ($rtk->is_berlaku) {
+                throw new \Exception('RTK yang sedang berlaku tidak bisa diubah.');
             }
-            // $status = $data['status'] ?? $rtkdProvince->status;
-            $isActive = $data['is_active'] ?? $rtkdProvince->is_active;
 
-            // Jika RTK ini diset menjadi BERLAKU
+            // Boleh edit kalau:
+            // 1. status_verification = PENDING (semua kondisi)
+            // 2. status_verification = APPROVED + status_document = NA (belum di-approve dokumen)
+            // 3. status_verification = REJECTED
+            $bolehEdit =
+                $rtk->status_verification === RTKStatusVerification::PENDING ||
+                $rtk->status_verification === RTKStatusVerification::REJECTED ||
+                (
+                    $rtk->status_verification === RTKStatusVerification::APPROVED &&
+                    $rtk->status_document === StatusDocument::NA
+                );
+
+            if (! $bolehEdit) {
+                throw new \Exception('RTK ini tidak bisa diubah.');
+            }
+
+            $isActive = (bool) ($data['is_active'] ?? false);
+
             if ($isActive) {
-                RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
-                    ->where('province_code', $user->scopeArea->province_code)
-                    ->where('is_active', true)
-                    ->where('id', '!=', $rtkdProvince->id)
-                    ->update([
-                        'is_active' => false,
-                    ]);
+                // Cek apakah ada RTK berlaku penuh di provinsi yang sama
+                $adaRtkBerlaku = RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                    ->where('type', TypeRtk::PROVINSI->value)
+                    ->where('id', '!=', $rtk->id)
+                    ->berlaku()
+                    ->exists();
 
-                // $isActive = true;
-            } 
-            // else {
-            //     // Jangan ubah is_active kalau bukan diset berlaku
-            //     $isActive = $rtkdProvince->is_active;
-            // }
+                if ($adaRtkBerlaku) {
+                    // Ada RTK berlaku penuh (data 1) — tetap biarkan is_active-nya
+                    // Tapi non-aktifkan RTK lain yang is_active = true tapi BUKAN berlaku penuh
+                    // Contoh: data 2 (pending, is_active=true) harus jadi false
+                    RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                        ->where('type', TypeRtk::PROVINSI->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->where(function ($q) {
+                            // Yang bukan berlaku penuh — salah satu kondisi tidak terpenuhi
+                            $q->where('status_verification', '!=', RTKStatusVerification::APPROVED->value)
+                                ->orWhere('status_document', '!=', StatusDocument::VALID->value);
+                        })
+                        ->update(['is_active' => false]);
+                } else {
+                    // Tidak ada RTK berlaku penuh — non-aktifkan semua is_active yang lain
+                    RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                        ->where('type', TypeRtk::PROVINSI->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+                }
+            }
 
-            $rtkdProvince->update([
-                'province_code' => $user->scopeArea->province_code,
-                'regency_code'  => null,
-                'name'          => $data['name'],
-                'start_date'    => $data['start_date'],
-                'end_date'      => $data['end_date'],
-                'status'        => RTKStatus::PENDING->value,
-                'type'          => TypeRtk::PROVINSI->value,
-                'document_path' => $documentPath,
-                'is_active'     => $isActive,
+            if (isset($data['document_path'])) {
+                if ($rtk->document_path) {
+                    Storage::disk('public')->delete($rtk->document_path);
+                }
+                $data['document_path'] = $data['document_path']->store(
+                    'rtk/documents/province',
+                    'public'
+                );
+            }
+
+            $rtk->update([
+                'name'                => $data['name'],
+                'start_date'          => $data['start_date'],
+                'end_date'            => $data['end_date'],
+                'is_active'           => $isActive,
+                'document_path'       => $data['document_path'] ?? $rtk->document_path,
+                'status_verification' => RTKStatusVerification::PENDING->value,
+                'rejected_reason'     => null,
+                'approved_by'         => null,
+                'approved_at'         => null,
             ]);
 
-            ToastMagic::success("RTKD Provinsi berhasil diupdate!");
+            ToastMagic::success('RTK Provinsi berhasil diupdate.');
 
-            return $rtkdProvince;
+            return $rtk->fresh();
         });
     }
 
+    /**
+     * Admin pusat — hanya update is_active (RTK acuan)
+     * Tidak reset status_verification, approved_by, dll
+     */
+    public function updateIsActiveProvince(RencanaTenagaKerja $rtk, bool $isActive): RencanaTenagaKerja
+    {
+        return DB::transaction(function () use ($rtk, $isActive) {
 
+            if ($isActive) {
+                $adaRtkBerlaku = RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                    ->where('type', TypeRtk::PROVINSI->value)
+                    ->where('id', '!=', $rtk->id)
+                    ->berlaku()
+                    ->exists();
+
+                if ($adaRtkBerlaku) {
+                    RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                        ->where('type', TypeRtk::PROVINSI->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->where(function ($q) {
+                            $q->where('status_verification', '!=', RTKStatusVerification::APPROVED->value)
+                                ->orWhere('status_document', '!=', StatusDocument::VALID->value);
+                        })
+                        ->update(['is_active' => false]);
+                } else {
+                    RencanaTenagaKerja::where('province_code', $rtk->province_code)
+                        ->where('type', TypeRtk::PROVINSI->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+                }
+            }
+
+            $rtk->update(['is_active' => $isActive]);
+
+            return $rtk->fresh();
+        });
+    }
 
     // Admin Kab/kota
     /**
@@ -314,21 +483,21 @@ class RTKDService
         string $regencyCode,
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
-        ?string $status = null
-    ): Builder {
-        $scopeArea = Auth::user()->scopeArea;
-        
-        return DB::table('rencana_tenaga_kerjas as rtk')
-            ->join('users as u', 'rtk.user_id', '=', 'u.id')
-            ->select('rtk.*')
-            ->where([
-                ['rtk.type', '=', TypeRtk::KAB_KOTA->value],
-                ['rtk.province_code', '=', $provinceCode],
-                ['rtk.regency_code', '=', $regencyCode],
-            ])
-            ->when($search, fn($q) => $q->where('rtk.name', 'like', "%{$search}%"))
-            ->when($status, fn($q) => $q->where('rtk.status', $status))
-            ->orderBy('rtk.created_at', $sortBy);
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null,
+    ) {
+        return RencanaTenagaKerja::query()
+            ->where('type', TypeRtk::KAB_KOTA->value)
+            ->where('province_code', $provinceCode)
+            ->where('regency_code', $regencyCode)
+            ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
+            ->when($statusVerification, fn($q) => $q->where('status_verification', $statusVerification))
+            ->when($statusDocument, fn($q) => $q->where('status_document', $statusDocument))
+            ->when($isActive !== null && $isActive !== '', function ($q) use ($isActive) {
+                $q->where('is_active', (bool) $isActive);
+            })
+            ->orderBy('created_at', $sortBy);
     }
 
     /**
@@ -340,124 +509,224 @@ class RTKDService
         ?string $search = null,
         string $sortBy = self::DEFAULT_SORT,
         int $limit = self::DEFAULT_LIMIT,
-        ?string $status = null
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null,
     ): LengthAwarePaginator {
         return $this->getFilteredQueryBuilderRTKDByKabKotaCode(
             provinceCode: $provinceCode,
             regencyCode: $regencyCode,
             search: $search,
             sortBy: $sortBy,
-            status: $status
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive,
         )->paginate($limit)->withQueryString();
     }
 
-    /**
-     * Create RTK Kab/Kota
-     * 
-     * @param array $data
-     * @return RencanaTenagaKerja
-     */
+    public function exportRtkRegency(
+        string $provinceCode,
+        string $regencyCode,
+        ?string $search = null,
+        string $sortBy = self::DEFAULT_SORT,
+        ?string $statusVerification = null,
+        ?string $statusDocument = null,
+        ?string $isActive = null,
+    ) {
+        return $this->getFilteredQueryBuilderRTKDByKabKotaCode(
+            provinceCode: $provinceCode,
+            regencyCode: $regencyCode,
+            search: $search,
+            sortBy: $sortBy,
+            statusVerification: $statusVerification,
+            statusDocument: $statusDocument,
+            isActive: $isActive,
+        );
+    }
+
     public function createRTKKabKota(array $data): RencanaTenagaKerja
     {
         $user = Auth::user();
-        if (!$user->scopeArea) {
-            throw new \LogicException('Wilayah kerja akun belum terdaftar di sistem');
-        }
 
         return DB::transaction(function () use ($data, $user) {
             $provinceCode = $user->scopeArea->province_code;
             $regencyCode = $user->scopeArea->regency_code;
-            
-            RencanaTenagaKerja::query()
-                ->where('province_code', $provinceCode)
-                ->where('regency_code', $regencyCode)
-                ->where('type', TypeRtk::KAB_KOTA->value)
-                ->where('is_active', true)
-                ->update([
-                    'is_active' => false
-                ]);
+
+            $isActive     = (bool) ($data['is_active'] ?? false);
+
+            // Kalau user set is_active = true
+            if ($isActive) {
+                // Cek apakah ada RTK yang berlaku penuh
+                $rtkBerlaku = RencanaTenagaKerja::where('regency_code', $regencyCode)
+                    ->where('type', TypeRtk::KAB_KOTA->value)
+                    ->berlaku() // APPROVED + VALID + is_active
+                    ->exists();
+
+                if (! $rtkBerlaku) {
+                    // Tidak ada yang berlaku penuh — non-aktifkan yang lama
+                    RencanaTenagaKerja::where('regency_code', $regencyCode)
+                        ->where('type', TypeRtk::KAB_KOTA->value)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+                }
+                // Kalau ada yang berlaku penuh — biarkan, is_active tetap true untuk RTK baru
+                // Penggantian RTK acuan dihandle admin pusat
+            }
 
             $documentPath = null;
-            if (!empty($data['document_path']) 
-                && $data['document_path'] instanceof \Illuminate\Http\UploadedFile) {
+            if (isset($data['document_path'])) {
                 $documentPath = $data['document_path']->store(
                     'rtkd/documents/kab-kota',
                     'public'
                 );
             }
 
-            $rtkkabkota = RencanaTenagaKerja::create([
-                'user_id' => $user->id,
-                'province_code' => $provinceCode,
-                'regency_code' => $regencyCode,
-                'name' => $data['name'],
-                'start_date' => $data['start_date'],
-                'end_date' => $data['end_date'],
-                'status' => RTKStatus::PENDING->value,
-                'is_active' => true,
-                'type' => TypeRtk::KAB_KOTA->value,
-                'document_path' => $documentPath,
+            $rtk = RencanaTenagaKerja::create([
+                'user_id'             => $user->id,
+                'province_code'       => $provinceCode,
+                'regency_code'        => $regencyCode,
+                'name'                => $data['name'],
+                'start_date'          => $data['start_date'],
+                'end_date'            => $data['end_date'],
+                'status_verification' => RTKStatusVerification::PENDING->value,
+                'status_document'     => StatusDocument::NA->value,
+                'type'                => TypeRtk::KAB_KOTA->value,
+                'is_active'           => $isActive,
+                'document_path'       => $documentPath,
             ]);
 
-            return $rtkkabkota;
+            ToastMagic::success('RTK Kab/Kota berhasil diajukan.');
+
+            return $rtk;
         });
     }
 
     /**
      * Update RTK Kab/Kota
-     * 
-     * @param RencanaTenagaKerja $rtkdKabKota
-     * @param array $data
-     * @return RencanaTenagaKerja
+     * Disesuaikan dengan logic updateRTKProvince
      */
-    public function updateRTKKabKota(RencanaTenagaKerja $rtkdKabKota, array $data): RencanaTenagaKerja {
-        $user = Auth::user();
-        if (!$user->scopeArea) {
-            throw new \LogicException('Wilayah kerja akun belum terdaftar di sistem');
-        }
+    public function updateRTKKabKota(RencanaTenagaKerja $rtk, array $data): RencanaTenagaKerja
+    {
+        return DB::transaction(function () use ($data, $rtk) {
 
-        return DB::transaction(function () use ($rtkdKabKota, $data, $user) {
+            // Tidak boleh edit kalau RTK ini sendiri sudah berlaku penuh
+            if ($rtk->is_berlaku) {
+                throw new \Exception('RTK yang sedang berlaku tidak bisa diubah.');
+            }
 
-            $documentPath = $rtkdKabKota->document_path;
+            // Boleh edit kalau:
+            // 1. status_verification = PENDING
+            // 2. status_verification = APPROVED + status_document = NA
+            // 3. status_verification = REJECTED
+            $bolehEdit =
+                $rtk->status_verification === RTKStatusVerification::PENDING ||
+                $rtk->status_verification === RTKStatusVerification::REJECTED ||
+                (
+                    $rtk->status_verification === RTKStatusVerification::APPROVED &&
+                    $rtk->status_document === StatusDocument::NA
+                );
 
-            if (!empty($data['document_path'])) {
-                $documentPath = $data['document_path']->store(
-                    'rtkd/documents/kab-kota',
+            if (! $bolehEdit) {
+                throw new \Exception('RTK ini tidak bisa diubah.');
+            }
+
+            $isActive = (bool) ($data['is_active'] ?? false);
+
+            if ($isActive) {
+                // Cek apakah ada RTK berlaku penuh di regency yang sama
+                $adaRtkBerlaku = RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                    ->where('type', TypeRtk::KAB_KOTA->value)
+                    ->where('id', '!=', $rtk->id)
+                    ->berlaku()
+                    ->exists();
+
+                if ($adaRtkBerlaku) {
+                    // Ada RTK berlaku penuh — tetap biarkan is_active-nya
+                    // Non-aktifkan RTK lain yang is_active = true tapi BUKAN berlaku penuh
+                    RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                        ->where('type', TypeRtk::KAB_KOTA->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->where(function ($q) {
+                            $q->where('status_verification', '!=', RTKStatusVerification::APPROVED->value)
+                                ->orWhere('status_document', '!=', StatusDocument::VALID->value);
+                        })
+                        ->update(['is_active' => false]);
+                } else {
+                    // Tidak ada RTK berlaku penuh — non-aktifkan semua is_active yang lain
+                    RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                        ->where('type', TypeRtk::KAB_KOTA->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+                }
+            }
+
+            if (isset($data['document_path'])) {
+                if ($rtk->document_path) {
+                    Storage::disk('public')->delete($rtk->document_path);
+                }
+                $data['document_path'] = $data['document_path']->store(
+                    'rtk/documents/kab-kota', // ← path kab-kota
                     'public'
                 );
             }
 
-            $isActive = $data['is_active'] ?? $rtkdKabKota->is_active;
-            if ($isActive) {
-                RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
-                    ->where('province_code', $user->scopeArea->province_code)
-                    ->where('regency_code', $user->scopeArea->regency_code)
-                    ->where('is_active', true)
-                    ->where('id', '!=', $rtkdKabKota->id)
-                    ->update([
-                        // 'status' => RTKStatus::TIDAK_BERLAKU->value,
-                        'is_active' => false,
-                    ]);
-                // $isActive = true;
-            } 
-            // else {
-            //     // Kalau bukan diset berlaku
-            //     $isActive = $rtkdKabKota->is_active;
-            // }
-
-            $rtkdKabKota->update([
-                'province_code' => $user->scopeArea->province_code,
-                'regency_code'  => $user->scopeArea->regency_code,
-                'name'          => $data['name'],
-                'start_date'    => $data['start_date'],
-                'end_date'      => $data['end_date'],
-                'status'        => RTKStatus::PENDING->value,
-                'type'          => TypeRtk::KAB_KOTA->value,
-                'document_path' => $documentPath,
-                'is_active'     => $isActive,
+            $rtk->update([
+                'name'                => $data['name'],
+                'start_date'          => $data['start_date'],
+                'end_date'            => $data['end_date'],
+                'is_active'           => $isActive,
+                'document_path'       => $data['document_path'] ?? $rtk->document_path,
+                'status_verification' => RTKStatusVerification::PENDING->value, // ← reset ke PENDING
+                'rejected_reason'     => null,
+                'approved_by'         => null,
+                'approved_at'         => null,
             ]);
 
-            return $rtkdKabKota;
+            ToastMagic::success('RTK Kab/Kota berhasil diupdate.');
+
+            return $rtk->fresh();
+        });
+    }
+
+    /**
+     * Admin pusat — hanya update is_active (RTK acuan)
+     * Tidak reset status_verification, approved_by, dll
+     */
+    public function updateIsActiveKabKota(RencanaTenagaKerja $rtk, bool $isActive): RencanaTenagaKerja
+    {
+        return DB::transaction(function () use ($rtk, $isActive) {
+
+            if ($isActive) {
+                $adaRtkBerlaku = RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                    ->where('type', TypeRtk::KAB_KOTA->value)
+                    ->where('id', '!=', $rtk->id)
+                    ->berlaku()
+                    ->exists();
+
+                if ($adaRtkBerlaku) {
+                    RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                        ->where('type', TypeRtk::KAB_KOTA->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->where(function ($q) {
+                            $q->where('status_verification', '!=', RTKStatusVerification::APPROVED->value)
+                                ->orWhere('status_document', '!=', StatusDocument::VALID->value);
+                        })
+                        ->update(['is_active' => false]);
+                } else {
+                    RencanaTenagaKerja::where('regency_code', $rtk->regency_code)
+                        ->where('type', TypeRtk::KAB_KOTA->value)
+                        ->where('id', '!=', $rtk->id)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+                }
+            }
+
+            $rtk->update(['is_active' => $isActive]);
+
+            return $rtk->fresh();
         });
     }
 
@@ -467,14 +736,22 @@ class RTKDService
     public function rtkKabKotaActive(): ?RencanaTenagaKerja
     {
         $user = Auth::user();
-        $rtkAktif = RencanaTenagaKerja::query()
+
+        // Prioritaskan RTK berlaku penuh dulu
+        $rtkBerlaku = RencanaTenagaKerja::query()
             ->where('type', TypeRtk::KAB_KOTA->value)
-            ->where('province_code', $user->scopeArea?->province_code)
             ->where('regency_code', $user->scopeArea?->regency_code)
-            ->where('is_active', true)
-            ->orderByDesc('start_date')
+            ->berlaku()
             ->first();
 
-        return $rtkAktif;
+        if ($rtkBerlaku) return $rtkBerlaku;
+
+        // Kalau tidak ada berlaku, ambil yang is_active = true
+        return RencanaTenagaKerja::query()
+            ->where('type', TypeRtk::KAB_KOTA->value)
+            ->where('regency_code', $user->scopeArea?->regency_code)
+            ->where('is_active', true)
+            ->orderByDesc('updated_at')
+            ->first();
     }
 }

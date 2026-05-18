@@ -4,6 +4,9 @@ namespace Modules\LMS\Http\Controllers\AdminPusat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RekapUserCourseProvinceExport;
+use App\Exports\RekapUserCourseRegencyExport;
 use Modules\LMS\Services\CourseService;
 use Modules\LMS\Services\RekapitulasiService;
 use Modules\MasterData\Models\Province;
@@ -31,7 +34,9 @@ class RekapitulasiController extends Controller
         return view('lms::admin-pusat.sdm.rekapitulasi-index', compact('data'));
     }
 
-    public function kabKota(Request $request, string $provinceCode) {
+
+    public function kabKota(Request $request, string $provinceCode)
+    {
         $limit   = $request->integer('per_page', 10);
         $search  = $request->string('search')->toString();
 
@@ -43,9 +48,13 @@ class RekapitulasiController extends Controller
             );
         return view('lms::admin-pusat.sdm.rekapitulasi-kab-kota', compact('data', 'provinceCode'));
     }
-    
 
-    public function rekapUserProvince(Request $request, string $provinceCode) {
+
+    /**
+     * Rekap user course per provinsi
+     */
+    public function rekapUserProvince(Request $request, string $provinceCode)
+    {
         $provinceName = Province::find($provinceCode)->name;
         $limit   = $request->integer('per_page', 10);
         $search  = $request->string('search')->toString();
@@ -59,14 +68,38 @@ class RekapitulasiController extends Controller
             courseId: $courseId,
         );
         return view('lms::admin-pusat.sdm.rekapitulasi-user-province', [
-            'data' => $data, 
-            'provinceCode' => $provinceCode, 
+            'data' => $data,
+            'provinceCode' => $provinceCode,
             'provinceName' => $provinceName,
             'courses' => $courses,
         ]);
     }
 
-    public function rekapUserKabKota(Request $request, string $regencyCode) {
+    /**
+     * Export rekap user course per provinsi
+     */
+    public function exportRekapUserProvince(Request $request, string $provinceCode)
+    {
+        $provinceName = Province::find($provinceCode)->name;
+        $filename     = 'rekapitulasi-provinsi-' . str($provinceName)->slug() . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        return Excel::download(
+            new RekapUserCourseProvinceExport(
+                provinceName: $provinceName,
+                courseService: $this->courseService,
+                provinceCode: $provinceCode,
+                courseId: $request->string('course_id')->toString() ?: null,
+                search: $request->string('search')->toString() ?: null,
+            ),
+            $filename
+        );
+    }
+
+    /**
+     * Rekap user course per kabupaten kota
+     */
+    public function rekapUserKabKota(Request $request, string $regencyCode)
+    {
         $regency = Regency::find($regencyCode);
         $limit   = $request->integer('per_page', 10);
         $search  = $request->string('search')->toString();
@@ -80,10 +113,30 @@ class RekapitulasiController extends Controller
             courseId: $courseId,
         );
         return view('lms::admin-pusat.sdm.rekapitulasi-user-kab-kota', [
-            'data' => $data, 
-            'regencyCode' => $regencyCode, 
+            'data' => $data,
+            'regencyCode' => $regencyCode,
             'regency' => $regency,
             'courses' => $courses,
         ]);
+    }
+
+    /**
+     * Export rekap user course per provinsi
+     */
+    public function exportRekapUserRegency(Request $request, string $regencyCode)
+    {
+        $regencyName = Regency::find($regencyCode)->name;
+        $filename     = 'rekapitulasi-' . str($regencyName)->slug() . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        return Excel::download(
+            new RekapUserCourseRegencyExport(
+                regencyName: $regencyName,
+                courseService: $this->courseService,
+                regencyCode: $regencyCode,
+                courseId: $request->string('course_id')->toString() ?: null,
+                search: $request->string('search')->toString() ?: null,
+            ),
+            $filename
+        );
     }
 }

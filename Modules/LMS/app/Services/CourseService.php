@@ -3,6 +3,8 @@
 namespace Modules\LMS\Services;
 
 use App\Models\User;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\LMS\Models\Course;
@@ -35,20 +37,20 @@ class CourseService
         string $search = '',
         ?string $courseId = null,
     ) {
-    return User::query()
-        ->inProvince($provinceCode)
-        ->provinceInstitution()
-        ->whereHas('enrolledCourses') // wajib punya course
-        ->when($courseId, function ($q) use ($courseId) {
-            $q->whereHas('enrolledCourses', function ($sub) use ($courseId) {
-                $sub->where('courses.id', $courseId);
-            });
-        })
-        ->when($search, fn($q) => $q->search($search))
-        ->with([
-            'profile',
-            'scopeArea',
-            'enrolledCourses' => function ($q) use ($courseId) {
+        return User::query()
+            ->inProvince($provinceCode)
+            ->provinceInstitution()
+            ->whereHas('enrolledCourses') // wajib punya course
+            ->when($courseId, function ($q) use ($courseId) {
+                $q->whereHas('enrolledCourses', function ($sub) use ($courseId) {
+                    $sub->where('courses.id', $courseId);
+                });
+            })
+            ->when($search, fn($q) => $q->search($search))
+            ->with([
+                'profile',
+                'scopeArea',
+                'enrolledCourses' => function ($q) use ($courseId) {
                     if ($courseId) {
                         $q->where('courses.id', $courseId);
                     }
@@ -108,6 +110,18 @@ class CourseService
             courseId: $courseId,
             search: $search,
         )->paginate($limit)->withQueryString();
+    }
+
+    public function exportCourseEnrollmentsByProvince(
+        string $provinceCode,
+        ?string $courseId = null,
+        ?string $search = null,
+    ) {
+        return $this->baseEnrollmentsByProvinceQuery(
+            provinceCode: $provinceCode,
+            courseId: $courseId,
+            search: $search,
+        )->orderBy('users.name');
     }
 
     public function queryCourseByRegency(string $regencyCode, string $search = '', int $limit = self::DEFAULT_LIMIT, string $sort = self::DEFAULT_SORT)
@@ -179,7 +193,75 @@ class CourseService
             search: $search,
         )->paginate($limit)->withQueryString();
     }
-    
+
+    public function exportCourseEnrollmentsByRegency(
+        string $regencyCode,
+        ?string $courseId = null,
+        ?string $search = null,
+    ) {
+        return $this->baseEnrollmentsByRegencyQuery(
+            regencyCode: $regencyCode,
+            courseId: $courseId,
+            search: $search,
+        )->orderBy('users.name');
+    }
+
+    public function myCourseStats(): array
+    {
+        $user    = Auth::user();
+        $courses = $user->enrolledCourses()->get();
+        $startedCourses = $courses->where('pivot.progress', '>', 0);
+
+        return [
+            'total'        => $courses->count(),
+            'aktif'        => $courses->where('pivot.status', 'in_progress')->count(),
+            'terdaftar'    => $courses->where('pivot.status', 'enrolled')->count(),
+            'selesai'      => $courses->where('pivot.status', 'completed')->count(),
+            'sertifikat'   => $courses->whereNotNull('pivot.certificate_code')->count(),
+            // 'avg_progress' => $$startedCourses->count() > 0
+            //     ? (int) round($courses->where('pivot.progress', '>', 0)->avg('pivot.progress'))
+            //     : 0,
+            'avg_progress' => $startedCourses->count() > 0
+                ? (int) round($startedCourses->avg('pivot.progress'))
+                : 0,
+        ];
+    }
+
+    /**
+     * Ambil course terakhir yang diakses user
+     * berdasarkan updated_at di pivot course_student
+     */
+    public function getLastAccessedCourse(): ?object
+    {
+        $course = Auth::user()
+            ->enrolledCourses()
+            ->wherePivotIn('status', ['enrolled', 'in_progress'])
+            ->orderByPivot('updated_at', 'desc')
+            ->first();
+
+        if (! $course) return null;
+
+        return (object) [
+            'name'     => $course->name,
+            'slug'     => $course->slug,
+            'progress' => $course->pivot->progress,
+            'status'   => $course->pivot->status,
+        ];
+    }
+
+
+    /**
+     * Ambil 3 course terbaru yang sedang diikuti user
+     */
+    public function getRecentCourses(int $limit = 3): \Illuminate\Support\Collection
+    {
+        return Auth::user()
+            ->enrolledCourses()
+            ->with('category')
+            ->orderByPivot('updated_at', 'desc')
+            ->limit($limit)
+            ->get();
+    }
 
     /**
      * Ambil course yang diikuti user yang sedang login
@@ -220,7 +302,6 @@ class CourseService
                 'links'   => $data['result']['links'] ?? [],
                 'auth'    => $data['auth'] ?? [],
             ];
-
         } catch (\Exception $e) {
             Log::error('CourseService::myCourses error', [
                 'error' => $e->getMessage(),
@@ -263,7 +344,6 @@ class CourseService
                 'message' => $data['message'] ?? 'Success',
                 'data'    => $data['result']['data'] ?? [],
             ];
-
         } catch (\Exception $e) {
             Log::error('CourseService::getCourseDetailSlug error', [
                 'error' => $e->getMessage(),

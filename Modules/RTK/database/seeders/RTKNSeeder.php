@@ -1,5 +1,7 @@
 <?php
+
 namespace Modules\RTK\Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Modules\RTK\Enums\RTKStatus;
@@ -7,6 +9,8 @@ use Modules\RTK\Enums\TypeRtk;
 use Modules\RTK\Models\RencanaTenagaKerja;
 use App\Models\User;
 use Carbon\Carbon;
+use Modules\RTK\Enums\RTKStatusVerification;
+use Modules\RTK\Enums\StatusDocument;
 
 class RTKNSeeder extends Seeder
 {
@@ -22,7 +26,7 @@ class RTKNSeeder extends Seeder
             return;
         }
 
-       $data = [
+        $data = [
             [
                 'name'       => 'RTKN 2023-2024',
                 'start_date' => 2023,
@@ -50,7 +54,8 @@ class RTKNSeeder extends Seeder
                     'name'          => $item['name'],
                     'start_date'    => $item['start_date'],
                     'end_date'      => $item['end_date'],
-                    'status'        => RTKStatus::PENDING->value,
+                    'status_verification' => RTKStatusVerification::PENDING->value,
+                    'status_document' => StatusDocument::NA->value,
                     'is_active'     => $item['is_active'],
                     'type'          => TypeRtk::NASIONAL->value,
                     'document_path' => null,

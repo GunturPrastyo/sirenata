@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\RTK\Http\Requests\AdminPusat;
+namespace Modules\RTK\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
-use Modules\RTK\Enums\RTKStatus;
+use Illuminate\Validation\Rule;
+use Modules\RTK\Models\RencanaTenagaKerja;
 
-class RTKPUpdateRequest extends FormRequest
+class RTKPStoreRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,6 +14,7 @@ class RTKPUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
+            // Rule::unique(RencanaTenagaKerja::class, 'name'),
             'name' => ['required', 'string', 'max:255'],
             'start_date' => ['required', 'integer', 'digits:4', 'min:1900'],
             'end_date' => [
@@ -21,16 +22,20 @@ class RTKPUpdateRequest extends FormRequest
                 'integer',
                 'digits:4',
                 function ($attribute, $value, $fail) {
-                    $expectedEndYear = (int) $this->start_date + 5;
+                    $startYear = (int) $this->start_date;
+                    $endYear = (int) $value;
 
-                    if ((int) $value !== $expectedEndYear) {
-                        $fail('Tahun akhir harus tepat 5 tahun setelah tahun mulai.');
+                    if ($endYear <= $startYear) {
+                        $fail('Tahun akhir harus lebih besar dari tahun mulai.');
                     }
+
+                    // if ($endYear > $startYear + 5) {
+                    //     $fail('Tahun akhir maksimal 5 tahun dari tahun mulai.');
+                    // }
                 },
             ],
-            'document_path' => ['nullable', 'file', 'mimes:pdf','max:10240'],
+            'document_path' => ['required', 'file', 'mimes:pdf', 'max:10240'],
             'is_active' => ['required', 'boolean'],
-            // 'status' => ['required', new Enum(RTKStatus::class)],
         ];
     }
 
@@ -41,7 +46,6 @@ class RTKPUpdateRequest extends FormRequest
     {
         return true;
     }
-
 
     /**
      * Get custom attributes for validator errors.

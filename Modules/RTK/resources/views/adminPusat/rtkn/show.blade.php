@@ -87,10 +87,18 @@
                                 placeholder="Masukkan nama dokumen RTKN">
                         </div>
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="status_verification" class="block text-sm font-medium text-gray-700 mb-2">
                                 Status
                             </label>
-                            <input type="text" id="status" name="status" value="{{ $rtkn->status }}" disabled
+                            <input type="text" id="status_verification" name="status_verification" value="{{ $rtkn->status_verification->label() }}" disabled
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 cursor-not-allowed focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Masukkan nama dokumen RTKN">
+                        </div>
+                        <div>
+                            <label for="status_document" class="block text-sm font-medium text-gray-700 mb-2">
+                                Status Dokumen
+                            </label>
+                            <input type="text" id="status_document" name="status_document" value="{{ $rtkn->status_document->label() }}" disabled
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 cursor-not-allowed focus:ring-indigo-500 focus:border-indigo-500"
                                 placeholder="Masukkan nama dokumen RTKN">
                         </div>

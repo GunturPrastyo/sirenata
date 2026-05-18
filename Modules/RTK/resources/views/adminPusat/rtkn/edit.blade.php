@@ -86,21 +86,6 @@
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Status <span class="text-red-500">*</span>
-                            </label>
-                            <select name="status" class="w-full rounded-md border-gray-300">
-                                @foreach (\Modules\RTK\Enums\RTKStatus::cases() as $status)
-                                    <option value="{{ $status->value }}" @selected(old('status', $rtkn->status?->value ?? $rtkn->status) == $status->value)>
-                                        {{ $status->label() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('status')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">
@@ -127,9 +112,10 @@
                                 </label>
                             </div>
                             <p class="text-xs text-gray-500 mt-4">
-                                Hanya satu RTK yang dapat dijadikan acuan pada setiap provinsi.
+                                Anda dapat mengajukan RTKN baru meskipun sudah terdapat RTKN yang sedang berlaku. RTKN
+                                yang sedang berlaku akan digantikan secara otomatis setelah RTKN baru disetujui oleh
+                                Admin Pusat.
                             </p>
-
                             @error('is_active')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -261,7 +247,7 @@
                         </div>
 
                         {{-- Preview Upload --}}
-                        <div id="filePreview" class="hidden h-[350px]">
+                        <div id="filePreview" class="hidden h-[700px]">
                             <iframe id="previewFrame" class="w-full h-full"></iframe>
                         </div>
                     </div>

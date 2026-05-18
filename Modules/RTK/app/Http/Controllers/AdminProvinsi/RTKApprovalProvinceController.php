@@ -9,33 +9,27 @@ use Modules\RTK\Models\RencanaTenagaKerja;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\RTK\Enums\RTKStatusVerification;
+use Modules\RTK\Enums\StatusDocument;
+use Modules\RTK\Services\ApprovalRtkService;
 
 class RTKApprovalProvinceController extends Controller
 {
-    public function approveKabKota(RencanaTenagaKerja $rtk)
+    public function __construct(
+        private ApprovalRtkService $rtkService
+    ) {}
+
+    public function approveVerificationKabKota(Request $request, RencanaTenagaKerja $rtk)
     {
-        DB::transaction(function () use ($rtk) {
-            // nonaktifkan RTK lama yang approved
-            RencanaTenagaKerja::where('province_code', $rtk->province_code)
-                ->where('regency_code', $rtk->regency_code)
-                ->where('type', $rtk->type)
-                ->where('status', RTKStatus::APPROVED->value)
-                ->where('id', '!=', $rtk->id)
-                ->update([
-                    'is_active' => false,
-                    'status' => RTKStatus::EXPIRED->value,
-                ]);
+        $result = $this->rtkService->approveVerificationKabKota(rtk: $rtk);
+        if (! $result['success']) ToastMagic::error($result['message']);
+        return back();
+    }
 
-            // aktifkan RTK baru
-            $rtk->update([
-                'status' => RTKStatus::APPROVED->value,
-                'is_active' => true,
-                'approved_by' => auth()->id(),
-                'approved_at' => now(),
-            ]);
-        });
-
-        ToastMagic::success('RTK berhasil disetujui');
+    public function approveDocumentKabKota(Request $request, RencanaTenagaKerja $rtk)
+    {
+        $result = $this->rtkService->approveDocumentKabKota(rtk: $rtk);
+        if (! $result['success']) ToastMagic::error($result['message']);
         return back();
     }
 
@@ -45,14 +39,35 @@ class RTKApprovalProvinceController extends Controller
             'reason' => ['required', 'string', 'max:500']
         ]);
 
+        // Tidak bisa reject kalau RTK sudah berlaku penuh
+        if ($rtk->is_berlaku) {
+            ToastMagic::error('RTK yang sedang berlaku tidak bisa ditolak.');
+            return back();
+        }
+
+        // Hanya bisa reject kalau is_active = true dan status_document = NA
+        $bolehReject = $rtk->is_active
+            && $rtk->status_document === StatusDocument::NA
+            && in_array($rtk->status_verification, [
+                RTKStatusVerification::PENDING,
+                RTKStatusVerification::APPROVED,
+            ]);
+
+        if (! $bolehReject) {
+            ToastMagic::error('RTK ini tidak bisa ditolak.');
+            return back();
+        }
+
         $rtk->update([
-            'status' => RTKStatus::REJECTED->value,
-            'rejected_reason' => $validated['reason'],
-            'approved_by' => Auth::id(),
-            'approved_at' => now(),
+            'status_verification' => RTKStatusVerification::REJECTED->value,
+            'status_document'     => StatusDocument::NA->value,
+            // is_active tidak diubah — tetap true agar user bisa edit
+            'rejected_reason'     => $validated['reason'],
+            'approved_by'         => Auth::id(),
+            'approved_at'         => now(),
         ]);
 
-        ToastMagic::success('RTK berhasil ditolak');
+        ToastMagic::success('RTK berhasil ditolak.');
         return back();
     }
 }

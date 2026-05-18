@@ -12,7 +12,7 @@ class CourseController extends Controller
     const IN_PROGRESS = 'in_progress';
     const COMPLETED = 'completed';
 
-     public function __construct(
+    public function __construct(
         private CourseService $courseService
     ) {}
 
@@ -37,7 +37,7 @@ class CourseController extends Controller
         $perPage = $request->get('row_per_page', 11);
         $result = $this->courseService->myCourses(token: $token, page: $page, perPage: $perPage);
         $courses = collect($result['data'])
-            ->map(fn ($item) => (object) $item);
+            ->map(fn($item) => (object) $item);
 
         return view('lms::user.course.my-course', [
             'courses' => $courses,
@@ -71,7 +71,7 @@ class CourseController extends Controller
         $perPage = $request->get('row_per_page', 11);
         $result = $this->courseService->myCourses(token: $token, page: $page, perPage: $perPage, status: self::IN_PROGRESS);
         $courses = collect($result['data'])
-            ->map(fn ($item) => (object) $item);
+            ->map(fn($item) => (object) $item);
 
         return view('lms::user.course.my-course-progress', [
             'courses' => $courses,
@@ -102,15 +102,15 @@ class CourseController extends Controller
         $perPage = $request->get('row_per_page', 11);
         $result = $this->courseService->myCourses(token: $token, page: $page, perPage: $perPage, status: self::COMPLETED);
         $courses = collect($result['data'])
-            ->map(fn ($item) => (object) $item);
-            // dd($courses);
+            ->map(fn($item) => (object) $item);
+        // dd($courses);
         return view('lms::user.course.my-course-completed', [
             'courses' => $courses,
             'meta'    => $result['meta'],
             'links'   => $result['links'],
             'success' => $result['success'],
             'message' => $result['message'],
-        ]);        
+        ]);
     }
 
     public function myCourseDetail(string $slug)
@@ -131,7 +131,7 @@ class CourseController extends Controller
         }
 
         $result = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
-        
+
         $courses = (object) $result['data'];
         // dd($courses);
         return view('lms::user.course.my-course-detail', [
