@@ -17,9 +17,7 @@ class RtkPemanfaatanSubmission extends Model
     protected $fillable = [
         'user_id',
         'period_id',
-        'q1_punya_rtkd',
-        'tahun_dari',
-        'tahun_sampai',
+        'created_by',
         'rtk_document_id',
         'q2_jadi_acuan',
         'dokumen_acuan',
@@ -44,6 +42,11 @@ class RtkPemanfaatanSubmission extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function period(): BelongsTo

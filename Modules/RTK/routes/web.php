@@ -20,27 +20,25 @@ use Modules\RTK\Http\Controllers\AdminPusat\RtkNasional\RTKNApprovalController;
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::resource('rencana-tenaga-kerja-nasional', RencanaTenagaKerjaNasionalController::class)->names('rtkn');
 
-    // Approval RTKN
     Route::controller(RTKNApprovalController::class)->name('rtkn.')->group(function () {
         Route::post('{rtkn}/approve-verification', 'approveVerification')->name('approve-verification');
         Route::post('{rtkn}/approve-document', 'approveDocument')->name('approve-document');
         Route::post('{rtkn}/reject', 'rejectRtkn')->name('reject-rtkn');
     });
 
-    // Export Excel RTKN
     Route::controller(ExportRtknController::class)->name('rtkn.')->group(function () {
         Route::get('export', 'ExportRtkn')->name('export');
     });
 
-    // Periode Survei RTK Daerah
     Route::resource('survey-periods', RtkSurveyPeriodController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::patch('survey-periods/{survey_period}/activate', [RtkSurveyPeriodController::class, 'activate'])->name('survey-periods.activate');
     Route::patch('survey-periods/{survey_period}/close', [RtkSurveyPeriodController::class, 'close'])->name('survey-periods.close');
 
-    // Hasil Pemanfaatan RTKD (Verifikasi)
     Route::get('hasil-pemanfaatan-rtkd', [HasilPemanfaatanRtkdController::class, 'index'])->name('hasil-pemanfaatan-rtkd.index');
     Route::get('hasil-pemanfaatan-rtkd/{id}', [HasilPemanfaatanRtkdController::class, 'show'])->name('hasil-pemanfaatan-rtkd.show');
     Route::patch('hasil-pemanfaatan-rtkd/{id}/verify', [HasilPemanfaatanRtkdController::class, 'verify'])->name('hasil-pemanfaatan-rtkd.verify');
+    Route::get('hasil-pemanfaatan-rtkd/{id}/ubah-sendiri', [HasilPemanfaatanRtkdController::class, 'editOnBehalf'])->name('hasil-pemanfaatan-rtkd.edit-on-behalf');
+    Route::post('hasil-pemanfaatan-rtkd/{id}/ubah-sendiri', [HasilPemanfaatanRtkdController::class, 'storeOnBehalf'])->name('hasil-pemanfaatan-rtkd.store-on-behalf');
 
     Route::prefix('rencana-tenaga-kerja-daerah')->name('rtkd.')->group(function () {
         Route::get('/', [RencanaTenagaKerjaDaerahController::class, 'index'])->name('index');
@@ -48,34 +46,26 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::get('/{provinceCode}/kab-kota', [RencanaTenagaKerjaDaerahController::class, 'kabKota'])->name('kab-kota');
         Route::get('/{provinceCode}/export-regency-by-province', [RencanaTenagaKerjaDaerahController::class, 'exportRegencyByProvince'])->name('export-regency-by-province');
 
-        // show rtk province
         Route::get('/province/{provinceCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showProvince'])->name('show-province');
 
-        // Edit RTK province — admin pusat ubah is_active
         Route::get('/province/{provinceCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaDaerahController::class, 'editProvince'])
             ->name('edit-province');
 
-        // Edit RTK regency — admin pusat ubah is_active
         Route::get('/regency/{regencyCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaDaerahController::class, 'editRegency'])
             ->name('edit-regency');
 
-        // Update RTK province
         Route::put('/province/{provinceCode}/rtk/{rtkdp}', [RencanaTenagaKerjaDaerahController::class, 'updateProvince'])
             ->name('update-province');
-        // Update RTK regency
         Route::put('/regency/{regencyCode}/rtk/{rtkdp}', [RencanaTenagaKerjaDaerahController::class, 'updateRegency'])
             ->name('update-regency');
-        // export excel
         Route::get('/province/{provinceCode}/export', [RencanaTenagaKerjaDaerahController::class, 'ExportRtkProvince'])->name('show-province-export');
 
         Route::get('/regency/{regencyCode}/show', [RencanaTenagaKerjaDaerahController::class, 'showRegency'])->name('show-regency');
         Route::get('/regency/{regencyCode}/export', [RencanaTenagaKerjaDaerahController::class, 'ExportRtkRegency'])->name('show-regency-export');
 
-        // verify
         Route::post('/province/{rtk}/approve-verification', [RTKApprovalPusatController::class, 'approveVerificationProvince'])->name('approveVerificationProvince');
         Route::post('/province/{rtk}/approve-document', [RTKApprovalPusatController::class, 'approveDocumentProvince'])->name('approveDocumentProvince');
 
-        // verify
         Route::post('/regency/{rtk}/approve-verification', [RTKApprovalPusatController::class, 'approveVerificationKabKota'])->name('approveVerificationKabKota');
         Route::post('/regency/{rtk}/approve-document', [RTKApprovalPusatController::class, 'approveDocumentKabKota'])->name('approveDocumentKabKota');
 
@@ -83,9 +73,6 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::post('/regency/{rtk}/reject', [RTKApprovalPusatController::class, 'rejectKabKota'])->name('rejectKabKota');
     });
 });
-
-
-
 
 Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->name('admin-province.')->group(function () {
     Route::resource('rencana-tenaga-kerja-daerah-provinsi', RencanaTenagaKerjaProvinceController::class)
@@ -104,15 +91,11 @@ Route::prefix('admin-province')->middleware(['auth', 'role:admin-province'])->na
 
         Route::get('/regency/{regencyCode}/rtk/{rtkdp}/edit', [RencanaTenagaKerjaKabKotaController::class, 'editRegency'])
             ->name('edit-regency');
-        // Update RTK regency
         Route::put('/regency/{regencyCode}/rtk/{rtkdp}', [RencanaTenagaKerjaKabKotaController::class, 'updateRegency'])
             ->name('update-regency');
 
-        // approve verification
         Route::post('/regency/{rtk}/approve-verification', [RTKApprovalProvinceController::class, 'approveVerificationKabKota'])->name('approveVerificationKabKota');
-        // approve document
         Route::post('/regency/{rtk}/approve-document', [RTKApprovalProvinceController::class, 'approveDocumentKabKota'])->name('approveDocumentKabKota');
-        // reject
         Route::post('/regency/{rtk}/reject', [RTKApprovalProvinceController::class, 'rejectKabKota'])->name('rejectKabKota');
     });
 });

@@ -13,28 +13,26 @@ use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class PemanfaatanRtkdController extends Controller
 {
-    /**
-     * Tampilkan status pemanfaatan RTKD untuk periode aktif.
-     */
     public function index()
     {
         $user = Auth::user();
         $activePeriod = RtkSurveyPeriod::aktif()->first();
 
-        // Cari submission untuk user ini pada periode aktif
-        $submission = null;
+        $submissions = collect();
         if ($activePeriod) {
-            $submission = RtkPemanfaatanSubmission::where('user_id', $user->id)
+            $submissions = RtkPemanfaatanSubmission::where('user_id', $user->id)
                 ->where('period_id', $activePeriod->id)
-                ->first();
+                ->latest()
+                ->get();
         }
 
-        return view('rtk::adminProvince.pemanfaatan-rtkd.index', compact('activePeriod', 'submission'));
+        return view('rtk::adminProvince.pemanfaatan-rtkd.index', [
+            'activePeriod' => $activePeriod,
+            'submissions' => $submissions,
+            'submission' => $submissions->first()
+        ]);
     }
 
-    /**
-     * Tampilkan form kuesioner dinamis.
-     */
     public function create()
     {
         $user = Auth::user();
@@ -45,7 +43,6 @@ class PemanfaatanRtkdController extends Controller
             return redirect()->route('admin-province.pemanfaatan-rtkd.index');
         }
 
-        // Cek apakah sudah mengisi
         $existing = RtkPemanfaatanSubmission::where('user_id', $user->id)
             ->where('period_id', $activePeriod->id)
             ->first();
@@ -54,8 +51,6 @@ class PemanfaatanRtkdController extends Controller
             return redirect()->route('admin-province.pemanfaatan-rtkd.edit', $existing->id);
         }
 
-        // Cek data RTK Provinsi aktif
-        // Ambil data terbaru yang statusnya disetujui (atau di sini mungkin menggunakan is_active)
         $latestRtk = null;
         if ($user->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', $user->scopeArea->province_code)
@@ -68,25 +63,20 @@ class PemanfaatanRtkdController extends Controller
         return view('rtk::adminProvince.pemanfaatan-rtkd.form', [
             'activePeriod' => $activePeriod,
             'latestRtk' => $latestRtk,
-            'submission' => new RtkPemanfaatanSubmission() // Kosong untuk mode create
+            'submission' => new RtkPemanfaatanSubmission()
         ]);
     }
 
-    /**
-     * Simpan jawaban kuesioner.
-     */
     public function store(Request $request)
     {
         $user = Auth::user();
         $activePeriod = RtkSurveyPeriod::aktif()->firstOrFail();
 
-        // Cek double submission
         if (RtkPemanfaatanSubmission::where('user_id', $user->id)->where('period_id', $activePeriod->id)->exists()) {
             ToastMagic::error('Anda sudah mengisi kuesioner untuk periode ini.');
             return redirect()->route('admin-province.pemanfaatan-rtkd.index');
         }
 
-        // Cek RTK Provinsi aktif untuk auto-fill
         $latestRtk = null;
         if ($user->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', $user->scopeArea->province_code)
@@ -99,6 +89,7 @@ class PemanfaatanRtkdController extends Controller
         $data = new RtkPemanfaatanSubmission();
         $data->user_id = $user->id;
         $data->period_id = $activePeriod->id;
+        $data->created_by = auth()->id();
 
         $this->processFormData($request, $data, $latestRtk);
 
@@ -106,16 +97,12 @@ class PemanfaatanRtkdController extends Controller
         return redirect()->route('admin-province.pemanfaatan-rtkd.index');
     }
 
-    /**
-     * Edit jawaban kuesioner (jika belum diverifikasi).
-     */
     public function edit(RtkPemanfaatanSubmission $pemanfaatan_rtkd)
     {
         if ($pemanfaatan_rtkd->user_id !== Auth::id()) {
             abort(403);
         }
 
-        // Jika sudah diverifikasi tidak bisa diedit
         if ($pemanfaatan_rtkd->status_verifikasi === 'verified') {
             ToastMagic::error('Kuesioner yang sudah disetujui tidak dapat diedit.');
             return redirect()->route('admin-province.pemanfaatan-rtkd.index');
@@ -139,9 +126,6 @@ class PemanfaatanRtkdController extends Controller
         ]);
     }
 
-    /**
-     * Update jawaban kuesioner.
-     */
     public function update(Request $request, RtkPemanfaatanSubmission $pemanfaatan_rtkd)
     {
         if ($pemanfaatan_rtkd->user_id !== Auth::id()) {
@@ -168,32 +152,20 @@ class PemanfaatanRtkdController extends Controller
         return redirect()->route('admin-province.pemanfaatan-rtkd.index');
     }
 
-    /**
-     * Helper untuk memproses form data JSON.
-     */
     private function processFormData(Request $request, RtkPemanfaatanSubmission $data, ?RencanaTenagaKerja $latestRtk)
     {
-        // 1. Auto-fill data RTKD dari sistem utama
         if ($latestRtk) {
-            $data->q1_punya_rtkd = 'ya';
-            $data->tahun_dari = $latestRtk->start_date;
-            $data->tahun_sampai = $latestRtk->end_date;
             $data->rtk_document_id = $latestRtk->id;
         } else {
-            $data->q1_punya_rtkd = 'tidak';
-            $data->tahun_dari = null;
-            $data->tahun_sampai = null;
             $data->rtk_document_id = null;
         }
 
-        // 2. Jika Tidak Punya RTKD
-        if ($data->q1_punya_rtkd === 'tidak') {
+        if (!$data->rtk_document_id) {
             $data->q2_jadi_acuan = null;
             $data->dokumen_acuan = null;
             $data->komponen_acuan = null;
             $data->alasan_belum_acuan = null;
 
-            // Proses alasan tidak punya
             $alasanTidakPunya = [];
             if ($request->has('alasan_tidak_punya')) {
                 foreach ($request->input('alasan_tidak_punya') as $alasan) {
@@ -206,16 +178,13 @@ class PemanfaatanRtkdController extends Controller
             }
             $data->alasan_tidak_punya = $alasanTidakPunya;
         } 
-        // 3. Jika Punya RTKD
         else {
             $data->alasan_tidak_punya = null;
             $data->q2_jadi_acuan = $request->input('q2_jadi_acuan', 'tidak');
 
-            // 3A. Jika jadi acuan
             if ($data->q2_jadi_acuan === 'ya') {
                 $data->alasan_belum_acuan = null;
 
-                // Dokumen acuan
                 $dokumenAcuan = [];
                 if ($request->has('dokumen_acuan')) {
                     foreach ($request->input('dokumen_acuan') as $docType) {
@@ -228,7 +197,6 @@ class PemanfaatanRtkdController extends Controller
                 }
                 $data->dokumen_acuan = $dokumenAcuan;
 
-                // Komponen acuan
                 $komponenAcuan = [];
                 if ($request->has('dokumen_acuan')) {
                     foreach ($request->input('dokumen_acuan') as $docType) {
@@ -237,8 +205,6 @@ class PemanfaatanRtkdController extends Controller
                         $ketLain = $request->input("lainnya_{$docType}");
                         
                         foreach ($komps as $komp) {
-                            // Map 'Angka Pengangguran' to safe key for array index in HTML, usually we can just use the exact string if we use bracket notation in HTML like name="halaman_rpjmd[Angka Pengangguran]"
-                            // But for safety, in HTML we'll just use the exact string.
                             $komponenAcuan[] = [
                                 'doc_type' => $docType,
                                 'komponen' => $komp,
@@ -250,7 +216,6 @@ class PemanfaatanRtkdController extends Controller
                 }
                 $data->komponen_acuan = $komponenAcuan;
 
-                // Proses file upload tambahan (jika ada) per dokumen
                 $uploads = $data->dokumen_uploads ?? [];
                 $uploadsByDocType = [];
                 foreach ($uploads as $u) {
@@ -273,7 +238,6 @@ class PemanfaatanRtkdController extends Controller
                         }
                     }
                     
-                    // Filter: hanya simpan upload untuk dokumen yang dicentang
                     $newUploads = [];
                     foreach ($request->input('dokumen_acuan') as $docType) {
                         if (isset($uploadsByDocType[$docType])) {
@@ -287,13 +251,11 @@ class PemanfaatanRtkdController extends Controller
                 $data->dokumen_uploads = $uploads;
 
             } 
-            // 3B. Jika tidak jadi acuan
             else {
                 $data->dokumen_acuan = null;
                 $data->komponen_acuan = null;
                 $data->dokumen_uploads = null;
 
-                // Alasan belum acuan
                 $alasanBelumAcuan = [];
                 if ($request->has('alasan_belum_acuan')) {
                     foreach ($request->input('alasan_belum_acuan') as $alasan) {
@@ -308,7 +270,7 @@ class PemanfaatanRtkdController extends Controller
             }
         }
 
-        $data->status_verifikasi = 'pending'; // Reset status setiap kali diupdate
+        $data->status_verifikasi = 'pending';
         $data->save();
     }
 }

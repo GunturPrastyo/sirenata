@@ -1,6 +1,5 @@
 <x-dashboard::layouts.dashboard title="Kuesioner Pemanfaatan RTKD">
     <div class="p-2 sm:p-6" x-data="kuesionerForm()">
-        {{-- Breadcrumb --}}
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -24,24 +23,18 @@
             </ol>
         </nav>
 
-        <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">Kuesioner Pemanfaatan RTKD</h2>
-            <p class="mt-1 text-sm text-gray-500">Periode Survei: <span class="font-semibold">{{ $activePeriod->nama }} ({{ $activePeriod->tahun }})</span></p>
-        </div>
-
-        <form action="{{ $submission->exists ? route('admin-province.pemanfaatan-rtkd.update', $submission->id) : route('admin-province.pemanfaatan-rtkd.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form x-ref="mainForm" @submit.prevent="validateAndSubmit" action="{{ $submission->exists ? route('admin-province.pemanfaatan-rtkd.update', $submission->id) : route('admin-province.pemanfaatan-rtkd.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @if($submission->exists)
                 @method('PUT')
             @endif
 
-            {{-- 1. Status Kepemilikan RTKD (Auto-filled) --}}
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-teal-500">
-                <div class="px-4 py-3 border-b border-slate-200 bg-gradient-to-r from-teal-50 to-white flex justify-between items-center">
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-indigo-600">
+                <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-teal-500 text-white text-xs font-bold">1</span>
+                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-bold">1</span>
                         <h3 class="text-base font-semibold text-slate-800">Status Kepemilikan RTK Provinsi</h3>
-                        <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-teal-100 text-teal-700 uppercase tracking-wider">Otomatis</span>
+                        <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-slate-200 text-slate-700 uppercase tracking-wider">Otomatis</span>
                     </div>
                     @if(isset($submission->field_verifications['q1_punya_rtkd']) && $submission->field_verifications['q1_punya_rtkd']['status'] === 'rejected')
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
@@ -58,31 +51,24 @@
                         </div>
                     @endif
                     @if($latestRtk)
-                        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-lg flex items-start gap-3">
-                            <svg class="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            <div>
-                                <h4 class="text-sm font-bold text-emerald-800">Sistem mendeteksi dokumen RTK Provinsi Aktif</h4>
-                                <p class="text-sm text-emerald-700 mt-1">Sistem otomatis mencatat Anda **Memiliki RTKD**.</p>
-                                <ul class="mt-2 text-sm text-emerald-700 list-disc list-inside">
-                                    <li>Nama Dokumen: <strong>{{ $latestRtk->name }}</strong></li>
-                                    <li>Tahun Aktif: <strong>{{ $latestRtk->start_date }} s/d {{ $latestRtk->end_date }}</strong></li>
-                                </ul>
-                            </div>
+                        <div class="p-3 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center gap-3">
+                            <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="text-sm text-emerald-800">
+                                <strong>Memiliki RTKD Aktif:</strong> {{ $latestRtk->name }} ({{ $latestRtk->start_date }} s/d {{ $latestRtk->end_date }})
+                            </span>
                         </div>
                     @else
-                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+                        <div class="p-3 bg-amber-50 border border-amber-100 rounded-lg flex items-start gap-3">
                             <svg class="w-5 h-5 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                             <div>
-                                <h4 class="text-sm font-bold text-amber-800">Sistem TIDAK mendeteksi dokumen RTK Provinsi Aktif</h4>
-                                <p class="text-sm text-amber-700 mt-1">Sistem otomatis mencatat Anda **Tidak Memiliki RTKD**. Silakan pilih alasan mengapa Anda belum memiliki dokumen RTKD.</p>
-                                <a href="{{ route('admin-province.rtkdp.index') }}" target="_blank" class="inline-block mt-2 text-sm text-indigo-600 hover:underline">Kelola Dokumen RTK Provinsi di sini &rarr;</a>
+                                <p class="text-sm text-amber-800"><strong>Sistem tidak mendeteksi dokumen RTK Provinsi Aktif.</strong></p>
+                                <a href="{{ route('admin-province.rtkdp.index') }}" target="_blank" class="inline-block mt-1 text-xs text-amber-700 hover:underline">Kelola Dokumen RTK Provinsi &rarr;</a>
                             </div>
                         </div>
                     @endif
                 </div>
             </div>
 
-            {{-- 2. Jika TIDAK Punya RTKD --}}
             <template x-if="!hasRtkd">
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
@@ -127,6 +113,7 @@
                             
                             <div x-show="alasanTidakPunya.includes('Lainnya')" class="mt-3 ml-7">
                                 <input type="text" name="alasan_tidak_punya_lainnya" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Sebutkan alasan lainnya..."
+                                    :required="alasanTidakPunya.includes('Lainnya')"
                                     value="{{ collect($submission->alasan_tidak_punya)->firstWhere('alasan', 'Lainnya')['keterangan_lainnya'] ?? '' }}">
                             </div>
                         </div>
@@ -134,15 +121,13 @@
                 </div>
             </template>
 
-            {{-- 3. Jika PUNYA RTKD --}}
             <template x-if="hasRtkd">
                 <div class="space-y-4">
                     
-                    {{-- Pemanfaatan Acuan --}}
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-violet-500">
-                        <div class="px-4 py-3 border-b border-slate-200 bg-gradient-to-r from-violet-50 to-white flex justify-between items-center">
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-indigo-600">
+                        <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                             <div class="flex items-center gap-2">
-                                <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-violet-500 text-white text-xs font-bold">2</span>
+                                <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-bold">2</span>
                                 <h3 class="text-base font-semibold text-slate-800">Pemanfaatan Dokumen</h3>
                             </div>
                             @if(isset($submission->field_verifications['q2_jadi_acuan']) && $submission->field_verifications['q2_jadi_acuan']['status'] === 'rejected')
@@ -163,18 +148,17 @@
                             
                             <div class="flex gap-4">
                                 <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="q2_jadi_acuan" value="ya" class="text-indigo-600 focus:ring-indigo-600" x-model="jadiAcuan">
+                                    <input type="radio" name="q2_jadi_acuan" value="ya" class="text-indigo-600 focus:ring-indigo-600" x-model="jadiAcuan" required>
                                     <span class="text-sm text-slate-800 font-medium">Ya, telah menjadi acuan</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="q2_jadi_acuan" value="tidak" class="text-indigo-600 focus:ring-indigo-600" x-model="jadiAcuan">
+                                    <input type="radio" name="q2_jadi_acuan" value="tidak" class="text-indigo-600 focus:ring-indigo-600" x-model="jadiAcuan" required>
                                     <span class="text-sm text-slate-800 font-medium">Belum / Tidak</span>
                                 </label>
                             </div>
                         </div>
                     </div>
 
-                    {{-- 3A. JIKA BELUM JADI ACUAN --}}
                     <template x-if="jadiAcuan === 'tidak'">
                         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-amber-200">
                             <div class="px-4 py-3 border-b border-amber-200 bg-amber-50 flex justify-between items-center">
@@ -193,7 +177,7 @@
                                         </div>
                                     </div>
                                 @endif
-                                <p class="text-sm text-slate-600 mb-2">Mengapa dokumen RTKD belum dijadikan acuan?</p>
+                                <p class="text-sm text-slate-600 mb-2">Mengapa dokumen RTKD belum dijadikan acuan? <span class="text-red-500">* (Pilih minimal satu)</span></p>
                                 
                                 <label class="flex items-start gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition">
                                     <input type="checkbox" name="alasan_belum_acuan[]" value="Koordinasi antar OPD yang membidangi ketenagakerjaan" class="mt-0.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -209,7 +193,10 @@
                                     </label>
                                     
                                     <div x-show="alasanBelumAcuan.includes('Lainnya')" class="mt-3 ml-7">
-                                        <input type="text" name="alasan_belum_acuan_lainnya" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Sebutkan alasan lainnya..."
+                                        <input type="text" name="alasan_belum_acuan_lainnya" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm" 
+                                            placeholder="Sebutkan alasan lainnya..."
+                                            :required="alasanBelumAcuan.includes('Lainnya')"
                                             value="{{ collect($submission->alasan_belum_acuan)->firstWhere('alasan', 'Lainnya')['keterangan_lainnya'] ?? '' }}">
                                     </div>
                                 </div>
@@ -217,14 +204,12 @@
                         </div>
                     </template>
 
-                    {{-- 3B. JIKA JADI ACUAN --}}
                     <template x-if="jadiAcuan === 'ya'">
                         <div class="space-y-4 border-l-4 border-indigo-500 pl-4 py-2">
-                            <p class="text-sm text-slate-600 mb-2 font-medium">Pilih dokumen perencanaan yang menjadikan RTKD sebagai acuan, unggah buktinya, lalu pilih komponennya.</p>
+                            <p class="text-sm text-slate-600 mb-2 font-medium">Pilih dokumen perencanaan yang menjadikan RTKD sebagai acuan, unggah buktinya, lalu pilih komponennya. <span class="text-red-500">* (Pilih minimal satu dokumen)</span></p>
                             
-                            {{-- Dokumen RPJMD --}}
-                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-blue-400">
-                                <label class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-white border-b border-slate-200 cursor-pointer hover:from-blue-100 transition">
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-slate-400">
+                                <label class="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                                     <input type="checkbox" name="dokumen_acuan[]" value="rpjmd" class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" x-model="dokumenAcuan">
                                     <span class="font-semibold text-slate-800">RPJMD <span class="font-normal text-slate-500 text-sm">(Rencana Pembangunan Jangka Menengah Daerah)</span></span>
                                 </label>
@@ -239,9 +224,11 @@
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">📎 Upload Dokumen RPJMD <span class="text-red-500">*</span></label>
                                         <div class="flex items-center gap-3">
-                                            <input type="file" name="upload_rpjmd" accept=".pdf,.doc,.docx" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-md">
+                                            <input type="file" name="upload_rpjmd" accept=".pdf,.doc,.docx" 
+                                                class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-md"
+                                                :required="dokumenAcuan.includes('rpjmd') && !{{ collect($submission->dokumen_uploads ?? [])->contains('doc_type', 'rpjmd') ? 'true' : 'false' }}">
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">Format: PDF/Word. Maks 5MB. Biarkan kosong jika tidak ingin mengubah file lama.</p>
+                                        <p class="text-xs text-slate-500 mt-1">Format: PDF/Word. Maks 5MB. @if(collect($submission->dokumen_uploads ?? [])->contains('doc_type', 'rpjmd')) Biarkan kosong jika tidak ingin mengubah file lama. @endif</p>
                                         @if($rpjmdUpload = collect($submission->dokumen_uploads ?? [])->firstWhere('doc_type', 'rpjmd'))
                                             <div class="mt-2 p-2 bg-indigo-50 rounded text-sm flex items-center justify-between">
                                                 <span class="text-indigo-700 font-medium truncate">File saat ini: {{ $rpjmdUpload['original_name'] }}</span>
@@ -261,9 +248,16 @@
                                                     </label>
                                                     <div class="mt-2 ml-7" x-show="komponenRpjmd.includes(komp)">
                                                         <template x-if="komp === 'Lainnya'">
-                                                            <input type="text" name="lainnya_rpjmd" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500 mb-2" placeholder="Nama komponen..." x-model="lainnyaRpjmd">
+                                                            <input type="text" name="lainnya_rpjmd" 
+                                                                class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500 mb-2" 
+                                                                placeholder="Nama komponen..." x-model="lainnyaRpjmd"
+                                                                :required="komponenRpjmd.includes('Lainnya')">
                                                         </template>
-                                                        <input type="text" :name="'halaman_rpjmd[' + komp + ']'" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500" placeholder="Halaman (misal: hal 12-14)" x-model="halamanRpjmd[komp]">
+                                                        <input type="text" :name="'halaman_rpjmd[' + komp + ']'" 
+                                                            class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500" 
+                                                            placeholder="Halaman (misal: hal 12-14) *" 
+                                                            x-model="halamanRpjmd[komp]"
+                                                            :required="komponenRpjmd.includes(komp)">
                                                     </div>
                                                 </div>
                                             </template>
@@ -272,9 +266,8 @@
                                 </div>
                             </div>
 
-                            {{-- Dokumen RENSTRA --}}
-                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-purple-400">
-                                <label class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-50 to-white border-b border-slate-200 cursor-pointer hover:from-purple-100 transition">
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-slate-400">
+                                <label class="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                                     <input type="checkbox" name="dokumen_acuan[]" value="renstra" class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" x-model="dokumenAcuan">
                                     <span class="font-semibold text-slate-800">RENSTRA Disnaker <span class="font-normal text-slate-500 text-sm">(Rencana Strategis Perangkat Daerah)</span></span>
                                 </label>
@@ -289,9 +282,11 @@
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">📎 Upload Dokumen Renstra <span class="text-red-500">*</span></label>
                                         <div class="flex items-center gap-3">
-                                            <input type="file" name="upload_renstra" accept=".pdf,.doc,.docx" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-md">
+                                            <input type="file" name="upload_renstra" accept=".pdf,.doc,.docx" 
+                                                class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-md"
+                                                :required="dokumenAcuan.includes('renstra') && !{{ collect($submission->dokumen_uploads ?? [])->contains('doc_type', 'renstra') ? 'true' : 'false' }}">
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">Format: PDF/Word. Maks 5MB. Biarkan kosong jika tidak ingin mengubah file lama.</p>
+                                        <p class="text-xs text-slate-500 mt-1">Format: PDF/Word. Maks 5MB. @if(collect($submission->dokumen_uploads ?? [])->contains('doc_type', 'renstra')) Biarkan kosong jika tidak ingin mengubah file lama. @endif</p>
                                         @if($renstraUpload = collect($submission->dokumen_uploads ?? [])->firstWhere('doc_type', 'renstra'))
                                             <div class="mt-2 p-2 bg-indigo-50 rounded text-sm flex items-center justify-between">
                                                 <span class="text-indigo-700 font-medium truncate">File saat ini: {{ $renstraUpload['original_name'] }}</span>
@@ -311,9 +306,16 @@
                                                     </label>
                                                     <div class="mt-2 ml-7" x-show="komponenRenstra.includes(komp)">
                                                         <template x-if="komp === 'Lainnya'">
-                                                            <input type="text" name="lainnya_renstra" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500 mb-2" placeholder="Nama komponen..." x-model="lainnyaRenstra">
+                                                            <input type="text" name="lainnya_renstra" 
+                                                                class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500 mb-2" 
+                                                                placeholder="Nama komponen..." x-model="lainnyaRenstra"
+                                                                :required="komponenRenstra.includes('Lainnya')">
                                                         </template>
-                                                        <input type="text" :name="'halaman_renstra[' + komp + ']'" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500" placeholder="Halaman (misal: hal 12-14)" x-model="halamanRenstra[komp]">
+                                                        <input type="text" :name="'halaman_renstra[' + komp + ']'" 
+                                                            class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500" 
+                                                            placeholder="Halaman (misal: hal 12-14) *" 
+                                                            x-model="halamanRenstra[komp]"
+                                                            :required="komponenRenstra.includes(komp)">
                                                     </div>
                                                 </div>
                                             </template>
@@ -322,9 +324,8 @@
                                 </div>
                             </div>
 
-                            {{-- Dokumen Lainnya --}}
-                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-orange-400">
-                                <label class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-orange-50 to-white border-b border-slate-200 cursor-pointer hover:from-orange-100 transition">
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-slate-400">
+                                <label class="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                                     <input type="checkbox" name="dokumen_acuan[]" value="lainnya" class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" x-model="dokumenAcuan">
                                     <span class="font-semibold text-slate-800">Dokumen Lainnya</span>
                                 </label>
@@ -338,14 +339,20 @@
                                     @endif
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Nama Dokumen Lainnya <span class="text-red-500">*</span></label>
-                                        <input type="text" name="dokumen_acuan_lainnya" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Sebutkan nama dokumen lainnya (misal: RKPD)..." value="{{ collect($submission->dokumen_acuan)->firstWhere('doc_type', 'lainnya')['nama_lainnya'] ?? '' }}">
+                                        <input type="text" name="dokumen_acuan_lainnya" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm" 
+                                            placeholder="Sebutkan nama dokumen lainnya (misal: RKPD)..." 
+                                            :required="dokumenAcuan.includes('lainnya')"
+                                            value="{{ collect($submission->dokumen_acuan)->firstWhere('doc_type', 'lainnya')['nama_lainnya'] ?? '' }}">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">📎 Upload Dokumen <span class="text-red-500">*</span></label>
                                         <div class="flex items-center gap-3">
-                                            <input type="file" name="upload_lainnya" accept=".pdf,.doc,.docx" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-md">
+                                            <input type="file" name="upload_lainnya" accept=".pdf,.doc,.docx" 
+                                                class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-md"
+                                                :required="dokumenAcuan.includes('lainnya') && !{{ collect($submission->dokumen_uploads ?? [])->contains('doc_type', 'lainnya') ? 'true' : 'false' }}">
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">Format: PDF/Word. Maks 5MB. Biarkan kosong jika tidak ingin mengubah file lama.</p>
+                                        <p class="text-xs text-slate-500 mt-1">Format: PDF/Word. Maks 5MB. @if(collect($submission->dokumen_uploads ?? [])->contains('doc_type', 'lainnya')) Biarkan kosong jika tidak ingin mengubah file lama. @endif</p>
                                         @if($lainnyaUpload = collect($submission->dokumen_uploads ?? [])->firstWhere('doc_type', 'lainnya'))
                                             <div class="mt-2 p-2 bg-indigo-50 rounded text-sm flex items-center justify-between">
                                                 <span class="text-indigo-700 font-medium truncate">File saat ini: {{ $lainnyaUpload['original_name'] }}</span>
@@ -365,9 +372,16 @@
                                                     </label>
                                                     <div class="mt-2 ml-7" x-show="komponenLainnya.includes(komp)">
                                                         <template x-if="komp === 'Lainnya'">
-                                                            <input type="text" name="lainnya_lainnya" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500 mb-2" placeholder="Nama komponen..." x-model="lainnyaLainnya">
+                                                            <input type="text" name="lainnya_lainnya" 
+                                                                class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500 mb-2" 
+                                                                placeholder="Nama komponen..." x-model="lainnyaLainnya"
+                                                                :required="komponenLainnya.includes('Lainnya')">
                                                         </template>
-                                                        <input type="text" :name="'halaman_lainnya[' + komp + ']'" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500" placeholder="Halaman (misal: hal 12-14)" x-model="halamanLainnya[komp]">
+                                                        <input type="text" :name="'halaman_lainnya[' + komp + ']'" 
+                                                            class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-indigo-500" 
+                                                            placeholder="Halaman (misal: hal 12-14) *" 
+                                                            x-model="halamanLainnya[komp]"
+                                                            :required="komponenLainnya.includes(komp)">
                                                     </div>
                                                 </div>
                                             </template>
@@ -396,18 +410,15 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('kuesionerForm', () => {
-                // Inisialisasi data dari server
                 const hasRtkdDefault = @json($latestRtk ? true : false);
-                const q2Default = @json($submission->q2_jadi_acuan ?? 'tidak');
+                const q2Default = @json($submission->q2_jadi_acuan ?? '');
                 
-                // Ambil data array lama jika sedang diedit
                 const oldAlasanTidakPunya = @json(is_array($submission->alasan_tidak_punya) ? collect($submission->alasan_tidak_punya)->pluck('alasan') : []);
                 const oldAlasanBelumAcuan = @json(is_array($submission->alasan_belum_acuan) ? collect($submission->alasan_belum_acuan)->pluck('alasan') : []);
                 const oldDokumenAcuan = @json(is_array($submission->dokumen_acuan) ? collect($submission->dokumen_acuan)->pluck('doc_type') : []);
                 
                 const oldKomponenAcuan = @json(is_array($submission->komponen_acuan) ? $submission->komponen_acuan : []);
 
-                // Parse old komponen acuan into specific structures
                 let kRpjmd = [];
                 let hRpjmd = {};
                 let lRpjmd = '';
@@ -463,7 +474,55 @@
 
                     komponenLainnya: kLainnya,
                     halamanLainnya: hLainnya,
-                    lainnyaLainnya: lLainnya
+                    lainnyaLainnya: lLainnya,
+
+                    validateAndSubmit() {
+                        if (!this.$refs.mainForm.checkValidity()) {
+                            this.$refs.mainForm.reportValidity();
+                            return;
+                        }
+                        
+                        if (!this.hasRtkd) {
+                            if (this.alasanTidakPunya.length === 0) {
+                                alert('Pilih minimal satu alasan tidak memiliki RTKD.');
+                                return;
+                            }
+                        } 
+                        else {
+                            if (!this.jadiAcuan) {
+                                alert('Pilih apakah RTKD sudah menjadi acuan atau belum.');
+                                return;
+                            }
+
+                            if (this.jadiAcuan === 'tidak') {
+                                if (this.alasanBelumAcuan.length === 0) {
+                                    alert('Pilih minimal satu alasan belum menjadi acuan.');
+                                    return;
+                                }
+                            } 
+                            else if (this.jadiAcuan === 'ya') {
+                                if (this.dokumenAcuan.length === 0) {
+                                    alert('Pilih minimal satu dokumen perencanaan (RPJMD/RENSTRA/Lainnya).');
+                                    return;
+                                }
+
+                                if (this.dokumenAcuan.includes('rpjmd') && this.komponenRpjmd.length === 0) {
+                                    alert('Pilih minimal satu komponen untuk dokumen RPJMD.');
+                                    return;
+                                }
+                                if (this.dokumenAcuan.includes('renstra') && this.komponenRenstra.length === 0) {
+                                    alert('Pilih minimal satu komponen untuk dokumen RENSTRA.');
+                                    return;
+                                }
+                                if (this.dokumenAcuan.includes('lainnya') && this.komponenLainnya.length === 0) {
+                                    alert('Pilih minimal satu komponen untuk dokumen lainnya.');
+                                    return;
+                                }
+                            }
+                        }
+
+                        this.$refs.mainForm.submit();
+                    }
                 }
             })
         })

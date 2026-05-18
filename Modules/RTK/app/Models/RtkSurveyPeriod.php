@@ -26,29 +26,25 @@ class RtkSurveyPeriod extends Model
         'tanggal_selesai' => 'date',
     ];
 
-    /**
-     * Scope: hanya periode aktif
-     */
     public function scopeAktif($query)
     {
         return $query->where('status', 'aktif');
     }
 
-    /**
-     * Label warna status untuk badge di view
-     */
     public function getStatusColorAttribute(): string
     {
         return match ($this->status) {
             'aktif' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
             'tutup' => 'bg-red-50 text-red-700 border-red-200',
-            default => 'bg-slate-50 text-slate-600 border-slate-200', // draft
+            default => 'bg-slate-50 text-slate-600 border-slate-200',
         };
     }
 
-    /**
-     * Label teks status
-     */
+    public function submissions()
+    {
+        return $this->hasMany(RtkPemanfaatanSubmission::class, 'period_id');
+    }
+
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {

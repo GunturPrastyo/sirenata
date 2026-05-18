@@ -6,17 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::table('rencana_tenaga_kerjas', function (Blueprint $table) {
-            $table->boolean('is_active')->default(false)->after('end_date');
+        Schema::table('rtk_pemanfaatan_submissions', function (Blueprint $table) {
+            //
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('rencana_tenaga_kerjas', function (Blueprint $table) {
-            $table->dropColumn('is_active');
+        Schema::table('rtk_pemanfaatan_submissions', function (Blueprint $table) {
+            //
         });
     }
 };

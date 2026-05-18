@@ -14,9 +14,6 @@ use Modules\RTK\Enums\StatusDocument;
 
 class RTKNSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $user = User::role('admin-pusat')->first();

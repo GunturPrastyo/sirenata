@@ -1,6 +1,5 @@
 <x-dashboard::layouts.dashboard title="Detail Kuesioner Pemanfaatan RTKD">
     <div class="p-2 sm:p-6" x-data="verifikasiForm()">
-        {{-- Breadcrumb --}}
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -23,13 +22,10 @@
             </ol>
         </nav>
 
-
-
         <form action="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.verify', $submission->id) }}" method="POST" id="form-verifikasi" class="space-y-6">
             @csrf
             @method('PATCH')
                 
-            {{-- Header Card --}}
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-6 opacity-10">
                     <svg class="w-24 h-24 text-indigo-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
@@ -52,34 +48,22 @@
                 </div>
             </div>
 
-            {{-- 1. Kepemilikan RTKD --}}
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" :class="{ 'border-emerald-500 ring-1 ring-emerald-500': fields.q1_punya_rtkd.status === 'verified', 'border-red-500 ring-1 ring-red-500': fields.q1_punya_rtkd.status === 'rejected' }">
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <h3 class="text-base font-semibold text-slate-800">1. Kepemilikan Dokumen RTK Provinsi</h3>
-                    <span x-show="fields.q1_punya_rtkd.status === 'verified'" class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
-                    <span x-show="fields.q1_punya_rtkd.status === 'rejected'" class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi</span>
+                    <span class="px-2 py-1 text-[10px] font-semibold rounded bg-slate-200 text-slate-600 uppercase tracking-wider">Terverifikasi Sistem</span>
                 </div>
                 <div class="p-4 flex flex-col md:flex-row gap-6">
                     <div class="flex-1">
-                        <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 {{ $submission->q1_punya_rtkd === 'ya' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600' }}">
-                                @if($submission->q1_punya_rtkd === 'ya')
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                @else
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                @endif
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm text-slate-500 font-medium">Apakah Memiliki RTKD?</p>
-                                <p class="text-lg font-bold {{ $submission->q1_punya_rtkd === 'ya' ? 'text-emerald-700' : 'text-red-700' }}">
-                                    {{ $submission->q1_punya_rtkd === 'ya' ? 'YA, MEMILIKI' : 'TIDAK MEMILIKI' }}
+                                <p class="text-lg font-bold {{ $submission->rtk_document_id ? 'text-emerald-700' : 'text-red-700' }}">
+                                    {{ $submission->rtk_document_id ? 'YA, MEMILIKI' : 'TIDAK MEMILIKI' }}
                                 </p>
                                 
-                                @if($submission->q1_punya_rtkd === 'ya')
+                                @if($submission->rtk_document_id)
                                     <div class="mt-4 grid grid-cols-2 gap-4">
                                         <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
                                             <p class="text-xs text-slate-500 mb-1">Masa Berlaku Dokumen</p>
-                                            <p class="text-sm font-semibold text-slate-800">{{ $submission->tahun_dari }} - {{ $submission->tahun_sampai }}</p>
+                                            <p class="text-sm font-semibold text-slate-800">{{ $submission->rtkDocument->start_date }} - {{ $submission->rtkDocument->end_date }}</p>
                                         </div>
                                         <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
                                             <p class="text-xs text-slate-500 mb-1">Status Dokumen</p>
@@ -92,27 +76,11 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Verifikasi Inline --}}
-                    <div class="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6">
-                        <div class="space-y-3">
-                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.q1_punya_rtkd.status === 'verified' ? 'border-emerald-200 bg-emerald-50' : 'border-transparent'">
-                                <input type="radio" name="verifications[q1_punya_rtkd][status]" value="verified" x-model="fields.q1_punya_rtkd.status" class="text-emerald-500 focus:ring-emerald-500">
-                                <span class="text-sm font-semibold text-slate-700">Setujui</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.q1_punya_rtkd.status === 'rejected' ? 'border-red-200 bg-red-50' : 'border-transparent'">
-                                <input type="radio" name="verifications[q1_punya_rtkd][status]" value="rejected" x-model="fields.q1_punya_rtkd.status" class="text-red-500 focus:ring-red-500">
-                                <span class="text-sm font-semibold text-slate-700">Minta Revisi</span>
-                            </label>
-                            <div x-show="fields.q1_punya_rtkd.status === 'rejected'" class="mt-2">
-                                <textarea name="verifications[q1_punya_rtkd][catatan]" x-model="fields.q1_punya_rtkd.catatan" class="w-full text-sm border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" rows="2" placeholder="Tulis catatan revisi..."></textarea>
-                            </div>
-                        </div>
-                    </div>
+                    <input type="hidden" name="verifications[q1_punya_rtkd][status]" value="verified">
                 </div>
             </div>
 
-            {{-- 1B. Alasan Tidak Punya RTKD --}}
-            @if($submission->q1_punya_rtkd === 'tidak')
+            @if(!$submission->rtk_document_id)
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" :class="{ 'border-emerald-500 ring-1 ring-emerald-500': fields.alasan_tidak_punya.status === 'verified', 'border-red-500 ring-1 ring-red-500': fields.alasan_tidak_punya.status === 'rejected' }">
                     <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                         <h3 class="text-base font-semibold text-slate-800">Alasan Tidak Memiliki RTKD</h3>
@@ -155,8 +123,7 @@
                 </div>
             @endif
 
-            {{-- 2. Pemanfaatan Dokumen (Hanya jika punya RTKD) --}}
-            @if($submission->q1_punya_rtkd === 'ya')
+            @if($submission->rtk_document_id)
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" :class="{ 'border-emerald-500 ring-1 ring-emerald-500': fields.q2_jadi_acuan.status === 'verified', 'border-red-500 ring-1 ring-red-500': fields.q2_jadi_acuan.status === 'rejected' }">
                     <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                         <h3 class="text-base font-semibold text-slate-800">2. Menjadi Acuan Perencanaan Pembangunan</h3>
@@ -197,7 +164,6 @@
                     </div>
                 </div>
 
-                {{-- JIKA JADI ACUAN: Grouped per Document Type --}}
                 @if($submission->q2_jadi_acuan === 'ya')
                     
                     @php
@@ -247,7 +213,6 @@
                             </div>
                             <div class="p-0 flex flex-col md:flex-row">
                                 <div class="flex-1 p-4 space-y-4">
-                                    {{-- Upload File --}}
                                     @if($uploadEntry)
                                         <div>
                                             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">📎 File Dokumen</p>
@@ -267,7 +232,6 @@
                                         </div>
                                     @endif
 
-                                    {{-- Komponen RTKD --}}
                                     @if(count($kompList) > 0)
                                         <div>
                                             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Komponen RTKD yang Diacu</p>
@@ -298,7 +262,6 @@
                                     @endif
                                 </div>
 
-                                {{-- Verifikasi Panel --}}
                                 <div class="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-slate-200 p-5 bg-slate-50 md:bg-transparent">
                                     <div class="space-y-3">
                                         <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.{{ $fieldKey }}?.status === 'verified' ? 'border-emerald-200 bg-emerald-50' : 'border-transparent'">
@@ -306,7 +269,7 @@
                                             <span class="text-sm font-semibold text-slate-700">Setujui</span>
                                         </label>
                                         <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.{{ $fieldKey }}?.status === 'rejected' ? 'border-red-200 bg-red-50' : 'border-transparent'">
-                                            <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="rejected" x-model="fields.{{ $fieldKey }}.status" class="text-red-500 focus:ring-red-500">
+                                            <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="rejected" x-model="fields.{{ $fieldKey }}?.status" class="text-red-500 focus:ring-red-500">
                                             <span class="text-sm font-semibold text-slate-700">Minta Revisi</span>
                                         </label>
                                         <div x-show="fields.{{ $fieldKey }}?.status === 'rejected'" class="mt-2">
@@ -318,7 +281,6 @@
                         </div>
                     @endforeach
 
-                {{-- JIKA BELUM ACUAN --}}
                 @else
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" :class="{ 'border-emerald-500 ring-1 ring-emerald-500': fields.alasan_belum_acuan.status === 'verified', 'border-red-500 ring-1 ring-red-500': fields.alasan_belum_acuan.status === 'rejected' }">
                         <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
@@ -363,23 +325,30 @@
                 @endif
             @endif
 
-            {{-- Tombol Aksi Akhir --}}
-            <div class="bg-slate-800 rounded-xl p-4 shadow-lg sticky bottom-6 z-20 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-                <div>
-                    <h4 class="text-white font-semibold">Simpan Hasil Verifikasi</h4>
-                    <p class="text-slate-400 text-sm mt-1" x-text="summaryText"></p>
+            @if($submission->status_verifikasi !== 'verified')
+                <div class="bg-slate-800 rounded-xl p-4 shadow-lg sticky bottom-6 z-20 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+                    <div>
+                        <h4 class="text-white font-semibold">Konfirmasi Verifikasi</h4>
+                        <p class="text-slate-400 text-sm mt-1" x-text="summaryText"></p>
+                    </div>
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        @if($submission->status_verifikasi !== 'verified')
+                            <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.edit-on-behalf', $submission->id) }}" class="w-full sm:w-auto px-6 py-2.5 bg-slate-700 text-white font-medium rounded-lg hover:bg-slate-600 transition shadow-sm flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                Ubah Sendiri
+                            </a>
+                        @endif
+                        <button type="submit" name="final_action" value="reject" x-show="hasRejection" class="w-full sm:w-auto px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition shadow-sm flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            Simpan & Revisi
+                        </button>
+                        <button type="submit" name="final_action" value="verify" x-show="!hasRejection" class="w-full sm:w-auto px-6 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition shadow-sm flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            Setujui Semua
+                        </button>
+                    </div>
                 </div>
-                <div class="flex gap-3 w-full sm:w-auto">
-                    <button type="submit" name="final_action" value="reject" x-show="hasRejection" class="w-full sm:w-auto px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition shadow-sm flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        Simpan & Kembalikan (Minta Revisi)
-                    </button>
-                    <button type="submit" name="final_action" value="verify" x-show="!hasRejection" class="w-full sm:w-auto px-6 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition shadow-sm flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                        Setujui Seluruh Kuesioner
-                    </button>
-                </div>
-            </div>
+            @endif
 
         </form>
     </div>
@@ -396,7 +365,6 @@
                     catatan: oldVerifs[key]?.catatan || ''
                 });
 
-                // Build dynamic fields for each submitted document type
                 let dynamicFields = {};
                 submittedDocTypes.forEach(dt => {
                     const key = 'dok_' + dt;
@@ -405,7 +373,6 @@
 
                 return {
                     fields: {
-                        q1_punya_rtkd: initField('q1_punya_rtkd'),
                         alasan_tidak_punya: initField('alasan_tidak_punya'),
                         q2_jadi_acuan: initField('q2_jadi_acuan'),
                         alasan_belum_acuan: initField('alasan_belum_acuan'),
@@ -418,9 +385,9 @@
 
                     get summaryText() {
                         if (this.hasRejection) {
-                            return 'Terdapat bagian yang ditolak. Sistem akan meminta provinsi melakukan revisi.';
+                            return 'Ada bagian yang ditolak (butuh revisi).';
                         }
-                        return 'Seluruh bagian telah disetujui. Data kuesioner akan diverifikasi penuh.';
+                        return 'Semua bagian telah disetujui.';
                     }
                 }
             })
