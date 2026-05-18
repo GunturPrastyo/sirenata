@@ -9,38 +9,26 @@ on:
 jobs:
   deploy:
     name: Deploy to VPS
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd ${{ secrets.DEPLOY_PATH }}
+      - name: Deploy Application
+        run: |
+          cd ${{ secrets.DEPLOY_PATH }}
 
-            # Pull kode terbaru dari GitHub
-            git pull origin main
+          git pull origin main
 
-            # Install dependensi PHP (tanpa dev dependencies)
-            docker exec elearning_app composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+          docker exec elearning_app composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-            # Install dependensi Node dan build assets Vite
-            docker exec elearning_app npm install
-            docker exec elearning_app npm run build
+          docker exec elearning_app npm install
+          docker exec elearning_app npm run build
 
-            # Jalankan migrasi database
-            docker exec elearning_app php artisan migrate --force
+          docker exec elearning_app php artisan migrate --force
 
-            # Clear dan rebuild cache
-            docker exec elearning_app php artisan config:cache
-            docker exec elearning_app php artisan route:cache
-            docker exec elearning_app php artisan view:cache
-            docker exec elearning_app php artisan event:cache
+          docker exec elearning_app php artisan config:cache
+          docker exec elearning_app php artisan route:cache
+          docker exec elearning_app php artisan view:cache
+          docker exec elearning_app php artisan event:cache
 
-            # Restart queue workers (jika ada)
-            docker exec elearning_app php artisan queue:restart
+          docker exec elearning_app php artisan queue:restart
