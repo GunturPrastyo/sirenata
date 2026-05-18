@@ -1,6 +1,5 @@
 <x-dashboard::layouts.dashboard title="Kuesioner Pemanfaatan RTKD">
     <div class="p-2 sm:p-6" x-data="kuesionerForm()">
-        {{-- Breadcrumb --}}
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -24,15 +23,12 @@
             </ol>
         </nav>
 
-
-
         <form x-ref="mainForm" @submit.prevent="validateAndSubmit" action="{{ $submission->exists ? route('admin-province.pemanfaatan-rtkd.update', $submission->id) : route('admin-province.pemanfaatan-rtkd.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @if($submission->exists)
                 @method('PUT')
             @endif
 
-            {{-- 1. Status Kepemilikan RTKD (Auto-filled) --}}
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-indigo-600">
                 <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <div class="flex items-center gap-2">
@@ -73,7 +69,6 @@
                 </div>
             </div>
 
-            {{-- 2. Jika TIDAK Punya RTKD --}}
             <template x-if="!hasRtkd">
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
@@ -126,11 +121,9 @@
                 </div>
             </template>
 
-            {{-- 3. Jika PUNYA RTKD --}}
             <template x-if="hasRtkd">
                 <div class="space-y-4">
                     
-                    {{-- Pemanfaatan Acuan --}}
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-indigo-600">
                         <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                             <div class="flex items-center gap-2">
@@ -166,7 +159,6 @@
                         </div>
                     </div>
 
-                    {{-- 3A. JIKA BELUM JADI ACUAN --}}
                     <template x-if="jadiAcuan === 'tidak'">
                         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-amber-200">
                             <div class="px-4 py-3 border-b border-amber-200 bg-amber-50 flex justify-between items-center">
@@ -212,12 +204,10 @@
                         </div>
                     </template>
 
-                    {{-- 3B. JIKA JADI ACUAN --}}
                     <template x-if="jadiAcuan === 'ya'">
                         <div class="space-y-4 border-l-4 border-indigo-500 pl-4 py-2">
                             <p class="text-sm text-slate-600 mb-2 font-medium">Pilih dokumen perencanaan yang menjadikan RTKD sebagai acuan, unggah buktinya, lalu pilih komponennya. <span class="text-red-500">* (Pilih minimal satu dokumen)</span></p>
                             
-                            {{-- Dokumen RPJMD --}}
                             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-slate-400">
                                 <label class="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                                     <input type="checkbox" name="dokumen_acuan[]" value="rpjmd" class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" x-model="dokumenAcuan">
@@ -276,7 +266,6 @@
                                 </div>
                             </div>
 
-                            {{-- Dokumen RENSTRA --}}
                             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-slate-400">
                                 <label class="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                                     <input type="checkbox" name="dokumen_acuan[]" value="renstra" class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" x-model="dokumenAcuan">
@@ -335,7 +324,6 @@
                                 </div>
                             </div>
 
-                            {{-- Dokumen Lainnya --}}
                             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden border-l-4 border-l-slate-400">
                                 <label class="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                                     <input type="checkbox" name="dokumen_acuan[]" value="lainnya" class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" x-model="dokumenAcuan">
@@ -422,18 +410,15 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('kuesionerForm', () => {
-                // Inisialisasi data dari server
                 const hasRtkdDefault = @json($latestRtk ? true : false);
                 const q2Default = @json($submission->q2_jadi_acuan ?? '');
                 
-                // Ambil data array lama jika sedang diedit
                 const oldAlasanTidakPunya = @json(is_array($submission->alasan_tidak_punya) ? collect($submission->alasan_tidak_punya)->pluck('alasan') : []);
                 const oldAlasanBelumAcuan = @json(is_array($submission->alasan_belum_acuan) ? collect($submission->alasan_belum_acuan)->pluck('alasan') : []);
                 const oldDokumenAcuan = @json(is_array($submission->dokumen_acuan) ? collect($submission->dokumen_acuan)->pluck('doc_type') : []);
                 
                 const oldKomponenAcuan = @json(is_array($submission->komponen_acuan) ? $submission->komponen_acuan : []);
 
-                // Parse old komponen acuan into specific structures
                 let kRpjmd = [];
                 let hRpjmd = {};
                 let lRpjmd = '';
@@ -492,43 +477,35 @@
                     lainnyaLainnya: lLainnya,
 
                     validateAndSubmit() {
-                        // 1. Cek HTML5 Validation first (for required text inputs/files)
                         if (!this.$refs.mainForm.checkValidity()) {
                             this.$refs.mainForm.reportValidity();
                             return;
                         }
-
-                        // 2. Custom validation for checkbox groups (At least one)
                         
-                        // Jika TIDAK punya RTKD
                         if (!this.hasRtkd) {
                             if (this.alasanTidakPunya.length === 0) {
                                 alert('Pilih minimal satu alasan tidak memiliki RTKD.');
                                 return;
                             }
                         } 
-                        // Jika PUNYA RTKD
                         else {
                             if (!this.jadiAcuan) {
                                 alert('Pilih apakah RTKD sudah menjadi acuan atau belum.');
                                 return;
                             }
 
-                            // Jika BELUM jadi acuan
                             if (this.jadiAcuan === 'tidak') {
                                 if (this.alasanBelumAcuan.length === 0) {
                                     alert('Pilih minimal satu alasan belum menjadi acuan.');
                                     return;
                                 }
                             } 
-                            // Jika SUDAH jadi acuan
                             else if (this.jadiAcuan === 'ya') {
                                 if (this.dokumenAcuan.length === 0) {
                                     alert('Pilih minimal satu dokumen perencanaan (RPJMD/RENSTRA/Lainnya).');
                                     return;
                                 }
 
-                                // Cek komponen per dokumen
                                 if (this.dokumenAcuan.includes('rpjmd') && this.komponenRpjmd.length === 0) {
                                     alert('Pilih minimal satu komponen untuk dokumen RPJMD.');
                                     return;
@@ -544,7 +521,6 @@
                             }
                         }
 
-                        // Jika lolos semua validasi
                         this.$refs.mainForm.submit();
                     }
                 }

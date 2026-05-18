@@ -1,6 +1,5 @@
 <x-dashboard::layouts.dashboard title="Pemanfaatan RTKD">
     <div class="p-2 sm:p-6">
-        {{-- Breadcrumb --}}
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -26,11 +25,8 @@
             </ol>
         </nav>
 
-
-        {{-- Notification Banner for Active Survey --}}
         @if ($activePeriod && !$submission)
             <div class="mb-6 relative overflow-hidden bg-white border border-indigo-100 rounded-2xl shadow-sm">
-                {{-- Decorative pattern --}}
                 <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-50 rounded-full opacity-50"></div>
                 <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-indigo-50 rounded-full opacity-30"></div>
 
@@ -52,7 +48,6 @@
                                 </p>
                             </div>
                         </div>
-
                     </div>
                     <div class="flex-shrink-0">
                         <a href="{{ route('admin-province.pemanfaatan-rtkd.create') }}" 
@@ -67,15 +62,12 @@
             </div>
         @endif
 
-        {{-- Main Content --}}
         <div class="space-y-6">
-            {{-- Data Table Section --}}
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <h2 class="text-base font-semibold text-slate-800">Status Pemanfaatan Rencana Tenaga Kerja Daerah</h2>
                 </div>
 
-                
                 <div class="p-0 overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -172,12 +164,10 @@
                 </div>
             </div>
 
-            {{-- Detail Data Kuesioner (Read-Only) --}}
             @if($submission)
                 <div class="mt-8 space-y-6">
                     <h2 class="text-lg font-bold text-slate-800">Detail Kuesioner yang Diisi</h2>
                     
-                    {{-- 1. Kepemilikan RTKD --}}
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                             <h3 class="text-base font-semibold text-slate-800">1. Kepemilikan Dokumen RTK Provinsi</h3>
@@ -221,7 +211,6 @@
                         </div>
                     </div>
 
-                    {{-- 1B. Alasan Tidak Punya RTKD --}}
                     @if(!$submission->rtk_document_id)
                         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                             <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
@@ -257,7 +246,6 @@
                         </div>
                     @endif
 
-                    {{-- 2. Pemanfaatan Dokumen --}}
                     @if($submission->rtk_document_id)
                         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                             <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
@@ -293,7 +281,6 @@
                             </div>
                         </div>
 
-                        {{-- JIKA JADI ACUAN --}}
                         @if($submission->q2_jadi_acuan === 'ya')
                             @php
                                 $docLabels = ['rpjmd' => 'RPJMD', 'renstra' => 'RENSTRA Disnaker', 'lainnya' => 'Dokumen Lainnya'];
@@ -349,7 +336,6 @@
                                             </div>
                                         @endif
 
-                                        {{-- Upload File --}}
                                         @if($uploadEntry)
                                             <div>
                                                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">📎 File Dokumen</p>
@@ -365,7 +351,6 @@
                                             </div>
                                         @endif
 
-                                        {{-- Komponen RTKD --}}
                                         @if(count($kompList) > 0)
                                             <div>
                                                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Komponen RTKD yang Diacu</p>
@@ -396,7 +381,6 @@
                                 </div>
                             @endforeach
 
-                        {{-- JIKA BELUM ACUAN --}}
                         @else
                             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                                 <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">

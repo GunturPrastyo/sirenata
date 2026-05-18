@@ -13,15 +13,10 @@ use App\Models\User;
 
 class HasilPemanfaatanRtkdController extends Controller
 {
-    /**
-     * Menampilkan daftar hasil kuesioner dengan filter.
-     */
     public function index(Request $request)
     {
-        // Ambil semua periode survei untuk dropdown filter
         $periods = RtkSurveyPeriod::orderBy('tahun', 'desc')->get();
         
-        // Tentukan periode yang dipilih (default ke periode aktif, atau yang paling baru jika tidak ada)
         $selectedPeriodId = $request->input('period_id');
         if (!$selectedPeriodId) {
             $activePeriod = RtkSurveyPeriod::aktif()->first();
@@ -30,12 +25,10 @@ class HasilPemanfaatanRtkdController extends Controller
 
         $query = RtkPemanfaatanSubmission::with(['user', 'period']);
 
-        // Filter berdasarkan Periode
         if ($selectedPeriodId) {
             $query->where('period_id', $selectedPeriodId);
         }
 
-        // Filter berdasarkan Kepemilikan RTKD
         if ($request->filled('q1_punya_rtkd')) {
             if ($request->input('q1_punya_rtkd') === 'ya') {
                 $query->whereNotNull('rtk_document_id');
@@ -44,12 +37,10 @@ class HasilPemanfaatanRtkdController extends Controller
             }
         }
 
-        // Filter berdasarkan Pemanfaatan Acuan
         if ($request->filled('q2_jadi_acuan')) {
             $query->where('q2_jadi_acuan', $request->input('q2_jadi_acuan'));
         }
 
-        // Filter pencarian berdasarkan nama provinsi (user->name)
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->whereHas('user', function ($q) use ($search) {
@@ -62,9 +53,6 @@ class HasilPemanfaatanRtkdController extends Controller
         return view('rtk::adminPusat.hasil-pemanfaatan.index', compact('submissions', 'periods', 'selectedPeriodId'));
     }
 
-    /**
-     * Menampilkan rincian kuesioner untuk diverifikasi.
-     */
     public function show($id)
     {
         $submission = RtkPemanfaatanSubmission::with(['user', 'period', 'rtkDocument'])->findOrFail($id);
@@ -72,9 +60,6 @@ class HasilPemanfaatanRtkdController extends Controller
         return view('rtk::adminPusat.hasil-pemanfaatan.show', compact('submission'));
     }
 
-    /**
-     * Memproses verifikasi kuesioner (Per-field).
-     */
     public function verify(Request $request, $id)
     {
         $request->validate([
@@ -87,7 +72,6 @@ class HasilPemanfaatanRtkdController extends Controller
         
         $verifications = $request->input('verifications');
         
-        // Determine global status
         $hasRejection = false;
         foreach ($verifications as $field => $data) {
             if ($data['status'] === 'rejected') {
@@ -99,7 +83,6 @@ class HasilPemanfaatanRtkdController extends Controller
         $submission->field_verifications = $verifications;
         $submission->status_verifikasi = $hasRejection ? 'rejected' : 'verified';
         
-        // Clear global notes, we rely on field notes now
         $submission->catatan_verifikasi = null; 
         
         $submission->save();
@@ -113,14 +96,10 @@ class HasilPemanfaatanRtkdController extends Controller
         return redirect()->route('admin-pusat.hasil-pemanfaatan-rtkd.index');
     }
 
-    /**
-     * Form untuk Admin Pusat mengisi kuesioner atas nama provinsi (Ubah Sendiri).
-     */
     public function editOnBehalf($id)
     {
         $submission = RtkPemanfaatanSubmission::with(['user', 'period'])->findOrFail($id);
         
-        // Cari data RTK Provinsi aktif milik USER PROVINSI tersebut
         $targetUser = $submission->user;
         $latestRtk = null;
         if ($targetUser->hasCompleteScope()) {
@@ -139,15 +118,11 @@ class HasilPemanfaatanRtkdController extends Controller
         ]);
     }
 
-    /**
-     * Simpan kuesioner baru hasil koreksi Admin Pusat.
-     */
     public function storeOnBehalf(Request $request, $id)
     {
         $oldSubmission = RtkPemanfaatanSubmission::findOrFail($id);
         $targetUser = User::findOrFail($oldSubmission->user_id);
         
-        // Cari data RTK Provinsi aktif milik USER PROVINSI tersebut
         $latestRtk = null;
         if ($targetUser->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', $targetUser->scopeArea->province_code)
@@ -157,16 +132,13 @@ class HasilPemanfaatanRtkdController extends Controller
                 ->first();
         }
 
-        // Buat record baru
         $data = new RtkPemanfaatanSubmission();
         $data->user_id = $targetUser->id;
         $data->period_id = $oldSubmission->period_id;
 
-        // Proses data (sama dengan logika di PemanfaatanRtkdController)
         $data->created_by = auth()->id();
         $this->processFormData($request, $data, $latestRtk);
 
-        // Langsung disetujui
         $data->status_verifikasi = 'verified';
         $data->catatan_verifikasi = 'Diisi/Dikoreksi langsung oleh Admin Pusat.';
         $data->save();
@@ -175,19 +147,14 @@ class HasilPemanfaatanRtkdController extends Controller
         return redirect()->route('admin-pusat.hasil-pemanfaatan-rtkd.index');
     }
 
-    /**
-     * Duplikasi logika pemrosesan form dari PemanfaatanRtkdController
-     */
     private function processFormData(Request $request, RtkPemanfaatanSubmission $data, ?RencanaTenagaKerja $latestRtk)
     {
-        // 1. Link data RTKD dari sistem utama jika ada
         if ($latestRtk) {
             $data->rtk_document_id = $latestRtk->id;
         } else {
             $data->rtk_document_id = null;
         }
 
-        // 2. Jika Tidak Punya RTKD (rtk_document_id null)
         if (!$data->rtk_document_id) {
             $data->q2_jadi_acuan = null;
             $data->dokumen_acuan = null;
@@ -299,4 +266,3 @@ class HasilPemanfaatanRtkdController extends Controller
         }
     }
 }
-

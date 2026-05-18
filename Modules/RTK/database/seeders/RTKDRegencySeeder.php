@@ -13,9 +13,6 @@ use Modules\RTK\Enums\StatusDocument;
 
 class RTKDRegencySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $regencies = Regency::all();

@@ -1,6 +1,5 @@
 <x-dashboard::layouts.dashboard title="Hasil Kuesioner Pemanfaatan RTKD">
     <div class="p-2 sm:p-6">
-        {{-- Breadcrumb --}}
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -26,15 +25,11 @@
             </ol>
         </nav>
 
-
-
         <x-flash-message class="mb-4" />
 
-        {{-- Filter Bar --}}
         <form method="GET" action="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.index') }}" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    {{-- Filter Periode --}}
                     <div class="relative w-full sm:w-52">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <select name="period_id" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
@@ -46,7 +41,6 @@
                             @endforeach
                         </select>
                     </div>
-                    {{-- Filter Punya RTKD --}}
                     <div class="relative w-full sm:w-48">
                         <select name="q1_punya_rtkd" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Semua Kepemilikan</option>
@@ -54,7 +48,6 @@
                             <option value="tidak" {{ request('q1_punya_rtkd') == 'tidak' ? 'selected' : '' }}>Tidak Punya</option>
                         </select>
                     </div>
-                    {{-- Filter Jadi Acuan --}}
                     <div class="relative w-full sm:w-48">
                         <select name="q2_jadi_acuan" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Semua Status Acuan</option>
@@ -79,7 +72,6 @@
             </div>
         </form>
 
-        {{-- Table Card --}}
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -190,8 +182,6 @@
                                         </a>
                                     @endif
                                 </td>
-
-
                             </tr>
                         @empty
                             <tr>

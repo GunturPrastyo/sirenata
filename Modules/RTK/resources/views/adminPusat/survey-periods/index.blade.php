@@ -1,6 +1,5 @@
 <x-dashboard::layouts.dashboard title="Periode Survei RTK Daerah">
     <div class="p-2 sm:p-6">
-        {{-- Breadcrumb --}}
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
@@ -26,9 +25,6 @@
             </ol>
         </nav>
 
-
-
-        {{-- Table Card --}}
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -106,7 +102,6 @@
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
                                     <x-table.action>
-                                        {{-- 1. Detail --}}
                                         <li>
                                             <button x-data x-on:click="$dispatch('open-modal', 'show-survey-period-{{ $period->id }}')"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600 cursor-pointer">
@@ -114,7 +109,6 @@
                                             </button>
                                         </li>
 
-                                        {{-- 2. Aktifkan / Tutup --}}
                                         @if ($period->status !== 'aktif')
                                             <li>
                                                 <form action="{{ route('admin-pusat.survey-periods.activate', $period->id) }}"
@@ -143,7 +137,6 @@
                                             </li>
                                         @endif
 
-                                        {{-- 3. Ubah --}}
                                         <li>
                                             <button type="button" x-data
                                                 @click="$dispatch('open-modal', 'edit-survey-period-{{ $period->id }}')"
@@ -152,7 +145,6 @@
                                             </button>
                                         </li>
 
-                                        {{-- 4. Hapus --}}
                                         <li>
                                             <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
                                                 <x-modal-delete :id="'delete-period-' . $period->id"
@@ -188,7 +180,6 @@
         </div>
     </div>
 
-    {{-- Modal: Tambah Periode Survei --}}
     <x-modal name="create-survey-period" title="Tambah Periode Survei">
         <form action="{{ route('admin-pusat.survey-periods.store') }}" method="POST" class="space-y-4">
             @csrf
@@ -251,7 +242,6 @@
         </form>
     </x-modal>
 
-    {{-- Modal: Edit Periode Survei (satu modal per item) --}}
     @foreach($periods as $period)
         <x-modal name="edit-survey-period-{{ $period->id }}" title="Edit Periode Survei">
             <form action="{{ route('admin-pusat.survey-periods.update', $period->id) }}" method="POST" class="space-y-4">

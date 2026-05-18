@@ -13,12 +13,8 @@ use Modules\RTK\Enums\StatusDocument;
 
 class RTKDProvinceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Ambil semua province
         $provinces = Province::all();
 
         if ($provinces->isEmpty()) {
@@ -28,7 +24,6 @@ class RTKDProvinceSeeder extends Seeder
 
         DB::transaction(function () use ($provinces) {
             foreach ($provinces as $province) {
-                // Ambil user admin-province yang scopeArea-nya sesuai province ini
                 $user = User::role('admin-province')
                     ->whereHas('scopeArea', function ($query) use ($province) {
                         $query->where('province_code', $province->code);
@@ -57,7 +52,7 @@ class RTKDProvinceSeeder extends Seeder
                         'name'      => "RTKD Provinsi {$province->name} 2025-2026",
                         'start_date' => 2025,
                         'end_date'   => 2026,
-                        'is_active'  => true, // hanya yang terakhir aktif
+                        'is_active'  => true,
                     ],
                 ];
 
