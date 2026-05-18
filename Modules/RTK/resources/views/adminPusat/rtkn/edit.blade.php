@@ -112,30 +112,14 @@
                                 </label>
                             </div>
                             <p class="text-xs text-gray-500 mt-4">
-                                Anda dapat mengajukan RTK baru meskipun sudah terdapat RTK yang sedang berlaku. RTK
-                                yang sedang berlaku akan digantikan secara otomatis setelah RTK baru disetujui oleh
-                                Admin Pusat / Admin Provinsi.
+                                Anda dapat mengajukan RTKN baru meskipun sudah terdapat RTKN yang sedang berlaku. RTKN
+                                yang sedang berlaku akan digantikan secara otomatis setelah RTKN baru disetujui oleh
+                                Admin Pusat.
                             </p>
                             @error('is_active')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-
-                        {{-- <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Status <span class="text-red-500">*</span>
-                            </label>
-                            <select name="status_verification" class="w-full rounded-md border-gray-300">
-                                @foreach (\Modules\RTK\Enums\RTKStatusVerification::cases() as $status)
-                                    <option value="{{ $status->value }}" @selected(old('status_verification', $rtkn->status_verification->value ?? $rtkn->status_verification) == $status->value)>
-                                        {{ $status->label() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('status_verification')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div> --}}
 
                         <!-- Tahun Berlaku -->
                         <div class="grid grid-cols-2 gap-4">

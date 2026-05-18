@@ -89,11 +89,12 @@ class RencanaTenagaKerja extends Model
         return $this->approver?->profile?->full_name ?? $this->approver?->name ?? '-';
     }
 
-
-    public function isExpired(): bool
+    public function getDocumentUrlAttribute(): ?string
     {
-        return (int) $this->end_date < now()->year;
+        if (! $this->document_path) return null;
+        return str_starts_with($this->document_path, 'http') ? $this->document_path : asset('storage/' . $this->document_path);
     }
+
 
     public function scopeBerlaku($query)
     {

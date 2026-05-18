@@ -38,6 +38,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'siapkerja_id',
+        'siapkerja_token',
+        'siapkerja_refresh_token',
         'password',
     ];
 
