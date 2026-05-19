@@ -79,7 +79,7 @@
                 @endphp
 
                 <div
-                    class="library-item bg-white rounded-lg shadow-sm border overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all">
+                    class="library-item bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-8px_rgba(99,102,241,0.3)] hover:border-indigo-500">
 
                     @if($library->cover_image)
                         <div class="h-28 sm:h-48 overflow-hidden">
