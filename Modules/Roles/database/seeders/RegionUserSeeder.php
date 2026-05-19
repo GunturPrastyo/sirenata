@@ -9,7 +9,6 @@ use Modules\User\Models\UserScope;
 use Creasi\Nusa\Models\Province;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Modules\User\Enums\InstitutionType;
 
 class RegionUserSeeder extends Seeder
@@ -26,8 +25,13 @@ class RegionUserSeeder extends Seeder
 
         $this->command->info('Mulai generate Admin & User Regional...');
 
+        // 31: DKI Jakarta, 32: Jawa Barat, 12: Sumatera Utara
+        $focusProvinceCodes = ['31', '32', '12'];
+
         foreach ($provinces as $province) {
             $slugProv = Str::slug($province->name);
+            
+            // 1. Selalu buat Admin Provinsi untuk ke-38 provinsi
             $this->createUser(
                 "admin.{$slugProv}@example.com",
                 "Admin Prov {$province->name}",
@@ -40,45 +44,51 @@ class RegionUserSeeder extends Seeder
                 null
             );
 
-            $this->createUser(
-                "user.{$slugProv}@example.com",
-                "User Prov {$province->name}",
-                "Instansi Prov {$province->name}",
-                InstitutionType::PROVINSI,
-                ['male', 'female'][array_rand(['male', 'female'])],
-                'user',
-                $password,
-                $province->code,
-                null
-            );
-            $regencies = $province->regencies()->inRandomOrder()->take(rand(2, 3))->get();
-
-            foreach ($regencies as $regency) {
-                $slugRegency = Str::slug($regency->name);
-
+            // 2. Hanya generate User Provinsi dan Kab/Kota untuk 3 Provinsi Fokus
+            if (in_array($province->code, $focusProvinceCodes)) {
+                // Buat User Provinsi
                 $this->createUser(
-                    "admin.{$slugRegency}@example.com",
-                    "Admin {$regency->name}",
-                    "Dinas Tenaga Kerja {$regency->name}",
-                    InstitutionType::KAB_KOTA,
-                    ['male', 'female'][array_rand(['male', 'female'])],
-                    'admin-kab-kota',
-                    $password,
-                    $province->code,
-                    $regency->code
-                );
-
-                $this->createUser(
-                    "user.{$slugRegency}@example.com",
-                    "User {$regency->name}",
-                    "Instansi {$regency->name}",
-                    InstitutionType::KAB_KOTA,
+                    "user.{$slugProv}@example.com",
+                    "User Prov {$province->name}",
+                    "Instansi Prov {$province->name}",
+                    InstitutionType::PROVINSI,
                     ['male', 'female'][array_rand(['male', 'female'])],
                     'user',
                     $password,
                     $province->code,
-                    $regency->code
+                    null
                 );
+
+                // Buat SEMUA Admin & User Kab/Kota di provinsi ini
+                $regencies = $province->regencies()->get();
+
+                foreach ($regencies as $regency) {
+                    $slugRegency = Str::slug($regency->name);
+
+                    $this->createUser(
+                        "admin.{$slugRegency}@example.com",
+                        "Admin {$regency->name}",
+                        "Dinas Tenaga Kerja {$regency->name}",
+                        InstitutionType::KAB_KOTA,
+                        ['male', 'female'][array_rand(['male', 'female'])],
+                        'admin-kab-kota',
+                        $password,
+                        $province->code,
+                        $regency->code
+                    );
+
+                    $this->createUser(
+                        "user.{$slugRegency}@example.com",
+                        "User {$regency->name}",
+                        "Instansi {$regency->name}",
+                        InstitutionType::KAB_KOTA,
+                        ['male', 'female'][array_rand(['male', 'female'])],
+                        'user',
+                        $password,
+                        $province->code,
+                        $regency->code
+                    );
+                }
             }
 
             $this->command->info("Selesai generate region: {$province->name}");

@@ -31,9 +31,8 @@ class UserScopeSeeder extends Seeder
             );
         }
 
-        // 3. Dummy Users — 1 per location
+        // 3. Dummy Users from RolesDatabaseSeeder
         $scopes = [
-            // user.pusat@example.com → No scope (Pusat)
             'user.jabar@example.com' => ['province_code' => '32', 'regency_code' => null],
             'user.sumut@example.com' => ['province_code' => '12', 'regency_code' => null],
             'user.kotabandung@example.com' => ['province_code' => '32', 'regency_code' => '32.73'],

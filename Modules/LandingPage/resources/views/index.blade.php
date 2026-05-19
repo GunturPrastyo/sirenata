@@ -15,7 +15,7 @@
             <!-- Title -->
             <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-up"
                 style="color: #13416B; animation-delay: 0.1s;">
-                SIRENATA
+                SIRENATA <span class="text-2xl text-indigo-600">v2.0 Test</span>
             </h1>
 
             <p class="text-2xl md:text-3xl text-gray-700 font-semibold mb-4 animate-fade-up"
