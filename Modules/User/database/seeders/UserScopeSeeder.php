@@ -13,7 +13,7 @@ class UserScopeSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Admin Provinsi (Jawa Barat - 32)
+
         $adminProv = User::where('email', 'adminprovinsi@gmail.com')->first();
         if ($adminProv) {
             UserScope::updateOrCreate(
@@ -22,7 +22,7 @@ class UserScopeSeeder extends Seeder
             );
         }
 
-        // 2. Admin Kab Kota (Kota Bandung - 32.73)
+
         $adminKab = User::where('email', 'adminkabkota@gmail.com')->first();
         if ($adminKab) {
             UserScope::updateOrCreate(
@@ -31,7 +31,7 @@ class UserScopeSeeder extends Seeder
             );
         }
 
-        // 3. Dummy Users from RolesDatabaseSeeder
+
         $scopes = [
             'user.jabar@example.com' => ['province_code' => '32', 'regency_code' => null],
             'user.sumut@example.com' => ['province_code' => '12', 'regency_code' => null],

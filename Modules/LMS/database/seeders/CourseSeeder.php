@@ -11,7 +11,25 @@ class CourseSeeder extends Seeder
 {
     public function run(): void
     {
-        Course::factory(10)->create();
+        $courseNames = [
+            'Perencanaan Tenaga Kerja Makro',
+            'Perencanaan Tenaga Kerja Mikro',
+            'Indeks Pembangunan Ketenagakerjaan',
+            'Sistem Informasi Pasar Kerja',
+            'Keselamatan dan Kesehatan Kerja Dasar'
+        ];
+
+        $categories = \Modules\LMS\Models\Category::all();
+
+        foreach ($courseNames as $name) {
+            Course::create([
+                'category_id' => $categories->count() > 0 ? $categories->random()->id : null,
+                'name' => $name,
+                'slug' => \Illuminate\Support\Str::slug($name),
+                'thumbnail' => 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random',
+                'description' => 'Deskripsi untuk ' . $name . '. Kursus ini akan membahas dasar-dasar dan konsep secara mendalam.',
+            ]);
+        }
 
         $courses = Course::with(['sections.contents'])->get();
         $users   = User::role('user')->get();
@@ -28,7 +46,7 @@ class CourseSeeder extends Seeder
 
         foreach ($courses as $course) {
 
-            // ── Mentors (1–2 orang) ───────────────────────────────────────
+
             $mentors = $users->random(rand(1, min(2, $users->count())));
             foreach ($mentors as $mentor) {
                 $course->mentors()->syncWithoutDetaching([
@@ -40,19 +58,19 @@ class CourseSeeder extends Seeder
                 ]);
             }
 
-            // Ambil semua konten dalam course ini (flatten dari semua sections)
+
             $allContents   = $course->sections->flatMap->contents;
             $totalContents = $allContents->count();
 
-            // ── Students — semua user role 'user' ────────────────────────
+
             foreach ($users as $student) {
 
-                // Random berapa konten yang sudah diselesaikan student ini
+
                 $completedCount = $totalContents > 0
                     ? rand(0, $totalContents)
                     : 0;
 
-                // Progress dihitung dari konten selesai / total konten
+
                 $progress = $totalContents > 0
                     ? (int) round(($completedCount / $totalContents) * 100)
                     : 0;
@@ -63,7 +81,7 @@ class CourseSeeder extends Seeder
                     default         => 'completed',
                 };
 
-                // Enroll student ke course
+
                 $course->students()->syncWithoutDetaching([
                     $student->id => [
                         'status'       => $status,
@@ -74,7 +92,7 @@ class CourseSeeder extends Seeder
                     ],
                 ]);
 
-                // Seed student_content_progress sesuai konten yang selesai
+
                 if ($totalContents > 0 && $completedCount > 0) {
                     $contentsToComplete = $allContents
                         ->shuffle()

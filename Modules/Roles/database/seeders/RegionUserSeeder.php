@@ -25,13 +25,13 @@ class RegionUserSeeder extends Seeder
 
         $this->command->info('Mulai generate Admin & User Regional...');
 
-        // 31: DKI Jakarta, 32: Jawa Barat, 12: Sumatera Utara
+
         $focusProvinceCodes = ['31', '32', '12'];
 
         foreach ($provinces as $province) {
             $slugProv = Str::slug($province->name);
             
-            // 1. Selalu buat Admin Provinsi untuk ke-38 provinsi
+
             $this->createUser(
                 "admin.{$slugProv}@example.com",
                 "Admin Prov {$province->name}",
@@ -44,9 +44,9 @@ class RegionUserSeeder extends Seeder
                 null
             );
 
-            // 2. Hanya generate User Provinsi dan Kab/Kota untuk 3 Provinsi Fokus
+
             if (in_array($province->code, $focusProvinceCodes)) {
-                // Buat User Provinsi
+
                 $this->createUser(
                     "user.{$slugProv}@example.com",
                     "User Prov {$province->name}",
@@ -59,7 +59,7 @@ class RegionUserSeeder extends Seeder
                     null
                 );
 
-                // Buat SEMUA Admin & User Kab/Kota di provinsi ini
+
                 $regencies = $province->regencies()->get();
 
                 foreach ($regencies as $regency) {
