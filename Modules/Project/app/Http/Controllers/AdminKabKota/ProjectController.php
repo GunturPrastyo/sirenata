@@ -54,14 +54,26 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        $adminScope = Auth::user()->scopeArea;
+        $allowedUserIds = User::role('user')->whereHas('scopeArea', function ($q) use ($adminScope) {
+            $q->where('regency_code', $adminScope?->regency_code);
+        })->pluck('id')->toArray();
+
         $request->validate([
             'proyekName' => 'required|string|max:255',
             'startDate' => 'required|date',
             'endDate' => 'required|date',
             'duration' => 'nullable|integer',
-            'teamLeader' => 'required|exists:users,id',
+            'teamLeader' => [
+                'required',
+                'exists:users,id',
+                \Illuminate\Validation\Rule::in($allowedUserIds)
+            ],
             'teamMembers' => 'nullable|array',
-            'teamMembers.*' => 'exists:users,id',
+            'teamMembers.*' => [
+                'exists:users,id',
+                \Illuminate\Validation\Rule::in($allowedUserIds)
+            ],
         ]);
 
         Project::create([
@@ -110,14 +122,26 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
 
+        $adminScope = Auth::user()->scopeArea;
+        $allowedUserIds = User::role('user')->whereHas('scopeArea', function ($q) use ($adminScope) {
+            $q->where('regency_code', $adminScope?->regency_code);
+        })->pluck('id')->toArray();
+
         $request->validate([
             'proyekName' => 'required|string|max:255',
             'startDate' => 'required|date',
             'endDate' => 'required|date',
             'duration' => 'nullable|integer',
-            'teamLeader' => 'required|exists:users,id',
+            'teamLeader' => [
+                'required',
+                'exists:users,id',
+                \Illuminate\Validation\Rule::in($allowedUserIds)
+            ],
             'teamMembers' => 'nullable|array',
-            'teamMembers.*' => 'exists:users,id',
+            'teamMembers.*' => [
+                'exists:users,id',
+                \Illuminate\Validation\Rule::in($allowedUserIds)
+            ],
         ]);
 
         $project->update([

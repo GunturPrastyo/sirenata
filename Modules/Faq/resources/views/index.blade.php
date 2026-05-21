@@ -25,60 +25,7 @@
             </ol>
         </nav>
 
-        <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-
-                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    <div class="relative w-full sm:w-48">
-                        <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <select name="level" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">Semua Level</option>
-                            <option value="Nasional" @selected(request('level') === 'Nasional')>Nasional</option>
-                            <option value="Provinsi" @selected(request('level') === 'Provinsi')>Provinsi</option>
-                            <option value="Kab/Kota" @selected(request('level') === 'Kab/Kota')>Kab/Kota</option>
-                        </select>
-                    </div>
-
-                    <div class="relative w-full sm:w-44">
-                        <select name="per_page" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            @foreach ([10, 20, 50, 100] as $page)
-                                <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
-                                    {{ $page }} / Halaman
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex w-full lg:w-96 gap-2">
-                    <div class="relative flex-1">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari FAQ..."
-                            class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                    focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-
-                    <button type="submit" class="inline-flex items-center gap-2 px-4 rounded-md
-                bg-indigo-600 text-white text-sm font-medium
-                hover:bg-indigo-700 transition">
-                        <i class="fas fa-search text-xs"></i>
-                        <span class="hidden sm:inline">Search</span>
-                    </button>
-
-                    <a href="{{ route($routePrefix . 'index') }}" class="inline-flex items-center gap-2 px-4 rounded-md
-                border border-slate-300 text-slate-600 text-sm font-medium
-                hover:bg-slate-100 transition">
-                        <i class="fas fa-rotate-left text-xs"></i>
-                        <span class="hidden sm:inline">Reset</span>
-                    </a>
-                </div>
-
-            </div>
-        </form>
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" x-data="{ showFilter: {{ (request('search') || request('level')) ? 'true' : 'false' }} }">
             <div
                 class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -90,6 +37,21 @@
                 </div>
 
                 <div class="flex items-center gap-2">
+                    <button type="button" @click="showFilter = !showFilter"
+                        class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-slate-700 bg-white text-sm font-medium rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
+                        :class="showFilter ? 'bg-slate-100 border-slate-400 font-semibold' : ''">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                        </svg>
+                        Filter
+                    </button>
+
+                    <a href="{{ route('admin-pusat.faq.export') }}?{{ http_build_query(request()->only(['search', 'level'])) }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                        title="Ekspor Data">
+                        <i class="fas fa-download text-xs"></i>
+                        <span class="hidden sm:inline">Ekspor</span>
+                    </a>
                     @role('admin-pusat')
                     <button x-data x-on:click="$dispatch('open-modal', 'create-faq')"
                         class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
@@ -99,20 +61,66 @@
                         Tambah FAQ
                     </button>
                     @endrole
-                    <button
-                        class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                        title="Ekspor Data">
-                        <i class="fas fa-download text-xs"></i>
-                        <span class="hidden sm:inline">Ekspor</span>
-                    </button>
-                    <button
-                        class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                        title="Cetak">
-                        <i class="fas fa-print text-xs"></i>
-                        <span class="hidden sm:inline">Cetak</span>
-                    </button>
                 </div>
             </div>
+
+            <!-- Search Bar inside Card -->
+            <form method="GET" class="p-5 border-b border-slate-200 bg-slate-50/50" x-show="showFilter" x-transition @if(!(request('search') || request('level'))) style="display: none;" @endif>
+                <div class="flex flex-col sm:flex-row flex-wrap gap-4 items-end">
+                    <!-- Level -->
+                    <div class="w-full sm:w-48">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">
+                            Filter Level
+                        </label>
+                        <div class="relative">
+                            <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <select name="level" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">Semua Level</option>
+                                <option value="Nasional" @selected(request('level') === 'Nasional')>Nasional</option>
+                                <option value="Provinsi" @selected(request('level') === 'Provinsi')>Provinsi</option>
+                                <option value="Kab/Kota" @selected(request('level') === 'Kab/Kota')>Kab/Kota</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Per Page -->
+                    <div class="w-full sm:w-40">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">
+                            Data per Halaman
+                        </label>
+                        <select name="per_page" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            @foreach ([10, 20, 50, 100] as $page)
+                                <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
+                                    {{ $page }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="flex-1 min-w-[240px] w-full">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">
+                            Pencarian
+                        </label>
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari FAQ..."
+                                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex gap-2 w-full sm:w-auto justify-end">
+                        <button type="submit" title="Cari" class="w-[42px] h-[42px] inline-flex justify-center items-center rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
+                            <i class="fas fa-search"></i>
+                        </button>
+
+                        <a href="{{ route($routePrefix . 'index') }}" title="Reset" class="w-[42px] h-[42px] inline-flex justify-center items-center rounded-lg border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition">
+                            <i class="fas fa-rotate-left"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
