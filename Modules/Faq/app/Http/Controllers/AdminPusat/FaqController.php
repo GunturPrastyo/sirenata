@@ -8,10 +8,24 @@ use Illuminate\Support\Facades\Auth;
 use Modules\Faq\Models\Faq;
 use Modules\Faq\Enums\FaqLevel;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Maatwebsite\Excel\Facades\Excel;
+use Modules\Faq\Exports\FaqExport;
 
 class FaqController extends Controller
 {
     protected string $routePrefix = 'admin-pusat.faq.';
+
+    public function export(Request $request)
+    {
+        $filename = 'FAQ' . '-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(
+            new FaqExport(
+                search: $request->string('search')->toString() ?: null,
+                level: $request->string('level')->toString() ?: null,
+            ),
+            $filename
+        );
+    }
 
     public function index(Request $request)
     {

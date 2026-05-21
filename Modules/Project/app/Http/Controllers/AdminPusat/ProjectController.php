@@ -8,10 +8,24 @@ use App\Models\User;
 use Modules\Project\Models\Project;
 use Modules\Project\Enums\ProjectType;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Maatwebsite\Excel\Facades\Excel;
+use Modules\Project\Exports\ProjectExport;
 
 class ProjectController extends Controller
 {
     protected string $routePrefix = 'admin-pusat.project.';
+
+    public function export(Request $request)
+    {
+        $filename = 'Daftar Proyek' . '-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(
+            new ProjectExport(
+                search: $request->string('search')->toString() ?: null,
+                status: $request->string('status')->toString() ?: null,
+            ),
+            $filename
+        );
+    }
 
     public function index(Request $request)
     {
@@ -47,14 +61,28 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        $allowedUserIds = User::role('user')->where(function ($query) {
+            $query->doesntHave('scopeArea')
+                ->orWhereHas('scopeArea', function ($q) {
+                    $q->whereNull('province_code')->whereNull('regency_code');
+                });
+        })->pluck('id')->toArray();
+
         $request->validate([
             'proyekName' => 'required|string|max:255',
             'startDate' => 'required|date',
             'endDate' => 'required|date',
             'duration' => 'nullable|integer',
-            'teamLeader' => 'required|exists:users,id',
+            'teamLeader' => [
+                'required',
+                'exists:users,id',
+                \Illuminate\Validation\Rule::in($allowedUserIds)
+            ],
             'teamMembers' => 'nullable|array',
-            'teamMembers.*' => 'exists:users,id',
+            'teamMembers.*' => [
+                'exists:users,id',
+                \Illuminate\Validation\Rule::in($allowedUserIds)
+            ],
         ]);
 
         Project::create([
@@ -97,14 +125,28 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
 
+        $allowedUserIds = User::role('user')->where(function ($query) {
+            $query->doesntHave('scopeArea')
+                ->orWhereHas('scopeArea', function ($q) {
+                    $q->whereNull('province_code')->whereNull('regency_code');
+                });
+        })->pluck('id')->toArray();
+
         $request->validate([
             'proyekName' => 'required|string|max:255',
             'startDate' => 'required|date',
             'endDate' => 'required|date',
             'duration' => 'nullable|integer',
-            'teamLeader' => 'required|exists:users,id',
+            'teamLeader' => [
+                'required',
+                'exists:users,id',
+                \Illuminate\Validation\Rule::in($allowedUserIds)
+            ],
             'teamMembers' => 'nullable|array',
-            'teamMembers.*' => 'exists:users,id',
+            'teamMembers.*' => [
+                'exists:users,id',
+                \Illuminate\Validation\Rule::in($allowedUserIds)
+            ],
         ]);
 
         $project->update([

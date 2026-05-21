@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('admin-pusat')->middleware(['role:admin-pusat|super-admin'])->name('admin-pusat.')->group(function () {
+        Route::get('faqs/export', [\Modules\Faq\Http\Controllers\AdminPusat\FaqController::class, 'export'])->name('faq.export');
         Route::resource('faqs', \Modules\Faq\Http\Controllers\AdminPusat\FaqController::class)->names('faq');
         Route::get('/help', [\Modules\Faq\Http\Controllers\AdminPusat\HelpController::class, 'index'])->name('help');
     });
