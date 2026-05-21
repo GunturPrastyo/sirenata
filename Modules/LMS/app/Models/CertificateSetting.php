@@ -10,6 +10,7 @@ class CertificateSetting extends Model
         'signer_name',
         'signer_title',
         'signature_image',
+        'background_image',
         'is_active',
     ];
 
