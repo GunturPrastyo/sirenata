@@ -5,6 +5,9 @@
    TOC_WORD (struktur dokumen Word)
    ══════════════════════════════════════════ */
 
+// ── Deteksi lingkungan (file:// vs http://) ──
+const IS_SERVER = location.protocol === 'http:' || location.protocol === 'https:';
+
 // ── State global ──
 let rawSheetsOriginal = {}; // Salinan ASLI dari Excel — TIDAK PERNAH diubah
 let rawSheets = {};    // kode → {title,tableType,years,rows,headers,data} — salinan kerja (bisa diedit)

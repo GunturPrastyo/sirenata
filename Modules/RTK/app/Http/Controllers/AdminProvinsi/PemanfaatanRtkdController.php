@@ -45,7 +45,18 @@ class PemanfaatanRtkdController extends Controller
 
         $existing = RtkPemanfaatanSubmission::where('user_id', $user->id)
             ->where('period_id', $activePeriod->id)
+            ->where('created_by', $user->id)
             ->first();
+
+        $pusatSubmission = RtkPemanfaatanSubmission::where('user_id', $user->id)
+            ->where('period_id', $activePeriod->id)
+            ->where('created_by', '!=', $user->id)
+            ->first();
+
+        if ($pusatSubmission) {
+            ToastMagic::error('Data telah dikoreksi/diisi oleh Admin Pusat dan tidak dapat diubah lagi.');
+            return redirect()->route('admin-province.pemanfaatan-rtkd.index');
+        }
 
         if ($existing) {
             return redirect()->route('admin-province.pemanfaatan-rtkd.edit', $existing->id);
@@ -55,7 +66,7 @@ class PemanfaatanRtkdController extends Controller
         if ($user->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', $user->scopeArea->province_code)
                 ->where('type', \Modules\RTK\Enums\TypeRtk::PROVINSI)
-                ->where('is_active', true)
+                ->berlaku()
                 ->latest()
                 ->first();
         }
@@ -72,8 +83,18 @@ class PemanfaatanRtkdController extends Controller
         $user = Auth::user();
         $activePeriod = RtkSurveyPeriod::aktif()->firstOrFail();
 
-        if (RtkPemanfaatanSubmission::where('user_id', $user->id)->where('period_id', $activePeriod->id)->exists()) {
+        if (RtkPemanfaatanSubmission::where('user_id', $user->id)->where('period_id', $activePeriod->id)->where('created_by', $user->id)->exists()) {
             ToastMagic::error('Anda sudah mengisi kuesioner untuk periode ini.');
+            return redirect()->route('admin-province.pemanfaatan-rtkd.index');
+        }
+
+        $pusatSubmission = RtkPemanfaatanSubmission::where('user_id', $user->id)
+            ->where('period_id', $activePeriod->id)
+            ->where('created_by', '!=', $user->id)
+            ->first();
+
+        if ($pusatSubmission) {
+            ToastMagic::error('Data telah dikoreksi/diisi oleh Admin Pusat dan tidak dapat diubah lagi.');
             return redirect()->route('admin-province.pemanfaatan-rtkd.index');
         }
 
@@ -81,7 +102,7 @@ class PemanfaatanRtkdController extends Controller
         if ($user->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', $user->scopeArea->province_code)
                 ->where('type', \Modules\RTK\Enums\TypeRtk::PROVINSI)
-                ->where('is_active', true)
+                ->berlaku()
                 ->latest()
                 ->first();
         }
@@ -103,10 +124,7 @@ class PemanfaatanRtkdController extends Controller
             abort(403);
         }
 
-        if ($pemanfaatan_rtkd->status_verifikasi === 'verified') {
-            ToastMagic::error('Kuesioner yang sudah disetujui tidak dapat diedit.');
-            return redirect()->route('admin-province.pemanfaatan-rtkd.index');
-        }
+
 
         $activePeriod = RtkSurveyPeriod::aktif()->first();
         
@@ -114,7 +132,7 @@ class PemanfaatanRtkdController extends Controller
         if (Auth::user()->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', Auth::user()->scopeArea->province_code)
                 ->where('type', \Modules\RTK\Enums\TypeRtk::PROVINSI)
-                ->where('is_active', true)
+                ->berlaku()
                 ->latest()
                 ->first();
         }
@@ -132,20 +150,16 @@ class PemanfaatanRtkdController extends Controller
             abort(403);
         }
 
-        if ($pemanfaatan_rtkd->status_verifikasi === 'verified') {
-            ToastMagic::error('Kuesioner yang sudah disetujui tidak dapat diedit.');
-            return redirect()->route('admin-province.pemanfaatan-rtkd.index');
-        }
-
         $latestRtk = null;
         if (Auth::user()->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', Auth::user()->scopeArea->province_code)
                 ->where('type', \Modules\RTK\Enums\TypeRtk::PROVINSI)
-                ->where('is_active', true)
+                ->berlaku()
                 ->latest()
                 ->first();
         }
 
+        $pemanfaatan_rtkd->created_by = Auth::id();
         $this->processFormData($request, $pemanfaatan_rtkd, $latestRtk);
 
         ToastMagic::success('Kuesioner berhasil diperbarui.');

@@ -943,20 +943,19 @@ caption.edit-hint kbd {
 }
 /* ══ TOMBOL PASTE EXCEL ══ */
 .btn-paste-excel {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 13px;
+  padding: 2px 8px;
   background: #eff6ff;
   border: 1px solid #bfdbfe;
-  border-radius: 7px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 11px;
   font-weight: 600;
   color: #1d4ed8;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: background .15s, border-color .15s;
   line-height: 1.4;
+  vertical-align: middle;
 }
 .btn-paste-excel:hover {
   background: #dbeafe;
@@ -964,6 +963,30 @@ caption.edit-hint kbd {
 }
 .btn-paste-excel:active {
   background: #bfdbfe;
+}
+
+.btn-screenshot {
+  padding: 2px 8px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background .15s, border-color .15s, color .15s;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+.btn-screenshot:hover {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #16a34a;
+}
+.btn-screenshot:active {
+  background: #dcfce7;
 }
 
 /* ══ OVERLAY DIALOG PASTE ══ */

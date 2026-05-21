@@ -5,7 +5,9 @@ namespace Modules\RTK\Http\Controllers\AdminPusat;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\RTK\Models\RtkSurveyPeriod;
+use Modules\RTK\Models\RtkPemanfaatanSubmission;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Support\Str;
 
 class RtkSurveyPeriodController extends Controller
 {
@@ -23,7 +25,9 @@ class RtkSurveyPeriodController extends Controller
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        return view('rtk::adminPusat.survey-periods.index', compact('periods'));
+        $allPeriods = RtkSurveyPeriod::orderByDesc('tahun')->get();
+
+        return view('rtk::adminPusat.survey-periods.index', compact('periods', 'allPeriods'));
     }
 
     public function store(Request $request)
@@ -94,6 +98,68 @@ class RtkSurveyPeriodController extends Controller
         $nama = $survey_period->nama;
         $survey_period->delete();
         ToastMagic::success("Periode \"{$nama}\" berhasil dihapus.");
+        return redirect()->route('admin-pusat.survey-periods.index');
+    }
+
+    /**
+     * Copy all verified submissions from this period to a target period.
+     */
+    public function copySubmissions(Request $request, RtkSurveyPeriod $survey_period)
+    {
+        $request->validate([
+            'target_period_id' => 'required|uuid|exists:rtk_survey_periods,id',
+        ]);
+
+        $targetPeriodId = $request->input('target_period_id');
+
+        if ($survey_period->id === $targetPeriodId) {
+            ToastMagic::error('Periode sumber dan tujuan tidak boleh sama.');
+            return redirect()->route('admin-pusat.survey-periods.index');
+        }
+
+        $verifiedSubmissions = RtkPemanfaatanSubmission::where('period_id', $survey_period->id)
+            ->where('status_verifikasi', 'verified')
+            ->get();
+
+        if ($verifiedSubmissions->isEmpty()) {
+            ToastMagic::error('Tidak ada data terverifikasi pada periode ini untuk disalin.');
+            return redirect()->route('admin-pusat.survey-periods.index');
+        }
+
+        $existingUserIds = RtkPemanfaatanSubmission::where('period_id', $targetPeriodId)
+            ->pluck('user_id')
+            ->toArray();
+
+        $copied = 0;
+        $skipped = 0;
+
+        foreach ($verifiedSubmissions as $submission) {
+            if (in_array($submission->user_id, $existingUserIds)) {
+                $skipped++;
+                continue;
+            }
+
+            $newSubmission = $submission->replicate();
+            $newSubmission->id = Str::uuid()->toString();
+            $newSubmission->period_id = $targetPeriodId;
+            $newSubmission->created_by = auth()->id();
+            $newSubmission->status_verifikasi = 'verified';
+            $newSubmission->catatan_verifikasi = 'Disalin dari periode "' . $survey_period->nama . '" oleh Admin Pusat.';
+            $newSubmission->field_verifications = null;
+            $newSubmission->created_at = now();
+            $newSubmission->updated_at = now();
+            $newSubmission->save();
+
+            $copied++;
+        }
+
+        $targetPeriod = RtkSurveyPeriod::find($targetPeriodId);
+        $message = "Berhasil menyalin {$copied} data ke periode \"{$targetPeriod->nama}\".";
+        if ($skipped > 0) {
+            $message .= " ({$skipped} data dilewati karena sudah ada.)";
+        }
+
+        ToastMagic::success($message);
         return redirect()->route('admin-pusat.survey-periods.index');
     }
 }

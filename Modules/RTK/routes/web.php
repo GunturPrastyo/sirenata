@@ -33,8 +33,10 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
     Route::resource('survey-periods', RtkSurveyPeriodController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::patch('survey-periods/{survey_period}/activate', [RtkSurveyPeriodController::class, 'activate'])->name('survey-periods.activate');
     Route::patch('survey-periods/{survey_period}/close', [RtkSurveyPeriodController::class, 'close'])->name('survey-periods.close');
+    Route::post('survey-periods/{survey_period}/copy-submissions', [RtkSurveyPeriodController::class, 'copySubmissions'])->name('survey-periods.copy-submissions');
 
     Route::get('hasil-pemanfaatan-rtkd', [HasilPemanfaatanRtkdController::class, 'index'])->name('hasil-pemanfaatan-rtkd.index');
+    Route::get('hasil-pemanfaatan-rtkd/export', [HasilPemanfaatanRtkdController::class, 'export'])->name('hasil-pemanfaatan-rtkd.export');
     Route::get('hasil-pemanfaatan-rtkd/{id}', [HasilPemanfaatanRtkdController::class, 'show'])->name('hasil-pemanfaatan-rtkd.show');
     Route::patch('hasil-pemanfaatan-rtkd/{id}/verify', [HasilPemanfaatanRtkdController::class, 'verify'])->name('hasil-pemanfaatan-rtkd.verify');
     Route::get('hasil-pemanfaatan-rtkd/{id}/ubah-sendiri', [HasilPemanfaatanRtkdController::class, 'editOnBehalf'])->name('hasil-pemanfaatan-rtkd.edit-on-behalf');

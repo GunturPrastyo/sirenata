@@ -68,100 +68,101 @@
                     <h2 class="text-base font-semibold text-slate-800">Status Pemanfaatan Rencana Tenaga Kerja Daerah</h2>
                 </div>
 
-                <div class="p-0 overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-200">
-                                <th class="px-6 py-3 font-medium">Periode</th>
-                                <th class="px-6 py-3 font-medium">Tanggal Pengisian</th>
-                                <th class="px-6 py-3 font-medium">Status Verifikasi</th>
-                                <th class="px-6 py-3 font-medium">Oleh</th>
-                                <th class="px-6 py-3 font-medium text-right">Aksi</th>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-slate-100 border-b border-slate-200">
+                        <tr class="text-slate-500 uppercase text-xs text-left">
+                            <th class="px-4 py-3 text-center w-12">No</th>
+                            <th class="px-4 py-3">Periode</th>
+                            <th class="px-4 py-3 text-center">Tanggal Pengisian</th>
+                            <th class="px-4 py-3 text-center">Status Verifikasi</th>
+                            <th class="px-4 py-3 text-center">Oleh</th>
+                            <th class="px-4 py-3 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        @if (!$activePeriod)
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-slate-500">
+                                    Admin Pusat belum membuka periode survei pemanfaatan RTKD saat ini. Silakan kembali lagi nanti.
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200 bg-white">
-                            @if (!$activePeriod)
-                                <tr>
-                                    <td colspan="4" class="px-6 py-8 text-center text-slate-500">
-                                        Admin Pusat belum membuka periode survei pemanfaatan RTKD saat ini. Silakan kembali lagi nanti.
+                        @elseif($submissions->isEmpty())
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-slate-500">
+                                    Belum ada kuesioner yang diisi untuk periode aktif.
+                                </td>
+                            </tr>
+                        @else
+                            @foreach($submissions as $key => $item)
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="px-4 py-3 text-center text-slate-600">
+                                        {{ $key + 1 }}
                                     </td>
-                                </tr>
-                            @elseif($submissions->isEmpty())
-                                <tr>
-                                    <td colspan="4" class="px-6 py-8 text-center text-slate-500">
-                                        Belum ada kuesioner yang diisi untuk periode aktif.
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm font-semibold text-slate-900">{{ $activePeriod->nama }}</div>
+                                        <div class="text-xs text-slate-500">Batas: {{ $activePeriod->tanggal_selesai ? $activePeriod->tanggal_selesai->format('d M Y') : '-' }}</div>
                                     </td>
-                                </tr>
-                            @else
-                                @foreach($submissions as $item)
-                                    <tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0">
-                                        <td class="px-6 py-4">
-                                            <div class="text-sm font-semibold text-slate-900">{{ $activePeriod->nama }}</div>
-                                            <div class="text-xs text-slate-500">Batas: {{ $activePeriod->tanggal_selesai ? $activePeriod->tanggal_selesai->format('d M Y') : '-' }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-slate-600">
-                                            {{ $item->created_at->format('d M Y, H:i') }}
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            @if($item->status_verifikasi === 'verified')
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">
-                                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                                                    Sudah Disetujui
-                                                </span>
-                                            @elseif($item->status_verifikasi === 'rejected')
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">
-                                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                    Revisi Diperlukan
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
-                                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                    Menunggu Verifikasi
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            @if($item->creator && $item->creator->hasRole('admin-pusat'))
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-100">
-                                                    Admin Pusat
-                                                </span>
-                                            @else
-                                                <span class="text-xs text-slate-500">Mandiri</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            @php
-                                                $itemHasNotes = false;
-                                                if (is_array($item->field_verifications)) {
-                                                    foreach ($item->field_verifications as $v) {
-                                                        if (!empty($v['catatan'])) {
-                                                            $itemHasNotes = true;
-                                                            break;
-                                                        }
+                                    <td class="px-4 py-3 text-center text-slate-600">
+                                        {{ $item->created_at->format('d M Y, H:i') }}
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($item->status_verifikasi === 'verified')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">
+                                                Sudah Disetujui
+                                            </span>
+                                        @elseif($item->status_verifikasi === 'rejected')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                                Revisi Diperlukan
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                                Menunggu Verifikasi
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($item->creator && $item->creator->hasRole('admin-pusat'))
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-100">
+                                                Admin Pusat
+                                            </span>
+                                        @else
+                                            <span class="text-xs text-slate-500">Mandiri</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @php
+                                            $itemHasNotes = false;
+                                            if (is_array($item->field_verifications)) {
+                                                foreach ($item->field_verifications as $v) {
+                                                    if (!empty($v['catatan'])) {
+                                                        $itemHasNotes = true;
+                                                        break;
                                                     }
                                                 }
-                                            @endphp
-                                            
-                                            @if($item->status_verifikasi === 'pending' && !$itemHasNotes)
-                                                <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition shadow-sm">
-                                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                                    Edit / Isi Ulang
-                                                </a>
-                                            @elseif($item->status_verifikasi === 'rejected')
-                                                <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
-                                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                                    Revisi
-                                                </a>
-                                            @else
-                                                <span class="text-sm text-slate-400 italic">Kuesioner Selesai</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
+                                            }
+                                        @endphp
+                                        
+                                        @if($item->status_verifikasi === 'verified')
+                                            <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition shadow-sm">
+                                                Edit / Isi Ulang
+                                            </a>
+                                        @elseif($item->status_verifikasi === 'rejected')
+                                            <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
+                                                Revisi / Edit
+                                            </a>
+                                        @else
+                                            <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition shadow-sm">
+                                                Edit / Isi Ulang
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
             </div>
 
             @if($submission)

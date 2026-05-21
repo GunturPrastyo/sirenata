@@ -1,397 +1,373 @@
 <x-dashboard::layouts.dashboard title="Detail Kuesioner Pemanfaatan RTKD">
-    <div class="p-2 sm:p-6" x-data="verifikasiForm()">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
+    @php
+        $isReadOnly = in_array($submission->status_verifikasi, ['verified', 'rejected']) || $isOverridden;
+    @endphp
+    <div class="p-4 sm:p-6 max-w-6xl mx-auto">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-4" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
                 <li class="inline-flex items-center">
                     <a href="{{ route('admin-pusat.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.99 9a.75.75 0 1 1-1.06 1.06l-1.06-1.06V20.25a1.75 1.75 0 0 1-1.75 1.75h-3a.75.75 0 0 1-.75-.75v-3.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v3.5a.75.75 0 0 1-.75.75h-3a1.75 1.75 0 0 1-1.75-1.75v-7.409l-1.06 1.06a.75.75 0 0 1-1.06-1.06l8.99-9Z" /></svg>
                     </a>
                 </li>
                 <li>
                     <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
                         <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Hasil Pemanfaatan RTKD</a>
                     </div>
                 </li>
                 <li>
                     <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
                         <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Detail & Verifikasi</span>
                     </div>
                 </li>
             </ol>
         </nav>
 
-        <form action="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.verify', $submission->id) }}" method="POST" id="form-verifikasi" class="space-y-6">
-            @csrf
-            @method('PATCH')
-                
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-6 opacity-10">
-                    <svg class="w-24 h-24 text-indigo-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                </div>
-                <div class="relative z-10">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-700">
-                            {{ $submission->period->nama ?? 'Periode Tidak Diketahui' }}
-                        </span>
-                        @if($submission->status_verifikasi === 'verified')
-                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Telah Disetujui Sepenuhnya</span>
-                        @elseif($submission->status_verifikasi === 'rejected')
-                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Membutuhkan Revisi Provinsi</span>
-                        @else
-                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-700">Menunggu Verifikasi Anda</span>
-                        @endif
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-900">{{ $submission->user->name ?? 'Provinsi Unknown' }}</h2>
-                    <p class="text-sm text-slate-500 mt-1">Dikirim pada: {{ $submission->created_at->format('d F Y, H:i') }}</p>
+        @if($isOverridden)
+            <div class="mb-5 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg p-3 flex items-center gap-3">
+                <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <div>
+                    <h4 class="font-bold text-sm">Data Ini Telah Diubah Oleh Pusat</h4>
+                    <p class="text-xs mt-0.5">Kuesioner ini adalah versi asli (sebelum diubah). Anda tidak dapat memverifikasi versi ini lagi.</p>
                 </div>
             </div>
-
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                    <h3 class="text-base font-semibold text-slate-800">1. Kepemilikan Dokumen RTK Provinsi</h3>
-                    <span class="px-2 py-1 text-[10px] font-semibold rounded bg-slate-200 text-slate-600 uppercase tracking-wider">Terverifikasi Sistem</span>
+        @elseif($submission->status_verifikasi === 'verified')
+            <div class="mb-5 bg-green-50 border border-green-200 text-green-800 rounded-lg p-3 flex items-center gap-3">
+                <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <div>
+                    <h4 class="font-bold text-sm">Kuesioner Telah Disetujui Sepenuhnya</h4>
+                    <p class="text-xs mt-0.5">Dikirim pada: {{ $submission->created_at->format('d F Y, H:i') }}</p>
                 </div>
-                <div class="p-4 flex flex-col md:flex-row gap-6">
-                    <div class="flex-1">
-                                <p class="text-lg font-bold {{ $submission->rtk_document_id ? 'text-emerald-700' : 'text-red-700' }}">
-                                    {{ $submission->rtk_document_id ? 'YA, MEMILIKI' : 'TIDAK MEMILIKI' }}
-                                </p>
-                                
-                                @if($submission->rtk_document_id)
-                                    <div class="mt-4 grid grid-cols-2 gap-4">
-                                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                            <p class="text-xs text-slate-500 mb-1">Masa Berlaku Dokumen</p>
-                                            <p class="text-sm font-semibold text-slate-800">{{ $submission->rtkDocument->start_date }} - {{ $submission->rtkDocument->end_date }}</p>
-                                        </div>
-                                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                            <p class="text-xs text-slate-500 mb-1">Status Dokumen</p>
-                                            <p class="text-sm font-semibold text-indigo-600 underline">
-                                                <a href="{{ $submission->rtkDocument ? route('admin-pusat.rtkd.show-province', $submission->rtkDocument->province_code) : '#' }}" target="_blank">Lihat Dokumen Referensi</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+            </div>
+        @elseif($submission->status_verifikasi === 'rejected')
+            <div class="mb-5 bg-red-50 border border-red-200 text-red-800 rounded-lg p-3 flex items-center gap-3">
+                <svg class="w-5 h-5 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z"></path></svg>
+                <div>
+                    <h4 class="font-bold text-sm">Kuesioner Dikembalikan ke Provinsi</h4>
+                    <p class="text-xs mt-0.5">Membutuhkan revisi berdasarkan catatan verifikator.</p>
+                </div>
+            </div>
+        @endif
+
+        <form action="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.verify', $submission->id) }}" method="POST" class="space-y-4"
+            x-data="{
+                hasRejection: false,
+                checkStatus() {
+                    this.hasRejection = !!this.$el.querySelector('input[type=\'radio\'][value=\'rejected\']:checked');
+                }
+            }"
+            x-init="setTimeout(() => checkStatus(), 100)"
+            @change="checkStatus()">
+            @csrf
+            @method('PATCH')
+
+            <!-- 1. Kepemilikan RTKD -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="font-semibold text-gray-800 text-sm">1. Kepemilikan Dokumen RTK Provinsi</h3>
+                    <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-gray-200 text-gray-600 uppercase tracking-wider">Auto-Verified</span>
+                </div>
+                <div class="p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div>
+                        <p class="font-medium text-base {{ $submission->rtk_document_id ? 'text-green-600' : 'text-red-600' }}">
+                            {{ $submission->rtk_document_id ? 'YA, MEMILIKI' : 'TIDAK MEMILIKI' }}
+                        </p>
                     </div>
+                    
+                    @if($submission->rtk_document_id && $submission->rtkDocument)
+                        <div class="p-3 bg-gray-50 rounded border border-gray-200 text-sm flex items-center gap-4">
+                            <div>
+                                <span class="text-gray-500">Masa Berlaku:</span>
+                                <span class="font-semibold text-gray-800 ml-1">{{ $submission->rtkDocument->start_date }} s/d {{ $submission->rtkDocument->end_date }}</span>
+                            </div>
+                            <div class="h-4 w-px bg-gray-300"></div>
+                            <a href="{{ route('admin-pusat.rtkd.show-province', $submission->rtkDocument->province_code) }}" target="_blank" class="text-blue-600 hover:underline font-medium">Lihat Dokumen &rarr;</a>
+                        </div>
+                    @endif
                     <input type="hidden" name="verifications[q1_punya_rtkd][status]" value="verified">
                 </div>
             </div>
 
+            <!-- Jika TIDAK Punya -->
             @if(!$submission->rtk_document_id)
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" :class="{ 'border-emerald-500 ring-1 ring-emerald-500': fields.alasan_tidak_punya.status === 'verified', 'border-red-500 ring-1 ring-red-500': fields.alasan_tidak_punya.status === 'rejected' }">
-                    <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                        <h3 class="text-base font-semibold text-slate-800">Alasan Tidak Memiliki RTKD</h3>
-                        <span x-show="fields.alasan_tidak_punya.status === 'verified'" class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
-                        <span x-show="fields.alasan_tidak_punya.status === 'rejected'" class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi</span>
+                @php $fieldKey = 'alasan_tidak_punya'; $oldData = $submission->field_verifications[$fieldKey] ?? []; @endphp
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" x-data="{ status: '{{ $oldData['status'] ?? 'verified' }}' }">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-semibold text-gray-800 text-sm">Alasan Tidak Memiliki RTKD</h3>
+                        <span x-show="status === 'verified'" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-green-100 text-green-700 uppercase">Disetujui</span>
+                        <span x-show="status === 'rejected'" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Revisi</span>
                     </div>
-                    <div class="p-4 flex flex-col md:flex-row gap-6">
-                        <div class="flex-1">
-                            <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
-                                @if(is_array($submission->alasan_tidak_punya))
-                                    @foreach($submission->alasan_tidak_punya as $alasan)
-                                        <li>
-                                            {{ $alasan['alasan'] }}
-                                            @if($alasan['alasan'] === 'Lainnya' && !empty($alasan['keterangan_lainnya']))
-                                                (<i>{{ $alasan['keterangan_lainnya'] }}</i>)
-                                            @endif
-                                        </li>
-                                    @endforeach
+                    <div class="p-4">
+                        <ul class="list-disc pl-5 space-y-1 text-gray-700 text-sm mb-4">
+                            @forelse($submission->alasan_tidak_punya ?? [] as $alasan)
+                                <li>{{ $alasan['alasan'] }} @if(!empty($alasan['keterangan_lainnya'])) <span class="text-gray-500">({{ $alasan['keterangan_lainnya'] }})</span> @endif</li>
+                            @empty
+                                <li class="text-gray-400 italic">Tidak ada alasan yang diberikan.</li>
+                            @endforelse
+                        </ul>
+
+                        <div class="mt-4 pt-4 border-t border-gray-100 bg-gray-50/50 -mx-4 -mb-4 p-4">
+                            <p class="text-xs font-semibold mb-2 text-gray-600 uppercase tracking-wide">Status Verifikasi</p>
+                            @if($isReadOnly)
+                                @if(($oldData['status'] ?? 'verified') === 'verified')
+                                    <div class="inline-flex items-center gap-2 p-2 bg-green-50 text-green-700 rounded border border-green-200 text-sm font-medium">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Disetujui
+                                    </div>
                                 @else
-                                    <li class="text-slate-400 italic">Tidak ada data alasan.</li>
+                                    <div class="p-3 bg-red-50 text-red-800 rounded border border-red-200">
+                                        <div class="flex items-center gap-2 mb-1 font-medium text-sm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Ditolak / Minta Revisi
+                                        </div>
+                                        <p class="text-sm text-red-600 bg-white p-2 rounded border border-red-100">{{ $oldData['catatan'] ?? 'Tidak ada catatan' }}</p>
+                                    </div>
                                 @endif
-                            </ul>
-                        </div>
-                        <div class="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6">
-                            <div class="space-y-3">
-                                <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.alasan_tidak_punya.status === 'verified' ? 'border-emerald-200 bg-emerald-50' : 'border-transparent'">
-                                    <input type="radio" name="verifications[alasan_tidak_punya][status]" value="verified" x-model="fields.alasan_tidak_punya.status" class="text-emerald-500 focus:ring-emerald-500">
-                                    <span class="text-sm font-semibold text-slate-700">Setujui</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.alasan_tidak_punya.status === 'rejected' ? 'border-red-200 bg-red-50' : 'border-transparent'">
-                                    <input type="radio" name="verifications[alasan_tidak_punya][status]" value="rejected" x-model="fields.alasan_tidak_punya.status" class="text-red-500 focus:ring-red-500">
-                                    <span class="text-sm font-semibold text-slate-700">Minta Revisi</span>
-                                </label>
-                                <div x-show="fields.alasan_tidak_punya.status === 'rejected'" class="mt-2">
-                                    <textarea name="verifications[alasan_tidak_punya][catatan]" x-model="fields.alasan_tidak_punya.catatan" class="w-full text-sm border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" rows="2" placeholder="Tulis catatan revisi..."></textarea>
+                            @else
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <label class="flex items-center gap-2 p-2 px-3 rounded border cursor-pointer hover:bg-white transition" :class="status === 'verified' ? 'border-green-400 bg-green-50 shadow-sm' : 'border-gray-300 bg-white'">
+                                        <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="verified" x-model="status" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                        <span class="text-sm font-medium text-gray-800">Setujui</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2 px-3 rounded border cursor-pointer hover:bg-white transition" :class="status === 'rejected' ? 'border-red-400 bg-red-50 shadow-sm' : 'border-gray-300 bg-white'">
+                                        <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="rejected" x-model="status" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                        <span class="text-sm font-medium text-gray-800">Minta Revisi</span>
+                                    </label>
+                                    <div x-show="status === 'rejected'" x-cloak class="flex-1 w-full sm:w-auto">
+                                        <textarea name="verifications[{{ $fieldKey }}][catatan]" class="w-full text-sm border-gray-300 rounded shadow-sm focus:ring-red-500 focus:border-red-500" rows="1" placeholder="Catatan revisi...">{{ $oldData['catatan'] ?? '' }}</textarea>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             @endif
 
+            <!-- Jika Punya RTKD -->
             @if($submission->rtk_document_id)
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" :class="{ 'border-emerald-500 ring-1 ring-emerald-500': fields.q2_jadi_acuan.status === 'verified', 'border-red-500 ring-1 ring-red-500': fields.q2_jadi_acuan.status === 'rejected' }">
-                    <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                        <h3 class="text-base font-semibold text-slate-800">2. Menjadi Acuan Perencanaan Pembangunan</h3>
-                        <span x-show="fields.q2_jadi_acuan.status === 'verified'" class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
-                        <span x-show="fields.q2_jadi_acuan.status === 'rejected'" class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi</span>
+                @php $fieldKey = 'q2_jadi_acuan'; $oldData = $submission->field_verifications[$fieldKey] ?? []; @endphp
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" x-data="{ status: '{{ $oldData['status'] ?? 'verified' }}' }">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-semibold text-gray-800 text-sm">2. Menjadi Acuan Perencanaan Pembangunan</h3>
+                        <span x-show="status === 'verified'" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-green-100 text-green-700 uppercase">Disetujui</span>
+                        <span x-show="status === 'rejected'" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Revisi</span>
                     </div>
-                    <div class="p-4 flex flex-col md:flex-row gap-6">
-                        <div class="flex-1 flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 {{ $submission->q2_jadi_acuan === 'ya' ? 'bg-indigo-100 text-indigo-600' : 'bg-amber-100 text-amber-600' }}">
-                                @if($submission->q2_jadi_acuan === 'ya')
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                    <div class="p-4">
+                        <p class="font-medium text-base mb-4 {{ $submission->q2_jadi_acuan === 'ya' ? 'text-blue-600' : 'text-orange-600' }}">
+                            {{ $submission->q2_jadi_acuan === 'ya' ? 'YA, MENJADI ACUAN' : 'BELUM MENJADI ACUAN' }}
+                        </p>
+
+                        <div class="mt-4 pt-4 border-t border-gray-100 bg-gray-50/50 -mx-4 -mb-4 p-4">
+                            <p class="text-xs font-semibold mb-2 text-gray-600 uppercase tracking-wide">Status Verifikasi</p>
+                            @if($isReadOnly)
+                                @if(($oldData['status'] ?? 'verified') === 'verified')
+                                    <div class="inline-flex items-center gap-2 p-2 bg-green-50 text-green-700 rounded border border-green-200 text-sm font-medium">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Disetujui
+                                    </div>
                                 @else
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    <div class="p-3 bg-red-50 text-red-800 rounded border border-red-200">
+                                        <div class="flex items-center gap-2 mb-1 font-medium text-sm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Ditolak / Minta Revisi
+                                        </div>
+                                        <p class="text-sm text-red-600 bg-white p-2 rounded border border-red-100">{{ $oldData['catatan'] ?? 'Tidak ada catatan' }}</p>
+                                    </div>
                                 @endif
-                            </div>
-                            <div>
-                                <p class="text-sm text-slate-500 font-medium">Apakah telah dijadikan acuan?</p>
-                                <p class="text-lg font-bold {{ $submission->q2_jadi_acuan === 'ya' ? 'text-indigo-700' : 'text-amber-700' }}">
-                                    {{ $submission->q2_jadi_acuan === 'ya' ? 'YA, MENJADI ACUAN' : 'BELUM MENJADI ACUAN' }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6">
-                            <div class="space-y-3">
-                                <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.q2_jadi_acuan.status === 'verified' ? 'border-emerald-200 bg-emerald-50' : 'border-transparent'">
-                                    <input type="radio" name="verifications[q2_jadi_acuan][status]" value="verified" x-model="fields.q2_jadi_acuan.status" class="text-emerald-500 focus:ring-emerald-500">
-                                    <span class="text-sm font-semibold text-slate-700">Setujui</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.q2_jadi_acuan.status === 'rejected' ? 'border-red-200 bg-red-50' : 'border-transparent'">
-                                    <input type="radio" name="verifications[q2_jadi_acuan][status]" value="rejected" x-model="fields.q2_jadi_acuan.status" class="text-red-500 focus:ring-red-500">
-                                    <span class="text-sm font-semibold text-slate-700">Minta Revisi</span>
-                                </label>
-                                <div x-show="fields.q2_jadi_acuan.status === 'rejected'" class="mt-2">
-                                    <textarea name="verifications[q2_jadi_acuan][catatan]" x-model="fields.q2_jadi_acuan.catatan" class="w-full text-sm border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" rows="2" placeholder="Tulis catatan revisi..."></textarea>
+                            @else
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <label class="flex items-center gap-2 p-2 px-3 rounded border cursor-pointer hover:bg-white transition" :class="status === 'verified' ? 'border-green-400 bg-green-50 shadow-sm' : 'border-gray-300 bg-white'">
+                                        <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="verified" x-model="status" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                        <span class="text-sm font-medium text-gray-800">Setujui</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2 px-3 rounded border cursor-pointer hover:bg-white transition" :class="status === 'rejected' ? 'border-red-400 bg-red-50 shadow-sm' : 'border-gray-300 bg-white'">
+                                        <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="rejected" x-model="status" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                        <span class="text-sm font-medium text-gray-800">Minta Revisi</span>
+                                    </label>
+                                    <div x-show="status === 'rejected'" x-cloak class="flex-1 w-full sm:w-auto">
+                                        <textarea name="verifications[{{ $fieldKey }}][catatan]" class="w-full text-sm border-gray-300 rounded shadow-sm focus:ring-red-500 focus:border-red-500" rows="1" placeholder="Catatan revisi...">{{ $oldData['catatan'] ?? '' }}</textarea>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
 
                 @if($submission->q2_jadi_acuan === 'ya')
-                    
                     @php
-                        $docLabels = ['rpjmd' => 'RPJMD', 'renstra' => 'RENSTRA Disnaker', 'lainnya' => 'Dokumen Lainnya'];
-                        $docDescriptions = ['rpjmd' => 'Rencana Pembangunan Jangka Menengah Daerah', 'renstra' => 'Rencana Strategis Perangkat Daerah', 'lainnya' => ''];
                         $submittedDocs = is_array($submission->dokumen_acuan) ? collect($submission->dokumen_acuan)->pluck('doc_type')->toArray() : [];
-                        $komponenByDoc = [];
-                        if (is_array($submission->komponen_acuan)) {
-                            foreach ($submission->komponen_acuan as $k) {
-                                $komponenByDoc[$k['doc_type']][] = $k;
-                            }
-                        }
-                        $uploadsByDoc = [];
-                        if (is_array($submission->dokumen_uploads)) {
-                            foreach ($submission->dokumen_uploads as $u) {
-                                $uploadsByDoc[$u['doc_type']] = $u;
-                            }
-                        }
+                        $komponenByDoc = collect($submission->komponen_acuan ?? [])->groupBy('doc_type');
+                        $uploadsByDoc = collect($submission->dokumen_uploads ?? [])->keyBy('doc_type');
                     @endphp
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach($submittedDocs as $docType)
-                        @php
-                            $fieldKey = 'dok_' . $docType;
-                            $docLabel = $docLabels[$docType] ?? strtoupper($docType);
-                            $docDesc = $docDescriptions[$docType] ?? '';
-                            $docAcuanEntry = collect($submission->dokumen_acuan)->firstWhere('doc_type', $docType);
+                        @php 
+                            $fieldKey = 'dok_' . $docType; 
+                            $oldData = $submission->field_verifications[$fieldKey] ?? []; 
+                            $upload = $uploadsByDoc[$docType] ?? null;
                             $kompList = $komponenByDoc[$docType] ?? [];
-                            $uploadEntry = $uploadsByDoc[$docType] ?? null;
                         @endphp
-                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" :class="{ 'border-emerald-500 ring-1 ring-emerald-500': fields.{{ $fieldKey }}?.status === 'verified', 'border-red-500 ring-1 ring-red-500': fields.{{ $fieldKey }}?.status === 'rejected' }">
-                            <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-base font-semibold text-slate-800">
-                                        {{ $docLabel }}
-                                        @if($docDesc)
-                                            <span class="text-sm font-normal text-slate-500">({{ $docDesc }})</span>
-                                        @endif
-                                    </h3>
-                                    @if($docType === 'lainnya' && !empty($docAcuanEntry['nama_lainnya']))
-                                        <p class="text-sm text-slate-500 mt-0.5">Nama Dokumen: <strong>{{ $docAcuanEntry['nama_lainnya'] }}</strong></p>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col" x-data="{ status: '{{ $oldData['status'] ?? 'verified' }}' }">
+                            <div class="bg-indigo-50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
+                                <h3 class="font-semibold text-indigo-900 text-sm">
+                                    Dokumen: {{ strtoupper($docType) }}
+                                    @if($docType === 'lainnya') 
+                                        <span class="font-normal">({{ collect($submission->dokumen_acuan)->firstWhere('doc_type', 'lainnya')['nama_lainnya'] ?? '-' }})</span>
                                     @endif
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span x-show="fields.{{ $fieldKey }}?.status === 'verified'" class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
-                                    <span x-show="fields.{{ $fieldKey }}?.status === 'rejected'" class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi</span>
-                                </div>
+                                </h3>
+                                <span x-show="status === 'verified'" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-green-100 text-green-700 uppercase">Disetujui</span>
+                                <span x-show="status === 'rejected'" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Revisi</span>
                             </div>
-                            <div class="p-0 flex flex-col md:flex-row">
-                                <div class="flex-1 p-4 space-y-4">
-                                    @if($uploadEntry)
-                                        <div>
-                                            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">📎 File Dokumen</p>
-                                            <a href="{{ Storage::url($uploadEntry['file_path']) }}" target="_blank" class="inline-flex items-center gap-3 p-3 border border-indigo-200 rounded-lg bg-indigo-50 hover:bg-indigo-100 transition group">
-                                                <div class="w-10 h-10 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
-                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                                </div>
-                                                <div>
-                                                    <p class="text-sm font-medium text-indigo-800 group-hover:text-indigo-900">{{ $uploadEntry['original_name'] }}</p>
-                                                    <p class="text-xs text-indigo-600">Klik untuk membuka</p>
-                                                </div>
-                                            </a>
-                                        </div>
+                            <div class="p-4 flex-1 flex flex-col">
+                                <!-- File -->
+                                <div class="mb-4">
+                                    <p class="text-xs text-gray-500 mb-1 uppercase font-semibold">Bukti Dokumen</p>
+                                    @if($upload)
+                                        <a href="{{ Storage::url($upload['file_path']) }}" target="_blank" class="inline-flex items-center gap-2 p-2 bg-blue-50 border border-blue-100 rounded text-blue-700 hover:bg-blue-100 transition text-sm max-w-full truncate">
+                                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                            <span class="font-medium truncate">{{ $upload['original_name'] }}</span>
+                                        </a>
                                     @else
-                                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-700">
-                                            ⚠️ Belum ada file yang diunggah untuk dokumen ini.
-                                        </div>
-                                    @endif
-
-                                    @if(count($kompList) > 0)
-                                        <div>
-                                            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Komponen RTKD yang Diacu</p>
-                                            <table class="min-w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
-                                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500">
-                                                    <tr>
-                                                        <th class="px-4 py-2 text-left font-medium">Komponen</th>
-                                                        <th class="px-4 py-2 text-left font-medium">Halaman</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="divide-y divide-slate-100 bg-white">
-                                                    @foreach($kompList as $komp)
-                                                        <tr>
-                                                            <td class="px-4 py-2">
-                                                                {{ $komp['komponen'] }}
-                                                                @if($komp['komponen'] === 'Lainnya' && !empty($komp['keterangan_lainnya']))
-                                                                    (<i>{{ $komp['keterangan_lainnya'] }}</i>)
-                                                                @endif
-                                                            </td>
-                                                            <td class="px-4 py-2 text-slate-500">{{ $komp['halaman_acuan'] ?? '-' }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    @else
-                                        <p class="text-sm text-slate-400 italic">Belum ada komponen yang dipilih.</p>
+                                        <span class="inline-block p-2 bg-gray-50 border border-gray-200 text-gray-500 rounded text-xs italic">Tidak ada file.</span>
                                     @endif
                                 </div>
-
-                                <div class="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-slate-200 p-5 bg-slate-50 md:bg-transparent">
-                                    <div class="space-y-3">
-                                        <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.{{ $fieldKey }}?.status === 'verified' ? 'border-emerald-200 bg-emerald-50' : 'border-transparent'">
-                                            <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="verified" x-model="fields.{{ $fieldKey }}.status" class="text-emerald-500 focus:ring-emerald-500">
-                                            <span class="text-sm font-semibold text-slate-700">Setujui</span>
-                                        </label>
-                                        <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.{{ $fieldKey }}?.status === 'rejected' ? 'border-red-200 bg-red-50' : 'border-transparent'">
-                                            <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="rejected" x-model="fields.{{ $fieldKey }}?.status" class="text-red-500 focus:ring-red-500">
-                                            <span class="text-sm font-semibold text-slate-700">Minta Revisi</span>
-                                        </label>
-                                        <div x-show="fields.{{ $fieldKey }}?.status === 'rejected'" class="mt-2">
-                                            <textarea name="verifications[{{ $fieldKey }}][catatan]" x-model="fields.{{ $fieldKey }}.catatan" class="w-full text-sm border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" rows="2" placeholder="Tulis catatan revisi..."></textarea>
-                                        </div>
+                                <!-- Komponen -->
+                                <div class="mb-4 flex-1">
+                                    <p class="text-xs text-gray-500 mb-1 uppercase font-semibold">Komponen Diacu</p>
+                                    <div class="border border-gray-100 rounded overflow-hidden">
+                                        <table class="w-full text-xs text-left">
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th class="px-3 py-2 border-b text-gray-600">Komponen</th>
+                                                    <th class="px-3 py-2 border-b text-gray-600">Halaman</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-100 bg-white">
+                                                @forelse($kompList as $k)
+                                                    <tr>
+                                                        <td class="px-3 py-2 text-gray-800">{{ $k['komponen'] }} @if(!empty($k['keterangan_lainnya'])) <span class="text-gray-500">({{ $k['keterangan_lainnya'] }})</span> @endif</td>
+                                                        <td class="px-3 py-2 text-gray-600">{{ $k['halaman_acuan'] ?? '-' }}</td>
+                                                    </tr>
+                                                @empty
+                                                    <tr><td colspan="2" class="px-3 py-3 text-gray-400 text-center italic">Tidak ada komponen.</td></tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
                                     </div>
+                                </div>
+
+                                <!-- Verifikasi -->
+                                <div class="mt-auto pt-4 border-t border-gray-100 bg-gray-50/50 -mx-4 -mb-4 p-4">
+                                    <p class="text-xs font-semibold mb-2 text-gray-600 uppercase tracking-wide">Status Verifikasi</p>
+                                    @if($isReadOnly)
+                                        @if(($oldData['status'] ?? 'verified') === 'verified')
+                                            <div class="inline-flex items-center gap-2 p-2 bg-green-50 text-green-700 rounded border border-green-200 text-sm font-medium w-full">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Disetujui
+                                            </div>
+                                        @else
+                                            <div class="p-3 bg-red-50 text-red-800 rounded border border-red-200 w-full">
+                                                <div class="flex items-center gap-2 mb-1 font-medium text-sm">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Ditolak / Minta Revisi
+                                                </div>
+                                                <p class="text-xs text-red-600 bg-white p-2 rounded border border-red-100">{{ $oldData['catatan'] ?? 'Tidak ada catatan' }}</p>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="flex flex-col gap-2">
+                                            <div class="flex gap-2">
+                                                <label class="flex-1 flex items-center justify-center gap-1.5 p-2 rounded border cursor-pointer hover:bg-white transition" :class="status === 'verified' ? 'border-green-400 bg-green-50 shadow-sm' : 'border-gray-300 bg-white'">
+                                                    <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="verified" x-model="status" class="w-3.5 h-3.5 text-green-600 focus:ring-green-500">
+                                                    <span class="text-xs font-medium text-gray-800">Setujui</span>
+                                                </label>
+                                                <label class="flex-1 flex items-center justify-center gap-1.5 p-2 rounded border cursor-pointer hover:bg-white transition" :class="status === 'rejected' ? 'border-red-400 bg-red-50 shadow-sm' : 'border-gray-300 bg-white'">
+                                                    <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="rejected" x-model="status" class="w-3.5 h-3.5 text-red-600 focus:ring-red-500">
+                                                    <span class="text-xs font-medium text-gray-800">Revisi</span>
+                                                </label>
+                                            </div>
+                                            <div x-show="status === 'rejected'" x-cloak>
+                                                <textarea name="verifications[{{ $fieldKey }}][catatan]" class="w-full text-xs border-gray-300 rounded shadow-sm focus:ring-red-500 focus:border-red-500" rows="2" placeholder="Catatan revisi...">{{ $oldData['catatan'] ?? '' }}</textarea>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     @endforeach
+                    </div>
 
                 @else
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" :class="{ 'border-emerald-500 ring-1 ring-emerald-500': fields.alasan_belum_acuan.status === 'verified', 'border-red-500 ring-1 ring-red-500': fields.alasan_belum_acuan.status === 'rejected' }">
-                        <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                            <h3 class="text-base font-semibold text-slate-800">Alasan Belum Menjadi Acuan</h3>
-                            <span x-show="fields.alasan_belum_acuan.status === 'verified'" class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
-                            <span x-show="fields.alasan_belum_acuan.status === 'rejected'" class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi</span>
+                    @php $fieldKey = 'alasan_belum_acuan'; $oldData = $submission->field_verifications[$fieldKey] ?? []; @endphp
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" x-data="{ status: '{{ $oldData['status'] ?? 'verified' }}' }">
+                        <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="font-semibold text-gray-800 text-sm">Alasan Belum Menjadi Acuan</h3>
+                            <span x-show="status === 'verified'" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-green-100 text-green-700 uppercase">Disetujui</span>
+                            <span x-show="status === 'rejected'" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Revisi</span>
                         </div>
-                        <div class="p-4 flex flex-col md:flex-row gap-6">
-                            <div class="flex-1">
-                                <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
-                                    @if(is_array($submission->alasan_belum_acuan))
-                                        @foreach($submission->alasan_belum_acuan as $alasan)
-                                            <li>
-                                                {{ $alasan['alasan'] }}
-                                                @if($alasan['alasan'] === 'Lainnya' && !empty($alasan['keterangan_lainnya']))
-                                                    (<i>{{ $alasan['keterangan_lainnya'] }}</i>)
-                                                @endif
-                                            </li>
-                                        @endforeach
+                        <div class="p-4">
+                            <ul class="list-disc pl-5 space-y-1 text-gray-700 text-sm mb-4">
+                                @forelse($submission->alasan_belum_acuan ?? [] as $alasan)
+                                    <li>{{ $alasan['alasan'] }} @if(!empty($alasan['keterangan_lainnya'])) <span class="text-gray-500">({{ $alasan['keterangan_lainnya'] }})</span> @endif</li>
+                                @empty
+                                    <li class="text-gray-400 italic">Tidak ada data alasan.</li>
+                                @endforelse
+                            </ul>
+
+                            <div class="mt-4 pt-4 border-t border-gray-100 bg-gray-50/50 -mx-4 -mb-4 p-4">
+                                <p class="text-xs font-semibold mb-2 text-gray-600 uppercase tracking-wide">Status Verifikasi</p>
+                                @if($isReadOnly)
+                                    @if(($oldData['status'] ?? 'verified') === 'verified')
+                                        <div class="inline-flex items-center gap-2 p-2 bg-green-50 text-green-700 rounded border border-green-200 text-sm font-medium">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Disetujui
+                                        </div>
                                     @else
-                                        <li class="text-slate-400 italic">Tidak ada data alasan.</li>
+                                        <div class="p-3 bg-red-50 text-red-800 rounded border border-red-200">
+                                            <div class="flex items-center gap-2 mb-1 font-medium text-sm">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Ditolak / Minta Revisi
+                                            </div>
+                                            <p class="text-sm text-red-600 bg-white p-2 rounded border border-red-100">{{ $oldData['catatan'] ?? 'Tidak ada catatan' }}</p>
+                                        </div>
                                     @endif
-                                </ul>
-                            </div>
-                            <div class="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6">
-                                <div class="space-y-3">
-                                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.alasan_belum_acuan.status === 'verified' ? 'border-emerald-200 bg-emerald-50' : 'border-transparent'">
-                                        <input type="radio" name="verifications[alasan_belum_acuan][status]" value="verified" x-model="fields.alasan_belum_acuan.status" class="text-emerald-500 focus:ring-emerald-500">
-                                        <span class="text-sm font-semibold text-slate-700">Setujui</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition border" :class="fields.alasan_belum_acuan.status === 'rejected' ? 'border-red-200 bg-red-50' : 'border-transparent'">
-                                        <input type="radio" name="verifications[alasan_belum_acuan][status]" value="rejected" x-model="fields.alasan_belum_acuan.status" class="text-red-500 focus:ring-red-500">
-                                        <span class="text-sm font-semibold text-slate-700">Minta Revisi</span>
-                                    </label>
-                                    <div x-show="fields.alasan_belum_acuan.status === 'rejected'" class="mt-2">
-                                        <textarea name="verifications[alasan_belum_acuan][catatan]" x-model="fields.alasan_belum_acuan.catatan" class="w-full text-sm border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" rows="2" placeholder="Tulis catatan revisi..."></textarea>
+                                @else
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <label class="flex items-center gap-2 p-2 px-3 rounded border cursor-pointer hover:bg-white transition" :class="status === 'verified' ? 'border-green-400 bg-green-50 shadow-sm' : 'border-gray-300 bg-white'">
+                                            <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="verified" x-model="status" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                            <span class="text-sm font-medium text-gray-800">Setujui</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 p-2 px-3 rounded border cursor-pointer hover:bg-white transition" :class="status === 'rejected' ? 'border-red-400 bg-red-50 shadow-sm' : 'border-gray-300 bg-white'">
+                                            <input type="radio" name="verifications[{{ $fieldKey }}][status]" value="rejected" x-model="status" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                            <span class="text-sm font-medium text-gray-800">Minta Revisi</span>
+                                        </label>
+                                        <div x-show="status === 'rejected'" x-cloak class="flex-1 w-full sm:w-auto">
+                                            <textarea name="verifications[{{ $fieldKey }}][catatan]" class="w-full text-sm border-gray-300 rounded shadow-sm focus:ring-red-500 focus:border-red-500" rows="1" placeholder="Catatan revisi...">{{ $oldData['catatan'] ?? '' }}</textarea>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>
                 @endif
             @endif
 
-            @if($submission->status_verifikasi !== 'verified')
-                <div class="bg-slate-800 rounded-xl p-4 shadow-lg sticky bottom-6 z-20 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+            <!-- Tombol Submit Akhir -->
+            @if(!$isReadOnly)
+                <div class="bg-slate-800 rounded-lg p-4 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 sticky bottom-4 z-50">
                     <div>
-                        <h4 class="text-white font-semibold">Konfirmasi Verifikasi</h4>
-                        <p class="text-slate-400 text-sm mt-1" x-text="summaryText"></p>
+                        <h4 class="text-white font-bold text-sm">Simpan Verifikasi</h4>
+                        <p class="text-slate-300 text-xs mt-0.5">Sistem akan otomatis menentukan status Disetujui/Ditolak.</p>
                     </div>
-                    <div class="flex gap-3 w-full sm:w-auto">
-                        @if($submission->status_verifikasi !== 'verified')
-                            <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.edit-on-behalf', $submission->id) }}" class="w-full sm:w-auto px-6 py-2.5 bg-slate-700 text-white font-medium rounded-lg hover:bg-slate-600 transition shadow-sm flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                Ubah Sendiri
-                            </a>
-                        @endif
-                        <button type="submit" name="final_action" value="reject" x-show="hasRejection" class="w-full sm:w-auto px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition shadow-sm flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            Simpan & Revisi
-                        </button>
-                        <button type="submit" name="final_action" value="verify" x-show="!hasRejection" class="w-full sm:w-auto px-6 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition shadow-sm flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                            Setujui Semua
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.edit-on-behalf', $submission->id) }}" class="w-full sm:w-auto px-4 py-2 bg-slate-600 text-white font-medium rounded hover:bg-slate-500 transition text-sm text-center">
+                            Ubah
+                        </a>
+                        <button type="submit" 
+                            class="w-full sm:w-auto px-5 py-2 text-white font-bold rounded transition shadow-md text-sm whitespace-nowrap"
+                            :class="hasRejection ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
+                            x-text="hasRejection ? 'Kembalikan' : 'Terverifikasi'">
+                            Simpan Verifikasi
                         </button>
                     </div>
                 </div>
             @endif
-
         </form>
     </div>
-
-    @push('scripts')
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('verifikasiForm', () => {
-                const oldVerifs = @json($submission->field_verifications ?? []);
-                const submittedDocTypes = @json(is_array($submission->dokumen_acuan) ? collect($submission->dokumen_acuan)->pluck('doc_type')->toArray() : []);
-                
-                const initField = (key) => ({
-                    status: oldVerifs[key]?.status || 'verified',
-                    catatan: oldVerifs[key]?.catatan || ''
-                });
-
-                let dynamicFields = {};
-                submittedDocTypes.forEach(dt => {
-                    const key = 'dok_' + dt;
-                    dynamicFields[key] = initField(key);
-                });
-
-                return {
-                    fields: {
-                        alasan_tidak_punya: initField('alasan_tidak_punya'),
-                        q2_jadi_acuan: initField('q2_jadi_acuan'),
-                        alasan_belum_acuan: initField('alasan_belum_acuan'),
-                        ...dynamicFields,
-                    },
-                    
-                    get hasRejection() {
-                        return Object.values(this.fields).some(f => f.status === 'rejected');
-                    },
-
-                    get summaryText() {
-                        if (this.hasRejection) {
-                            return 'Ada bagian yang ditolak (butuh revisi).';
-                        }
-                        return 'Semua bagian telah disetujui.';
-                    }
-                }
-            })
-        })
-    </script>
-    @endpush
 </x-dashboard::layouts.dashboard>

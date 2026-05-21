@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════
-   step2-parameter.js — RTK Makro v8
+   step2-parameter.js — RTK Makro
    Langkah 2: isi dropdown tahun, konfirmasi
    parameter, dan pemicu komputasi proyeksi
    ══════════════════════════════════════════ */
@@ -59,20 +59,25 @@ function fillDrops() {
   }
 }
 
+// ── initSession() — sudah tidak dipakai, biarkan kosong sebagai stub ──
+// (dulu ambil user dari PHP session; sekarang LS / DB Load yang menentukan)
+async function initSession() { /* no-op */ }
+
 // ── Konfirmasi parameter dan lanjut ke Langkah 3 ──
 function konfirmasi() {
-  const nama = document.getElementById('inNama').value.trim();
+  const kodeRaw   = (document.getElementById('inSession')?.value || '').trim();
+  const namaRaw   = document.getElementById('inNama').value.trim();
+  const kodeUser  = kodeRaw || namaRaw.toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 30) || 'user1';
+  const nama      = namaRaw || kodeUser;
   const hA = parseInt(document.getElementById('sHA').value), hZ = parseInt(document.getElementById('sHZ').value);
   const pA = parseInt(document.getElementById('sPA').value), pZ = parseInt(document.getElementById('sPZ').value);
   const td = parseInt(document.getElementById('sTD').value);
-  if (!nama) { alert('Nama daerah harus diisi!'); return; }
   if (isNaN(hA) || isNaN(hZ) || hA > hZ) { alert('Rentang historis tidak valid!'); return; }
   P = {
-    nama, hA, hZ,
+    nama, kodeUser, hA, hZ,
     pA: isNaN(pA) ? hZ + 1 : pA,
     pZ: isNaN(pZ) ? hZ + 5 : pZ,
     td: isNaN(td) ? hZ : td,
-    // Pertahankan data yang sudah diisi sebelum konfirmasi (override manual & import Excel)
     targets:       P.targets       || {},
     targetImports: P.targetImports || {},
     lajuOverrides: P.lajuOverrides || {},
@@ -100,5 +105,6 @@ function konfirmasi() {
     document.getElementById('btnKab').disabled = false;
     document.getElementById('btnXls').disabled = false;
     document.getElementById('btnLaju').disabled = false;
+    document.getElementById('btnDbSave').disabled = false;
   }, 100);
 }
