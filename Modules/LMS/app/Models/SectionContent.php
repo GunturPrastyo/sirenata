@@ -21,6 +21,7 @@ class SectionContent extends Model
         'course_section_id',
         'name',
         'video',
+        'document',
         'position',
     ];
 
@@ -38,7 +39,7 @@ class SectionContent extends Model
     {
         return $this->hasMany(StudentContentProgress::class, 'section_content_id');
     }
-    
+
     // Cek apakah konten sudah selesai ditonton oleh user tertentu
     public function isCompletedByUser(string $userId): bool
     {
@@ -47,10 +48,16 @@ class SectionContent extends Model
             ->exists();
     }
 
-    public function getVideoUrlAttribute(): ?string
+    // public function getVideoUrlAttribute(): ?string
+    // {
+    //     return $this->video
+    //         ? asset('storage/' . $this->video)
+    //         : null;
+    // }
+    public function getDocumentUrlAttribute(): ?string
     {
-        return $this->video
-            ? asset('storage/' . $this->video)
+        return $this->document
+            ? asset('storage/' . $this->document)
             : null;
     }
 }

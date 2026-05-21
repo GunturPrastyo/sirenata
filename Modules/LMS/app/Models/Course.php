@@ -61,7 +61,7 @@ class Course extends Model
     public function getThumbnailUrlAttribute(): ?string
     {
         if (! $this->thumbnail) return null;
-        return str_starts_with($this->thumbnail, 'http') ? $this->thumbnail : asset('storage/' . $this->thumbnail);
+        return str_starts_with($this->thumbnail, 'https') ? $this->thumbnail : asset('storage/' . $this->thumbnail);
     }
 
     public function user()
@@ -128,5 +128,4 @@ class Course extends Model
             ->withPivot('is_active')
             ->withTimestamps();
     }
-    
 }

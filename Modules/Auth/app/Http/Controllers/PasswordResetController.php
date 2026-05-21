@@ -37,7 +37,6 @@ class PasswordResetController extends Controller
 
     public function showResetForm(Request $request)
     {
-        // Cek apakah token valid sebelum tampilkan view
         $tokenExists = DB::table('password_reset_tokens')
             ->where('email', $request->email)
             ->exists();
@@ -50,8 +49,8 @@ class PasswordResetController extends Controller
             'token' => $request->token,
             'email' => $request->email,
         ]);
-    } 
- 
+    }
+
     public function resetPassword(Request $request)
     {
         $request->validate([

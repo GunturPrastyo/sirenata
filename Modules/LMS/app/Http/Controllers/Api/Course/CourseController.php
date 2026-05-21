@@ -42,7 +42,7 @@ class CourseController extends Controller
                 category_id: $category_id,
                 search: $search,
             )->paginate($row_per_page);
-                
+
             return ResponseHelper::success(
                 status: true,
                 message: 'Users retrieved successfully',
@@ -107,7 +107,7 @@ class CourseController extends Controller
                 result: new CourseResource($course->load('category', 'user')),
                 statusCode: 201
             );
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             return ResponseHelper::error(
                 message: $th->getMessage(),
                 statusCode: 500
@@ -166,14 +166,14 @@ class CourseController extends Controller
                 );
             }
 
-        $this->courseService->CourseDelete($course);
+            $this->courseService->CourseDelete($course);
 
-        return ResponseHelper::success(
-            status: true,
-            message: 'Course deleted successfully',
-            result: null,
-            statusCode: 200
-        );
+            return ResponseHelper::success(
+                status: true,
+                message: 'Course deleted successfully',
+                result: null,
+                statusCode: 200
+            );
         } catch (\Exception $e) {
             return ResponseHelper::error(
                 message: $e->getMessage(),

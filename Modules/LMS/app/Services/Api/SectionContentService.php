@@ -34,13 +34,16 @@ class SectionContentService
      */
     public function store(array $validated, CourseSection $courseSection, $file = null): array
     {
-        // if ($file) {
-        //     $validated['video'] = $file->store(
-        //         "courses/contents/{$courseSection->course_id}", 'public'
-        //     );
-        // }
 
-        // Auto-set position ke urutan terakhir kalau tidak diisi
+        // 2. Proses File Dokumen jika ada
+        if ($file) {
+            $validated['document'] = $file->store(
+                "courses/contents/{$courseSection->course_id}",
+                'public'
+            );
+        }
+
+        // 3. Auto-set position
         $validated['position'] = $validated['position']
             ?? $courseSection->contents()->max('position') + 1;
 
@@ -48,7 +51,6 @@ class SectionContentService
 
         return [
             'success' => true,
-            'code'    => 201,
             'message' => 'Konten berhasil ditambahkan',
             'content' => $content,
         ];
@@ -59,17 +61,18 @@ class SectionContentService
      */
     public function update(array $validated, SectionContent $content, $file = null): array
     {
-        // if ($file) {
-        //     // Hapus video lama kalau ada
-        //     if ($content->video) {
-        //         Storage::disk('public')->delete($content->video);
-        //     }
+        if ($file) {
+            if ($content->document) {
+                Storage::disk('public')->delete($content->document);
+            }
 
-        //     $validated['video'] = $file->store(
-        //         "courses/contents/{$content->section->course_id}", 'public'
-        //     );
-        // }
+            $validated['document'] = $file->store(
+                "courses/contents/{$content->section->course_id}",
+                'public'
+            );
+        }
 
+        // 3. Update data (termasuk path dokumen baru jika ada, atau URL video)
         $content->update($validated);
 
         return [

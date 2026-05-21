@@ -31,14 +31,14 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/my-courses', [CourseStudentController::class, 'myCourses']);
-        
+
         Route::prefix('sections/{courseSection}')->group(function () {
             Route::get('/contents', [SectionContentController::class, 'index']);
         });
-        
+
         Route::post('/contents/{content}/complete', [CourseProgressController::class, 'complete']);
         Route::get('/courses/{slug}/progress', [CourseProgressController::class, 'show']);
-        Route::get('/courses/{slug}', [CourseProgressController::class, 'show']);
+        Route::get('/courses/progress/{slug}', [CourseProgressController::class, 'show']);
 
         Route::prefix('contents')->group(function () {
             Route::get('/{content}', [SectionContentController::class, 'show']);

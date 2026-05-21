@@ -58,7 +58,7 @@ class SectionContentController extends Controller
      */
     public function show(SectionContent $content): JsonResponse
     {
-        
+
 
         try {
             return ResponseHelper::success(
@@ -80,6 +80,7 @@ class SectionContentController extends Controller
      * 
      * Create SectionContentCourse berdasarkan courseSection Id
      * 
+     * @requestMediaType multipart/form-data
      * @authenticated
      * @role:admin-pusat
      */
@@ -89,7 +90,7 @@ class SectionContentController extends Controller
             $result = $this->service->store(
                 validated: $request->validated(),
                 courseSection: $courseSection,
-                // file: $request->file('video')
+                file: $request->file('document')
             );
 
             return ResponseHelper::success(
@@ -97,11 +98,11 @@ class SectionContentController extends Controller
                 message: $result['message'],
                 result: new SectionContentResource($result['content']),
                 statusCode: 201
-        );
+            );
         } catch (\Exception $e) {
             return ResponseHelper::error(
                 message: $e->getMessage(),
-                statusCode: 500
+                statusCode: 400
             );
         }
     }
@@ -119,15 +120,15 @@ class SectionContentController extends Controller
             $result = $this->service->update(
                 validated: $request->validated(),
                 content: $content,
-                // file: $request->file('video')
+                file: $request->file('document')
             );
 
             return ResponseHelper::success(
-            status: true,
-            message: $result['message'],
-            result: new SectionContentResource($result['content']),
-            statusCode: 200
-        );
+                status: true,
+                message: $result['message'],
+                result: new SectionContentResource($result['content']),
+                statusCode: 200
+            );
         } catch (\Exception $e) {
             return ResponseHelper::error(
                 message: $e->getMessage(),
@@ -178,7 +179,7 @@ class SectionContentController extends Controller
             'contents.*.id'        => ['required', 'uuid', 'exists:section_contents,id'],
             'contents.*.position'  => ['required', 'integer', 'min:0'],
         ]);
-        
+
         $result = $this->service->reorder($request->contents, $courseSection);
 
         return ResponseHelper::success(

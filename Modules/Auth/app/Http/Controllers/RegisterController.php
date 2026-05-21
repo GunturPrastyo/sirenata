@@ -15,7 +15,7 @@ class RegisterController extends Controller
     public function __construct(
         private AuthService $authService
     ) {}
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -25,20 +25,24 @@ class RegisterController extends Controller
     }
 
     public function store(RegisterRequest $request)
-{
-    try {
-        $validated = $request->validated();
-        $user = $this->authService->register($validated);
+    {
+        try {
+            $validated = $request->validated();
+            $user = $this->authService->register($validated);
 
-        Auth::login($user);
-        $request->session()->regenerate();
+            Auth::login($user);
+            $request->session()->regenerate();
 
-        ToastMagic::success('User registered successfully');
-        return redirect()->route(Auth::user()->getRedirectRoute());
 
-    } catch (\Exception $e) {
-        ToastMagic::error('Failed to register user');
-        return back()->withInput();
+            $user->tokens()->delete();
+            $token = $user->createToken('api-token')->plainTextToken;
+            session(['api_token' => $token]);
+
+            ToastMagic::success('User registered successfully');
+            return redirect()->route(Auth::user()->getRedirectRoute());
+        } catch (\Exception $e) {
+            ToastMagic::error('Failed to register user');
+            return back()->withInput();
+        }
     }
-}
 }

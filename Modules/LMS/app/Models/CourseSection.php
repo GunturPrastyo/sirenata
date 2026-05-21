@@ -29,7 +29,7 @@ class CourseSection extends Model
     {
         return $this->belongsTo(Course::class);
     }
- 
+
     public function contents(): HasMany
     {
         return $this->hasMany(SectionContent::class)->orderBy('position');

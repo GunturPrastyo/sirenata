@@ -26,4 +26,17 @@ class UpdateCourseRequest extends FormRequest
     {
         return true;
     }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function attributes(): array
+    {
+        return [
+            'category_id' => 'Kategori Course',
+            'name' => 'Nama Course',
+            'thumbnail' => 'Thumbnail Course',
+            'description' => 'Deskripsi Course',
+        ];
+    }
 }

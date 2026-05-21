@@ -16,7 +16,8 @@ class SectionContentResource extends JsonResource
             'id'        => $this->id,
             'name'      => $this->name,
             'position'  => $this->position,
-            'video_url' => $this->video_url, // accessor — null kalau belum ada video
+            'video_url' => $this->video,
+            'document_url' => $this->document_url, // accessor — null kalau belum ada dokumen
         ];
     }
 }

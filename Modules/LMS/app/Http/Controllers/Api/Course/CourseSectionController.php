@@ -68,7 +68,6 @@ class CourseSectionController extends Controller
                 result: new CourseSectionResource($section),
                 statusCode: 201
             );
-
         } catch (\Exception $e) {
             return ResponseHelper::error(
                 message: $e->getMessage(),
@@ -76,7 +75,7 @@ class CourseSectionController extends Controller
             );
         }
     }
- 
+
     /**
      * Update Course section
      * 
@@ -100,7 +99,6 @@ class CourseSectionController extends Controller
                 result: new CourseSectionResource($section),
                 statusCode: 200
             );
-
         } catch (\Throwable $e) {
             return ResponseHelper::error(
                 message: $e->getMessage(),
@@ -108,7 +106,7 @@ class CourseSectionController extends Controller
             );
         }
     }
- 
+
     /**
      * Hapus section
      * 
@@ -128,7 +126,6 @@ class CourseSectionController extends Controller
                 result: null,
                 statusCode: 200
             );
-
         } catch (\Exception $e) {
             return ResponseHelper::error(
                 message: $e->getMessage(),
@@ -165,7 +162,6 @@ class CourseSectionController extends Controller
                 result: null,
                 statusCode: 200
             );
-
         } catch (\Throwable $e) {
             return ResponseHelper::error(
                 message: $e->getMessage(),

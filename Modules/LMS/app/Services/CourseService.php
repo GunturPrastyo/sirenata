@@ -22,7 +22,7 @@ class CourseService
     private string $baseUrl;
     public function __construct()
     {
-        $this->baseUrl = config('Lms.api_url', env('LMS_API_URL', 'https://e-learning.test/api/v1'));
+        $this->baseUrl = (string) config('lms.api_url', 'https://e-learning.test/api/v1');
     }
 
     public function getCoursesForFilter()
@@ -354,6 +354,261 @@ class CourseService
                 'message' => 'Terjadi kesalahan',
                 'data'    => [],
                 'meta'    => [],
+            ];
+        }
+    }
+
+
+    /**
+     * Get Data All Course Api Admin Pusat
+     */
+    public function allCourses(string $token, int $page = 1, int $perPage = 12, ?string $search = null, ?string $categoryId = null): array
+    {
+        try {
+            $response = Http::withToken($token)
+                ->timeout(10)
+                ->get("{$this->baseUrl}/courses", [
+                    'category_id'   => $categoryId,
+                    'search'        => $search,
+                    'page'          => $page,
+                    'row_per_page'  => $perPage,
+                ]);
+
+            if ($response->failed()) {
+                Log::error('Failed to fetch all courses', [
+                    'status' => $response->status(),
+                    'body'   => $response->body(),
+                ]);
+
+                return [
+                    'success' => false,
+                    'message' => 'Gagal mengambil data course',
+                    'data'    => [],
+                    'meta'    => [],
+                ];
+            }
+
+            $data = $response->json();
+
+            return [
+                'success' => true,
+                'message' => $data['message'] ?? 'Success',
+                'data'    => $data['result']['data'] ?? [],
+                'meta'    => $data['result']['meta'] ?? [],
+                'links'   => $data['result']['links'] ?? [],
+            ];
+        } catch (\Exception $e) {
+            Log::error('CourseService::allCourses error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan',
+                'data'    => [],
+                'meta'    => [],
+            ];
+        }
+    }
+
+    /**
+     * Store/Post Data Course Api Admin Pusat
+     */
+    public function storeCourse(string $token, array $data, $thumbnailFile = null): array
+    {
+        try {
+            // 1. Tambahkan acceptJson() di sini
+            $client = Http::withToken($token)
+                ->acceptJson()
+                ->timeout(15);
+
+            if ($thumbnailFile) {
+                $client->attach(
+                    'thumbnail',
+                    file_get_contents($thumbnailFile->getRealPath()),
+                    $thumbnailFile->getClientOriginalName()
+                );
+            }
+
+            $response = $client->post("{$this->baseUrl}/courses", $data);
+
+            // 2. Jika gagal (termasuk 422 Validation Error dari API)
+            if ($response->failed()) {
+                $errorData = $response->json(); // Ambil detail error JSON-nya
+
+                Log::error('Failed to store course', [
+                    'status' => $response->status(),
+                    'body'   => $errorData ?? $response->body(),
+                ]);
+
+                // Ambil pesan error spesifik jika ada
+                $errorMessage = $errorData['message'] ?? 'Terjadi kesalahan di server API';
+
+                return [
+                    'success' => false,
+                    'message' => 'Gagal: ' . $errorMessage,
+                    'data'    => [],
+                ];
+            }
+
+            // 3. Jika berhasil
+            $responseData = $response->json();
+
+            // Perbaikan Log: gunakan array format, bukan digabung dengan string (.)
+            Log::info('Response Data:', $responseData ?? []);
+
+            return [
+                'success' => true,
+                'message' => $responseData['message'] ?? 'Course berhasil diperbarui',
+                'data'    => $responseData['result'] ?? [],
+            ];
+        } catch (\Exception $e) {
+            Log::error('CourseService::updateCourse error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem saat menyimpan data',
+                'data'    => [],
+            ];
+        }
+    }
+    /**
+     * Update/PUT Data Course Api Admin Pusat
+     */
+    public function updateCourse(string $token, array $data, $thumbnailFile = null): array
+    {
+        try {
+            $client = Http::withToken($token)
+                ->acceptJson()
+                ->timeout(15);
+
+            if ($thumbnailFile) {
+                $client->attach(
+                    'thumbnail',
+                    file_get_contents($thumbnailFile->getRealPath()),
+                    $thumbnailFile->getClientOriginalName()
+                );
+            }
+
+            $data['_method'] = 'PUT';
+            $response = $client->post("{$this->baseUrl}/courses/{$data['slug']}", $data);
+
+            if ($response->failed()) {
+                $errorData = $response->json();
+
+                Log::error('Failed to update course', [
+                    'status' => $response->status(),
+                    'body'   => $errorData ?? $response->body(),
+                ]);
+
+                $errorMessage = $errorData['message'] ?? 'Terjadi kesalahan di server API';
+
+                return [
+                    'success' => false,
+                    'message' => 'Gagal: ' . $errorMessage,
+                    'data'    => [],
+                ];
+            }
+
+            $responseData = $response->json();
+            Log::info('Response Data:', $responseData ?? []);
+
+            return [
+                'success' => true,
+                'message' => $responseData['message'] ?? 'Course berhasil diperbarui',
+                'data'    => $responseData['result'] ?? [],
+            ];
+        } catch (\Exception $e) {
+            Log::error('CourseService::updateCourse error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem saat menyimpan data',
+                'data'    => [],
+            ];
+        }
+    }
+
+    /**
+     * Delete Data Course Api Admin Pusat
+     */
+    public function deleteCourse(string $token, string $slug): array
+    {
+        try {
+            $client = Http::withToken($token)
+                ->acceptJson()
+                ->timeout(15);
+
+            $response = $client->delete("{$this->baseUrl}/courses/{$slug}");
+
+            if ($response->failed()) {
+                $errorData = $response->json();
+
+                Log::error('Failed to delete course', [
+                    'status' => $response->status(),
+                    'body'   => $errorData ?? $response->body(),
+                ]);
+
+                return [
+                    'success' => false,
+                    'message' => 'Gagal menghapus: ' . ($errorData['message'] ?? 'Terjadi kesalahan di server API'),
+                ];
+            }
+
+            $responseData = $response->json();
+
+            return [
+                'success' => true,
+                'message' => $responseData['message'] ?? 'Course berhasil dihapus',
+            ];
+        } catch (\Exception $e) {
+            Log::error('CourseService::deleteCourse error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem saat menghapus data',
+            ];
+        }
+    }
+
+
+    /**
+     * Get Detail Course Api Admin Pusat
+     */
+    public function getCourseBySlug(string $token, string $slug): array
+    {
+        try {
+            $response = Http::withToken($token)
+                ->acceptJson()
+                ->timeout(15)
+                ->get("{$this->baseUrl}/courses/{$slug}");
+
+            if ($response->failed()) {
+                return [
+                    'success' => false,
+                    'message' => 'Course tidak ditemukan',
+                    'data'    => null,
+                ];
+            }
+
+            $data = $response->json();
+
+            return [
+                'success' => true,
+                'message' => 'Success',
+                'data'    => $data['result'] ?? null,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'data'    => null,
             ];
         }
     }

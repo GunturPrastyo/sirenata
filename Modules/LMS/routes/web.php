@@ -9,6 +9,9 @@ use Modules\LMS\Http\Controllers\AdminPusat\LibraryCategoryController as AdminPu
 use Modules\LMS\Http\Controllers\AdminPusat\LibraryController as AdminPusatLibraryController;
 use Modules\LMS\Http\Controllers\User\LibraryController as UserLibraryController;
 use Modules\LMS\Http\Controllers\User\CourseController as UserCourseController;
+use Modules\LMS\Http\Controllers\AdminPusat\Course\CourseController;
+use Modules\LMS\Http\Controllers\AdminPusat\Course\CourseSectionController;
+use Modules\LMS\Http\Controllers\AdminPusat\Course\SectionContentController;
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(RekapitulasiController::class)->group(function () {
@@ -20,6 +23,12 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
 
         Route::get('/rekap-user-kab-kota/{regencyCode}', 'rekapUserKabKota')->name('rekap-user-kab-kota');
         Route::get('/rekap-user-kab-kota/{regencyCode}/export', 'exportRekapUserRegency')->name('rekap-user-kab-kota.export');
+    });
+
+    Route::prefix('management-course')->name('management-course.')->group(function () {
+        Route::resource('courses', CourseController::class);
+        Route::resource('course-sections', CourseSectionController::class);
+        Route::resource('course-sections-contents', SectionContentController::class);
     });
 
     Route::resource('library-categories', AdminPusatLibraryCategoryController::class)->only(['index', 'store', 'update', 'destroy']);

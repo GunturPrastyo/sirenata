@@ -127,6 +127,41 @@
     </ul>
 </li>
 
+<li x-data="{ open: {{ request()->routeIs('admin-pusat.management-course.courses*') ? 'true' : 'false' }} }">
+    <button @click="open = !open"
+        class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
+        {{ request()->routeIs('admin-pusat.management-course.courses*')
+            ? 'text-indigo-600 bg-purple-100'
+            : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="M7 9h4" />
+            <path d="M7 12h2" />
+            <circle cx="16" cy="12" r="2.5" />
+            <path d="M14.5 14v4l1.5-1 l1.5 1v-4" />
+        </svg>
+
+        <span class="flex-1 ms-3 text-left text-sm">Management Course</span>
+
+        <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+        </svg>
+    </button>
+
+    <ul x-show="open" x-collapse class="mt-1 space-y-1">
+        <li>
+            <a href="{{ route('admin-pusat.management-course.courses.index') }}"
+                class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
+                {{ request()->routeIs('admin-pusat.courses*')
+                    ? 'text-indigo-600 bg-purple-100'
+                    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                Management Course
+            </a>
+        </li>
+    </ul>
+</li>
+
 <li>
     <a href="#"
         class="flex items-center px-2 py-1.5 rounded-md transition

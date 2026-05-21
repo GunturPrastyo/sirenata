@@ -21,6 +21,12 @@ class AuthService
     {
         if (Auth::attempt($credentials, $remember)) {
             session()->regenerate();
+
+            $user = Auth::user();
+            $user->tokens()->delete();
+            $token = $user->createToken('api-token')->plainTextToken;
+            session(['api_token' => $token]);
+
             return true;
         }
 
@@ -30,7 +36,8 @@ class AuthService
     /**
      * Handle user registration.
      */
-    public function register($validated) {
+    public function register($validated)
+    {
         return DB::transaction(function () use ($validated) {
             $user = User::create([
                 'name'     => $validated['name'],
@@ -47,13 +54,19 @@ class AuthService
      */
     public function logout(): void
     {
-        // Hapus token web-session
-        Auth::user()->tokens()->where('name', 'web-session')->delete();
+        $user = Auth::user();
+
+        if ($user) {
+            // Hapus token yang bernama 'api-token'
+            $user->tokens()->where('name', 'api-token')->delete();
+            // Atau cukup gunakan $user->tokens()->delete(); jika ingin menghapus semua token user
+        }
+
         // Hapus dari session
         session()->forget('api_token');
 
         Auth::logout();
         session()->invalidate();
         session()->regenerateToken();
-    }  
+    }
 }

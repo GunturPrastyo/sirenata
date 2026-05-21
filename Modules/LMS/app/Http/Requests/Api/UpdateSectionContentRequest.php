@@ -13,7 +13,8 @@ class UpdateSectionContentRequest extends FormRequest
     {
         return [
             'name'     => ['sometimes', 'string', 'max:255'],
-            // 'video'    => ['nullable', 'file', 'mimetypes:video/mp4,video/mpeg,video/quicktime,video/webm', 'max:512000'],
+            'video'    => ['nullable', 'string', 'url'],
+            'document' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10000'],
             // 'position' => ['sometimes', 'integer', 'min:0'],
         ];
     }
