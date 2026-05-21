@@ -36,6 +36,7 @@ class CertificateController extends Controller
             'signer_name' => 'required|string|max:255',
             'signer_title' => 'required|string|max:255',
             'signature_image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'background_image' => 'required|image|mimes:png,jpg,jpeg|max:5120',
         ]);
 
         $setting = new CertificateSetting();
@@ -46,6 +47,11 @@ class CertificateController extends Controller
         if ($request->hasFile('signature_image')) {
             $setting->signature_image = $request->file('signature_image')
                 ->store('certificates/signatures', 'public');
+        }
+
+        if ($request->hasFile('background_image')) {
+            $setting->background_image = $request->file('background_image')
+                ->store('certificates/templates', 'public');
         }
 
         $setting->save();
@@ -61,6 +67,7 @@ class CertificateController extends Controller
             'signer_name' => 'required|string|max:255',
             'signer_title' => 'required|string|max:255',
             'signature_image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'background_image' => 'nullable|image|mimes:png,jpg,jpeg|max:5120',
         ]);
 
         $certificate->signer_name = $validated['signer_name'];
@@ -72,6 +79,14 @@ class CertificateController extends Controller
             }
             $certificate->signature_image = $request->file('signature_image')
                 ->store('certificates/signatures', 'public');
+        }
+
+        if ($request->hasFile('background_image')) {
+            if ($certificate->background_image) {
+                Storage::disk('public')->delete($certificate->background_image);
+            }
+            $certificate->background_image = $request->file('background_image')
+                ->store('certificates/templates', 'public');
         }
 
         $certificate->save();
@@ -97,6 +112,10 @@ class CertificateController extends Controller
     {
         if ($certificate->signature_image) {
             Storage::disk('public')->delete($certificate->signature_image);
+        }
+
+        if ($certificate->background_image) {
+            Storage::disk('public')->delete($certificate->background_image);
         }
 
         $certificate->delete();

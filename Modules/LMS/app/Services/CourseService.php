@@ -22,7 +22,8 @@ class CourseService
     private string $baseUrl;
     public function __construct()
     {
-        $this->baseUrl = (string) config('lms.api_url', 'https://e-learning.test/api/v1');
+        $defaultUrl = request()->getSchemeAndHttpHost() . '/api/v1';
+        $this->baseUrl = (string) config('Lms.api_url', config('lms.api_url', env('LMS_API_URL', $defaultUrl)));
     }
 
     public function getCoursesForFilter()
@@ -270,7 +271,8 @@ class CourseService
     public function myCourses(string $token, int $page = 1, int $perPage = 12, ?string $status = null): array
     {
         try {
-            $response = Http::withToken($token)
+            $response = Http::withoutVerifying()
+                ->withToken($token)
                 ->timeout(10)
                 ->get("{$this->baseUrl}/my-courses", [
                     'status'        => $status,
@@ -289,6 +291,7 @@ class CourseService
                     'message' => 'Gagal mengambil data course',
                     'data'    => [],
                     'meta'    => [],
+                    'links'   => [],
                 ];
             }
 
@@ -312,6 +315,7 @@ class CourseService
                 'message' => 'Terjadi kesalahan',
                 'data'    => [],
                 'meta'    => [],
+                'links'   => [],
             ];
         }
     }
@@ -319,7 +323,8 @@ class CourseService
     public function getCourseDetailSlug(string $token, string $slug): array
     {
         try {
-            $response = Http::withToken($token)
+            $response = Http::withoutVerifying()
+                ->withToken($token)
                 ->timeout(10)
                 ->get("{$this->baseUrl}/courses/{$slug}/progress");
 

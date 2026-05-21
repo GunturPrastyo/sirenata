@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('signer_name')->nullable();
             $table->string('signer_title')->nullable();
             $table->string('signature_image')->nullable();
+            $table->string('background_image')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

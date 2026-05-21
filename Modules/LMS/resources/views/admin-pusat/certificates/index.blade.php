@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Tanda Tangan Sertifikat - E-Learning">
+<x-dashboard::layouts.dashboard title="Pengaturan Sertifikat - E-Learning">
     <div class="p-2 sm:p-6">
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">
@@ -19,7 +19,7 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Tanda Tangan Sertifikat</span>
+                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Pengaturan Sertifikat</span>
                     </div>
                 </li>
             </ol>
@@ -38,7 +38,7 @@
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar Tanda Tangan Sertifikat</h2>
+                    <h2 class="text-base font-semibold text-slate-800">Pengaturan Sertifikat</h2>
                     <p class="text-sm text-slate-500 mt-1">
                         Total: <span class="font-medium text-slate-700">{{ $settings->total() }}</span> Data
                     </p>
@@ -49,7 +49,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        <span class="hidden sm:inline">Tambah Tanda Tangan</span>
+                        <span class="hidden sm:inline">Tambah Pengaturan</span>
                         <span class="sm:hidden">Tambah</span>
                     </button>
                 </div>
@@ -60,6 +60,7 @@
                     <thead class="bg-slate-100 border-b border-slate-200">
                         <tr class="text-slate-500 uppercase text-xs">
                             <th class="px-4 md:px-6 py-3 text-left">No.</th>
+                            <th class="px-4 md:px-6 py-3 text-left">Template</th>
                             <th class="px-4 md:px-6 py-3 text-left">Tanda Tangan</th>
                             <th class="px-4 md:px-6 py-3 text-left">Nama Penandatangan</th>
                             <th class="px-4 md:px-6 py-3 text-left">Jabatan</th>
@@ -72,6 +73,16 @@
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-4 md:px-6 py-3">
                                     <p class="text-slate-600">{{ $key + $settings->firstItem() }}</p>
+                                </td>
+                                <td class="px-4 md:px-6 py-3">
+                                    @if($setting->background_image)
+                                        <div class="p-1 bg-gray-50 border border-dashed border-gray-300 rounded-lg inline-block">
+                                            <img src="{{ Storage::url($setting->background_image) }}" alt="Template"
+                                                class="h-16 w-24 object-cover rounded">
+                                        </div>
+                                    @else
+                                        <span class="text-xs text-slate-400 italic">Belum diunggah</span>
+                                    @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3">
                                     @if($setting->signature_image)
@@ -119,6 +130,13 @@
                                         <li>
                                             <button type="button"
                                                 x-data
+                                                @click="$dispatch('open-modal', 'preview-certificate-{{ $setting->id }}')"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600 cursor-pointer">Preview</button>
+                                        </li>
+
+                                        <li>
+                                            <button type="button"
+                                                x-data
                                                 @click="$dispatch('open-modal', 'edit-certificate-setting-{{ $setting->id }}')"
                                                 class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600 cursor-pointer">Ubah</button>
                                         </li>
@@ -134,7 +152,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
+                                <td colspan="7" class="px-6 py-12 text-center">
                                     <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -153,9 +171,9 @@
         </div>
     </div>
 
-    <x-modal name="create-certificate-setting" title="Tambah Tanda Tangan Sertifikat">
+    <x-modal name="create-certificate-setting" title="Tambah Pengaturan Sertifikat" maxWidth="sm:max-w-md">
         <form action="{{ route('admin-pusat.certificates.store') }}" method="POST" enctype="multipart/form-data"
-            x-data="{ signaturePreview: null }" class="space-y-4">
+            x-data="{ signaturePreview: null, backgroundPreview: null }" class="space-y-4">
             @csrf
             <div>
                 <label for="create-signer-name" class="block text-sm font-medium text-gray-700 mb-1">
@@ -190,6 +208,21 @@
                 </template>
             </div>
 
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Template Background Sertifikat <span class="text-red-500">*</span>
+                    <span class="text-xs text-gray-500 font-normal">(PNG/JPG, max 5MB, disarankan 1754x1240px)</span>
+                </label>
+                <input type="file" name="background_image" accept="image/png,image/jpg,image/jpeg" required
+                    @change="backgroundPreview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null"
+                    class="w-full border border-gray-300 rounded-lg p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                <template x-if="backgroundPreview">
+                    <div class="mt-2 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg">
+                        <img :src="backgroundPreview" alt="Preview Background" class="w-full max-h-48 object-contain rounded">
+                    </div>
+                </template>
+            </div>
+
             <div class="flex gap-3 pt-2">
                 <button type="button" x-data @click="$dispatch('close-modal', 'create-certificate-setting')"
                     class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm text-center cursor-pointer">
@@ -204,9 +237,9 @@
     </x-modal>
 
     @foreach($settings as $setting)
-        <x-modal name="edit-certificate-setting-{{ $setting->id }}" title="Edit Tanda Tangan Sertifikat">
+        <x-modal name="edit-certificate-setting-{{ $setting->id }}" title="Edit Pengaturan Sertifikat" maxWidth="sm:max-w-md">
             <form action="{{ route('admin-pusat.certificates.update', $setting->id) }}" method="POST" enctype="multipart/form-data"
-                x-data="{ signaturePreview: null }" class="space-y-4">
+                x-data="{ signaturePreview: null, backgroundPreview: null }" class="space-y-4">
                 @csrf
                 @method('PUT')
                 <div>
@@ -250,6 +283,27 @@
                     </template>
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Template Background Sertifikat
+                        <span class="text-xs text-gray-500 font-normal">(kosongkan jika tidak ingin mengubah)</span>
+                    </label>
+                    @if($setting->background_image)
+                        <div class="mb-2 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg">
+                            <p class="text-[10px] text-gray-400 mb-1">Saat ini:</p>
+                            <img src="{{ Storage::url($setting->background_image) }}" alt="Template Background" class="w-full max-h-32 object-contain rounded">
+                        </div>
+                    @endif
+                    <input type="file" name="background_image" accept="image/png,image/jpg,image/jpeg"
+                        @change="backgroundPreview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null"
+                        class="w-full border border-gray-300 rounded-lg p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <template x-if="backgroundPreview">
+                        <div class="mt-2 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg">
+                            <img :src="backgroundPreview" alt="Preview Background" class="w-full max-h-32 object-contain rounded">
+                        </div>
+                    </template>
+                </div>
+
                 <div class="flex gap-3 pt-2">
                     <button type="button" x-data @click="$dispatch('close-modal', 'edit-certificate-setting-{{ $setting->id }}')"
                         class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm text-center cursor-pointer">
@@ -263,4 +317,35 @@
             </form>
         </x-modal>
     @endforeach
+
+
+    @foreach($settings as $setting)
+        <x-modal name="preview-certificate-{{ $setting->id }}" title="Preview Sertifikat" maxWidth="sm:max-w-4xl">
+            <div class="flex flex-col items-center">
+
+                <div class="overflow-hidden rounded shadow-sm border border-gray-200" style="width: 786px; height: 556px;">
+                    <div style="transform: scale(0.7); transform-origin: top left; width: 1122px; height: 793px;">
+                        @include('lms::admin-pusat.certificates.certificate-template', [
+                            'nama_peserta' => 'Nama Peserta Contoh',
+                            'nama_kursus' => 'Perencanaan Tenaga Kerja Makro',
+                            'tanggal_selesai' => now()->translatedFormat('d F Y'),
+                            'nomor_sertifikat' => 'CERT-' . date('Y') . '-PTK-001',
+                            'background_url' => $setting->background_image ? Storage::url($setting->background_image) : null,
+                            'signature_url' => $setting->signature_image ? Storage::url($setting->signature_image) : null,
+                            'signer_name' => $setting->signer_name,
+                            'signer_title' => $setting->signer_title,
+                        ])
+                    </div>
+                </div>
+
+                <div class="flex justify-end w-full mt-4 -mb-5">
+                    <button type="button" x-data @click="$dispatch('close-modal', 'preview-certificate-{{ $setting->id }}')"
+                        class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-200 transition cursor-pointer">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </x-modal>
+    @endforeach
+
 </x-dashboard::layouts.dashboard>
