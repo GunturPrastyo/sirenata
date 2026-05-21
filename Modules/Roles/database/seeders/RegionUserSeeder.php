@@ -33,7 +33,7 @@ class RegionUserSeeder extends Seeder
             
 
             $this->createUser(
-                "admin.{$slugProv}@example.com",
+                "admin.{$slugProv}@gmail.com",
                 "Admin Prov {$province->name}",
                 "Dinas Tenaga Kerja {$province->name}",
                 InstitutionType::PROVINSI,
@@ -48,7 +48,7 @@ class RegionUserSeeder extends Seeder
             if (in_array($province->code, $focusProvinceCodes)) {
 
                 $this->createUser(
-                    "user.{$slugProv}@example.com",
+                    "user.{$slugProv}@gmail.com",
                     "User Prov {$province->name}",
                     "Instansi Prov {$province->name}",
                     InstitutionType::PROVINSI,
@@ -66,7 +66,7 @@ class RegionUserSeeder extends Seeder
                     $slugRegency = Str::slug($regency->name);
 
                     $this->createUser(
-                        "admin.{$slugRegency}@example.com",
+                        "admin.{$slugRegency}@gmail.com",
                         "Admin {$regency->name}",
                         "Dinas Tenaga Kerja {$regency->name}",
                         InstitutionType::KAB_KOTA,
@@ -78,7 +78,7 @@ class RegionUserSeeder extends Seeder
                     );
 
                     $this->createUser(
-                        "user.{$slugRegency}@example.com",
+                        "user.{$slugRegency}@gmail.com",
                         "User {$regency->name}",
                         "Instansi {$regency->name}",
                         InstitutionType::KAB_KOTA,

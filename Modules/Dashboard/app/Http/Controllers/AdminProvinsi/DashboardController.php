@@ -79,8 +79,7 @@ class DashboardController extends Controller
         // Masa Aktif RTK per Kab/Kota (active RTK per regency with remaining years)
         $availableRtkYears = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
-            ->where('is_active', true)
-            ->where('status_verification', 'approved')
+            ->berlaku()
             ->pluck('start_date')
             ->unique()
             ->sortDesc()
@@ -91,8 +90,7 @@ class DashboardController extends Controller
         
         $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
-            ->where('is_active', true)
-            ->where('status_verification', 'approved');
+            ->berlaku();
             
         if ($selectedRtkYear !== 'all') {
             $queryRtk->where('end_date', '>=', (int) $selectedRtkYear);
@@ -116,8 +114,7 @@ class DashboardController extends Controller
         // Data for second chart: RTK filtered by end_date
         $availableRtkEndYears = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
-            ->where('is_active', true)
-            ->where('status_verification', 'approved')
+            ->berlaku()
             ->pluck('end_date')
             ->unique()
             ->sortDesc()
@@ -128,8 +125,7 @@ class DashboardController extends Controller
         
         $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
-            ->where('is_active', true)
-            ->where('status_verification', 'approved');
+            ->berlaku();
             
         if ($selectedRtkEndYear !== 'all') {
             $queryRtkEnd->where('end_date', (int) $selectedRtkEndYear);

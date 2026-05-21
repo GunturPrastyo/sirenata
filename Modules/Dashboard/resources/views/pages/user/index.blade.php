@@ -475,10 +475,6 @@
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             />
                         </div>
-
-                        <!-- Hidden input to concatenate values -->
-                        {{-- <input type="hidden" name="instansi" id="finalInstansiValue"> --}}
-
                         <!-- Submit Button -->
                         <button
                             type="submit"
@@ -513,32 +509,17 @@
             // --- Instansi Form Logic ---
             @if (!$profile || empty($profile->instansi))
                 $(document).ready(function() {
-                    // Data Kementerian/Lembaga
-                    const kementerianList = [
-                        "Kementerian Koordinator Bidang Infrastruktur dan Pengembangan Wilayah",
-                        "Kementerian Dalam Negeri", "Kementerian Luar Negeri", "Kementerian Pertahanan",
-                        "Kementerian Pekerjaan Umum", "Kementerian Perumahan dan Kawasan Permukiman",
-                        "Kementerian Perhubungan", "Kementerian Kelautan dan Perikanan",
-                        "Kementerian Perlindungan Pekerja Migran Indonesia",
-                        "Kementerian Imigrasi dan Pemasyarakatan",
-                        "Kementerian Keuangan", "Kementerian Pertanian", "Kementerian Koperasi",
-                        "Kementerian Usaha Kecil dan Menengah", "Kementerian Perdagangan",
-                        "Kementerian Lingkungan Hidup",
-                        "Kementerian Kehutanan", "Kementerian Agraria dan Tata Ruang/ Kepala Badan Pertahanan",
-                        "Kementerian Pariwisata", "Kementerian Ekonomi Kreatif/Kepala Badan Ekonomi Kreatif",
-                        "Kementerian Ketegakerjaan", "Kementerian Desa dan Pembangunan Daerah Tertingal",
-                        "Kementarian Komunikasi dan Digitalisasi", "Kementerian Energi dan Sumber Daya Tertinggal",
-                        "Kementerian Pendidikan Dasar dan Menengah",
-                        "Kementerian Pendidikan Tinggi, Sains dan Teknologi",
-                        "Kementerian Agama", "Kementerian Sosial", "Tentara Nasional Indonesia",
-                        "Kepolisian Republik Indonesia", "Badan Informasi Geospasial", "Badan Kemanan Laut",
-                        "Badan Karantina Indonesia", "Badan Narkotika Nasional", "Badan Pusat Statistik",
-                        "Badan Nasional Penanggulangan Bencana", "Badan Gizi Nasional", "Badan Pangan Nasional"
-                    ];
-
-                    // Populate Kementerian
-                    kementerianList.forEach(k => {
-                        $('#kementerian').append(new Option(k, k));
+                    // Fetch Kementerian/Lembaga via API
+                    $.ajax({
+                        url: '{{ route("api.masterdata.institutions.index") }}?type=pusat',
+                        type: 'GET',
+                        success: function(response) {
+                            if(response.success) {
+                                response.data.forEach(k => {
+                                    $('#kementerian').append(new Option(k.name, k.name));
+                                });
+                            }
+                        }
                     });
 
                     // Initialize Select2
@@ -612,21 +593,19 @@
                     // Function to populate Instansi dropdown
                     function populateInstansi() {
                         $('#instansi').empty().append(new Option('Pilih Instansi', ''));
-                        const dummyInstansi = [
-                            'Dinas Pendidikan',
-                            'Dinas Kesehatan',
-                            'Dinas Pekerjaan Umum',
-                            'Dinas Perhubungan',
-                            'Dinas Sosial',
-                            'Badan Kepegawaian Daerah',
-                            'Dinas Tenaga Kerja',
-                            'Dinas Perindustrian dan Perdagangan'
-                        ];
-                        dummyInstansi.forEach(i => {
-                            $('#instansi').append(new Option(i, i));
+                        $.ajax({
+                            url: '{{ route("api.masterdata.institutions.index") }}?type=daerah',
+                            type: 'GET',
+                            success: function(response) {
+                                if(response.success) {
+                                    response.data.forEach(i => {
+                                        $('#instansi').append(new Option(i.name, i.name));
+                                    });
+                                    // Add "Lainnya" option
+                                    $('#instansi').append(new Option('Lainnya (Instansi tidak ada dalam daftar)', 'lainnya'));
+                                }
+                            }
                         });
-                        // Add "Lainnya" option
-                        $('#instansi').append(new Option('Lainnya (Instansi tidak ada dalam daftar)', 'lainnya'));
                     }
 
                     // Handle Kab/Kota Selection
@@ -679,8 +658,6 @@
                                 alert('Pilih Kementerian/Lembaga!');
                                 return;
                             }
-                            // Pastikan select tidak disabled
-                            // $('#kementerian').prop('disabled', false);
                             $('#finalInstansi').val(kemVal);
                         }
 

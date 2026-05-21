@@ -122,49 +122,16 @@ class RolesDatabaseSeeder extends Seeder
         ]);
         $adminPusatUser->assignRole('admin-pusat');
 
-        // Admin Province User
-        $adminProvinceUser = \App\Models\User::firstOrCreate([
-            'email' => 'adminprovinsi@gmail.com',
-        ], [
-            'name' => 'Admin Provinsi',
-            'password' => bcrypt('password'),
-        ]);
-        $adminProvinceUser->assignRole('admin-province');
 
-        // Admin Kab Kota User
-        $adminKabKotaUser = \App\Models\User::firstOrCreate([
-            'email' => 'adminkabkota@gmail.com',
-        ], [
-            'name' => 'Admin Kab Kota',
-            'password' => bcrypt('password'),
-        ]);
-        $adminKabKotaUser->assignRole('admin-kab-kota');
-
-        // User dengan direct permission (tanpa role)
-        $normalUser = \App\Models\User::firstOrCreate([
-            'email' => 'user@gmail.com',
-        ], [
-            'name' => 'Normal User',
-            'password' => bcrypt('password'),
-        ]);
-        $normalUser->assignRole('user');
-        $normalUser->givePermissionTo('post-create');
-        // This user will purposely NOT have an instansi to test the modal
-        \Modules\User\Models\UserProfile::firstOrCreate([
-            'user_id' => $normalUser->id
-        ], [
-            'full_name' => 'Normal User (No Instansi)',
-            'gender' => 'male',
-        ]);
 
         // Create Dummy Users for testing — 1 per location level
         $dummyUsers = [
-            ['email' => 'user.pusat@example.com', 'name' => 'User Pusat', 'instansi' => 'Kementerian Pusat', 'gender' => 'male'],
-            ['email' => 'user.jabar@example.com', 'name' => 'User Prov Jawa Barat', 'instansi' => 'Dinas Tenaga Kerja Jabar', 'gender' => 'female'],
-            ['email' => 'user.sumut@example.com', 'name' => 'User Prov Sumatera Utara', 'instansi' => 'Dinas Tenaga Kerja Sumut', 'gender' => 'male'],
-            ['email' => 'user.kotabandung@example.com', 'name' => 'User Kota Bandung', 'instansi' => 'BLK Kota Bandung', 'gender' => 'female'],
-            ['email' => 'user.kabbandung@example.com', 'name' => 'User Kab Bandung', 'instansi' => 'BLK Kab Bandung', 'gender' => 'male'],
-            ['email' => 'user.kotamedan@example.com', 'name' => 'User Kota Medan', 'instansi' => 'BLK Kota Medan', 'gender' => 'female'],
+            ['email' => 'user.pusat@gmail.com', 'name' => 'User Pusat', 'instansi' => 'Kementerian Pusat', 'gender' => 'male'],
+            ['email' => 'user.jabar@gmail.com', 'name' => 'User Prov Jawa Barat', 'instansi' => 'Dinas Tenaga Kerja Jabar', 'gender' => 'female'],
+            ['email' => 'user.sumut@gmail.com', 'name' => 'User Prov Sumatera Utara', 'instansi' => 'Dinas Tenaga Kerja Sumut', 'gender' => 'male'],
+            ['email' => 'user.kotabandung@gmail.com', 'name' => 'User Kota Bandung', 'instansi' => 'BLK Kota Bandung', 'gender' => 'female'],
+            ['email' => 'user.kabbandung@gmail.com', 'name' => 'User Kab Bandung', 'instansi' => 'BLK Kab Bandung', 'gender' => 'male'],
+            ['email' => 'user.kotamedan@gmail.com', 'name' => 'User Kota Medan', 'instansi' => 'BLK Kota Medan', 'gender' => 'female'],
         ];
 
         foreach ($dummyUsers as $data) {

@@ -8,7 +8,6 @@ const paths = [
 ];
 
 export default defineConfig({
-    
     plugins: [
         laravel({
             input: paths,

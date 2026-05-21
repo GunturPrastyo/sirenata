@@ -33,11 +33,11 @@ class UserScopeSeeder extends Seeder
 
 
         $scopes = [
-            'user.jabar@example.com' => ['province_code' => '32', 'regency_code' => null],
-            'user.sumut@example.com' => ['province_code' => '12', 'regency_code' => null],
-            'user.kotabandung@example.com' => ['province_code' => '32', 'regency_code' => '32.73'],
-            'user.kabbandung@example.com' => ['province_code' => '32', 'regency_code' => '32.04'],
-            'user.kotamedan@example.com' => ['province_code' => '12', 'regency_code' => '12.71'],
+            'user.jabar@gmail.com' => ['province_code' => '32', 'regency_code' => null],
+            'user.sumut@gmail.com' => ['province_code' => '12', 'regency_code' => null],
+            'user.kotabandung@gmail.com' => ['province_code' => '32', 'regency_code' => '32.73'],
+            'user.kabbandung@gmail.com' => ['province_code' => '32', 'regency_code' => '32.04'],
+            'user.kotamedan@gmail.com' => ['province_code' => '12', 'regency_code' => '12.71'],
         ];
 
         foreach ($scopes as $email => $scope) {

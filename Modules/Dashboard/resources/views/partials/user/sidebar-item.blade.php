@@ -47,36 +47,37 @@
     </a>
 </li>
 <li>
-    <button x-data="{ open: false }" @click="open = !open"
-        class="flex items-center justify-between w-full px-2 py-1.5 text-gray-500 rounded-lg hover:bg-purple-100 hover:text-indigo-600 transition-colors group">
-        <div class="flex items-center">
-            <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 4v16m8-8H4m8-4h.01M12 16h.01M16 12h.01M8 12h.01" />
-            </svg>
-            <span class="flex-1 ms-3 whitespace-nowrap">Perhitungan</span>
-        </div>
-        <svg class="w-3 h-3 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor"
-            viewBox="0 0 10 6">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+    <a href="{{ route('user.kalkulator.sandbox') }}" target="_blank"
+        class="flex items-center px-2 py-1.5 text-gray-500 rounded-lg hover:bg-purple-100 hover:text-indigo-600 transition-colors group">
+        <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 4v16m8-8H4m8-4h.01M12 16h.01M16 12h.01M8 12h.01" />
         </svg>
-    </button>
-    <ul x-show="open" class="py-2 space-y-2" x-cloak>
-        <li>
-            <a href="#"
-                class="flex items-center w-full px-2 py-1.5 ps-10 text-gray-500 rounded-lg hover:bg-purple-100 hover:text-indigo-600 transition-colors">
-                Kalkulator RTK
-            </a>
-        </li>
-        <li>
-            <a href="#"
-                class="flex items-center w-full px-2 py-1.5 ps-10 text-gray-500 rounded-lg hover:bg-purple-100 hover:text-indigo-600 transition-colors">
-                Draft RTK
-            </a>
-        </li>
-    </ul>
+        <span class="flex-1 ms-3 whitespace-nowrap">Kalkulator RTK</span>
+        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+    </a>
 </li>
+@php
+    $userProjects = \Modules\Project\Models\Project::where('team_leader', auth()->id())
+        ->orWhereJsonContains('team_members', auth()->id())
+        ->exists();
+@endphp
+@if($userProjects)
+<li>
+    <a href="{{ route('user.tim-kerja.index') }}"
+        class="flex items-center px-2 py-1.5 {{ request()->routeIs('user.tim-kerja.*') ? 'text-indigo-600 bg-purple-100' : 'text-gray-500 hover:bg-purple-100 hover:text-indigo-600' }} rounded-lg group transition-colors">
+        <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('user.tim-kerja.*') ? 'text-indigo-600' : 'group-hover:text-indigo-600' }}" aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+        </svg>
+        <span class="flex-1 ms-3 whitespace-nowrap">Tim Kerja</span>
+    </a>
+</li>
+@endif
 <li>
     <a href="{{ route('user.help') }}"
         class="flex items-center px-2 py-1.5 {{ request()->routeIs('user.help') ? 'text-indigo-600 bg-purple-100' : 'text-gray-500 hover:bg-purple-100 hover:text-indigo-600' }} rounded-lg group transition-colors">

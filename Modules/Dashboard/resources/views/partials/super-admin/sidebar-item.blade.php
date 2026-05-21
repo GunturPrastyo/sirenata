@@ -63,16 +63,42 @@
     </ul>
 </li>
 
-<li>
-    <a href="{{ route('admin-pusat.help') }}" class="flex items-center px-2 py-1.5 rounded-md transition
-        {{ request()->routeIs('admin-pusat.help')
+<li
+    x-data="{ open: {{ request()->routeIs('super-admin.lembaga.*', 'super-admin.instansi.*') ? 'true' : 'false' }} }">
+    <button @click="open = !open" class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
+        {{ request()->routeIs('super-admin.lembaga.*', 'super-admin.instansi.*')
     ? 'text-indigo-600 bg-purple-100'
     : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                d="M4 7h16M4 12h16m-7 5h7" />
         </svg>
-        <span class="ms-3">Bantuan / FAQ</span>
-    </a>
+
+        <span class="flex-1 ms-3 text-left">Master Data</span>
+
+        <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+        </svg>
+    </button>
+
+    <ul x-show="open" x-collapse class="mt-1 space-y-1">
+        <li>
+            <a href="{{ route('super-admin.lembaga.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-sm
+                {{ request()->routeIs('super-admin.lembaga.*')
+    ? 'text-indigo-600 bg-purple-100'
+    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                Lembaga
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('super-admin.instansi.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-sm
+                {{ request()->routeIs('super-admin.instansi.*')
+    ? 'text-indigo-600 bg-purple-100'
+    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+                Instansi
+            </a>
+        </li>
+    </ul>
 </li>
