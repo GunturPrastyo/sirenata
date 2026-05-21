@@ -52,6 +52,66 @@ function _renderBimtekPanel(charDef) {
     return hdr;
   }
 
+  // Helper: tombol rumus dengan popover ber-KaTeX
+  function _makeFormulaBtn(btnLabel, popTitle, latexStr, noteHtml) {
+    const btn = document.createElement('button');
+    btn.innerHTML = '∑ Rumus';
+    btn.title = btnLabel;
+    btn.style.cssText = 'font-size:11px;padding:2px 8px;border:1px solid #6ee7b7;border-radius:4px;background:#ecfdf5;color:#065f46;cursor:pointer;white-space:nowrap;flex-shrink:0;font-weight:600;';
+
+    let pop = null;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      if (pop) { pop.remove(); pop = null; return; }
+
+      pop = document.createElement('div');
+      pop.style.cssText = [
+        'position:absolute','z-index:9999','background:#f0fdf4',
+        'border:2px solid #6ee7b7','border-radius:12px',
+        'padding:14px 18px 12px','box-shadow:0 6px 20px rgba(0,0,0,0.18)',
+        'min-width:240px','pointer-events:auto','text-align:center'
+      ].join(';');
+
+      const titleEl = document.createElement('div');
+      titleEl.textContent = popTitle;
+      titleEl.style.cssText = 'font-size:11px;font-weight:700;color:#065f46;margin-bottom:10px;';
+      pop.appendChild(titleEl);
+
+      const katexEl = document.createElement('div');
+      katexEl.style.cssText = 'font-size:1.35em;margin:4px 0 10px;color:#064e3b;';
+      if (window.katex) {
+        katexEl.innerHTML = katex.renderToString(latexStr, { throwOnError: false, displayMode: true });
+      } else {
+        katexEl.textContent = latexStr;
+      }
+      pop.appendChild(katexEl);
+
+      if (noteHtml) {
+        const noteEl = document.createElement('div');
+        noteEl.innerHTML = noteHtml;
+        noteEl.style.cssText = 'font-size:10px;color:#047857;border-top:1px solid #bbf7d0;padding-top:7px;margin-top:2px;';
+        pop.appendChild(noteEl);
+      }
+
+      const close = document.createElement('span');
+      close.textContent = '✕';
+      close.style.cssText = 'position:absolute;top:7px;right:11px;cursor:pointer;color:#6ee7b7;font-size:13px;font-weight:700;line-height:1;';
+      close.onclick = () => { pop.remove(); pop = null; };
+      pop.appendChild(close);
+
+      document.body.appendChild(pop);
+      const rect = btn.getBoundingClientRect();
+      pop.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
+      pop.style.left = (rect.left  + window.scrollX)      + 'px';
+      const dismiss = (ev) => { if (!pop.contains(ev.target) && ev.target !== btn) { pop.remove(); pop = null; document.removeEventListener('click', dismiss); } };
+      setTimeout(() => document.addEventListener('click', dismiss), 0);
+    };
+    return btn;
+  }
+
+  const _formulaR     = String.raw`r = \left[\left(\frac{P_t}{P_0}\right)^{\!\frac{1}{n}} - 1\right] \times 100\%`;
+  const _formulaRNote = 'P<sub>t</sub> = nilai akhir &nbsp;|&nbsp; P<sub>0</sub> = nilai awal &nbsp;|&nbsp; n = rentang tahun';
+
   // 1. Table Input Data
   const blk1 = document.createElement('div');
   blk1.appendChild(makeFlexHeader(`Input Data ${isPUK ? 'Penduduk Usia Kerja' : 'TPAK'}`, charDef.histCode));
@@ -354,9 +414,12 @@ function _renderBimtekPanel(charDef) {
     _showToast(`⚡ Auto Adjustment selesai: ${yearsWithTarget.length} tahun, ${rowsAdj} baris disesuaikan.${failMsg}`);
   };
 
-  // Grup tombol kanan hdr2: [⎘ Copy] [📋 Paste] [⚡ Auto Adj] [↺ Reset]
+  // Grup tombol kanan hdr2: [∑ Rumus r] [⎘ Copy] [📋 Paste] [⚡ Auto Adj] [↺ Reset]
+  const _formulaPq     = String.raw`P_q = P_t \left(1 + r'\right)^{m}`;
+  const _formulaPqNote = 'P<sub>t</sub> = nilai dasar &nbsp;|&nbsp; r\' = laju proyeksi &nbsp;|&nbsp; m = selisih tahun';
   const _hdr2BtnGroup = document.createElement('div');
   _hdr2BtnGroup.style.cssText = 'display:flex;gap:4px;align-items:center;flex-shrink:0;';
+  _hdr2BtnGroup.appendChild(_makeFormulaBtn('Rumus Laju Pertumbuhan r', 'Hitung Laju Pertumbuhan', _formulaR, _formulaRNote));
   _hdr2BtnGroup.appendChild(_copyBtn2);
   _hdr2BtnGroup.appendChild(_pasteBtn2);
   _hdr2BtnGroup.appendChild(_autoAdjBtn);
@@ -368,6 +431,8 @@ function _renderBimtekPanel(charDef) {
   // 3. Table Proyeksi & Target
   const blk3 = document.createElement('div');
   const hdr3 = makeFlexHeader(`Proyeksi ${isPUK ? 'Penduduk Usia Kerja' : 'TPAK'} (${P.nama})`, charDef.projCode);
+  hdr3.style.justifyContent = 'space-between';
+  hdr3.style.alignItems = 'flex-end';
 
   // Tombol toggle 5 desimal
   const _t3DecBtn = document.createElement('button');
@@ -413,6 +478,7 @@ function _renderBimtekPanel(charDef) {
 
   const _hdr3BtnGroup = document.createElement('div');
   _hdr3BtnGroup.style.cssText = 'display:flex;gap:4px;align-items:center;flex-shrink:0;';
+  _hdr3BtnGroup.appendChild(_makeFormulaBtn('Rumus Proyeksi Pq', 'Hitung Proyeksi', _formulaPq, _formulaPqNote));
   _hdr3BtnGroup.appendChild(_copyBtn3);
   _hdr3BtnGroup.appendChild(_t3DecBtn);
   hdr3.appendChild(_hdr3BtnGroup);
@@ -452,11 +518,11 @@ function _renderBimtekPanel(charDef) {
     if (hidden) {
       requestAnimationFrame(() => {
         syncSplitViewHeights(pcWrap);
-        blk5.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
+        pcWrap.scrollTo({ left: pcWrap.scrollWidth, behavior: 'smooth' });
       });
     } else {
       requestAnimationFrame(() => {
-        blk4.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        pcWrap.scrollTo({ left: blk4.offsetLeft - pcWrap.offsetLeft, behavior: 'smooth' });
       });
     }
   };

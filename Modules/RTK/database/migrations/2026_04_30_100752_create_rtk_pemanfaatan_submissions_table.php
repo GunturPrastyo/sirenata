@@ -24,7 +24,6 @@ return new class extends Migration
             $table->text('catatan_verifikasi')->nullable();
             $table->json('field_verifications')->nullable();
             $table->timestamps();
-            $table->unique(['user_id', 'period_id']);
         });
     }
 

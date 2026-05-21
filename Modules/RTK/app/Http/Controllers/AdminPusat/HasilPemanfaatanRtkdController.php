@@ -10,9 +10,25 @@ use Modules\RTK\Models\RencanaTenagaKerja;
 use Illuminate\Support\Facades\Storage;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use App\Models\User;
+use Maatwebsite\Excel\Facades\Excel;
+use Modules\RTK\Exports\HasilPemanfaatanRtkdExport;
 
 class HasilPemanfaatanRtkdController extends Controller
 {
+    public function export(Request $request)
+    {
+        $filename = 'Hasil Pemanfaatan RTKD' . '-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(
+            new HasilPemanfaatanRtkdExport(
+                periodId: $request->input('period_id'),
+                q1PunyaRtkd: $request->input('q1_punya_rtkd'),
+                q2JadiAcuan: $request->input('q2_jadi_acuan'),
+                search: $request->input('search'),
+            ),
+            $filename
+        );
+    }
+
     public function index(Request $request)
     {
         $periods = RtkSurveyPeriod::orderBy('tahun', 'desc')->get();
@@ -23,7 +39,7 @@ class HasilPemanfaatanRtkdController extends Controller
             $selectedPeriodId = $activePeriod ? $activePeriod->id : ($periods->first() ? $periods->first()->id : null);
         }
 
-        $query = RtkPemanfaatanSubmission::with(['user', 'period']);
+        $query = RtkPemanfaatanSubmission::with(['user.scopeArea.province', 'period']);
 
         if ($selectedPeriodId) {
             $query->where('period_id', $selectedPeriodId);
@@ -44,20 +60,39 @@ class HasilPemanfaatanRtkdController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhereHas('scopeArea.province', function ($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
         $submissions = $query->latest()->paginate(20)->withQueryString();
 
-        return view('rtk::adminPusat.hasil-pemanfaatan.index', compact('submissions', 'periods', 'selectedPeriodId'));
+        $overriddenUserIds = [];
+        if ($selectedPeriodId) {
+            $overriddenUserIds = RtkPemanfaatanSubmission::where('period_id', $selectedPeriodId)
+                ->whereColumn('created_by', '!=', 'user_id')
+                ->pluck('user_id')
+                ->toArray();
+        }
+
+        return view('rtk::adminPusat.hasil-pemanfaatan.index', compact('submissions', 'periods', 'selectedPeriodId', 'overriddenUserIds'));
     }
 
     public function show($id)
     {
         $submission = RtkPemanfaatanSubmission::with(['user', 'period', 'rtkDocument'])->findOrFail($id);
         
-        return view('rtk::adminPusat.hasil-pemanfaatan.show', compact('submission'));
+        $isOverridden = false;
+        if ($submission->created_by === $submission->user_id) {
+            $isOverridden = RtkPemanfaatanSubmission::where('user_id', $submission->user_id)
+                ->where('period_id', $submission->period_id)
+                ->where('created_by', '!=', $submission->user_id)
+                ->exists();
+        }
+        
+        return view('rtk::adminPusat.hasil-pemanfaatan.show', compact('submission', 'isOverridden'));
     }
 
     public function verify(Request $request, $id)
@@ -99,13 +134,13 @@ class HasilPemanfaatanRtkdController extends Controller
     public function editOnBehalf($id)
     {
         $submission = RtkPemanfaatanSubmission::with(['user', 'period'])->findOrFail($id);
-        
         $targetUser = $submission->user;
+        
         $latestRtk = null;
         if ($targetUser->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', $targetUser->scopeArea->province_code)
                 ->where('type', \Modules\RTK\Enums\TypeRtk::PROVINSI)
-                ->where('is_active', true)
+                ->berlaku()
                 ->latest()
                 ->first();
         }
@@ -120,21 +155,17 @@ class HasilPemanfaatanRtkdController extends Controller
 
     public function storeOnBehalf(Request $request, $id)
     {
-        $oldSubmission = RtkPemanfaatanSubmission::findOrFail($id);
-        $targetUser = User::findOrFail($oldSubmission->user_id);
+        $data = RtkPemanfaatanSubmission::findOrFail($id);
+        $targetUser = User::findOrFail($data->user_id);
         
         $latestRtk = null;
         if ($targetUser->hasCompleteScope()) {
             $latestRtk = RencanaTenagaKerja::where('province_code', $targetUser->scopeArea->province_code)
                 ->where('type', \Modules\RTK\Enums\TypeRtk::PROVINSI)
-                ->where('is_active', true)
+                ->berlaku()
                 ->latest()
                 ->first();
         }
-
-        $data = new RtkPemanfaatanSubmission();
-        $data->user_id = $targetUser->id;
-        $data->period_id = $oldSubmission->period_id;
 
         $data->created_by = auth()->id();
         $this->processFormData($request, $data, $latestRtk);

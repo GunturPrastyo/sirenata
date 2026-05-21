@@ -93,6 +93,7 @@ function _ensureCharPanelRendered(panel) {
   if (!renderer) return;
   try {
     panel.appendChild(renderer(ch));
+    if (typeof _injectScreenshotBtns === 'function') _injectScreenshotBtns(panel);
   } catch (err) {
     console.error('[IND_RENDERERS] Gagal render panel', indId, charId, err);
     const e = document.createElement('div');

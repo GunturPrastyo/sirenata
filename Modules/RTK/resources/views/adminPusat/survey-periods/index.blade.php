@@ -145,6 +145,16 @@
                                             </button>
                                         </li>
 
+                                        @if($period->submissions_count > 0)
+                                        <li>
+                                            <button type="button" x-data
+                                                @click="$dispatch('open-modal', 'copy-submissions-{{ $period->id }}')"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-teal-600 cursor-pointer">
+                                                Salin Data
+                                            </button>
+                                        </li>
+                                        @endif
+
                                         <li>
                                             <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
                                                 <x-modal-delete :id="'delete-period-' . $period->id"
@@ -297,5 +307,57 @@
                 </div>
             </form>
         </x-modal>
+    @endforeach
+
+    @foreach($periods as $period)
+        @if($period->submissions_count > 0)
+        <x-modal name="copy-submissions-{{ $period->id }}" title="Salin Data Terverifikasi">
+            <form action="{{ route('admin-pusat.survey-periods.copy-submissions', $period->id) }}" method="POST" class="space-y-4">
+                @csrf
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p class="text-sm text-blue-800">
+                        <span class="font-semibold">Sumber:</span> {{ $period->nama }} ({{ $period->tahun }})
+                    </p>
+                    <p class="text-sm text-blue-600 mt-1">
+                        {{ $period->submissions_count }} data terverifikasi akan disalin ke periode tujuan.
+                    </p>
+                </div>
+
+                <div>
+                    <label for="target-period-{{ $period->id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Periode Tujuan <span class="text-red-500">*</span>
+                    </label>
+                    <select name="target_period_id" id="target-period-{{ $period->id }}" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                        <option value="">-- Pilih Periode Tujuan --</option>
+                        @foreach($allPeriods as $targetPeriod)
+                            @if($targetPeriod->id !== $period->id)
+                                <option value="{{ $targetPeriod->id }}">
+                                    {{ $targetPeriod->nama }} ({{ $targetPeriod->tahun }}) — {{ $targetPeriod->status_label }}
+                                </option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <p class="text-xs text-amber-700">
+                        <strong>Catatan:</strong> Data yang sudah ada di periode tujuan akan dilewati (tidak ditimpa).
+                    </p>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" x-data @click="$dispatch('close-modal', 'copy-submissions-{{ $period->id }}')"
+                        class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm text-center cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="flex-1 bg-teal-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-teal-700 transition-colors text-sm cursor-pointer">
+                        Salin Data
+                    </button>
+                </div>
+            </form>
+        </x-modal>
+        @endif
     @endforeach
 </x-dashboard::layouts.dashboard>

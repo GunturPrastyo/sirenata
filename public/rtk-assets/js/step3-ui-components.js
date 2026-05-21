@@ -1230,12 +1230,107 @@ function makeBimtekTable5(t3Proj, t4DeltaData, isPercent = false) {
 /**
  * Blok tabel: judul biru (seperti PDF referensi) + sub-judul kecil + tabel
  */
+// ══════════════════════════════════════════════════════════════
+// INJECT SCREENSHOT BUTTONS — dipanggil setelah panel dirender
+// Menambah tombol 📸 ke semua blok tabel: bimtek split-view & tbl-block
+// ══════════════════════════════════════════════════════════════
+function _injectScreenshotBtns(containerEl) {
+  if (!containerEl) return;
+
+  // Bimtek blocks: setiap child langsung dari .split-view yang punya .tbl-block-h1
+  containerEl.querySelectorAll('.split-view > div').forEach(blk => {
+    if (blk.querySelector('.tbl-screenshot-btn')) return;
+    const hdr = blk.querySelector('.tbl-block-h1');
+    if (!hdr) return;
+    const titleSpan = hdr.querySelector('span');
+    const title = titleSpan ? titleSpan.textContent : hdr.textContent.trim();
+
+    const btn = document.createElement('button');
+    btn.className = 'tbl-screenshot-btn';
+    btn.title = 'Screenshot tabel — salin ke clipboard, lalu paste ke WhatsApp';
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+    btn.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;font-size:11px;padding:2px 8px;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280;cursor:pointer;white-space:nowrap;flex-shrink:0;font-weight:600;line-height:1;';
+    btn.onmouseenter = () => { btn.style.background='#f0fdf4'; btn.style.color='#16a34a'; btn.style.borderColor='#86efac'; };
+    btn.onmouseleave = () => { btn.style.background='#f9fafb'; btn.style.color='#6b7280'; btn.style.borderColor='#d1d5db'; };
+    btn.onclick = () => _captureBlockToClipboard(blk, title, btn);
+
+    // Sisipkan ke grup tombol yang sudah ada agar tidak merusak layout space-between
+    const existingGroup = Array.from(hdr.children).find(el => el.tagName === 'DIV' && !el.classList.contains('code-badge') && !el.classList.contains('tbl-block-h1'));
+    if (existingGroup) {
+      existingGroup.appendChild(btn);
+    } else {
+      const looseButtons = Array.from(hdr.children).filter(el => el.tagName === 'BUTTON');
+      if (looseButtons.length > 0) {
+        const group = document.createElement('div');
+        group.style.cssText = 'display:flex;gap:4px;align-items:center;flex-shrink:0;';
+        hdr.insertBefore(group, looseButtons[0]);
+        looseButtons.forEach(b => group.appendChild(b));
+        group.appendChild(btn);
+      } else {
+        hdr.appendChild(btn);
+      }
+    }
+  });
+
+  // tbl-block (dari makeBlock) — sudah punya tombol dari makeBlock(), tidak perlu inject lagi
+}
+
+// ── Screenshot helper — capture satu blok tabel ke clipboard ──
+async function _captureBlockToClipboard(blockEl, title, btn) {
+  btn.disabled = true;
+  btn.textContent = '⏳';
+  try {
+    const canvas = await html2canvas(blockEl, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      ignoreElements: el => el.classList && el.classList.contains('tbl-screenshot-btn')
+    });
+    canvas.toBlob(async blob => {
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      } catch {
+        // Fallback: unduh sebagai file jika clipboard diblokir
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'tabel-' + (title || 'rtk').replace(/\s+/g, '-').toLowerCase() + '.png';
+        a.click();
+        URL.revokeObjectURL(url);
+        _showToast('📥 Clipboard diblokir browser — gambar diunduh otomatis.');
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+    }, 'image/png');
+  } catch (err) {
+    _showToast('⚠️ Gagal capture: ' + err.message, true);
+    btn.disabled = false;
+    btn.textContent = '📸';
+  }
+}
+
 function makeBlock(title, subtitle, tblEl, className = '') {
   const block = document.createElement('div');
   block.className = 'tbl-block ' + className;
 
+  // Header row: judul di kiri, tombol screenshot di kanan
+  const hRow = document.createElement('div');
+  hRow.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:8px;';
+
   const h = document.createElement('div'); h.className = 'tbl-block-h1';
-  h.textContent = title; block.appendChild(h);
+  h.textContent = title; hRow.appendChild(h);
+
+  const btn = document.createElement('button');
+  btn.className = 'tbl-screenshot-btn';
+  btn.title = 'Screenshot tabel — salin ke clipboard lalu paste ke WhatsApp';
+  btn.innerHTML = '📷';
+  btn.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;font-size:11px;padding:2px 8px;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280;cursor:pointer;white-space:nowrap;flex-shrink:0;font-weight:600;line-height:1;';
+  btn.onmouseenter = () => { btn.style.background='#f0fdf4'; btn.style.color='#16a34a'; btn.style.borderColor='#86efac'; };
+  btn.onmouseleave = () => { btn.style.background='#f9fafb'; btn.style.color='#6b7280'; btn.style.borderColor='#d1d5db'; };
+  btn.onclick = () => _captureBlockToClipboard(block, title, btn);
+  hRow.appendChild(btn);
+
+  block.appendChild(hRow);
 
   if (subtitle) {
     const s = document.createElement('div'); s.className = 'tbl-block-sub';

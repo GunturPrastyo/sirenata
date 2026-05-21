@@ -5,10 +5,8 @@
                 <li class="inline-flex items-center">
                     <a href="{{ route('admin-pusat.dashboard') }}"
                         class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.99 9a.75.75 0 1 1-1.06 1.06l-1.06-1.06V20.25a1.75 1.75 0 0 1-1.75 1.75h-3a.75.75 0 0 1-.75-.75v-3.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v3.5a.75.75 0 0 1-.75.75h-3a1.75 1.75 0 0 1-1.75-1.75v-7.409l-1.06 1.06a.75.75 0 0 1-1.06-1.06l8.99-9Z"></path>
                         </svg>
                     </a>
                 </li>
@@ -27,52 +25,7 @@
 
         <x-flash-message class="mb-4" />
 
-        <form method="GET" action="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.index') }}" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    <div class="relative w-full sm:w-52">
-                        <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <select name="period_id" class="pl-9 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">Semua Periode</option>
-                            @foreach($periods as $period)
-                                <option value="{{ $period->id }}" {{ $selectedPeriodId == $period->id ? 'selected' : '' }}>
-                                    {{ $period->nama }} ({{ $period->tahun }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="relative w-full sm:w-48">
-                        <select name="q1_punya_rtkd" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">Semua Kepemilikan</option>
-                            <option value="ya" {{ request('q1_punya_rtkd') == 'ya' ? 'selected' : '' }}>Punya RTKD</option>
-                            <option value="tidak" {{ request('q1_punya_rtkd') == 'tidak' ? 'selected' : '' }}>Tidak Punya</option>
-                        </select>
-                    </div>
-                    <div class="relative w-full sm:w-48">
-                        <select name="q2_jadi_acuan" class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">Semua Status Acuan</option>
-                            <option value="ya" {{ request('q2_jadi_acuan') == 'ya' ? 'selected' : '' }}>Jadi Acuan</option>
-                            <option value="tidak" {{ request('q2_jadi_acuan') == 'tidak' ? 'selected' : '' }}>Belum Acuan</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex w-full lg:w-96 gap-2">
-                    <div class="relative flex-1">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Provinsi..."
-                            class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <button type="submit" class="inline-flex items-center gap-2 px-4 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
-                        <i class="fas fa-search text-xs"></i><span class="hidden sm:inline">Search</span>
-                    </button>
-                    <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.index') }}" class="inline-flex items-center gap-2 px-4 rounded-md border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition">
-                        <i class="fas fa-rotate-left text-xs"></i><span class="hidden sm:inline">Reset</span>
-                    </a>
-                </div>
-            </div>
-        </form>
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" x-data="{ showFilter: {{ (request('search') || request('period_id') || request('q1_punya_rtkd') || request('q2_jadi_acuan')) ? 'true' : 'false' }} }">
             <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-base font-semibold text-slate-800">Daftar Hasil Kuesioner</h2>
@@ -80,7 +33,88 @@
                         Total: <span class="font-medium text-slate-700">{{ $submissions->total() }}</span> Entri
                     </p>
                 </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="showFilter = !showFilter"
+                        class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-slate-700 bg-white text-sm font-medium rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
+                        :class="showFilter ? 'bg-slate-100 border-slate-400 font-semibold' : ''">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                        </svg>
+                        Filter
+                    </button>
+                    <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.export') }}?{{ http_build_query(request()->only(['period_id', 'q1_punya_rtkd', 'q2_jadi_acuan', 'search'])) }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                        title="Ekspor Data">
+                        <i class="fas fa-download text-xs"></i>
+                        <span class="hidden sm:inline">Ekspor</span>
+                    </a>
+                </div>
             </div>
+
+            <!-- Search Bar inside Card -->
+            <form method="GET" action="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.index') }}" class="p-5 border-b border-slate-200 bg-slate-50/50" x-show="showFilter" x-transition @if(!(request('search') || request('period_id') || request('q1_punya_rtkd') || request('q2_jadi_acuan'))) style="display: none;" @endif>
+                <div class="flex flex-col sm:flex-row flex-wrap gap-4 items-end">
+                    <!-- Periode -->
+                    <div class="w-full sm:w-48">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">
+                            Filter Periode
+                        </label>
+                        <div class="relative">
+                            <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <select name="period_id" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">Semua Periode</option>
+                                @foreach($periods as $period)
+                                    <option value="{{ $period->id }}" {{ $selectedPeriodId == $period->id ? 'selected' : '' }}>
+                                        {{ $period->nama }} ({{ $period->tahun }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Kepemilikan -->
+                    <div class="w-full sm:w-44">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">
+                            Kepemilikan RTKD
+                        </label>
+                        <select name="q1_punya_rtkd" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua Kepemilikan</option>
+                            <option value="ya" {{ request('q1_punya_rtkd') == 'ya' ? 'selected' : '' }}>Punya RTKD</option>
+                            <option value="tidak" {{ request('q1_punya_rtkd') == 'tidak' ? 'selected' : '' }}>Tidak Punya</option>
+                        </select>
+                    </div>
+                    <!-- Status Acuan -->
+                    <div class="w-full sm:w-44">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">
+                            Status Acuan
+                        </label>
+                        <select name="q2_jadi_acuan" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua Status Acuan</option>
+                            <option value="ya" {{ request('q2_jadi_acuan') == 'ya' ? 'selected' : '' }}>Jadi Acuan</option>
+                            <option value="tidak" {{ request('q2_jadi_acuan') == 'tidak' ? 'selected' : '' }}>Belum Acuan</option>
+                        </select>
+                    </div>
+                    <!-- Pencarian -->
+                    <div class="flex-1 min-w-[240px] w-full">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">
+                            Pencarian
+                        </label>
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Provinsi..."
+                                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                    <!-- Buttons -->
+                    <div class="flex gap-2 w-full sm:w-auto justify-end">
+                        <button type="submit" title="Cari" class="w-[42px] h-[42px] inline-flex justify-center items-center rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.index') }}" title="Reset" class="w-[42px] h-[42px] inline-flex justify-center items-center rounded-lg border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition">
+                            <i class="fas fa-rotate-left"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -105,7 +139,7 @@
                                     {{ $key + $submissions->firstItem() }}
                                 </td>
                                 <td class="px-4 py-3 font-medium text-slate-800">
-                                    {{ $sub->user->name ?? 'Unknown' }}
+                                    {{ $sub->user->scopeArea?->province?->name ?? $sub->user->name ?? 'Unknown' }}
                                 </td>
                                 <td class="px-4 py-3 text-slate-600">
                                     {{ $sub->created_at->format('d M Y H:i') }}
@@ -170,7 +204,10 @@
                                     @endif
                                 </td>
                                 <td class="px-4 md:px-6 py-3 text-center">
-                                    @if($sub->status_verifikasi === 'pending')
+                                    @php
+                                        $isOverridden = in_array($sub->user_id, $overriddenUserIds ?? []) && $sub->created_by === $sub->user_id;
+                                    @endphp
+                                    @if($sub->status_verifikasi === 'pending' && !$isOverridden)
                                         <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.show', $sub->id) }}"
                                             class="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition shadow-sm">
                                             Verifikasi
