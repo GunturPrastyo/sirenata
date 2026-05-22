@@ -17,7 +17,7 @@
 
 <li>
     <a href="{{ route('admin-province.project.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
-        {{ request()->routeIs('project.*')
+        {{ request()->routeIs('admin-province.project.*')
             ? 'text-indigo-600 bg-purple-100'
             : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
@@ -29,7 +29,7 @@
     </a>
 </li>
 
-<li x-data="{ open: {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan.index') ? 'true' : 'false' }} }">
+<li x-data="{ open: {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan*') ? 'true' : 'false' }} }">
     <button @click="open = !open"
         class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-province.rtkdp*', 'admin-province.laporan*')
@@ -142,6 +142,6 @@
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
-        <span class="ms-3">Bantuan / FAQ</span>
+        <span class="ms-3">Bantuan</span>
     </a>
 </li>

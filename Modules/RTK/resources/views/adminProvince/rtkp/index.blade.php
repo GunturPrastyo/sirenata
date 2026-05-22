@@ -27,175 +27,115 @@
             </ol>
         </nav>
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <a href="{{ route('admin-province.rtkdp.create') }}"
-                class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                Upload RTK
-            </a>
-        </div>
-
         <div class="my-2">
             <x-flash-message />
         </div>
 
-        <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
-            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
-                <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 w-full lg:flex-1">
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Status Verifikasi
-                        </label>
-                        <div class="relative">
-                            <i
-                                class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
-                            ></i>
-                            <select
-                                name="status_verification"
-                                onchange="this.form.submit()"
-                                class="pl-8 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                                <option value="">Semua</option>
-                                @foreach (\Modules\RTK\Enums\RTKStatusVerification::cases() as $statusVerifikasi)
-                                    <option
-                                        value="{{ $statusVerifikasi->value }}"
-                                        @selected(request('status_verification') === $statusVerifikasi->value)
-                                    >
-                                        {{ $statusVerifikasi->label() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Status Dokumen
-                        </label>
-                        <div class="relative">
-                            <i
-                                class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
-                            ></i>
-                            <select
-                                name="status_document"
-                                onchange="this.form.submit()"
-                                class="pl-8 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                                <option value="">Semua</option>
-                                @foreach (\Modules\RTK\Enums\StatusDocument::cases() as $statusDocument)
-                                    <option
-                                        value="{{ $statusDocument->value }}"
-                                        @selected(request('status_document') === $statusDocument->value)
-                                    >
-                                        {{ $statusDocument->label() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
+        <x-dashboard::filter-card 
+            title="Daftar Rekapitulasi RTKD Provinsi" 
+            :total="$rtkdps->total() . ' Dokumen RTK'"
+            :resetUrl="route('admin-province.rtkdp.index')">
+            
+            <x-slot name="actions">
+                <a href="{{ route('admin-province.rtkdp-export') }}?{{ http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan'])) }}"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                    title="Ekspor Data">
+                    <i class="fas fa-download text-xs"></i>
+                    <span class="hidden sm:inline">Ekspor</span>
+                </a>
+                <a href="{{ route('admin-province.rtkdp.create') }}"
+                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="hidden sm:inline">Upload RTK</span>
+                    <span class="sm:hidden">Upload</span>
+                </a>
+            </x-slot>
 
-                    {{-- Filter RTK Acuan (is_active) --}}
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            RTK Acuan
-                        </label>
-                        <div class="relative">
-                            <i
-                                class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
-                            ></i>
-                            <select
-                                name="acuan"
-                                onchange="this.form.submit()"
-                                class="pl-8 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                                <option value="">Semua</option>
-                                <option value="1" @selected(request('acuan') === '1')>
-                                    Ya (Acuan)
-                                </option>
-                                <option value="0" @selected(request('acuan') === '0')>
-                                    Tidak
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {{-- Per Page --}}
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Tampilkan
-                        </label>
-                        <select
-                            name="per_page"
-                            onchange="this.form.submit()"
-                            class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        >
-                            @foreach ([10, 20, 50, 100] as $page)
-                                <option
-                                    value="{{ $page }}"
-                                    {{ request('per_page') == $page ? 'selected' : '' }}
-                                >
-                                    {{ $page }} / Halaman
+            <x-slot name="filter_inputs">
+                <!-- Status Verifikasi -->
+                <div class="w-full sm:w-48">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Status Verifikasi
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <select name="status_verification" onchange="this.form.submit()"
+                            class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua</option>
+                            @foreach (\Modules\RTK\Enums\RTKStatusVerification::cases() as $statusVerifikasi)
+                                <option value="{{ $statusVerifikasi->value }}" @selected(request('status_verification') === $statusVerifikasi->value)>
+                                    {{ $statusVerifikasi->label() }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
                 </div>
 
-                {{-- Search + Buttons --}}
-                <div class="flex gap-2 w-full lg:w-72 shrink-0">
-                    <div class="relative flex-1">
-                        <i
-                            class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
-                        ></i>
-                        <input
-                            type="text"
-                            name="search"
-                            value="{{ request('search') }}"
-                            placeholder="Cari nama RTK..."
-                            class="pl-9 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        />
+                <!-- Status Dokumen -->
+                <div class="w-full sm:w-48">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Status Dokumen
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <select name="status_document" onchange="this.form.submit()"
+                            class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua</option>
+                            @foreach (\Modules\RTK\Enums\StatusDocument::cases() as $statusDocument)
+                                <option value="{{ $statusDocument->value }}" @selected(request('status_document') === $statusDocument->value)>
+                                    {{ $statusDocument->label() }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-
-                    <button
-                        type="submit"
-                        class="inline-flex items-center gap-2 px-4 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition shrink-0"
-                    >
-                        <i class="fas fa-search text-xs"></i>
-                    </button>
-
-                    <a
-                        href="{{ route('admin-province.rtkdp.index') }}"
-                        class="inline-flex items-center gap-2 px-4 rounded-md border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition shrink-0"
-                    >
-                        <i class="fas fa-rotate-left text-xs"></i>
-                    </a>
-                </div>
-            </div>
-        </form>
-
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div
-                class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h2 class="text-sm font-semibold text-slate-800">Daftar Rekapitulasi RTKD Provinsi</h2>
-                    <p class="text-sm text-slate-500 mt-1">
-                        Total: <span class="font-medium text-slate-700" id="total-admin">{{ $rtkdps->total() }}</span>
-                    </p>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <a
-                        href="{{ route('admin-province.rtkdp-export') }}?{{ http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan'])) }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
-                        <i class="fas fa-download text-xs"></i>
-                        <span class="hidden sm:inline">Ekspor</span>
-                    </a>          
+                <!-- RTK Acuan -->
+                <div class="w-full sm:w-48">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        RTK Acuan
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <select name="acuan" onchange="this.form.submit()"
+                            class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua</option>
+                            <option value="1" @selected(request('acuan') === '1')>Ya (Acuan)</option>
+                            <option value="0" @selected(request('acuan') === '0')>Tidak</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Per Page -->
+                <div class="w-full sm:w-40">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Data per Halaman
+                    </label>
+                    <select name="per_page" onchange="this.form.submit()"
+                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        @foreach ([10, 20, 50, 100] as $page)
+                            <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
+                                {{ $page }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Pencarian -->
+                <div class="flex-1 min-w-[240px] w-full">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Pencarian
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama RTK..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+            </x-slot>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -356,6 +296,6 @@
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $rtkdps->links() }}
             </div>
-        </div>
+        </x-dashboard::filter-card>
     </div>
 </x-dashboard::layouts.dashboard>

@@ -34,33 +34,32 @@
         <!-- Quick Stats Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 stats-grid">
             <!-- Total Admin Pusat -->
-            <x-dashboard::superadmin.statscard title="Total Admin Pusat" count="12" growth="2 baru"
-                period="Bulan ini">
+            <x-dashboard::superadmin.statscard title="Total Admin Pusat" count="{{ $totalAdminPusat }}" growth="Aktif"
+                period="Sistem">
                 <div class="p-2 md:p-3 rounded-full gradient-indigo">
                     <i class="fas fa-users text-white text-base md:text-lg"></i>
                 </div>
             </x-dashboard::superadmin.statscard>
 
-
-            <!-- Admin Aktif -->
-            <x-dashboard::superadmin.statscard title="Admin Aktif" count="10" growth="83% dari total"
-                period="Bulan ini">
+            <!-- Total Admin Provinsi -->
+            <x-dashboard::superadmin.statscard title="Total Admin Provinsi" count="{{ $totalAdminProvinsi }}" growth="Aktif"
+                period="Sistem">
                 <div class="p-2 md:p-3 rounded-full gradient-emerald">
                     <i class="fas fa-user-check text-white text-base md:text-lg"></i>
                 </div>
             </x-dashboard::superadmin.statscard>
 
-            <!-- Admin Nonaktif -->
-            <x-dashboard::superadmin.statscard title="Admin Nonaktif" count="5" growth="17% dari total"
-                period="Bulan ini">
+            <!-- Total Admin Kab/Kota -->
+            <x-dashboard::superadmin.statscard title="Total Admin Kab/Kota" count="{{ $totalAdminKabKota }}" growth="Aktif"
+                period="Sistem">
                 <div class="p-2 md:p-3 rounded-full gradient-amber">
                     <i class="fas fa-user-slash text-white text-base md:text-lg"></i>
                 </div>
             </x-dashboard::superadmin.statscard>
 
-            <!-- Aktivitas Admin -->
-            <x-dashboard::superadmin.statscard title="Aktivitas Admin" count="247" growth="17% dari total"
-                period="Bulan ini">
+            <!-- Total Peserta E-Learning -->
+            <x-dashboard::superadmin.statscard title="Total Peserta" count="{{ $totalUser }}" growth="Aktif"
+                period="Sistem">
                 <div class="p-2 md:p-3 rounded-full gradient-rose">
                     <i class="fas fa-chart-line text-white text-base md:text-lg"></i>
                 </div>
@@ -68,46 +67,45 @@
         </div>
 
         <!-- Main Dashboard Content -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6 items-start">
             <!-- Event Penting -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 md:p-6 h-full">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 md:p-6">
                     <div class="flex items-center justify-between mb-4 md:mb-6">
                         <div>
-                            <h2 class="text-lg md:text-xl font-bold text-gray-900 card-title">Event Penting
-                                Terkini
-                            </h2>
+                            <h2 class="text-lg md:text-xl font-bold text-gray-900 card-title">Event Penting Terkini</h2>
                         </div>
-                        <a href="#" class="text-sm text-indigo-600 hover:underline font-medium">Lihat
-                            Semua</a>
                     </div>
 
                     <div class="space-y-3 md:space-y-4">
-                        <x-dashboard::superadmin.activitylogitem title="Update Konfigurasi Integrasi"
-                            description="Konfigurasi API Key KCLC diperbarui oleh Superadmin." time="10m"
-                            user="Superadmin" />
-                        <x-dashboard::superadmin.activitylogitem title="Update Konfigurasi Integrasi"
-                            description="Konfigurasi API Key KCLC diperbarui oleh Superadmin." time="10m"
-                            user="Superadmin" />
-                        <x-dashboard::superadmin.activitylogitem title="Update Konfigurasi Integrasi"
-                            description="Konfigurasi API Key KCLC diperbarui oleh Superadmin." time="10m"
-                            user="Superadmin" />
-                        <x-dashboard::superadmin.activitylogitem title="Update Konfigurasi Integrasi"
-                            description="Konfigurasi API Key KCLC diperbarui oleh Superadmin." time="10m"
-                            user="Superadmin" />
-
+                        @forelse($recentActivities as $activity)
+                            @php
+                                $subjectName = $activity->subject_type ? class_basename($activity->subject_type) : 'Sistem';
+                                $title = ucfirst($activity->description) . ' ' . $subjectName;
+                                $description = $subjectName . ' (' . ($activity->subject?->name ?? $activity->subject_id) . ') telah ' . $activity->description;
+                                $time = $activity->created_at ? $activity->created_at->diffForHumans(null, true) : '-';
+                                $userName = $activity->causer?->name ?? 'System';
+                            @endphp
+                            <x-dashboard::superadmin.activitylogitem 
+                                :title="$title"
+                                :description="$description" 
+                                :time="$time"
+                                :user="$userName" />
+                        @empty
+                            <div class="p-6 text-center border border-dashed border-slate-300 rounded-lg text-slate-400 bg-slate-50/50">
+                                <i class="fas fa-history text-xl mb-2 text-slate-300"></i>
+                                <p class="text-sm">Belum ada log aktivitas admin saat ini.</p>
+                            </div>
+                        @endforelse
                     </div>
 
+                    @if(count($recentActivities) > 0)
                     <div class="mt-6 pt-6 border-t border-slate-200">
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                            <p class="text-sm text-gray-500">Total event hari ini: <span
-                                    class="font-medium text-gray-900">8 event</span></p>
-                            <button
-                                class="text-indigo-600 hover:text-indigo-800 text-sm font-medium px-4 py-2 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors w-full sm:w-auto text-center">
-                                <i class="fas fa-history mr-2"></i> Muat Ulang Event
-                            </button>
+                            <p class="text-sm text-gray-500">Menampilkan {{ count($recentActivities) }} event log terbaru</p>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
 
@@ -125,91 +123,35 @@
                         <p class="text-xs text-gray-500 mt-1">Buat akun baru</p>
                     </a>
 
-                    <button onclick="exportData()"
+                    <a href="{{ route('super-admin.lembaga.index') }}"
                         class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 md:p-4 flex flex-col items-center justify-center text-center hover:bg-emerald-100 transition-colors card-hover">
                         <div class="p-2 md:p-3 rounded-full bg-emerald-100 text-emerald-600 mb-2 md:mb-3">
-                            <i class="fas fa-file-export text-base md:text-lg"></i>
+                            <i class="fas fa-building text-base md:text-lg"></i>
                         </div>
-                        <p class="font-medium text-gray-900 text-sm md:text-base">Ekspor Data</p>
-                        <p class="text-xs text-gray-500 mt-1">Laporan admin</p>
-                    </button>
+                        <p class="font-medium text-gray-900 text-sm md:text-base">Kelola Lembaga</p>
+                        <p class="text-xs text-gray-500 mt-1">Kementerian/Pusat</p>
+                    </a>
 
-                    <button onclick="openSettings()"
+                    <a href="{{ route('super-admin.instansi.index') }}"
                         class="bg-amber-50 border border-amber-100 rounded-xl p-3 md:p-4 flex flex-col items-center justify-center text-center hover:bg-amber-100 transition-colors card-hover">
                         <div class="p-2 md:p-3 rounded-full bg-amber-100 text-amber-600 mb-2 md:mb-3">
-                            <i class="fas fa-cog text-base md:text-lg"></i>
+                            <i class="fas fa-map-marked-alt text-base md:text-lg"></i>
                         </div>
-                        <p class="font-medium text-gray-900 text-sm md:text-base">Pengaturan</p>
-                        <p class="text-xs text-gray-500 mt-1">Konfigurasi sistem</p>
-                    </button>
+                        <p class="font-medium text-gray-900 text-sm md:text-base">Kelola Instansi</p>
+                        <p class="text-xs text-gray-500 mt-1">Dinas Daerah</p>
+                    </a>
 
-                    <button onclick="viewActivityLogs()"
+                    <a href="{{ route('super-admin.roles.index') }}"
                         class="bg-purple-50 border border-purple-100 rounded-xl p-3 md:p-4 flex flex-col items-center justify-center text-center hover:bg-purple-100 transition-colors card-hover">
                         <div class="p-2 md:p-3 rounded-full bg-purple-100 text-purple-600 mb-2 md:mb-3">
-                            <i class="fas fa-history text-base md:text-lg"></i>
+                            <i class="fas fa-user-shield text-base md:text-lg"></i>
                         </div>
-                        <p class="font-medium text-gray-900 text-sm md:text-base">Log Aktivitas</p>
-                        <p class="text-xs text-gray-500 mt-1">Monitor admin</p>
-                    </button>
+                        <p class="font-medium text-gray-900 text-sm md:text-base">Role & Permission</p>
+                        <p class="text-xs text-gray-500 mt-1">Hak Akses</p>
+                    </a>
                 </div>
 
-                <!-- Ringkasan Aktivitas -->
-                <div class="mt-6 md:mt-8 pt-6 border-t border-slate-100">
-                    <h3 class="font-medium text-gray-900 mb-3 md:mb-4">Ringkasan Aktivitas</h3>
-                    <div class="space-y-3 md:space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div
-                                    class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm mr-3">
-                                    SP
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Sarah Putri</p>
-                                    <p class="text-xs text-gray-500">Login terakhir: 1 jam lalu</p>
-                                </div>
-                            </div>
-                            <span
-                                class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Aktif</span>
-                        </div>
 
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div
-                                    class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-sm mr-3">
-                                    AW
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Agus Wijaya</p>
-                                    <p class="text-xs text-gray-500">Login terakhir: 3 jam lalu</p>
-                                </div>
-                            </div>
-                            <span
-                                class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Aktif</span>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div
-                                    class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-bold text-sm mr-3">
-                                    BS
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Budi Santoso</p>
-                                    <p class="text-xs text-gray-500">Login terakhir: 2 minggu</p>
-                                </div>
-                            </div>
-                            <span
-                                class="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full">Nonaktif</span>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 md:mt-6">
-                        <a href="../admin-pusat/index.html"
-                            class="block text-center text-indigo-600 hover:text-indigo-800 text-sm font-medium py-2 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors">
-                            <i class="fas fa-arrow-right mr-2"></i> Kelola Semua Admin
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

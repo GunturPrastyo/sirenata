@@ -10,106 +10,71 @@
             this.selected = [] :
             this.selected = ids
     }
-}" x-on:bulk-cleared.window="selected = []">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+}" x-on:bulk-cleared.window="selected = []" x-on:submit.prevent="">
 
-        <a href="{{ route('super-admin.user-management.create') }}"
-            class="flex items-center bg-indigo-600 text-white px-4 py-2.5 rounded-md hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md w-full sm:w-auto justify-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Tambah User
-        </a>
-    </div>
+    <x-dashboard::filter-card
+        title="Daftar User"
+        :total="$users->total() . ' user'"
+        :resetUrl="route('super-admin.user-management.index')">
 
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <div class="relative">
-                    <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <select
-                        class="pl-9  py-2.5 w-full rounded-md border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">Semua Status</option>
-                        <option value="aktif">Aktif</option>
-                        <option value="nonaktif">Nonaktif</option>
-                    </select>
-                </div>
-                <div class="relative">
-                    <select wire:model.lazy="limit"
-                        class="py-2.5 w-full rounded-md border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="10">10 / per Halaman</option>
-                        <option value="20">20 / per Halaman</option>
-                        <option value="50">50 / per Halaman</option>
-                        <option value="100">100 / per Halaman</option>
-                    </select>
-                </div>
+        <x-slot name="actions">
+            <a href="{{ route('super-admin.user-management.create') }}"
+                class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah User
+            </a>
+        </x-slot>
 
-                <button wire:click='resetFilter'
-                    class="flex items-center gap-2 px-4 py-2.5 text-sm rounded-md
-                        bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
-                    <i class="fas fa-rotate-left text-xs"></i>
-                    Reset
-                </button>
+        <x-slot name="filter_inputs">
+            <!-- Limit -->
+            <div class="w-full sm:w-44">
+                <label class="block text-xs font-medium text-slate-500 mb-1">
+                    Data per Halaman
+                </label>
+                <select wire:model.live="limit"
+                    class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="10">10 / per Halaman</option>
+                    <option value="20">20 / per Halaman</option>
+                    <option value="50">50 / per Halaman</option>
+                    <option value="100">100 / per Halaman</option>
+                </select>
             </div>
-            <div class="relative w-full md:w-72">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" wire:model.lazy="search" placeholder="Cari nama, email..."
-                    class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-        </div>
 
-        <div x-show="selected.length > 0" x-transition class=" mt-5 pt-4 border-t border-slate-200" id="bulk-actions">
+            <!-- Search -->
+            <div class="flex-1 min-w-[240px] w-full">
+                <label class="block text-xs font-medium text-slate-500 mb-1">
+                    Pencarian
+                </label>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari nama, email..."
+                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+            </div>
+        </x-slot>
+
+        <!-- Bulk Actions -->
+        <div x-show="selected.length > 0" x-transition class="p-5 border-b border-slate-200 bg-slate-50/50" id="bulk-actions" style="display: none;">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="text-sm text-slate-600">
                     <span class="font-semibold text-slate-900" x-text="selected.length"></span> admin dipilih ·
-                    <button class="text-indigo-600 hover:underline">Pilih semua</button>
+                    <button class="text-indigo-600 hover:underline" @click="toggleAll(@js($users->pluck('id')))">Pilih semua</button>
                 </div>
 
                 <div class="flex flex-wrap gap-2">
-                    <button class="px-3 py-1.5 rounded-md text-sm bg-emerald-50 text-emerald-700 hover:bg-emerald-100">
+                    <button class="px-3 py-1.5 rounded-md text-sm bg-emerald-50 text-emerald-700 hover:bg-emerald-100 cursor-pointer">
                         <i class="fas fa-user-check mr-1"></i> Aktifkan
                     </button>
-                    <button class="px-3 py-1.5 rounded-md text-sm bg-amber-50 text-amber-700 hover:bg-amber-100">
+                    <button class="px-3 py-1.5 rounded-md text-sm bg-amber-50 text-amber-700 hover:bg-amber-100 cursor-pointer">
                         <i class="fas fa-user-slash mr-1"></i> Nonaktifkan
                     </button>
                     <button @click="$wire.bulkDelete(selected)"
-                        class="px-3 py-1.5 rounded-md text-sm bg-red-50 text-red-700 hover:bg-red-100">
+                        class="px-3 py-1.5 rounded-md text-sm bg-red-50 text-red-700 hover:bg-red-100 cursor-pointer">
                         <i class="fas fa-trash mr-1"></i> Hapus
                     </button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div
-            class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <h2 class="text-base font-semibold text-slate-800">Daftar User</h2>
-                <p class="text-sm text-slate-500 mt-1">
-                    Total: <span class="font-medium text-slate-700" id="total-admin">{{ $users->total() }}</span> user
-                </p>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <button
-                    class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg
-                    text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                    title="Ekspor Data">
-                    <i class="fas fa-download text-xs"></i>
-                    <span class="hidden sm:inline">Ekspor</span>
-                </button>
-
-                <button
-                    class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg
-                    text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                    title="Cetak">
-                    <i class="fas fa-print text-xs"></i>
-                    <span class="hidden sm:inline">Cetak</span>
-                </button>
             </div>
         </div>
 
@@ -178,11 +143,11 @@
                                 <x-table.action>
                                     <li>
                                         <a href="{{ route('super-admin.user-management.edit', $user->id) }}"
-                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
+                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-left">Edit</a>
                                     </li>
                                     <li>
                                         <a href="{{ route('super-admin.user-management.show', $user->id) }}"
-                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Show</a>
+                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-left">Show</a>
                                     </li>
                                     <li>
                                         <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
@@ -195,7 +160,7 @@
                         </tr>
                     @empty
                         <tr class="">
-                            <td colspan="6" class="px-6 py-12 text-center">
+                            <td colspan="8" class="px-6 py-12 text-center">
                                 <p class="text-sm text-slate-500">Tidak ada data admin</p>
                             </td>
                         </tr>
@@ -207,5 +172,5 @@
         <div class="px-5 py-4 border-t border-slate-200">
             {{ $users->links() }}
         </div>
-    </div>
+    </x-dashboard::filter-card>
 </div>

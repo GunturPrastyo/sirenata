@@ -271,8 +271,30 @@
 
                                                     {{-- Footer --}}
                                                     <div
-                                                        class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end"
+                                                        class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end items-center gap-3"
                                                     >
+                                                        @if (!$content->is_completed)
+                                                            <form action="{{ route('user.course.content.complete', ['content' => $content->id]) }}" method="POST" class="m-0">
+                                                                @csrf
+                                                                <button
+                                                                    type="submit"
+                                                                    class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-1.5"
+                                                                >
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                    </svg>
+                                                                    Tandai Selesai
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <span class="inline-flex items-center text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                                                                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                                                </svg>
+                                                                Materi Selesai ✓
+                                                            </span>
+                                                        @endif
+
                                                         <button
                                                             type="button"
                                                             @click="$dispatch('close-modal', 'show-content-{{ $content->id }}')"
@@ -295,6 +317,94 @@
                     @endforelse
                 </div>
             </div>
+
+            {{-- Certificate Section --}}
+            @if (($course->status ?? '') === 'completed' || ($course->progress ?? 0) >= 100)
+                <div class="bg-white rounded-lg shadow-sm p-6 mt-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        🎓 Sertifikat Kelulusan
+                    </h2>
+
+                    @if (!empty($course->certificate_file))
+                        {{-- Already generated --}}
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="p-3 bg-emerald-100 rounded-full">
+                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-emerald-800">Sertifikat Sudah Diterbitkan</p>
+                                    <p class="text-sm text-emerald-600">Anda dapat mengunduh sertifikat Anda di bawah ini.</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                                <div class="bg-white rounded-lg p-3 border border-emerald-100">
+                                    <p class="text-xs text-gray-500 mb-1">Nomor Sertifikat</p>
+                                    <p class="text-sm font-bold text-gray-900">{{ $course->certificate_code }}</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-emerald-100">
+                                    <p class="text-xs text-gray-500 mb-1">Tanggal Terbit</p>
+                                    <p class="text-sm font-bold text-gray-900">{{ \Carbon\Carbon::parse($course->certificate_issued_at)->translatedFormat('d F Y') }}</p>
+                                </div>
+                            </div>
+
+                            <a href="{{ $course->certificate_file }}" target="_blank"
+                                class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                Unduh Sertifikat
+                            </a>
+                        </div>
+                    @else
+                        {{-- Not yet generated --}}
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="p-3 bg-indigo-100 rounded-full">
+                                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-indigo-800">Selamat! Anda Telah Menyelesaikan Kursus Ini 🎉</p>
+                                    <p class="text-sm text-indigo-600">Klik tombol di bawah untuk membuat sertifikat kelulusan Anda.</p>
+                                </div>
+                            </div>
+
+                            <form action="{{ route('user.course.my-course.generate-certificate', ['slug' => request()->route('slug')]) }}" method="POST"
+                                x-data="{ loading: false }"
+                                @submit="loading = true">
+                                @csrf
+                                <button type="submit"
+                                    :disabled="loading"
+                                    :class="loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-indigo-700'"
+                                    class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+                                    <template x-if="!loading">
+                                        <span class="flex items-center gap-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            Generate Sertifikat
+                                        </span>
+                                    </template>
+                                    <template x-if="loading">
+                                        <span class="flex items-center gap-2">
+                                            <svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Sedang memproses...
+                                        </span>
+                                    </template>
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 </x-dashboard::layouts.dashboard>

@@ -20,105 +20,69 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Daftar Laporan RTKN</span>
+                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Manajemen Role</span>
                     </div>
                 </li>
             </ol>
         </nav>
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <a href="{{ route('super-admin.roles.create') }}"
-                class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
-                Tambah Role
-            </a>
-        </div>
+        <x-dashboard::filter-card
+            title="Daftar Role"
+            :total="$roles->total() . ' Role'"
+            :resetUrl="route('super-admin.roles.index')">
 
-        <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    <div class="relative w-full sm:w-44">
-                        <select name="orderBy"
-                            class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="" selected>Pilih Order By</option>
-                            <option value="desc" @selected(request('orderBy') === 'desc')>Terbaru</option>
-                            <option value="asc" @selected(request('orderBy') === 'asc')>Terlama</option>
-                        </select>
-                    </div>
-                    <div class="relative w-full sm:w-44">
-                        <select name="per_page"
-                            class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            @foreach ([10, 20, 50, 100] as $page)
-                                <option value="{{ $page }}"
-                                    {{ request('per_page') == $page ? 'selected' : '' }}>
-                                    {{ $page }} / Halaman
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+            <x-slot name="actions">
+                <a href="{{ route('super-admin.roles.create') }}"
+                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Tambah Role
+                </a>
+            </x-slot>
+
+            <x-slot name="filter_inputs">
+                <!-- Order By -->
+                <div class="w-full sm:w-44">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Urutan
+                    </label>
+                    <select name="orderBy"
+                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="" selected>Pilih Order By</option>
+                        <option value="desc" @selected(request('orderBy') === 'desc')>Terbaru</option>
+                        <option value="asc" @selected(request('orderBy') === 'asc')>Terlama</option>
+                    </select>
                 </div>
 
-                <div class="flex w-full lg:w-96 gap-2">
-                    <div class="relative flex-1">
+                <!-- Per Page -->
+                <div class="w-full sm:w-44">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Data per Halaman
+                    </label>
+                    <select name="per_page"
+                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        @foreach ([10, 20, 50, 100] as $page)
+                            <option value="{{ $page }}" @selected(request('per_page') == $page)>
+                                {{ $page }} / Halaman
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Search -->
+                <div class="flex-1 min-w-[240px] w-full">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Pencarian
+                    </label>
+                    <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari nama atau email..."
-                            class="pl-10 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm
-                    focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            placeholder="Cari nama..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
-
-                    <!-- Search -->
-                    <button type="submit"
-                        class="inline-flex items-center gap-2 px-4 rounded-md
-                bg-indigo-600 text-white text-sm font-medium
-                hover:bg-indigo-700 transition">
-                        <i class="fas fa-search text-xs"></i>
-                        <span class="hidden sm:inline">Search</span>
-                    </button>
-
-                    <!-- Reset -->
-                    <a href="{{ route('super-admin.roles.index') }}"
-                        class="inline-flex items-center gap-2 px-4 rounded-md
-                border border-slate-300 text-slate-600 text-sm font-medium
-                hover:bg-slate-100 transition">
-                        <i class="fas fa-rotate-left text-xs"></i>
-                        <span class="hidden sm:inline">Reset</span>
-                    </a>
                 </div>
-
-            </div>
-        </form>
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div
-                class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar Role</h2>
-                    <p class="text-sm text-slate-500 mt-1">
-                        Total: <span class="font-medium text-slate-700" id="total-admin">{{ $roles->total() }}</span>
-                        Role
-                    </p>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button
-                        class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md
-                    text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                        title="Ekspor Data">
-                        <i class="fas fa-download text-xs"></i>
-                        <span class="hidden sm:inline">Ekspor</span>
-                    </button>
-
-                    <button
-                        class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md
-                    text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                        title="Cetak">
-                        <i class="fas fa-print text-xs"></i>
-                        <span class="hidden sm:inline">Cetak</span>
-                    </button>
-                </div>
-            </div>
+            </x-slot>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -144,7 +108,7 @@
                                     <x-table.action>
                                         <li>
                                             <a href="{{ route('super-admin.roles.edit', $role->uuid) }}"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">Edit</a>
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-left">Edit</a>
                                         </li>
                                         <li>
                                             <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
@@ -157,7 +121,7 @@
                             </tr>
                         @empty
                             <tr class="">
-                                <td colspan="5" class="px-6 py-12 text-center">
+                                <td colspan="3" class="px-6 py-12 text-center">
                                     <p class="text-sm text-slate-500">Tidak ada data Role</p>
                                 </td>
                             </tr>
@@ -169,7 +133,7 @@
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $roles->links() }}
             </div>
-        </div>
+        </x-dashboard::filter-card>
     </div>
 
     @push('scripts')

@@ -25,26 +25,36 @@
             </ol>
         </nav>
 
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar Lembaga</h2>
-                    <p class="text-sm text-slate-500 mt-1">
-                        Total: <span class="font-medium text-slate-700">{{ $institutions->total() }}</span> Lembaga
-                    </p>
-                </div>
+        <x-dashboard::filter-card
+            title="Daftar Lembaga"
+            :total="$institutions->total() . ' Lembaga'"
+            :resetUrl="route('super-admin.lembaga.index')">
 
-                <div class="flex items-center gap-2">
-                    <button type="button" x-data @click="$dispatch('open-modal', 'create-lembaga')"
-                        class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span class="hidden sm:inline">Tambah Lembaga</span>
-                        <span class="sm:hidden">Tambah</span>
-                    </button>
+            <x-slot name="actions">
+                <button type="button" x-data @click="$dispatch('open-modal', 'create-lembaga')"
+                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="hidden sm:inline">Tambah Lembaga</span>
+                    <span class="sm:hidden">Tambah</span>
+                </button>
+            </x-slot>
+
+            <x-slot name="filter_inputs">
+                <!-- Search -->
+                <div class="flex-1 min-w-[240px] w-full">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Pencarian
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari nama lembaga..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
                 </div>
-            </div>
+            </x-slot>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -92,7 +102,7 @@
                                                 @method('PATCH')
                                                 <button type="submit" class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-slate-600 text-left cursor-pointer">
                                                     {{ $instansi->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
-                                                </button>
+                                                 </button>
                                             </form>
                                         </li>
                                         <li>
@@ -156,7 +166,7 @@
             <div class="p-4 border-t border-gray-200">
                 {{ $institutions->links() }}
             </div>
-        </div>
+        </x-dashboard::filter-card>
     </div>
     <x-modal name="create-lembaga" title="Tambah Lembaga Baru">
         <form action="{{ route('super-admin.lembaga.store') }}" method="POST" class="space-y-4">

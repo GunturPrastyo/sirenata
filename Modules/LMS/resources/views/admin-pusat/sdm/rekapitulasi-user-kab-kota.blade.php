@@ -42,16 +42,28 @@
             <x-flash-message />
         </div>
 
-        <form method="GET" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+        <x-dashboard::filter-card 
+            title="Rekapitulasi User SDM {{ $regency->name }}" 
+            :total="$data->total() . ' User'"
+            :resetUrl="route('admin-pusat.rekapitulasi.rekap-user-kab-kota', $regencyCode)">
+            
+            <x-slot name="actions">
+                <a href="{{ route('admin-pusat.rekapitulasi.rekap-user-kab-kota.export', $regencyCode) }}?{{ http_build_query(request()->only(['search', 'course_id'])) }}"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                    title="Ekspor Data">
+                    <i class="fas fa-download text-xs"></i>
+                    <span class="hidden sm:inline">Ekspor</span>
+                </a>
+            </x-slot>
+
+            <x-slot name="filter_inputs">
                 <!-- Per Page -->
-                <div class="lg:col-span-2">
+                <div class="w-full sm:w-40">
                     <label class="block text-xs font-medium text-slate-500 mb-1">
                         Data per Halaman
                     </label>
-                    <select name="per_page" onchange="this.form.submit()"
-                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm
-                        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <select name="per_page"
+                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         @foreach ([10, 20, 50, 100] as $page)
                             <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
                                 {{ $page }}
@@ -61,13 +73,12 @@
                 </div>
 
                 <!-- Filter Course -->
-                <div class="lg:col-span-3">
+                <div class="w-full sm:w-64">
                     <label class="block text-xs font-medium text-slate-500 mb-1">
                         Filter Kursus
                     </label>
-                    <select name="course_id" onchange="this.form.submit()"
-                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm
-                        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <select name="course_id"
+                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="">Semua Kursus</option>
                         @foreach ($courses as $course)
                             <option value="{{ $course->id }}"
@@ -78,8 +89,8 @@
                     </select>
                 </div>
 
-                <!-- Search -->
-                <div class="lg:col-span-4">
+                <!-- Pencarian -->
+                <div class="flex-1 min-w-[240px] w-full">
                     <label class="block text-xs font-medium text-slate-500 mb-1">
                         Pencarian
                     </label>
@@ -87,57 +98,10 @@
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari nama user, instansi..."
-                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm
-                            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
-
-                <!-- Buttons -->
-                <div class="lg:col-span-3 flex gap-2">
-
-                    <button type="submit"
-                        class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg
-                    bg-indigo-600 text-white text-sm font-medium
-                    hover:bg-indigo-700 transition">
-                        <i class="fas fa-search text-xs"></i>
-                        Search
-                    </button>
-
-                    <a href="{{ route('admin-pusat.rekapitulasi.rekap-user-kab-kota', $regencyCode) }}"
-                        class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg
-                    border border-slate-300 text-slate-600 text-sm font-medium
-                    hover:bg-slate-100 transition">
-                        <i class="fas fa-rotate-left text-xs"></i>
-                        Reset
-                    </a>
-                </div>
-            </div>
-        </form>
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div
-                class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h2 class="text-base font-semibold text-slate-800">Rekapitulasi User SDM
-                        {{ $regency->name }}</h2>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('admin-pusat.rekapitulasi.rekap-user-kab-kota.export', $regencyCode) }}?{{ http_build_query(request()->only(['search', 'course_id'])) }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
-                        <i class="fas fa-download text-xs"></i>
-                        <span class="hidden sm:inline">Ekspor</span>
-                    </a>
-
-                    <button
-                        class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md
-                    text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition"
-                        title="Cetak">
-                        <i class="fas fa-print text-xs"></i>
-                        <span class="hidden sm:inline">Cetak</span>
-                    </button>
-                </div>
-            </div>
+            </x-slot>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -197,7 +161,7 @@
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $data->withQueryString()->links() }}
             </div>
-        </div>
+        </x-dashboard::filter-card>
     </div>
 
     @push('scripts')

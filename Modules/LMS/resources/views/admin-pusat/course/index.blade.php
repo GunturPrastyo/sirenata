@@ -22,103 +22,67 @@
             </ol>
         </nav>
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <a href="{{ route('admin-pusat.management-course.courses.create') }}"
-                class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                Create Course
-            </a>
-        </div>
+        <x-dashboard::filter-card 
+            title="Daftar Course" 
+            :total="$meta['total'] ?? 0"
+            :resetUrl="route('admin-pusat.management-course.courses.index')">
+            
+            <x-slot name="actions">
+                <a href="{{ route('admin-pusat.management-course.courses.create') }}"
+                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    Create Course
+                </a>
+            </x-slot>
 
-        <form method="GET" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-6">
-            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
-                <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 w-full lg:flex-1">
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Kategori Course
-                        </label>
-                        <div class="relative">
-                            <i class="fas fa-layer-group absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                            <select
-                                name="category_id"
-                                onchange="this.form.submit()"
-                                class="pl-8 pr-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                                <option value="">Semua Kategori</option>
-                                @foreach ($categories as $category)
-                                    <option 
-                                        value="{{ $category->id }}"
-                                        @selected(request('category_id') == $category->id)>
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    {{-- Per Page --}}
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Tampilkan
-                        </label>
-                        <select
-                            name="per_page"
-                            onchange="this.form.submit()"
-                            class="px-3 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        >
-                            @foreach ([10, 20, 50, 100] as $page)
-                                <option
-                                    value="{{ $page }}"
-                                    {{ request('per_page') == $page ? 'selected' : '' }}
-                                >
-                                    {{ $page }} / Halaman
+            <x-slot name="filter_inputs">
+                <!-- Kategori Course -->
+                <div class="w-full sm:w-48">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Kategori Course
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-layer-group absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <select name="category_id" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua Kategori</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
+                                    {{ $category->name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
                 </div>
 
-                {{-- Search + Buttons --}}
-                <div class="flex gap-2 w-full lg:w-96 shrink-0">
-                    <div class="relative flex-1">
-                        <i
-                            class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
-                        ></i>
-                        <input
-                            type="text"
-                            name="search"
-                            value="{{ request('search') }}"
-                            placeholder="Cari nama course..."
-                            class="pl-9 pr-4 py-2.5 w-full rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        />
+                <!-- Per Page -->
+                <div class="w-full sm:w-40">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Data per Halaman
+                    </label>
+                    <select name="per_page" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        @foreach ([10, 20, 50, 100] as $page)
+                            <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
+                                {{ $page }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Pencarian -->
+                <div class="flex-1 min-w-[240px] w-full">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Pencarian
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama course..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
-
-                    <button
-                        type="submit"
-                        class="inline-flex items-center gap-2 px-4 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition shrink-0"
-                    >
-                        <i class="fas fa-search text-xs"></i>
-                    </button>
-
-                    <a
-                        href="{{ route('admin-pusat.management-course.courses.index') }}"
-                        class="inline-flex items-center gap-2 px-4 rounded-md border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition shrink-0"
-                    >
-                        <i class="fas fa-rotate-left text-xs"></i>
-                    </a>
                 </div>
-            </div>
-        </form>
-
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar Kursus</h2>
-                </div>
-            </div>
+            </x-slot>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm table-auto">
@@ -202,6 +166,6 @@
                     <x-api-pagination :meta="$meta" />
                 </div>
             @endif
-        </div>
+        </x-dashboard::filter-card>
     </div>
 </x-dashboard::layouts.dashboard>

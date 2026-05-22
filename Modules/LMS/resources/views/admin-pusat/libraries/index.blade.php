@@ -39,86 +39,63 @@
 
 
 
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" x-data="{ showFilter: {{ (request('search') || request('library_category_id')) ? 'true' : 'false' }} }">
-            <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h2 class="text-base font-semibold text-slate-800">Daftar Materi Perpustakaan</h2>
-                    <p class="text-sm text-slate-500 mt-1">Total: <span class="font-medium text-slate-700">{{ $libraries->total() }}</span> Materi</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" @click="showFilter = !showFilter"
-                        class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-slate-700 bg-white text-sm font-medium rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
-                        :class="showFilter ? 'bg-slate-100 border-slate-400 font-semibold' : ''">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                        </svg>
-                        Filter
-                    </button>
-                    <button type="button" x-data @click="$dispatch('open-modal', 'create-library')"
-                        class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span class="hidden sm:inline">Tambah Materi</span>
-                        <span class="sm:hidden">Tambah</span>
-                    </button>
-                </div>
-            </div>
+        <x-dashboard::filter-card 
+            title="Daftar Materi Perpustakaan" 
+            :total="$libraries->total() . ' Materi'"
+            :resetUrl="route('admin-pusat.libraries.index')">
+            
+            <x-slot name="actions">
+                <button type="button" x-data @click="$dispatch('open-modal', 'create-library')"
+                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="hidden sm:inline">Tambah Materi</span>
+                    <span class="sm:hidden">Tambah</span>
+                </button>
+            </x-slot>
 
-            <!-- Search Bar inside Card -->
-            <form method="GET" class="p-5 border-b border-slate-200 bg-slate-50/50" x-show="showFilter" x-transition @if(!(request('search') || request('library_category_id'))) style="display: none;" @endif>
-                <div class="flex flex-col sm:flex-row flex-wrap gap-4 items-end">
-                    <!-- Kategori -->
-                    <div class="w-full sm:w-48">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Filter Kategori
-                        </label>
-                        <div class="relative">
-                            <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                            <select name="library_category_id" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Semua Kategori</option>
-                                @foreach($libraryCategories as $category)
-                                    <option value="{{ $category->id }}" {{ ($libraryCategoryId ?? '') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Per Page -->
-                    <div class="w-full sm:w-40">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Data per Halaman
-                        </label>
-                        <select name="per_page" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            @foreach ([10, 20, 50, 100] as $page)
-                                <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>{{ $page }}</option>
+            <x-slot name="filter_inputs">
+                <!-- Kategori -->
+                <div class="w-full sm:w-48">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Filter Kategori
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <select name="library_category_id" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua Kategori</option>
+                            @foreach($libraryCategories as $category)
+                                <option value="{{ $category->id }}" {{ ($libraryCategoryId ?? '') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </div>
+                </div>
 
-                    <!-- Search -->
-                    <div class="flex-1 min-w-[240px] w-full">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Pencarian
-                        </label>
-                        <div class="relative">
-                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari judul materi..."
-                                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                    </div>
+                <!-- Per Page -->
+                <div class="w-full sm:w-40">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Data per Halaman
+                    </label>
+                    <select name="per_page" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        @foreach ([10, 20, 50, 100] as $page)
+                            <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>{{ $page }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-                    <!-- Buttons -->
-                    <div class="flex gap-2 w-full sm:w-auto justify-end">
-                        <button type="submit" title="Cari" class="w-[42px] h-[42px] inline-flex justify-center items-center rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <a href="{{ route('admin-pusat.libraries.index') }}" title="Reset" class="w-[42px] h-[42px] inline-flex justify-center items-center rounded-lg border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-100 transition">
-                            <i class="fas fa-rotate-left"></i>
-                        </a>
+                <!-- Search -->
+                <div class="flex-1 min-w-[240px] w-full">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">
+                        Pencarian
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari judul materi..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
-            </form>
+            </x-slot>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -219,7 +196,7 @@
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $libraries->links('pagination::tailwind') }}
             </div>
-        </div>
+        </x-dashboard::filter-card>
     </div>
 
     <x-modal name="preview-modal" title="Preview Materi" maxWidth="sm:max-w-4xl">

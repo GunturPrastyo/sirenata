@@ -18,15 +18,40 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Alex+Brush&display=swap" rel="stylesheet">
 
-<div class="certificate-wrapper" style="
-    width: 1122px;
-    height: 793px;
-    position: relative;
-    overflow: hidden;
-    font-family: 'Montserrat', sans-serif;
-    background-color: #ffffff;
-    margin: 0 auto;
-">
+<style>
+    @page {
+        size: a4 landscape;
+        margin: 0;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .certificate-wrapper {
+        width: 1122px;
+        height: 793px;
+        position: relative;
+        overflow: hidden;
+        font-family: 'Montserrat', sans-serif;
+        background-color: #ffffff;
+        margin: 0 auto;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .certificate-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1122px;
+        height: 793px;
+        z-index: 1;
+        padding: 130px 80px 50px 80px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+</style>
+
+<div class="certificate-wrapper">
     {{-- Background Image dari Canva --}}
     @if($background_url)
         <img src="{{ $background_url }}" alt="Background" style="
@@ -35,7 +60,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
             z-index: 0;
         ">
     @else
@@ -57,17 +81,7 @@
     @endif
 
     {{-- Content Overlay --}}
-    <div style="
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 50px 80px;
-        text-align: center;
-    ">
+    <div class="certificate-content">
         {{-- Header / Jenis Sertifikat --}}
         <p style="
             font-family: 'Cinzel', serif;
@@ -110,7 +124,7 @@
         <div style="
             width: 380px;
             height: 1px;
-            background: linear-gradient(90deg, transparent, #b89c49 20%, #b89c49 80%, transparent);
+            background: #b89c49;
             margin: 10px auto 20px;
         "></div>
 
@@ -120,7 +134,6 @@
             color: #55606d;
             margin: 0 0 8px 0;
             line-height: 1.6;
-            max-width: 650px;
             font-weight: 400;
         ">
             Telah dinyatakan <span style="font-weight: 700; color: #1e3a5f; letter-spacing: 1px;">LULUS</span> dengan hasil evaluasi memuaskan dan sukses menyelesaikan program pembelajaran:
@@ -177,24 +190,23 @@
         bottom: 45px;
         right: 80px;
         z-index: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        width: 220px;
+        text-align: center;
     ">
         @if($signature_url)
             <img src="{{ $signature_url }}" alt="Tanda Tangan" style="
                 height: 70px;
-                object-fit: contain;
-                margin-bottom: 5px;
+                margin: 0 auto 5px;
+                display: block;
             ">
         @else
-            <div style="height: 70px;"></div>
+            <div style="height: 75px;"></div>
         @endif
 
         <div style="
             width: 200px;
             border-bottom: 1.5px solid #b89c49;
-            margin-bottom: 8px;
+            margin: 0 auto 8px;
         "></div>
         
         <p style="
