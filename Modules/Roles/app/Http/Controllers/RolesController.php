@@ -62,7 +62,7 @@ class RolesController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        return view('roles::create');
+        abort(404);
     }
 
     /**

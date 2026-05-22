@@ -1,44 +1,7 @@
 <x-dashboard::layouts.dashboard title="Edit Role">
 
     <div class="p-2 sm:p-6">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('super-admin.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <a href="{{ route('super-admin.roles.index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Management
-                            Role</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 hover:text-indigo-600 md:ml-2">
-                            Create Role
-                        </span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Manajemen Role', 'url' => route('super-admin.roles.index')], ['label' => 'Edit Role']]" />
 
         <x-validation-errors />
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-6 card-hover">
@@ -46,18 +9,7 @@
                 @method('PUT')
                 @csrf
                 <div class="mb-8">
-                    <div>
-                        <label for="name"
-                            class="block text-sm font-medium text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                            Name
-                        </label>
-                        <input type="text" id="name" name="name" value="{{ $role->name }}"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="Masukkan name">
-                        @error('name')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input name="name" label="Name" value="{{ $role->name }}" required placeholder="Masukkan name" />
                 </div>
 
                 <div class="mb-8" x-data="{
@@ -83,64 +35,51 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto border border-slate-400 rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200 text-sm">
-                            <thead class="bg-gray-50">
+                    <x-table.table plain>
+                        <thead>
+                            <tr>
+                                <x-table.th>Permission Name</x-table.th>
+                                <x-table.th align="center">Create</x-table.th>
+                                <x-table.th align="center">Edit</x-table.th>
+                                <x-table.th align="center">View</x-table.th>
+                                <x-table.th align="center">Delete</x-table.th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-100 bg-white">
+                            @foreach ($permissions as $module => $modulePermissions)
                                 <tr>
-                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
-                                        Permission Name
-                                    </th>
-                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
-                                        Create
-                                    </th>
-                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
-                                        Edit
-                                    </th>
-                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
-                                        View
-                                    </th>
-                                    <th class="px-4 py-3 text-center font-semibold text-gray-600 uppercase">
-                                        Delete
-                                    </th>
+                                    <x-table.td>
+                                        <span class="font-medium text-gray-700">{{ $module }}</span>
+                                    </x-table.td>
+
+                                    @foreach (['create', 'edit', 'view', 'delete'] as $action)
+                                        @php
+                                            $permissionName = $module . '-' . $action;
+                                            $exists = $modulePermissions->firstWhere('name', $permissionName);
+                                        @endphp
+
+                                        <x-table.td align="center">
+                                            @if ($exists)
+                                                <input type="checkbox" name="permissions[]"
+                                                    value="{{ $permissionName }}"
+                                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                    {{ $role->hasPermissionTo($permissionName) ? 'checked' : '' }}>
+                                            @else
+                                                -
+                                            @endif
+                                        </x-table.td>
+                                    @endforeach
                                 </tr>
-                            </thead>
-
-                            <tbody class="divide-y divide-gray-100 bg-white">
-                                @foreach ($permissions as $module => $modulePermissions)
-                                    <tr>
-                                        <td class="px-4 py-3 font-medium text-gray-700">
-                                            {{ $module }}
-                                        </td>
-
-                                        @foreach (['create', 'edit', 'view', 'delete'] as $action)
-                                            @php
-                                                $permissionName = $module . '-' . $action;
-                                                $exists = $modulePermissions->firstWhere('name', $permissionName);
-                                            @endphp
-
-                                            <td class="px-4 py-3 text-center">
-                                                @if ($exists)
-                                                    <input type="checkbox" name="permissions[]"
-                                                        value="{{ $permissionName }}"
-                                                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                        {{ $role->hasPermissionTo($permissionName) ? 'checked' : '' }}>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            @endforeach
+                        </tbody>
+                    </x-table.table>
                 </div>
 
                 <div class="flex flex-wrap gap-3 action-buttons form-section w-full">
-                    <button type="submit" id="btn-submit"
-                        class="inline-flex cursor-pointer items-center w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm justify-center">
+                    <x-button type="submit" id="btn-submit" class="w-full">
                         Simpan Role
-                    </button>
+                    </x-button>
                 </div>
             </form>
         </div>

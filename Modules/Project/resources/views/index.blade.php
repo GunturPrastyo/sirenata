@@ -1,30 +1,6 @@
 <x-dashboard::layouts.dashboard title="Proyek - E-Learning">
     <div class="p-2 sm:p-6">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ url('/') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Proyek</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
-
+        <x-breadcrumb :items="[['label' => 'Proyek']]" />
 
         <x-dashboard::filter-card 
             title="Daftar Proyek" 
@@ -32,21 +8,14 @@
             :resetUrl="route($routePrefix . 'index')">
             
             <x-slot name="actions">
-                <a href="{{ route('admin-pusat.project.export') }}?{{ http_build_query(request()->only(['search', 'status'])) }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-                    title="Ekspor Data">
-                    <i class="fas fa-download text-xs"></i>
+                <x-button :href="route('admin-pusat.project.export') . '?' . http_build_query(request()->only(['search', 'status']))" variant="success" icon="fas fa-download" title="Ekspor Data">
                     <span class="hidden sm:inline">Ekspor</span>
-                </a>
+                </x-button>
                 @can('project-create')
-                    <a href="{{ route($routePrefix . 'create') }}"
-                        class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
+                    <x-button :href="route($routePrefix . 'create')" variant="primary" icon="fas fa-plus">
                         <span class="hidden sm:inline">Tambah Proyek</span>
                         <span class="sm:hidden">Tambah</span>
-                    </a>
+                    </x-button>
                 @endcan
             </x-slot>
 
@@ -96,91 +65,88 @@
                 </div>
             </x-slot>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
-                        <tr class="text-slate-500 uppercase text-xs">
-                            <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Nama</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Tipe</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Periode</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Ketua Tim</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Persentase</th>
-                            <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
-                        </tr>
-                    </thead>
+            <x-table.table plain>
+                <thead>
+                    <tr>
+                        <x-table.th>No.</x-table.th>
+                        <x-table.th>Nama</x-table.th>
+                        <x-table.th>Tipe</x-table.th>
+                        <x-table.th>Periode</x-table.th>
+                        <x-table.th>Ketua Tim</x-table.th>
+                        <x-table.th>Persentase</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </tr>
+                </thead>
 
-                    <tbody id="admin-table-body" class="divide-y divide-slate-200">
-                        @forelse ($projects as $key => $project)
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $key + $projects->firstItem() }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600 font-medium">{{ $project->name }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
+                <tbody id="admin-table-body" class="divide-y divide-slate-200">
+                    @forelse ($projects as $key => $project)
+                        <tr class="hover:bg-slate-50 transition">
+                            <x-table.td>
+                                <span class="text-slate-600">{{ $key + $projects->firstItem() }}</span>
+                            </x-table.td>
+                            <x-table.td>
+                                <span class="text-slate-600 font-medium">{{ $project->name }}</span>
+                            </x-table.td>
+                            <x-table.td>
+                                <x-badge color="slate" :text="$project->type" />
+                            </x-table.td>
+                            <x-table.td>
+                                <span class="text-slate-600">
+                                    {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : '-' }}
+                                    -
+                                    {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : '-' }}
+                                </span>
+                            </x-table.td>
+                            <x-table.td>
+                                <span class="text-slate-600">{{ $project->leader->name ?? '-' }}</span>
+                            </x-table.td>
+                            <x-table.td>
+                                <div class="flex items-center">
                                     <span
-                                        class="px-2 py-1 bg-slate-100 text-slate-800 border border-slate-200 rounded text-xs">{{ $project->type }}</span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">
-                                        {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : '-' }}
-                                        -
-                                        {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : '-' }}
-                                    </p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $project->leader->name ?? '-' }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <div class="flex items-center">
-                                        <span
-                                            class="text-indigo-600 font-medium whitespace-nowrap mr-2">{{ $project->progress ?? 0 }}%</span>
-                                        <div class="w-24 lg:w-32 bg-slate-200 rounded-full h-2">
-                                            <div class="bg-indigo-600 h-2 rounded-full"
-                                                style="width: {{ $project->progress ?? 0 }}%"></div>
-                                        </div>
+                                        class="text-indigo-600 font-medium whitespace-nowrap mr-2">{{ $project->progress ?? 0 }}%</span>
+                                    <div class="w-24 lg:w-32 bg-slate-200 rounded-full h-2">
+                                        <div class="bg-indigo-600 h-2 rounded-full"
+                                            style="width: {{ $project->progress ?? 0 }}%"></div>
                                     </div>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 text-center">
-                                    <x-table.action>
-                                        @can('project-view')
-                                            <li>
-                                                <a href="{{ route($routePrefix . 'show', $project->id) }}"
-                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600">Detail</a>
-                                            </li>
-                                        @endcan
+                                </div>
+                            </x-table.td>
+                            <x-table.td align="center">
+                                <x-table.action>
+                                    @can('project-view')
+                                        <li>
+                                            <a href="{{ route($routePrefix . 'show', $project->id) }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600">Detail</a>
+                                        </li>
+                                    @endcan
 
-                                        @can('project-edit')
-                                            <li>
-                                                <a href="{{ route($routePrefix . 'edit', $project->id) }}"
-                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600">Ubah</a>
-                                            </li>
-                                        @endcan
+                                    @can('project-edit')
+                                        <li>
+                                            <a href="{{ route($routePrefix . 'edit', $project->id) }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600">Ubah</a>
+                                        </li>
+                                    @endcan
 
-                                        @can('project-delete')
-                                            <li>
-                                                <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                    <x-modal-delete :id="'delete-project-' . $project->id" message="Apakah Anda yakin ingin menghapus proyek ini?"
-                                                        :item-name="$project->name" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route($routePrefix . 'destroy', $project->id)" />
-                                                </div>
-                                            </li>
-                                        @endcan
-                                    </x-table.action>
+                                    @can('project-delete')
+                                        <li>
+                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                                <x-modal-delete :id="'delete-project-' . $project->id" message="Apakah Anda yakin ingin menghapus proyek ini?"
+                                                    :item-name="$project->name" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route($routePrefix . 'destroy', $project->id)" />
+                                            </div>
+                                        </li>
+                                    @endcan
+                                </x-table.action>
 
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">Tidak ada proyek yang ditemukan.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                            </x-table.td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <x-table.td colspan="7" align="center" class="py-12">
+                                <span class="text-sm text-slate-500">Tidak ada proyek yang ditemukan.</span>
+                            </x-table.td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </x-table.table>
 
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $projects->links('pagination::tailwind') }}

@@ -1,30 +1,9 @@
 <x-dashboard::layouts.dashboard title="Profile">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb -->
-        <nav class="flex mb-4" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="../index.html"
-                        class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Profil</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[
+            ['label' => 'Profil']
+        ]" />
 
         <x-validation-errors class="mb-2" />
 
@@ -47,93 +26,77 @@
 
                 <div class="pt-24 px-6 md:px-12 pb-10">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label for="nama"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                                Nama Lengkap
-                            </label>
-                            <input type="text" id="nama" name="full_name"
-                                value="{{ old('full_name', $user->profile?->full_name) }}"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 ">
-                            <x-input-error field="full_name" />
-                        </div>
+                        <x-form.input 
+                            name="full_name" 
+                            label="Nama Lengkap" 
+                            :required="true"
+                            :value="$user->profile?->full_name"
+                        />
 
                         <!-- NIK -->
-                        <div>
-                            <label for="nik" class="block text-sm font-semibold text-gray-700 mb-2">
-                                NIK
-                            </label>
-                            <input type="text" id="nik" value="{{ $user->profile?->nik }}" readonly
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 cursor-not-allowed">
-                            <x-input-error field="nik" />
-                        </div>
+                        <x-form.input 
+                            name="nik" 
+                            label="NIK" 
+                            :value="$user->profile?->nik"
+                            readonly
+                            class="cursor-not-allowed bg-gray-100"
+                        />
                     </div>
 
                     <!-- Row 2: Email, Phone, Instansi -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-
                         <!-- Email -->
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Email
-                            </label>
-                            <input type="email" id="email" value="{{ $user->email }}" readonly
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 cursor-not-allowed">
+                        <x-form.input 
+                            name="email" 
+                            label="Email" 
+                            type="email"
+                            :value="$user->email"
+                            readonly
+                            class="cursor-not-allowed bg-gray-100"
+                        />
 
-                            <x-input-error field="email" />
-                        </div>
+                        <x-form.input 
+                            name="phone" 
+                            label="Nomor Handphone" 
+                            type="tel"
+                            inputmode="numeric"
+                            pattern="[0-9+]*"
+                            placeholder="08xxxx atau +628xxxx"
+                            :value="$user->profile?->phone"
+                            :required="true"
+                        />
 
-                        <div>
-                            <label for="phone"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                                Nomor Handphone
-                            </label>
-                            <input type="tel" id="phone" name="phone" inputmode="numeric" pattern="[0-9+]*"
-                                placeholder="08xxxx atau +628xxxx" value="{{ old('phone', $user->profile?->phone) }}"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                            <x-input-error field="phone" />
-                        </div>
+                        <x-form.select 
+                            name="gender" 
+                            label="Gender" 
+                            :required="true"
+                        >
+                            <option value="" disabled selected>Pilih Gender</option>
+                            <option value="male"
+                                {{ old('gender', $user->profile?->gender) == 'male' ? 'selected' : '' }}>Laki-laki
+                            </option>
+                            <option value="female"
+                                {{ old('gender', $user->profile?->gender) == 'female' ? 'selected' : '' }}>Perempuan
+                            </option>
+                        </x-form.select>
 
-                        <div>
-                            <label for="gender"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                                Gender
-                            </label>
-                            <select id="gender" name="gender"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                                <option value="" disabled selected>Pilih Gender</option>
-                                <option value="male"
-                                    {{ old('gender', $user->profile?->gender) == 'male' ? 'selected' : '' }}>Laki-laki
-                                </option>
-                                <option value="female"
-                                    {{ old('gender', $user->profile?->gender) == 'female' ? 'selected' : '' }}>Perempuan
-                                </option>
-                            </select>
-                            <x-input-error field="gender" />
-                        </div>
-                        <div>
-                            <label for="instansi"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                                Kementerian/Lembaga
-                            </label>
-                            <input type="text" id="instansi" name="instansi"
-                                value="{{ old('instansi', $user->profile?->instansi) }}"
-                                placeholder="Kementerian Ketenagakerjaan RI"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                            <x-input-error field="instansi" />
-                        </div>
+                        <x-form.input 
+                            name="instansi" 
+                            label="Kementerian/Lembaga" 
+                            placeholder="Kementerian Ketenagakerjaan RI"
+                            :value="$user->profile?->instansi"
+                            :required="true"
+                        />
 
-                        <div>
-                            <label for="unit_kerja"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                                Unit Kerja
-                            </label>
-                            <input type="text" id="unit_kerja" name="unit_kerja"
-                                value="{{ old('unit_kerja', $user->profile?->unit_kerja) }}" placeholder="SDM"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                            <x-input-error field="unit_kerja" />
-                        </div>
+                        <x-form.input 
+                            name="unit_kerja" 
+                            label="Unit Kerja" 
+                            placeholder="SDM"
+                            :value="$user->profile?->unit_kerja"
+                            :required="true"
+                        />
                     </div>
+
 
                     <!-- Divider -->
                     <div class="border-t border-gray-200 my-8"></div>
@@ -144,13 +107,13 @@
                         <p class="text-sm text-gray-600 mb-6">Kosongkan jika tidak ingin mengubah password</p>
 
                         <div class="mb-6">
-                            <label for="current_password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <label for="current_password" class="block text-sm font-medium text-gray-700 mb-2">
                                 Password Lama
                             </label>
                             <div class="relative">
                                 <input type="password" id="current_password" name="current_password"
                                     placeholder="Masukkan password lama"
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all pr-12 text-gray-800">
+                                    class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 pr-12 text-gray-800 {{ $errors->has('current_password') ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-slate-800' }}">
 
                                 <button type="button" onclick="togglePassword('current_password', event)"
                                     class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -162,20 +125,22 @@
                                     </svg>
                                 </button>
 
-                                <x-input-error field="current_password" />
+                                @error('current_password')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                             <!-- Password -->
                             <div>
-                                <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
                                     Password Baru
                                 </label>
                                 <div class="relative">
                                     <input type="password" id="password" name="password"
                                         placeholder="Masukkan password baru" oninput="validatePassword()"
-                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all pr-12 text-gray-800">
+                                        class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 pr-12 text-gray-800 {{ $errors->has('password') ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-slate-800' }}">
                                     <button type="button" onclick="togglePassword('password', event)"
                                         class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor"
@@ -186,7 +151,9 @@
                                                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                         </svg>
                                     </button>
-                                    <x-input-error field="password" />
+                                    @error('password')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Password Strength Meter -->
@@ -253,13 +220,13 @@
                             </div>
 
                             <div>
-                                <label for="repassword" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <label for="repassword" class="block text-sm font-medium text-gray-700 mb-2">
                                     Re-Password
                                 </label>
                                 <div class="relative">
                                     <input type="password" id="repassword" name="password_confirmation"
                                         placeholder="Masukkan ulang password" oninput="validatePasswordMatch()"
-                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all pr-12 text-gray-800">
+                                        class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 pr-12 text-gray-800 {{ $errors->has('password_confirmation') ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 text-slate-800' }}">
                                     <button type="button" onclick="togglePassword('repassword', event)"
                                         class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor"
@@ -271,18 +238,19 @@
                                         </svg>
                                     </button>
 
-                                    <x-input-error field="password_confirmation" />
+                                    @error('password_confirmation')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Submit Button -->
-                    <div class="mt-10 flex justify-end">
-                        <button type="submit"
-                            class="px-8 py-3.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
-                            Submit
-                        </button>
+                        <!-- Submit Button -->
+                        <div class="mt-10 flex justify-end">
+                            <x-button type="submit" variant="success" size="lg">
+                                Submit
+                            </x-button>
+                        </div>
                     </div>
                 </div>
             </div>

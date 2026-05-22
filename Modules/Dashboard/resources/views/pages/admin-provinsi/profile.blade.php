@@ -1,30 +1,7 @@
 <x-dashboard::layouts.dashboard title="Profile">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb -->
-        <nav class="flex mb-4" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="../index.html"
-                        class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Profil</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Profil']]" />
 
         <x-validation-errors class="mb-2" />
 
@@ -47,108 +24,90 @@
 
                 <div class="pt-24 px-6 md:px-12 pb-10">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label for="nama"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*']">
-                                Nama Lengkap
-                            </label>
-                            <input type="text" id="nama" name="full_name"
-                                value="{{ old('full_name', $user->profile?->full_name) }}"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 ">
-                            <x-input-error field="full_name" />
-                        </div>
+                        <x-form.input 
+                            name="full_name" 
+                            label="Nama Lengkap" 
+                            value="{{ $user->profile?->full_name }}" 
+                            required 
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3"
+                        />
 
                         <!-- NIK -->
-                        <div>
-                            <label for="nik" class="block text-sm font-semibold text-gray-700 mb-2">
-                                NIK
-                            </label>
-                            <input type="text" id="nik" value="{{ $user->profile?->nik }}" readonly
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 cursor-not-allowed">
-                            <x-input-error field="nik" />
-                        </div>
+                        <x-form.input 
+                            name="nik" 
+                            label="NIK" 
+                            value="{{ $user->profile?->nik }}" 
+                            readonly 
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3 cursor-not-allowed"
+                        />
                     </div>
 
                     <!-- Row 2: Email, Phone, Instansi -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
                         <!-- Email -->
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Email
-                            </label>
-                            <input type="email" id="email" value="{{ $user->email }}" readonly
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 cursor-not-allowed">
+                        <x-form.input 
+                            name="email" 
+                            label="Email" 
+                            value="{{ $user->email }}" 
+                            readonly 
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3 cursor-not-allowed"
+                        />
 
-                            <x-input-error field="email" />
-                        </div>
+                        <x-form.input 
+                            name="phone" 
+                            label="Nomor Handphone" 
+                            value="{{ $user->profile?->phone }}" 
+                            required 
+                            placeholder="08xxxx atau +628xxxx" 
+                            inputmode="numeric" 
+                            pattern="[0-9+]*"
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3"
+                        />
 
-                        <div>
-                            <label for="phone"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*']">
-                                Nomor Handphone
-                            </label>
-                            <input type="tel" id="phone" name="phone" inputmode="numeric" pattern="[0-9+]*"
-                                placeholder="08xxxx atau +628xxxx" value="{{ old('phone', $user->profile?->phone) }}"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                            <x-input-error field="phone" />
-                        </div>
+                        <x-form.select 
+                            name="gender" 
+                            label="Gender" 
+                            required 
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3"
+                        >
+                            <option value="" disabled selected>Pilih Gender</option>
+                            <option value="male" {{ old('gender', $user->profile?->gender) == 'male' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="female" {{ old('gender', $user->profile?->gender) == 'female' ? 'selected' : '' }}>Perempuan</option>
+                        </x-form.select>
+                        <x-form.input 
+                            name="instansi" 
+                            label="Kementerian/Lembaga" 
+                            value="{{ $user->profile?->instansi }}" 
+                            required 
+                            placeholder="Kementerian Ketenagakerjaan RI"
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3"
+                        />
 
-                        <div>
-                            <label for="gender"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*']">
-                                Gender
-                            </label>
-                            <select id="gender" name="gender"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                                <option value="" disabled selected>Pilih Gender</option>
-                                <option value="male"
-                                    {{ old('gender', $user->profile?->gender) == 'male' ? 'selected' : '' }}>Laki-laki
-                                </option>
-                                <option value="female"
-                                    {{ old('gender', $user->profile?->gender) == 'female' ? 'selected' : '' }}>Perempuan
-                                </option>
-                            </select>
-                            <x-input-error field="gender" />
-                        </div>
-                        <div>
-                            <label for="instansi"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                                Kementerian/Lembaga
-                            </label>
-                            <input type="text" id="instansi" name="instansi"
-                                value="{{ old('instansi', $user->profile?->instansi) }}"
-                                placeholder="Kementerian Ketenagakerjaan RI"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                            <x-input-error field="instansi" />
-                        </div>
-
-                        <div>
-                            <label for="unit_kerja"
-                                class="block text-sm font-semibold text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                                Unit Kerja
-                            </label>
-                            <input type="text" id="unit_kerja" name="unit_kerja"
-                                value="{{ old('unit_kerja', $user->profile?->unit_kerja) }}" placeholder="SDM"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                            <x-input-error field="unit_kerja" />
-                        </div>
-                        <div>
-                            <label for="province_code" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Provinsi
-                            </label>
-                            <input type="text" id="province_code" readonly
-                                value="{{ $user->scopeArea?->province?->name }}" placeholder="Provinsi"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                        </div>
-                        <div>
-                            <label for="province_code" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Kab/Kota
-                            </label>
-                            <input type="text" id="province_code" readonly
-                                value="{{ $user->scopeArea?->regency?->name }}" placeholder="Kab/Kota"
-                                class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700">
-                        </div>
+                        <x-form.input 
+                            name="unit_kerja" 
+                            label="Unit Kerja" 
+                            value="{{ $user->profile?->unit_kerja }}" 
+                            required 
+                            placeholder="SDM"
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3"
+                        />
+                        <x-form.input 
+                            name="province_name" 
+                            label="Provinsi" 
+                            value="{{ $user->scopeArea?->province?->name }}" 
+                            readonly 
+                            placeholder="Provinsi"
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3 cursor-not-allowed"
+                        />
+                        <x-form.input 
+                            name="regency_name" 
+                            label="Kab/Kota" 
+                            value="{{ $user->scopeArea?->regency?->name }}" 
+                            readonly 
+                            placeholder="Kab/Kota"
+                            class="bg-gray-100 border-gray-200 rounded-xl py-3 cursor-not-allowed"
+                        />
                     </div>
 
                     <!-- Divider -->
@@ -295,10 +254,9 @@
 
                     <!-- Submit Button -->
                     <div class="mt-10 flex justify-end">
-                        <button type="submit"
-                            class="px-8 py-3.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        <x-button type="submit" variant="success" size="lg" class="shadow-lg hover:shadow-xl transform hover:scale-105 duration-200 font-semibold rounded-xl px-8 py-3.5">
                             Submit
-                        </button>
+                        </x-button>
                     </div>
                 </div>
             </div>

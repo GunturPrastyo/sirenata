@@ -4,27 +4,10 @@
     @endphp
     <div class="p-4 sm:p-6 max-w-6xl mx-auto">
         <!-- Breadcrumb -->
-        <nav class="flex mb-4" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.99 9a.75.75 0 1 1-1.06 1.06l-1.06-1.06V20.25a1.75 1.75 0 0 1-1.75 1.75h-3a.75.75 0 0 1-.75-.75v-3.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v3.5a.75.75 0 0 1-.75.75h-3a1.75 1.75 0 0 1-1.75-1.75v-7.409l-1.06 1.06a.75.75 0 0 1-1.06-1.06l8.99-9Z" /></svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                        <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Hasil Pemanfaatan RTKD</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Detail & Verifikasi</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
+            ['label' => 'Hasil Pemanfaatan RTKD', 'url' => route('admin-pusat.hasil-pemanfaatan-rtkd.index')],
+            ['label' => 'Detail & Verifikasi']
+        ]" />
 
         @if($isOverridden)
             <div class="mb-5 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg p-3 flex items-center gap-3">
@@ -356,15 +339,15 @@
                         <p class="text-slate-300 text-xs mt-0.5">Sistem akan otomatis menentukan status Disetujui/Ditolak.</p>
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
-                        <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.edit-on-behalf', $submission->id) }}" class="w-full sm:w-auto px-4 py-2 bg-slate-600 text-white font-medium rounded hover:bg-slate-500 transition text-sm text-center">
+                        <x-button href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.edit-on-behalf', $submission->id) }}" variant="white" class="w-full sm:w-auto">
                             Ubah
-                        </a>
-                        <button type="submit" 
-                            class="w-full sm:w-auto px-5 py-2 text-white font-bold rounded transition shadow-md text-sm whitespace-nowrap"
-                            :class="hasRejection ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
-                            x-text="hasRejection ? 'Kembalikan' : 'Terverifikasi'">
-                            Simpan Verifikasi
-                        </button>
+                        </x-button>
+                        <x-button type="submit" variant="danger" class="w-full sm:w-auto" x-show="hasRejection">
+                            Kembalikan
+                        </x-button>
+                        <x-button type="submit" variant="success" class="w-full sm:w-auto" x-show="!hasRejection">
+                            Terverifikasi
+                        </x-button>
                     </div>
                 </div>
             @endif

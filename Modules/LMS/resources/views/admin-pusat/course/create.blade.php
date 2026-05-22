@@ -1,34 +1,10 @@
 <x-dashboard::layouts.dashboard title="Tambah Course">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-slate-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <a href="{{ route('admin-pusat.management-course.courses.index') }}" class="ml-1 text-sm font-medium text-slate-700 hover:text-indigo-600 md:ml-2">Daftar Course</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-slate-500 md:ml-2">Tambah Course</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
+            ['label' => 'Daftar Course', 'url' => route('admin-pusat.management-course.courses.index')],
+            ['label' => 'Tambah Course']
+        ]" />
 
         <x-validation-errors />
 
@@ -45,65 +21,41 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Kategori (Category ID) -->
                     <div class="col-span-1 md:col-span-2">
-                        <label for="category_id" class="block text-sm font-medium text-slate-700 mb-1">Kategori <span class="text-red-500">*</span></label>
-                        <select name="category_id" id="category_id" required
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 @error('category_id') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">
+                        <x-form.select name="category_id" id="category_id" label="Kategori" required>
                             <option value="" disabled selected>-- Pilih Kategori --</option>
-                            <!-- Pastikan Anda mengirim $categories dari Controller -->
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
-                        </select>
-                        @error('category_id')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                        @enderror
+                        </x-form.select>
                     </div>
 
                     <!-- Nama Course -->
                     <div class="col-span-1 md:col-span-2">
-                        <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Nama Course <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                            placeholder="Contoh: Perencanaan Tenaga Kerja"
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 @error('name') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">
-                        @error('name')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                        @enderror
+                        <x-form.input name="name" label="Nama Course" placeholder="Contoh: Perencanaan Tenaga Kerja" required />
                     </div>
 
                     <!-- Thumbnail -->
                     <div class="col-span-1 md:col-span-2">
-                        <label for="thumbnail" class="block text-sm font-medium text-slate-700 mb-1">Thumbnail Course <span class="text-red-500">*</span></label>
-                        <input type="file" name="thumbnail" id="thumbnail" accept="image/*" required
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 @error('thumbnail') border-red-500 @enderror">
-                        @error('thumbnail')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                        @enderror
+                        <x-form.input type="file" name="thumbnail" label="Thumbnail Course" accept="image/*"
+                            class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" required />
                     </div>
 
                     <!-- Deskripsi -->
                     <div class="col-span-1 md:col-span-2">
-                        <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Deskripsi Course <span class="text-red-500">*</span></label>
-                        <textarea name="description" id="description" rows="5" required
-                            placeholder="Tuliskan deskripsi lengkap mengenai course ini..."
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 @error('description') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">{{ old('description') }}</textarea>
-                        @error('description')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                        @enderror
+                        <x-form.textarea name="description" label="Deskripsi Course" rows="5" placeholder="Tuliskan deskripsi lengkap mengenai course ini..." required />
                     </div>
                 </div>
 
                 <!-- Tombol Aksi -->
                 <div class="mt-8 flex justify-end space-x-3 border-t border-slate-200 pt-5">
-                    <a href="{{ route('admin-pusat.management-course.courses.index') }}" 
-                        class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200">
+                    <x-button :href="route('admin-pusat.management-course.courses.index')" variant="white">
                         Batal
-                    </a>
-                    <button type="submit" 
-                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    </x-button>
+                    <x-button type="submit" variant="primary">
                         Simpan Course
-                    </button>
+                    </x-button>
                 </div>
             </form>
         </div>

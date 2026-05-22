@@ -15,7 +15,8 @@
                         Masuk
                     </a>
                     <a href="{{ route('register') }}"
-                        class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-all">
+                        class="px-5 py-2.5 text-white font-semibold rounded-lg shadow-md transition-all hover:opacity-90"
+                        style="background-color: #13416B;">
                         Daftar
                     </a>
                 @endguest
@@ -27,7 +28,7 @@
                             <button @click="open = !open"
                                 class="rounded-full overflow-hidden focus:outline-none cursor-pointer">
                                 <img class="w-8 h-8 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}&background=6366f1&color=fff"
+                                    src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}&background=13416b&color=fff"
                                     alt="user">
                             </button>
                         </div>
@@ -42,11 +43,11 @@
                                 @role('super-admin')
                                     <li>
                                         <a href="{{ route('super-admin.profile') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
                                     </li>
                                     <li>
                                         <a href="{{ route('super-admin.dashboard') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">
                                             Dashboard Superadmin
                                         </a>
                                     </li>
@@ -54,11 +55,11 @@
                                 @role('admin-pusat')
                                     <li>
                                         <a href="{{ route('admin-pusat.profile') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
                                     </li>
                                     <li>
                                         <a href="{{ route('admin-pusat.dashboard') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">
                                             Dashboard Admin Pusat
                                         </a>
                                     </li>
@@ -66,11 +67,11 @@
                                 @role('admin-province')
                                     <li>
                                         <a href="{{ route('admin-province.profile') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
                                     </li>
                                     <li>
                                         <a href="{{ route('admin-province.dashboard') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">
                                             Dashboard Admin Provinsi
                                         </a>
                                     </li>
@@ -78,11 +79,11 @@
                                 @role('admin-kab-kota')
                                     <li>
                                         <a href="{{ route('admin-kab-kota.profile') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
                                     </li>
                                     <li>
                                         <a href="{{ route('admin-kab-kota.dashboard') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">
                                             Dashboard Admin Kab/Kota
                                         </a>
                                     </li>
@@ -90,10 +91,10 @@
                                 @role('user')
                                     <li>
                                         <a href="{{ route('user.profile') }}"
-                                            class="block p-2 rounded hover:bg-purple-200">Profil</a>
+                                            class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('user.dashboard') }}" class="block p-2 rounded hover:bg-purple-200">Dashboard
+                                        <a href="{{ route('user.dashboard') }}" class="block p-2 rounded hover:bg-[#13416B]/30">Dashboard
                                             User/Peserta</a>
                                     </li>
                                 @endrole
@@ -102,7 +103,7 @@
                                     <form action="{{ route('logout') }}" method="POST" class="w-full">
                                         @csrf
                                         <button type="submit"
-                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-purple-200 hover:text-purple-900 transition text-left">
+                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-[#13416B]/30 hover:text-[#13416B] transition text-left">
                                             Keluar
                                         </button>
                                     </form>

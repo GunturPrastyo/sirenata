@@ -170,7 +170,7 @@ class HasilPemanfaatanRtkdController extends Controller
         $data->created_by = auth()->id();
         $this->processFormData($request, $data, $latestRtk);
 
-        $data->status_verifikasi = 'verified';
+        $data->status_verifikasi = 'pending';
         $data->catatan_verifikasi = 'Diisi/Dikoreksi langsung oleh Admin Pusat.';
         $data->save();
 

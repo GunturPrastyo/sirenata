@@ -28,7 +28,7 @@
     <template x-teleport="body">
         <div
             x-show="show"
-            class="fixed top-0 left-0 z-[99] p-2 md:p-4 flex items-start justify-center w-screen h-screen overflow-y-auto"
+            class="fixed top-0 left-0 z-[99] p-2 md:p-4 flex items-center justify-center w-screen h-screen overflow-y-auto"
             x-cloak
         >
             <!-- Backdrop -->

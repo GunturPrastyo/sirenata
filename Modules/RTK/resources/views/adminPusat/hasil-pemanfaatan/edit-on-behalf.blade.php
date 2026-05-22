@@ -1,27 +1,9 @@
 <x-dashboard::layouts.dashboard title="Ubah Data Kuesioner (Admin Pusat)">
     <div class="p-2 sm:p-6" x-data="kuesionerForm()">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.99 9a.75.75 0 1 1-1.06 1.06l-1.06-1.06V20.25a1.75 1.75 0 0 1-1.75 1.75h-3a.75.75 0 0 1-.75-.75v-3.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v3.5a.75.75 0 0 1-.75.75h-3a1.75 1.75 0 0 1-1.75-1.75v-7.409l-1.06 1.06a.75.75 0 0 1-1.06-1.06l8.99-9Z"></path></svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                        <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Hasil Pemanfaatan RTKD</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Ubah Data (On Behalf)</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
+            ['label' => 'Hasil Pemanfaatan RTKD', 'url' => route('admin-pusat.hasil-pemanfaatan-rtkd.index')],
+            ['label' => 'Ubah Data (On Behalf)']
+        ]" />
 
         <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 flex items-start gap-3">
             <svg class="w-6 h-6 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -400,12 +382,12 @@
             </template>
 
             <div class="flex justify-end gap-3 pt-4">
-                <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.show', $submission->id) }}" class="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">
+                <x-button href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.show', $submission->id) }}" variant="white">
                     Batal
-                </a>
-                <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition shadow-sm">
+                </x-button>
+                <x-button type="submit" variant="primary">
                     Simpan Perubahan
-                </button>
+                </x-button>
             </div>
         </form>
     </div>

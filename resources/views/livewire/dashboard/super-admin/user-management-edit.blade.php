@@ -15,93 +15,29 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 form-grid">
-                    <div>
-                        <label for="nama" class="block text-sm font-medium text-gray-700 mb-2">
-                            Nama Lengkap <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="nama" name="nama" wire:model.lazy="full_name"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="Masukkan nama lengkap">
-                        @error('full_name')
-                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input name="full_name" label="Nama Lengkap" wire:model.lazy="full_name" required placeholder="Masukkan nama lengkap" />
 
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Email <span class="text-red-500">*</span>
-                        </label>
-                        <input type="email" id="email" name="email" wire:model.lazy="email" disabled
-                            class="w-full px-4 py-2.5 border border-gray-300 cursor-not-allowed rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="contoh@kemnaker.go.id">
-                        @error('email')
-                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input type="email" name="email" label="Email" wire:model.lazy="email" disabled placeholder="contoh@kemnaker.go.id" />
 
-                    <div>
-                        <label for="telepon" class="block text-sm font-medium text-gray-700 mb-2">
-                            Nomor Telepon <span class="text-red-500">*</span>
-                        </label>
-                        <input type="tel" id="telepon" name="telepon" wire:model.lazy="phone" inputmode="numeric"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="+62 812-3456-7890">
-                        @error('phone')
-                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input type="tel" name="phone" label="Nomor Telepon" wire:model.lazy="phone" required placeholder="+62 812-3456-7890" inputmode="numeric" />
 
-                    <div>
-                        <label for="instansi" class="block text-sm font-medium text-gray-700 mb-2">
-                            instansi <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="instansi" name="instansi" wire:model.lazy="instansi"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="Contoh: Staff Administrasi">
-                        @error('instansi')
-                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input name="instansi" label="Instansi" wire:model.lazy="instansi" required placeholder="Contoh: Staff Administrasi" />
 
-                    <div>
-                        <label for="join_date" class="block text-sm font-medium text-gray-700 mb-2">
-                            Tanggal Bergabung
-                        </label>
-                        <input type="date" id="join_date" name="join_date" disabled wire:model.lazy="join_date"
-                            class="w-full px-4 py-2.5 border border-gray-300 cursor-not-allowed rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input">
-                    </div>
+                    <x-form.input type="date" name="join_date" label="Tanggal Bergabung" wire:model.lazy="join_date" disabled />
 
-                    <div>
-                        <label for="province" class="block text-sm font-medium text-gray-700 mb-2">
-                            Province
-                        </label>
-                        <select wire:model.lazy="province" id="province" name="province"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input">
-                            <option value="">Pilih Provinsi</option>
-                            @foreach ($this->provinces as $province)
-                                <option value="{{ $province->code }}">{{ $province->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('province')
-                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.select name="province" label="Province" wire:model.lazy="province">
+                        <option value="">Pilih Provinsi</option>
+                        @foreach ($this->provinces as $province)
+                            <option value="{{ $province->code }}">{{ $province->name }}</option>
+                        @endforeach
+                    </x-form.select>
 
-                    <div>
-                        <label for="regency" class="block text-sm font-medium text-gray-700 mb-2">
-                            Regency
-                        </label>
-                        <select wire:model.lazy="regency" id="regency" name="regency"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input">
-                            <option value="">Pilih Kabupaten/Kota</option>
-                            @foreach ($this->regencies as $regency)
-                                <option value="{{ $regency->code }}">{{ $regency->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('regency')
-                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.select name="regency" label="Regency" wire:model.lazy="regency">
+                        <option value="">Pilih Kabupaten/Kota</option>
+                        @foreach ($this->regencies as $regency)
+                            <option value="{{ $regency->code }}">{{ $regency->name }}</option>
+                        @endforeach
+                    </x-form.select>
 
                     {{-- <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -213,17 +149,13 @@
 
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-3 action-buttons form-section">
-                <button type="submit" id="btn-submit"
-                    class="inline-flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
-                    <i class="fas fa-save mr-2"></i>
+                <x-button type="submit" id="btn-submit" icon="fas fa-save">
                     Simpan Perubahan
-                </button>
+                </x-button>
 
-                <a href="{{ route('super-admin.user-management.index') }}"
-                    class="inline-flex items-center bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors shadow-sm">
-                    <i class="fas fa-times mr-2"></i>
+                <x-button href="{{ route('super-admin.user-management.index') }}" variant="secondary" icon="fas fa-times">
                     Batal
-                </a>
+                </x-button>
             </div>
         </form>
     </div>

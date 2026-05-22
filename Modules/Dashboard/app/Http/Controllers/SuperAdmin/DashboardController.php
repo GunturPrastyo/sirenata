@@ -36,6 +36,12 @@ class DashboardController extends Controller
         $totalLembaga = Institution::where('type', 'pusat')->count();
         $totalInstansi = Institution::where('type', 'daerah')->count();
 
+        // 2. LMS Courses Count
+        $totalCourses = 0;
+        if (class_exists(\Modules\LMS\Models\Course::class)) {
+            $totalCourses = \Modules\LMS\Models\Course::count();
+        }
+
         // 3. Activity Logs
         $recentActivities = collect();
         if (class_exists(\Spatie\Activitylog\Models\Activity::class)) {
@@ -46,51 +52,6 @@ class DashboardController extends Controller
             }
         }
 
-        if ($recentActivities->isEmpty()) {
-            $recentActivities = collect([
-                (object) [
-                    'description' => 'diperbarui',
-                    'subject_type' => 'Konfigurasi Sistem',
-                    'subject' => (object) ['name' => 'API Key KCLC'],
-                    'subject_id' => 1,
-                    'created_at' => now()->subMinutes(10),
-                    'causer' => (object) ['name' => 'Superadmin']
-                ],
-                (object) [
-                    'description' => 'dibuat',
-                    'subject_type' => 'Akun Admin Pusat',
-                    'subject' => (object) ['name' => 'Sarah Putri'],
-                    'subject_id' => 2,
-                    'created_at' => now()->subHours(1),
-                    'causer' => (object) ['name' => 'Superadmin']
-                ],
-                (object) [
-                    'description' => 'terdaftar',
-                    'subject_type' => 'Peserta Baru',
-                    'subject' => (object) ['name' => 'Budi Santoso'],
-                    'subject_id' => 15,
-                    'created_at' => now()->subHours(3),
-                    'causer' => null
-                ],
-                (object) [
-                    'description' => 'diperbarui',
-                    'subject_type' => 'Lembaga',
-                    'subject' => (object) ['name' => 'Kementerian Ketenagakerjaan'],
-                    'subject_id' => 4,
-                    'created_at' => now()->subDay(),
-                    'causer' => (object) ['name' => 'Superadmin']
-                ],
-                (object) [
-                    'description' => 'dibuat',
-                    'subject_type' => 'Kelas Baru',
-                    'subject' => (object) ['name' => 'Pelatihan Vokasi TIK'],
-                    'subject_id' => 8,
-                    'created_at' => now()->subDays(2),
-                    'causer' => (object) ['name' => 'Sarah Putri']
-                ]
-            ]);
-        }
-
         return view('dashboard::pages.super-admin.index', [
             'user' => $user,
             'totalUser' => $totalUser,
@@ -99,6 +60,7 @@ class DashboardController extends Controller
             'totalAdminKabKota' => $totalAdminKabKota,
             'totalLembaga' => $totalLembaga,
             'totalInstansi' => $totalInstansi,
+            'totalCourses' => $totalCourses,
             'recentActivities' => $recentActivities,
         ]);
     }

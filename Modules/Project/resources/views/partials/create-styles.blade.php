@@ -2,35 +2,38 @@
 
 <style>
     .select2-container--default .select2-selection--single {
-        height: 42px;
-        border: 1px solid #d1d5db;
-        border-radius: 0.5rem;
+        height: 44px;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.75rem;
         padding: 0.5rem 0.75rem;
+        transition: all 0.2s;
     }
 
     .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 26px;
-        color: #374151;
+        line-height: 24px;
+        color: #1e293b;
     }
 
     .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 40px;
+        height: 42px;
     }
 
     .select2-container--default.select2-container--focus .select2-selection--single {
         border-color: #6366f1;
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
     }
 
     .select2-dropdown {
-        border: 1px solid #d1d5db;
-        border-radius: 0.5rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
 
     .select2-container--default .select2-search--dropdown .select2-search__field {
-        border: 1px solid #d1d5db;
-        border-radius: 0.375rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.5rem;
         padding: 0.5rem;
+        outline: none;
     }
 
     .select2-container--default .select2-results__option--highlighted[aria-selected] {
@@ -38,15 +41,16 @@
     }
 
     .select2-container--default .select2-selection--multiple {
-        min-height: 42px;
-        border: 1px solid #d1d5db;
-        border-radius: 0.5rem;
+        min-height: 44px;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.75rem;
         padding: 0.25rem 0.5rem;
+        transition: all 0.2s;
     }
 
     .select2-container--default.select2-container--focus .select2-selection--multiple {
         border-color: #6366f1;
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
     }
 
     .select2-container--default .select2-selection--multiple .select2-selection__choice {

@@ -1,8 +1,8 @@
 <aside
     class="fixed top-0 left-0 z-40 w-64 h-full bg-white border-e border-gray-200
-    transform transition-transform duration-300
+    transform -translate-x-full transition-transform duration-300
     sm:translate-x-0"
-    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" @keydown.escape.window="sidebarOpen = false" x-cloak>
+    :class="sidebarOpen ? 'translate-x-0' : ''" @keydown.escape.window="sidebarOpen = false" x-cloak>
     <div class="h-full px-3 py-4 overflow-y-auto pt-20 sm:pt-4">
 
         <a href="#" class="flex items-center ps-2.5 mb-5">

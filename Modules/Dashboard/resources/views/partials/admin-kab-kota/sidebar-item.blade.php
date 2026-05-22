@@ -1,8 +1,8 @@
 <li>
     <a href="{{ route('admin-kab-kota.dashboard') }}" class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-kab-kota.dashboard')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+    ? 'text-[#13416B] bg-[#13416B]/30'
+    : 'text-gray-600 hover:bg-[#13416B]/30 hover:text-[#13416B]' }}">
         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -17,9 +17,9 @@
 <li>
     <a href="{{ route('admin-kab-kota.project.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-kab-kota.project.*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
-        <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
+    ? 'text-[#13416B] bg-[#13416B]/30'
+    : 'text-gray-600 hover:bg-[#13416B]/30 hover:text-[#13416B]' }}">
+        <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-[#13416B]" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M10 6H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-5m-4 0V5a2 2 0 1 1 4 0v1m-4 0a2 2 0 1 0 4 0m-5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 0 0-2.83 2M15 11h3m-3 4h2" />
@@ -31,8 +31,8 @@
 <li x-data="{ open: {{ request()->routeIs('admin-kab-kota.rtkd*', 'admin-kab-kota.laporan*') ? 'true' : 'false' }} }">
     <button @click="open = !open" class="flex items-center cursor-pointer w-full px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-kab-kota.rtkd*', 'admin-kab-kota.laporan*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+    ? 'text-[#13416B] bg-[#13416B]/30'
+    : 'text-gray-600 hover:bg-[#13416B]/30 hover:text-[#13416B]' }}">
         <svg class="w-5 h-5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
             fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -47,20 +47,20 @@
         </svg>
     </button>
 
-    <ul x-show="open" x-collapse class="mt-1 space-y-1">
+    <ul x-show="open" x-collapse x-cloak class="mt-1 space-y-1">
         <li>
             <a href="{{ route('admin-kab-kota.rtkd.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
                 {{ request()->routeIs('admin-kab-kota.rtkd*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+    ? 'text-[#13416B] bg-[#13416B]/30'
+    : 'text-gray-600 hover:bg-[#13416B]/30 hover:text-[#13416B]' }}">
                 Rekapitulasi Rencana Tenaga Kerja Kab/Kota
             </a>
         </li>
         <li>
             <a href="{{ route('admin-kab-kota.laporan.index') }}" class="flex items-center pl-10 px-2 py-1.5 rounded-md transition text-xs
                 {{ request()->routeIs('admin-kab-kota.laporan*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+    ? 'text-[#13416B] bg-[#13416B]/30'
+    : 'text-gray-600 hover:bg-[#13416B]/30 hover:text-[#13416B]' }}">
                 Rencana Tenaga Kerja (RTK)
             </a>
         </li>
@@ -71,9 +71,9 @@
 <li>
     <a href="{{ route('admin-kab-kota.rekapitulasi.index') }}" class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-kab-kota.rekapitulasi*')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
-        <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-indigo-600" aria-hidden="true"
+    ? 'text-[#13416B] bg-[#13416B]/30'
+    : 'text-gray-600 hover:bg-[#13416B]/30 hover:text-[#13416B]' }}">
+        <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-[#13416B]" aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
                 d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
@@ -85,8 +85,8 @@
 <li>
     <a href="{{ route('admin-kab-kota.help') }}" class="flex items-center px-2 py-1.5 rounded-md transition
         {{ request()->routeIs('admin-kab-kota.help')
-    ? 'text-indigo-600 bg-purple-100'
-    : 'text-gray-600 hover:bg-purple-100 hover:text-indigo-600' }}">
+    ? 'text-[#13416B] bg-[#13416B]/30'
+    : 'text-gray-600 hover:bg-[#13416B]/30 hover:text-[#13416B]' }}">
         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

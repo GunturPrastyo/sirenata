@@ -4,93 +4,56 @@
     @endpush
 
     <div class="p-2 sm:p-6">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ url('/') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <a href="{{ route($routePrefix . 'index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Proyek</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Detail Proyek</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Proyek', 'url' => route($routePrefix . 'index')], ['label' => 'Detail Proyek']]" />
 
-        <div class="bg-white rounded-lg shadow-sm p-4 sm:p-8 max-w-2xl mx-auto">
-            <div class="flex justify-between items-center mb-6">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 max-w-2xl mx-auto">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 border-b border-slate-100 pb-5 sm:pb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Detail Proyek</h1>
-                    <p class="text-gray-500 text-sm">Informasi lengkap mengenai proyek ini</p>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Detail Proyek</h1>
                 </div>
-                <span
-                    class="px-3 py-1 text-sm font-medium rounded-full 
-                    {{ $project->status === 'Selesai' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
-                    {{ $project->status ?? 'On Progress' }}
-                </span>
+                <div>
+                    <x-badge :color="$project->status === 'Selesai' ? 'success' : 'indigo'" :text="$project->status ?? 'On Progress'" class="uppercase tracking-wider" />
+                </div>
             </div>
 
             <div class="space-y-6">
-                <div class="border-b border-gray-100 pb-4">
-                    <label class="block text-sm font-medium text-gray-500 mb-1">Nama Proyek</label>
-                    <p class="text-lg font-semibold text-gray-900">{{ $project->name }}</p>
+                <div class="border-b border-slate-100 pb-4">
+                    <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Nama Proyek</label>
+                    <p class="text-lg font-bold text-slate-800">{{ $project->name }}</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 border-b border-gray-100 pb-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 border-b border-slate-100 pb-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Tanggal Mulai</label>
-                        <p class="text-base text-gray-900">
-                            {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : '-' }}
+                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tanggal Mulai</label>
+                        <p class="text-sm sm:text-base font-semibold text-slate-700">
+                             {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : '-' }}
                         </p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Tanggal Selesai</label>
-                        <p class="text-base text-gray-900">
-                            {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : '-' }}
+                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tanggal Selesai</label>
+                        <p class="text-sm sm:text-base font-semibold text-slate-700">
+                             {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : '-' }}
                         </p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Durasi</label>
-                        <p class="text-base text-gray-900">{{ $project->duration }} Bulan</p>
+                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Durasi</label>
+                        <p class="text-sm sm:text-base font-semibold text-slate-700">{{ $project->duration }} Bulan</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 border-b border-gray-100 pb-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 border-b border-slate-100 pb-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Tipe Proyek</label>
-                        <p class="text-base text-gray-900"><span
-                                class="px-2 py-1 bg-gray-100 rounded text-sm font-medium">{{ $project->type }}</span>
+                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tipe Proyek</label>
+                        <p class="mt-1">
+                            <x-badge color="slate" :text="$project->type" />
                         </p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Progress</label>
-                        <div class="flex items-center">
-                            <span class="text-indigo-600 font-bold mr-2">{{ $project->progress ?? 0 }}%</span>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-indigo-600 h-2.5 rounded-full"
+                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Progress</label>
+                        <div class="flex items-center mt-1.5">
+                            <span class="text-indigo-600 font-bold text-sm mr-2.5">{{ $project->progress ?? 0 }}%</span>
+                            <div class="w-full bg-slate-100 border border-slate-200/60 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-indigo-600 h-2.5 rounded-full shadow-inner shadow-indigo-500/20"
                                     style="width: {{ $project->progress ?? 0 }}%">
                                 </div>
                             </div>
@@ -98,59 +61,58 @@
                     </div>
                 </div>
 
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Tim Proyek</h3>
+                <div class="pt-2">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Tim Proyek
+                    </h3>
 
-                    <div class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-100">
-                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-semibold">Ketua
-                            Tim</label>
-                        <div class="flex items-center">
-                            <div
-                                class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold mr-3 shadow-sm">
-                                {{ substr($project->leader->name ?? '?', 0, 1) }}
-                            </div>
-                            <span class="font-medium text-gray-900">{{ $project->leader->name ?? '-' }}</span>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-4 flex items-center justify-between">
+                        <div>
+                            <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Ketua Tim</label>
+                            <span class="font-bold text-slate-800 text-sm sm:text-base">{{ $project->leader->name ?? '-' }}</span>
+                        </div>
+                        <div class="h-10 w-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg shadow-sm">
+                            {{ substr($project->leader->name ?? '?', 0, 1) }}
                         </div>
                     </div>
 
-                    <div>
+                    <div class="mt-4">
                         @php
                             $teamMembersArr = is_array($project->team_members) ? $project->team_members : json_decode($project->team_members, true) ?? [];
                         @endphp
-                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-3 font-semibold">Anggota
-                            Tim
-                            ({{ count($teamMembersArr) }})</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                            Anggota Tim ({{ count($teamMembersArr) }})
+                        </label>
                         @if(count($teamMembersArr) > 0)
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 @foreach(App\Models\User::whereIn('id', $teamMembersArr)->get() as $member)
-                                    <div
-                                        class="flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                        <div
-                                            class="h-8 w-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 font-bold mr-3">
+                                    <div class="flex items-center p-3 bg-white border border-slate-100 rounded-xl hover:border-indigo-100 hover:shadow-sm hover:shadow-indigo-500/5 transition-all">
+                                        <div class="h-8 w-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-600 font-bold mr-3 text-sm">
                                             {{ substr($member->name, 0, 1) }}
                                         </div>
-                                        <span class="text-sm text-gray-800 font-medium">{{ $member->name }}</span>
+                                        <span class="text-sm text-slate-700 font-semibold">{{ $member->name }}</span>
                                     </div>
                                 @endforeach
                             </div>
                         @else
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 text-center">
-                                <p class="text-sm text-gray-500 italic">Tidak ada anggota tim tambahan.</p>
+                            <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 text-center">
+                                <p class="text-xs sm:text-sm text-slate-400 italic">Tidak ada anggota tim tambahan.</p>
                             </div>
                         @endif
                     </div>
                 </div>
 
-                <div class="flex gap-4 pt-6 mt-6 border-t border-gray-200">
-                    <a href="{{ route($routePrefix . 'index') }}"
-                        class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center shadow-sm">
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 mt-6 border-t border-slate-100">
+                    <x-button :href="route($routePrefix . 'index')" variant="secondary" class="flex-1">
                         Kembali
-                    </a>
+                    </x-button>
                     @can('project-edit')
-                        <a href="{{ route($routePrefix . 'edit', $project->id) }}"
-                            class="flex-1 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors text-center shadow-sm">
+                        <x-button :href="route($routePrefix . 'edit', $project->id)" variant="primary" class="flex-1">
                             Edit Proyek
-                        </a>
+                        </x-button>
                     @endcan
                 </div>
             </div>

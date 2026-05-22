@@ -1,44 +1,10 @@
 <x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah Provinsi Create">
     <div class="p-2 sm:p-6">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-province.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <a href="{{ route('admin-province.rtkdp.index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">
-                            Rekapitulasi Rencana Tenaga Kerja Daerah Provinsi
-                        </a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">
-                            Upload Rencana Tenaga Kerja Daerah Provinsi
-                        </span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <!-- Breadcrumb Navigation -->
+        <x-breadcrumb :items="[
+            ['label' => 'Rekapitulasi Rencana Tenaga Kerja Provinsi', 'url' => route('admin-province.rtkdp.index')],
+            ['label' => 'Upload Rencana Tenaga Kerja Daerah Provinsi']
+        ]" />
 
         <x-validation-errors />
         <!-- Upload Form with Side-by-Side Layout -->
@@ -50,17 +16,12 @@
                         class="space-y-8" enctype="multipart/form-data">
                         @csrf
                         <!-- Nama -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Nama <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="name" name="name" value="{{ old('name') }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 placeholder:text-sm focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Masukkan nama dokumen Rencana Tenaga Kerja Daerah Provinsi">
-                            @error('name')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <x-form.input 
+                            name="name" 
+                            label="Nama" 
+                            :required="true" 
+                            placeholder="Masukkan nama dokumen Rencana Tenaga Kerja Daerah Provinsi" 
+                        />
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">
@@ -99,28 +60,20 @@
 
                         <!-- Tahun Berlaku -->
                         <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Berlaku Dari Tahun <span class="text-red-500">*</span>
-                                </label>
-                                <input type="number" id="start_date" name="start_date" value="{{ old('start_date') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 placeholder:text-sm rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="2025">
-                                @error('start_date')
-                                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Sampai Tahun <span class="text-red-500">*</span>
-                                </label>
-                                <input type="number" id="end_date" name="end_date" value="{{ old('end_date') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="2030">
-                                @error('end_date')
-                                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                            <x-form.input 
+                                type="number" 
+                                name="start_date" 
+                                label="Berlaku Dari Tahun" 
+                                :required="true" 
+                                placeholder="2025" 
+                            />
+                            <x-form.input 
+                                type="number" 
+                                name="end_date" 
+                                label="Sampai Tahun" 
+                                :required="true" 
+                                placeholder="2030" 
+                            />
                         </div>
 
                         <!-- File Upload -->
@@ -175,19 +128,27 @@
 
                         <!-- Action Buttons -->
                         <div class="flex gap-4 pt-4">
-                            <a href="{{ route('admin-province.rtkdp.index') }}"
-                                class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium hover:bg-gray-300 transition-colors text-center">
+                            <x-button 
+                                href="{{ route('admin-province.rtkdp.index') }}" 
+                                variant="secondary" 
+                                size="lg" 
+                                class="flex-1"
+                            >
                                 Batal
-                            </a>
-                            <button type="submit"
-                                class="flex-1 bg-indigo-600 text-white px-6 py-3 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+                            </x-button>
+                            <x-button 
+                                type="submit" 
+                                variant="primary" 
+                                size="lg" 
+                                class="flex-1"
+                            >
                                 <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
                                 </svg>
                                 Simpan
-                            </button>
+                            </x-button>
                         </div>
                     </form>
                 </div>

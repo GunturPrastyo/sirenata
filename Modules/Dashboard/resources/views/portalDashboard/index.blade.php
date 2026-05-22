@@ -11,7 +11,7 @@
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 ">
             <!-- Superadmin Dashboard -->
             @role('super-admin')
-            <x-dashboard::accesscard title="Superadmin" description="Administrasi dan konfigurasi sistem"
+            <x-dashboard::access-card title="Superadmin" description="Administrasi dan konfigurasi sistem"
                 url="{{ route('super-admin.dashboard') }}" variant="red">
                 <div
                     class="w-20 h-20 bg-red-100 rounded-2xl  flex items-center justify-center mb-6 group-hover:bg-red-500 transition-all">
@@ -23,11 +23,11 @@
                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
-            </x-dashboard::accesscard>
+            </x-dashboard::access-card>
             @endrole
             <!-- Admin Pusat Dashboard -->
             @role('admin-pusat')
-            <x-dashboard::accesscard title="Admin Pusat" description="Manajemen tingkat pusat"
+            <x-dashboard::access-card title="Admin Pusat" description="Manajemen tingkat pusat"
                 url="{{ route('admin-pusat.dashboard') }}" variant="purple">
                 <div
                     class="w-20 h-20 bg-purple-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-500 transition-all">
@@ -37,12 +37,12 @@
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                 </div>
-            </x-dashboard::accesscard>
+            </x-dashboard::access-card>
             @endrole
 
             <!-- Admin Provinsi Dashboard -->
             @role('admin-province')
-            <x-dashboard::accesscard title="Admin Provinsi" description="Manajemen tingkat provinsi"
+            <x-dashboard::access-card title="Admin Provinsi" description="Manajemen tingkat provinsi"
                 url="{{ route('admin-province.dashboard') }}" variant="emerald">
                 <div
                     class="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500 transition-all">
@@ -54,12 +54,12 @@
                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
-            </x-dashboard::accesscard>
+            </x-dashboard::access-card>
             @endrole
 
             <!-- Admin Kab/Kota Dashboard -->
             @role('admin-kab-kota')
-            <x-dashboard::accesscard title="Admin Kab/Kota" description="Manajemen tingkat kabupaten/kota"
+            <x-dashboard::access-card title="Admin Kab/Kota" description="Manajemen tingkat kabupaten/kota"
                 url="{{ route('admin-kab-kota.dashboard') }}" variant="orange">
                 <div
                     class="w-20 h-20 bg-orange-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500 transition-all">
@@ -69,12 +69,12 @@
                             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
                 </div>
-            </x-dashboard::accesscard>
+            </x-dashboard::access-card>
             @endrole
 
             <!-- User/Peserta Dashboard -->
             @role('user')
-            <x-dashboard::accesscard title="User/Peserta" description="Dashboard pembelajaran peserta"
+            <x-dashboard::access-card title="User/Peserta" description="Dashboard pembelajaran peserta"
                 url="{{ route('user.dashboard') }}" variant="indigo">
                 <div
                     class="w-20 h-20 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500 transition-all">
@@ -84,7 +84,7 @@
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                 </div>
-            </x-dashboard::accesscard>
+            </x-dashboard::access-card>
             @endrole
         </div>
 

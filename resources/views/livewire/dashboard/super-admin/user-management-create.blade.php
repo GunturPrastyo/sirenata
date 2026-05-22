@@ -14,106 +14,29 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 form-grid">
-                    <div>
-                        <label for="name"
-                            class="block text-sm font-medium text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                            Name
-                        </label>
-                        <input type="text" id="name" name="name" wire:model.lazy="name"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="Masukkan name">
-                        @error('name')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="nama"
-                            class="block text-sm font-medium text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                            Nama Lengkap
-                        </label>
-                        <input type="text" id="nama" name="nama" wire:model.lazy="full_name"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="Masukkan nama lengkap">
+                    <x-form.input name="name" label="Name" wire:model.lazy="name" required placeholder="Masukkan name" />
+                    
+                    <x-form.input name="full_name" label="Nama Lengkap" wire:model.lazy="full_name" required placeholder="Masukkan nama lengkap" helper="Contoh: Sarah Putri" />
 
-                        <p class="text-xs text-gray-500 mt-2">Contoh: Sarah Putri</p>
+                    <x-form.input type="email" name="email" label="Email" wire:model.lazy="email" required placeholder="contoh@kemnaker.go.id" helper="Harus menggunakan domain kemnaker.go.id" />
 
-                        @error('full_name')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input type="tel" name="phone" label="Nomor Telepon" wire:model.lazy="phone" required placeholder="081234567890" helper="Format: 081234567890" inputmode="numeric" />
 
-                    <div>
-                        <label for="email"
-                            class="block text-sm font-medium text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                            Email
-                        </label>
-                        <input type="email" id="email" name="email" wire:model.lazy="email"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="contoh@kemnaker.go.id">
-                        <p class="text-xs text-gray-500 mt-2">Harus menggunakan domain kemnaker.go.id</p>
-                        @error('email')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.input name="instansi" label="Instansi" wire:model.lazy="instansi" required placeholder="Contoh: Staff Administrasi" />
 
-                    <div>
-                        <label for="telepon"
-                            class="block text-sm font-medium text-gray-700 mb-2 after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                            Nomor Telepon
-                        </label>
-                        <input type="tel" id="telepon" name="telepon" wire:model.lazy="phone" inputmode="numeric"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="081234567890">
-                        <p class="text-xs text-gray-500 mt-2">Format: 081234567890</p>
-                        @error('phone')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.select name="province" label="Provinsi" wire:model.lazy="province">
+                        <option value="">Semua Status</option>
+                        @foreach ($this->provinces as $province)
+                            <option value="{{ $province->code }}">{{ $province->name }}</option>
+                        @endforeach
+                    </x-form.select>
 
-                    <div>
-                        <label for="instansi"
-                            class="block text-sm font-medium text-gray-700 mb-2  after:ml-0.5 after:text-red-500 after:content-['*'] ">
-                            Instansi
-                        </label>
-                        <input type="text" id="instansi" name="instansi" wire:model.lazy="instansi"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input"
-                            placeholder="Contoh: Staff Administrasi">
-                        @error('instansi')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="province" class="block text-sm font-medium text-gray-700 mb-2">
-                            Provinsi
-                        </label>
-                        <select wire:model.lazy="province" id="province" name="province"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input">
-                            <option value="">Semua Status</option>
-                            @foreach ($this->provinces as $province)
-                                <option value="{{ $province->code }}">{{ $province->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('province')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="regency" class="block text-sm font-medium text-gray-700 mb-2">
-                            Kab/Kota
-                        </label>
-                        <select wire:model.lazy="regency" id="regency" name="regency"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 form-input">
-                            <option value="">Semua Status</option>
-                            @foreach ($this->regencies as $regency)
-                                <option value="{{ $regency->code }}">{{ $regency->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('regency')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-form.select name="regency" label="Kab/Kota" wire:model.lazy="regency">
+                        <option value="">Semua Status</option>
+                        @foreach ($this->regencies as $regency)
+                            <option value="{{ $regency->code }}">{{ $regency->name }}</option>
+                        @endforeach
+                    </x-form.select>
                 </div>
             </div>
 
@@ -254,11 +177,9 @@
 
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-3 action-buttons form-section">
-                <button type="submit" id="btn-submit"
-                    class="inline-flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
-                    <i class="fas fa-save mr-2"></i>
+                <x-button type="submit" id="btn-submit" icon="fas fa-save">
                     Simpan User
-                </button>
+                </x-button>
             </div>
         </form>
     </div>

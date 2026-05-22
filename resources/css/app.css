@@ -109,3 +109,7 @@
         animation: progress-animation 1.5s ease-out forwards;
     }
 }
+
+[x-cloak] {
+    display: none !important;
+}

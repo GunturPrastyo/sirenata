@@ -1,29 +1,8 @@
 <x-dashboard::layouts.dashboard title="FAQ - E-Learning">
     <div class="p-2 sm:p-6">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ url('/') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">FAQ</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
+            ['label' => 'FAQ']
+        ]" />
 
         <x-dashboard::filter-card 
             title="Daftar FAQ" 
@@ -31,20 +10,13 @@
             :resetUrl="route($routePrefix . 'index')">
             
             <x-slot name="actions">
-                <a href="{{ route('admin-pusat.faq.export') }}?{{ http_build_query(request()->only(['search', 'level'])) }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-                    title="Ekspor Data">
-                    <i class="fas fa-download text-xs"></i>
+                <x-button :href="route('admin-pusat.faq.export') . '?' . http_build_query(request()->only(['search', 'level']))" variant="success" icon="fas fa-download" title="Ekspor Data">
                     <span class="hidden sm:inline">Ekspor</span>
-                </a>
+                </x-button>
                 @role('admin-pusat')
-                <button x-data x-on:click="$dispatch('open-modal', 'create-faq')"
-                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
+                <x-button x-data x-on:click="$dispatch('open-modal', 'create-faq')" variant="primary" icon="fas fa-plus">
                     Tambah FAQ
-                </button>
+                </x-button>
                 @endrole
             </x-slot>
 
@@ -92,74 +64,73 @@
                 </div>
             </x-slot>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
-                        <tr class="text-slate-500 uppercase text-xs">
-                            <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Pertanyaan</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Level</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Dibuat Oleh</th>
-                            <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
+            <x-table.table plain>
+                <thead>
+                    <tr>
+                        <x-table.th align="left">No.</x-table.th>
+                        <x-table.th>Pertanyaan</x-table.th>
+                        <x-table.th>Level</x-table.th>
+                        <x-table.th>Dibuat Oleh</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-slate-100 bg-white">
+                    @forelse($faqs as $key => $faq)
+                        <tr class="hover:bg-slate-50 transition">
+                            <x-table.td>
+                                {{ $key + $faqs->firstItem() }}
+                            </x-table.td>
+                            <x-table.td class="font-medium">
+                                {{ Str::limit($faq->question, 60) }}
+                            </x-table.td>
+                            <x-table.td>
+                                @if($faq->level === 'Nasional')
+                                    <x-badge color="emerald" text="Nasional" />
+                                @elseif($faq->level === 'Provinsi')
+                                    <x-badge color="indigo" text="Provinsi" />
+                                @elseif($faq->level === 'Kab/Kota')
+                                    <x-badge color="amber" text="Kab/Kota" />
+                                @endif
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $faq->creator->name ?? 'Sistem' }}
+                            </x-table.td>
+                            <x-table.td align="center">
+                                <x-table.action>
+                                    <li>
+                                        <button x-data x-on:click="$dispatch('open-modal', 'show-faq-{{ $faq->id }}')"
+                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-slate-700 text-xs">Detail</button>
+                                    </li>
+                                    @role('admin-pusat')
+                                    <li>
+                                        <button x-data x-on:click="$dispatch('open-modal', 'edit-faq-{{ $faq->id }}')"
+                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-slate-700 text-xs">Ubah</button>
+                                    </li>
+                                    <li>
+                                        <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-slate-700 text-xs">
+                                            <x-modal-delete :id="'delete-faq-' . $faq->id" message="Apakah Anda yakin ingin menghapus FAQ ini?"
+                                                :item-name="Str::limit($faq->question, 40)" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route($routePrefix . 'destroy', $faq->id)" />
+                                        </div>
+                                    </li>
+                                    @endrole
+                                </x-table.action>
+                            </x-table.td>
                         </tr>
-                    </thead>
-
-                    <tbody class="divide-y divide-slate-200">
-                        @forelse($faqs as $key => $faq)
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $key + $faqs->firstItem() }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600 font-medium">{{ Str::limit($faq->question, 60) }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    @if($faq->level === 'Nasional')
-                                        <span
-                                            class="px-2 py-1 bg-green-100 text-green-800 rounded border border-green-200 text-xs font-medium">Nasional</span>
-                                    @elseif($faq->level === 'Provinsi')
-                                        <span
-                                            class="px-2 py-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium">Provinsi</span>
-                                    @elseif($faq->level === 'Kab/Kota')
-                                        <span
-                                            class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded border border-yellow-200 text-xs font-medium">Kab/Kota</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $faq->creator->name ?? 'Sistem' }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 text-center">
-                                    <x-table.action>
-                                        <li>
-                                            <button x-data x-on:click="$dispatch('open-modal', 'show-faq-{{ $faq->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600">Detail</button>
-                                        </li>
-                                        @role('admin-pusat')
-                                        <li>
-                                            <button x-data x-on:click="$dispatch('open-modal', 'edit-faq-{{ $faq->id }}')"
-                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600">Ubah</button>
-                                        </li>
-                                        <li>
-                                            <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                <x-modal-delete :id="'delete-faq-' . $faq->id" message="Apakah Anda yakin ingin menghapus FAQ ini?"
-                                                    :item-name="Str::limit($faq->question, 40)" buttonText="Hapus" buttonClass="w-full text-left text-red-600 outline-none cursor-pointer" :route="route($routePrefix . 'destroy', $faq->id)" />
-                                            </div>
-                                        </li>
-                                        @endrole
-                                    </x-table.action>
-
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">TIdak ada FAQ yang ditemukan.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <x-table.td colspan="5" align="center" class="py-12">
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                                        <i class="fas fa-question-circle text-xl"></i>
+                                    </div>
+                                    <p class="text-base font-medium text-slate-700">Tidak ada FAQ yang ditemukan.</p>
+                                </div>
+                            </x-table.td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </x-table.table>
 
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $faqs->links('pagination::tailwind') }}
@@ -169,34 +140,25 @@
 
     <x-modal name="create-faq" title="Tambah FAQ Baru">
         <form action="{{ route($routePrefix . 'store') }}" method="POST"
-            x-data="{ level: '{{ old('level', 'Nasional') }}' }">
+            x-data="{ level: '{{ old('level', 'Nasional') }}' }" class="space-y-4">
             @csrf
-            <div class="mb-4">
-                <label for="question" class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan <span class="text-red-500">*</span></label>
-                <input type="text" name="question" id="question" value="{{ old('question') }}" required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
-            </div>
-            <div class="mb-4">
-                <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Level <span class="text-red-500">*</span></label>
-                <select name="level" id="level" required x-model="level"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                    <option value="Nasional">Nasional (Tingkat Pusat)</option>
-                    <option value="Provinsi">Provinsi</option>
-                    <option value="Kab/Kota">Kabupaten/Kota</option>
-                </select>
-            </div>
+            <x-form.input name="question" label="Pertanyaan" :required="true" />
+            
+            <x-form.select name="level" label="Level" :required="true" x-model="level">
+                <option value="Nasional">Nasional (Tingkat Pusat)</option>
+                <option value="Provinsi">Provinsi</option>
+                <option value="Kab/Kota">Kabupaten/Kota</option>
+            </x-form.select>
 
-            <div class="mb-6">
-                <label for="answer" class="block text-sm font-medium text-gray-700 mb-1">Jawaban <span class="text-red-500">*</span></label>
-                <textarea name="answer" id="answer" rows="5" required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">{{ old('answer') }}</textarea>
-            </div>
-            <div class="flex justify-end gap-3 mt-4">
-                <button type="button" x-on:click="$dispatch('close-modal', 'create-faq')"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Batal</button>
-                <button type="submit"
-                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Simpan
-                    FAQ</button>
+            <x-form.textarea name="answer" label="Jawaban" :rows="5" :required="true" />
+
+            <div class="flex justify-end gap-3 pt-2">
+                <x-button type="button" x-on:click="$dispatch('close-modal', 'create-faq')" variant="white">
+                    Batal
+                </x-button>
+                <x-button type="submit" variant="primary">
+                    Simpan FAQ
+                </x-button>
             </div>
         </form>
     </x-modal>
@@ -211,14 +173,11 @@
                 <div>
                     <h4 class="text-sm font-medium text-gray-500 mb-1">Level</h4>
                     @if($faq->level === 'Nasional')
-                        <span
-                            class="px-2 py-1 bg-green-100 text-green-800 rounded border border-green-200 text-xs font-medium">Nasional</span>
+                        <x-badge color="emerald" text="Nasional" />
                     @elseif($faq->level === 'Provinsi')
-                        <span
-                            class="px-2 py-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium">Provinsi</span>
+                        <x-badge color="indigo" text="Provinsi" />
                     @elseif($faq->level === 'Kab/Kota')
-                        <span
-                            class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded border border-yellow-200 text-xs font-medium">Kab/Kota</span>
+                        <x-badge color="amber" text="Kab/Kota" />
                     @endif
                 </div>
                 <div>
@@ -237,39 +196,26 @@
     @foreach($faqs as $faq)
         <x-modal name="edit-faq-{{ $faq->id }}" title="Edit FAQ">
             <form action="{{ route($routePrefix . 'update', $faq->id) }}" method="POST"
-                x-data="{ level: '{{ old('level', $faq->level) }}' }">
+                x-data="{ level: '{{ old('level', $faq->level) }}' }" class="space-y-4">
                 @csrf
                 @method('PUT')
-                <div class="mb-4">
-                    <label for="edit_question_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan <span class="text-red-500">*</span></label>
-                    <input type="text" name="question" id="edit_question_{{ $faq->id }}"
-                        value="{{ old('question', $faq->question) }}" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                </div>
-                <div class="mb-4">
-                    <label for="edit_level_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Level <span class="text-red-500">*</span></label>
-                    <select name="level" id="edit_level_{{ $faq->id }}" required x-model="level"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                        <option value="Nasional">Nasional (Tingkat Pusat)</option>
-                        <option value="Provinsi">Provinsi</option>
-                        <option value="Kab/Kota">Kabupaten/Kota</option>
-                    </select>
-                </div>
+                <x-form.input name="question" label="Pertanyaan" :required="true" :value="old('question', $faq->question)" />
+                
+                <x-form.select name="level" label="Level" :required="true" x-model="level">
+                    <option value="Nasional">Nasional (Tingkat Pusat)</option>
+                    <option value="Provinsi">Provinsi</option>
+                    <option value="Kab/Kota">Kabupaten/Kota</option>
+                </x-form.select>
 
-                <div class="mb-6">
-                    <label for="edit_answer_{{ $faq->id }}"
-                        class="block text-sm font-medium text-gray-700 mb-1">Jawaban <span class="text-red-500">*</span></label>
-                    <textarea name="answer" id="edit_answer_{{ $faq->id }}" rows="5" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">{{ old('answer', $faq->answer) }}</textarea>
-                </div>
-                <div class="flex justify-end gap-3 mt-4">
-                    <button type="button" x-on:click="$dispatch('close-modal', 'edit-faq-{{ $faq->id }}')"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Batal</button>
-                    <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Perbarui
-                        FAQ</button>
+                <x-form.textarea name="answer" label="Jawaban" :rows="5" :required="true" :value="old('answer', $faq->answer)" />
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <x-button type="button" x-on:click="$dispatch('close-modal', 'edit-faq-{{ $faq->id }}')" variant="white">
+                        Batal
+                    </x-button>
+                    <x-button type="submit" variant="primary">
+                        Perbarui FAQ
+                    </x-button>
                 </div>
             </form>
         </x-modal>

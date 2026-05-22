@@ -18,13 +18,9 @@
         :resetUrl="route('super-admin.user-management.index')">
 
         <x-slot name="actions">
-            <a href="{{ route('super-admin.user-management.create') }}"
-                class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
+            <x-button href="{{ route('super-admin.user-management.create') }}" icon="fas fa-plus" size="sm">
                 Tambah User
-            </a>
+            </x-button>
         </x-slot>
 
         <x-slot name="filter_inputs">
@@ -78,96 +74,89 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="bg-slate-100 border-b border-slate-200">
-                    <tr class="text-slate-500 uppercase text-xs">
-                        <th class="px-4 md:px-6 py-3 w-10">
-                            {{-- <input type="checkbox" @click="toggleAll(@js($users->pluck('id')))"
-                                :checked="selected.length === {{ $users->count() }}"
-                                class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> --}}
-                        </th>
-                        <th class="px-4 md:px-6 py-3 text-left">Name</th>
-                        <th class="px-4 md:px-6 py-3 text-left">Email</th>
-                        <th class="px-4 md:px-6 py-3 text-left">Role</th>
-                        <th class="px-4 md:px-6 py-3 text-left">Status</th>
-                        <th class="px-4 md:px-6 py-3 text-left">Provinsi</th>
-                        <th class="px-4 md:px-6 py-3 text-left">Kabupaten/Kota</th>
-                        <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
-                    </tr>
-                </thead>
+        <x-table.table plain>
+            <thead>
+                <tr>
+                    <x-table.th class="w-10">
+                        {{-- <input type="checkbox" @click="toggleAll(@js($users->pluck('id')))"
+                            :checked="selected.length === {{ $users->count() }}"
+                            class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> --}}
+                    </x-table.th>
+                    <x-table.th>Name</x-table.th>
+                    <x-table.th>Email</x-table.th>
+                    <x-table.th>Role</x-table.th>
+                    <x-table.th>Status</x-table.th>
+                    <x-table.th>Provinsi</x-table.th>
+                    <x-table.th>Kabupaten/Kota</x-table.th>
+                    <x-table.th align="center">Aksi</x-table.th>
+                </tr>
+            </thead>
 
-                <tbody id="admin-table-body" class="divide-y divide-slate-200">
-
-                    @forelse ($users as $user)
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="px-4 md:px-6 py-3">
-                                <input type="checkbox" @change="toggle(@js($user->id))"
-                                    :checked="selected.includes({{ $user->id }})"
-                                    class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                            </td>
-                            <td class="px-4 md:px-6 py-3">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-semibold">
-                                        {{ $user->name[0] }}
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-slate-800">{{ $user->name }}</p>
-                                    </div>
+            <tbody id="admin-table-body" class="divide-y divide-slate-200">
+                @forelse ($users as $user)
+                    <tr class="hover:bg-slate-50 transition">
+                        <x-table.td>
+                            <input type="checkbox" @change="toggle(@js($user->id))"
+                                :checked="selected.includes({{ $user->id }})"
+                                class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                        </x-table.td>
+                        <x-table.td>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-semibold">
+                                    {{ $user->name[0] }}
                                 </div>
-                            </td>
+                                <div>
+                                    <p class="font-medium text-slate-800">{{ $user->name }}</p>
+                                </div>
+                            </div>
+                        </x-table.td>
 
-                            <td class="px-4 md:px-6 py-3 ">
-                                <p class="text-slate-600">{{ $user->email }}</p>
-                            </td>
+                        <x-table.td>
+                            <p class="text-slate-600">{{ $user->email }}</p>
+                        </x-table.td>
 
-                            <td class="px-4 md:px-6 py-3">
-                                <p class="text-slate-600">{{ $user->getRoleNames()->first() }}</p>
-                            </td>
-                            <td class="px-4 md:px-6 py-3  lg:table-cell">
-                                <span
-                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
-                                    bg-emerald-50 text-emerald-700">
-                                    Aktif
-                                </span>
-                            </td>
-                            <td class="px-4 md:px-6 py-3  lg:table-cell">
-                                <p class="text-slate-600">{{ $user->scopeArea?->province?->name }}</p>
-                            </td>
-                            <td class="px-4 md:px-6 py-3  lg:table-cell">
-                                <p class="text-slate-600">{{ $user->scopeArea?->regency?->name }}</p>
-                            </td>
+                        <x-table.td>
+                            <p class="text-slate-600">{{ $user->getRoleNames()->first() }}</p>
+                        </x-table.td>
+                        <x-table.td class="lg:table-cell">
+                            <x-badge color="emerald" text="Aktif" />
+                        </x-table.td>
+                        <x-table.td class="lg:table-cell">
+                            <p class="text-slate-600">{{ $user->scopeArea?->province?->name }}</p>
+                        </x-table.td>
+                        <x-table.td class="lg:table-cell">
+                            <p class="text-slate-600">{{ $user->scopeArea?->regency?->name }}</p>
+                        </x-table.td>
 
-                            <td class="px-4 md:px-6 py-3 text-center">
-                                <x-table.action>
-                                    <li>
-                                        <a href="{{ route('super-admin.user-management.edit', $user->id) }}"
-                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-left">Edit</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('super-admin.user-management.show', $user->id) }}"
-                                            class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-left">Show</a>
-                                    </li>
-                                    <li>
-                                        <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                            <x-modal-delete :id="$user->id" message="Are you sure delete user"
-                                                :item-name="$user->name" :route="route('super-admin.user-management.destroy', $user->id)" />
-                                        </div>
-                                    </li>
-                                </x-table.action>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr class="">
-                            <td colspan="8" class="px-6 py-12 text-center">
-                                <p class="text-sm text-slate-500">Tidak ada data admin</p>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                        <x-table.td align="center">
+                            <x-table.action>
+                                <li>
+                                    <a href="{{ route('super-admin.user-management.edit', $user->id) }}"
+                                        class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-left">Edit</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('super-admin.user-management.show', $user->id) }}"
+                                        class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-left">Show</a>
+                                </li>
+                                <li>
+                                    <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
+                                        <x-modal-delete :id="$user->id" message="Are you sure delete user"
+                                            :item-name="$user->name" :route="route('super-admin.user-management.destroy', $user->id)" />
+                                    </div>
+                                </li>
+                            </x-table.action>
+                        </x-table.td>
+                    </tr>
+                @empty
+                    <tr>
+                        <x-table.td colspan="8" align="center" class="py-12">
+                            <p class="text-sm text-slate-500">Tidak ada data admin</p>
+                        </x-table.td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </x-table.table>
 
         <div class="px-5 py-4 border-t border-slate-200">
             {{ $users->links() }}

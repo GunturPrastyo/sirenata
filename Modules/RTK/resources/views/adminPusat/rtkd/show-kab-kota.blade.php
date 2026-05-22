@@ -1,57 +1,11 @@
 <x-dashboard::layouts.dashboard title="Validasi RTK Kab/Kota">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <a href="{{ route('admin-pusat.rtkd.index') }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Daftar Laporan
-                            RTKD Provinsi</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <a href="{{ route('admin-pusat.rtkd.kab-kota', $regency->province_code) }}"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Daftar Laporan
-                            RTK
-                            {{ $province->name }}
-                        </a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Daftar Laporan RTK
-                            {{ $regency->name }}</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
+            ['label' => 'Daftar Laporan RTKD Provinsi', 'url' => route('admin-pusat.rtkd.index')],
+            ['label' => 'Daftar Laporan RTK ' . $province->name, 'url' => route('admin-pusat.rtkd.kab-kota', $regency->province_code)],
+            ['label' => 'Daftar Laporan RTK ' . $regency->name]
+        ]" />
 
         <x-dashboard::filter-card 
             title="Daftar Laporan RTK {{ $regency->name }}" 
@@ -59,12 +13,10 @@
             :resetUrl="route('admin-pusat.rtkd.show-regency', $regencyCode)">
             
             <x-slot name="actions">
-                <a href="{{ route('admin-pusat.rtkd.show-regency-export', $regencyCode) }}?{{ http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan'])) }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-                    title="Ekspor Data">
-                    <i class="fas fa-download text-xs"></i>
-                    <span class="hidden sm:inline">Ekspor</span>
-                </a>
+                <x-button href="{{ route('admin-pusat.rtkd.show-regency-export', $regencyCode) }}?{{ http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan'])) }}"
+                    variant="success" icon="fas fa-download" title="Ekspor Data">
+                    Ekspor
+                </x-button>
             </x-slot>
 
             <x-slot name="filter_inputs">
@@ -155,66 +107,61 @@
                 </div>
             </x-slot>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
-                        <tr class="text-slate-500 uppercase text-xs">
+            <x-table.table plain>
+                <thead>
+                    <tr>
+                        <x-table.th>No.</x-table.th>
+                        <x-table.th>Dokumen RTK</x-table.th>
+                        <x-table.th>Periode Berlaku</x-table.th>
+                        <x-table.th>Status Verifikasi</x-table.th>
+                        <x-table.th>Status Dokumen</x-table.th>
+                        <x-table.th>RTK Acuan</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </tr>
+                </thead>
 
-                            <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Dokumen RTK</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status Verifikasi</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status Dokumen</th>
-                            <th class="px-4 md:px-6 py-3 text-left">RTK Acuan</th>
-                            <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
-                        </tr>
-                    </thead>
+                <tbody id="admin-table-body" class="divide-y divide-slate-200">
+                    @forelse ($rtks as $key => $rtk)
+                        <tr class="hover:bg-slate-50 transition">
+                            <x-table.td>
+                                <p class="text-slate-600">{{ $key + $rtks->firstItem() }}</p>
+                            </x-table.td>
+                            <x-table.td>
+                                <p class="text-slate-600">{{ $rtk->name }}</p>
+                            </x-table.td>
+                            <x-table.td>
+                                <p class="text-slate-600">{{ $rtk->start_date }} - {{ $rtk->end_date }}</p>
+                            </x-table.td>
+                            <x-table.td>
+                                @php
+                                    $verifColor = match($rtk->status_verification->value ?? $rtk->status_verification) {
+                                        'APPROVED', 'Approved' => 'success',
+                                        'PENDING', 'Pending' => 'indigo',
+                                        'REJECTED', 'Rejected' => 'red',
+                                        default => 'slate'
+                                    };
+                                @endphp
+                                <x-badge :color="$verifColor" :text="$rtk->status_verification->label()" />
+                            </x-table.td>
+                            <x-table.td>
+                                @php
+                                    $docColor = match($rtk->status_document->value ?? $rtk->status_document) {
+                                        'VALID', 'Valid' => 'success',
+                                        'EXPIRED', 'Expired' => 'red',
+                                        default => 'slate'
+                                    };
+                                @endphp
+                                <x-badge :color="$docColor" :text="$rtk->status_document->label()" />
+                            </x-table.td>
 
-                    <tbody id="admin-table-body" class="divide-y divide-slate-200">
-                        @forelse ($rtks as $key => $rtk)
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $key + $rtks->firstItem() }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $rtk->name }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600">{{ $rtk->start_date }} - {{ $rtk->end_date }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <span class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtk->status_verification->color() }}">
-                                        {{ $rtk->status_verification->label() }}
-                                    </span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <span class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtk->status_document->color() }}">
-                                        {{ $rtk->status_document->label() }}
-                                    </span>
-                                </td>
-
-                                <td class="px-4 md:px-6 py-3">
-                                    @if ($rtk->is_active)
-                                        <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            Ya
-                                        </span>
-                                    @else
-                                        <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6L18 18M6 18L18 6" />
-                                            </svg>
-                                            Tidak
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 md:px-6 py-3 text-center">
+                            <x-table.td>
+                                @if ($rtk->is_active)
+                                    <x-badge color="success" text="Ya" />
+                                @else
+                                    <x-badge color="slate" text="Tidak" />
+                                @endif
+                            </x-table.td>
+                            <x-table.td align="center">
                                     <x-table.action>
                                         {{-- Step 1: Approve verifikasi — muncul kalau PENDING + is_active --}}
                                         @if($rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING && $rtk->is_active)
@@ -476,18 +423,17 @@
                                             </x-modal>
                                         </li>
                                     </x-table.action>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">Tidak ada data RTKD Kab/Kota</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                            </x-table.td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <x-table.td colspan="7" align="center" class="py-12">
+                                <p class="text-sm text-slate-500">Tidak ada data RTKD Kab/Kota</p>
+                            </x-table.td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </x-table.table>
 
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $rtks->links() }}

@@ -1,27 +1,9 @@
 <x-dashboard::layouts.dashboard title="Kuesioner Pemanfaatan RTKD">
     <div class="p-2 sm:p-6" x-data="kuesionerForm()">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-province.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                        <a href="{{ route('admin-province.pemanfaatan-rtkd.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Pemanfaatan RTKD</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Form Kuesioner</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[
+            ['label' => 'Hasil Pemanfaatan RTKD', 'url' => route('admin-province.pemanfaatan-rtkd.index')],
+            ['label' => 'Form Kuesioner']
+        ]" />
 
         <form x-ref="mainForm" @submit.prevent="validateAndSubmit" action="{{ $submission->exists ? route('admin-province.pemanfaatan-rtkd.update', $submission->id) : route('admin-province.pemanfaatan-rtkd.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
@@ -37,7 +19,7 @@
                         <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-slate-200 text-slate-700 uppercase tracking-wider">Otomatis</span>
                     </div>
                     @if(isset($submission->field_verifications['q1_punya_rtkd']) && $submission->field_verifications['q1_punya_rtkd']['status'] === 'rejected')
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                        <x-badge color="danger">Revisi Diminta</x-badge>
                     @endif
                 </div>
                 <div class="p-4">
@@ -77,7 +59,7 @@
                         <h3 class="text-base font-semibold text-slate-800">Alasan Tidak Memiliki RTKD</h3>
                     </div>
                         @if(isset($submission->field_verifications['alasan_tidak_punya']) && $submission->field_verifications['alasan_tidak_punya']['status'] === 'rejected')
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                            <x-badge color="danger">Revisi Diminta</x-badge>
                         @endif
                     </div>
                     <div class="p-4 space-y-3">
@@ -131,7 +113,7 @@
                                 <h3 class="text-base font-semibold text-slate-800">Pemanfaatan Dokumen</h3>
                             </div>
                             @if(isset($submission->field_verifications['q2_jadi_acuan']) && $submission->field_verifications['q2_jadi_acuan']['status'] === 'rejected')
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                                <x-badge color="danger">Revisi Diminta</x-badge>
                             @endif
                         </div>
                         <div class="p-4">
@@ -164,7 +146,7 @@
                             <div class="px-4 py-3 border-b border-amber-200 bg-amber-50 flex justify-between items-center">
                                 <h3 class="text-base font-semibold text-amber-900">Alasan Belum Menjadi Acuan</h3>
                                 @if(isset($submission->field_verifications['alasan_belum_acuan']) && $submission->field_verifications['alasan_belum_acuan']['status'] === 'rejected')
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                                    <x-badge color="danger">Revisi Diminta</x-badge>
                                 @endif
                             </div>
                             <div class="p-4 space-y-3">
@@ -396,12 +378,12 @@
             </template>
 
             <div class="flex justify-end gap-3 pt-4">
-                <a href="{{ route('admin-province.pemanfaatan-rtkd.index') }}" class="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">
+                <x-button href="{{ route('admin-province.pemanfaatan-rtkd.index') }}" variant="secondary">
                     Batal
-                </a>
-                <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition shadow-sm">
+                </x-button>
+                <x-button type="submit" variant="primary">
                     Simpan Kuesioner
-                </button>
+                </x-button>
             </div>
         </form>
     </div>

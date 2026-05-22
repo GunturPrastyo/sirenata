@@ -60,7 +60,7 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        return view('permission::create');
+        abort(404);
     }
 
     /**
@@ -91,10 +91,7 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function edit($id)
     {
-        $permission = Permission::find($id);
-        return view('permission::edit', [
-            'permission' => $permission
-        ]);
+        abort(404);
     }
 
     /**

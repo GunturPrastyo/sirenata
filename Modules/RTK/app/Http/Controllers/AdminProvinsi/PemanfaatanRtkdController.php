@@ -43,6 +43,11 @@ class PemanfaatanRtkdController extends Controller
             return redirect()->route('admin-province.pemanfaatan-rtkd.index');
         }
 
+        if ($activePeriod->tanggal_selesai && now()->gt($activePeriod->tanggal_selesai->endOfDay())) {
+            ToastMagic::error('Batas waktu pengisian kuesioner periode ini telah berakhir.');
+            return redirect()->route('admin-province.pemanfaatan-rtkd.index');
+        }
+
         $existing = RtkPemanfaatanSubmission::where('user_id', $user->id)
             ->where('period_id', $activePeriod->id)
             ->where('created_by', $user->id)
@@ -82,6 +87,11 @@ class PemanfaatanRtkdController extends Controller
     {
         $user = Auth::user();
         $activePeriod = RtkSurveyPeriod::aktif()->firstOrFail();
+
+        if ($activePeriod->tanggal_selesai && now()->gt($activePeriod->tanggal_selesai->endOfDay())) {
+            ToastMagic::error('Batas waktu pengisian kuesioner periode ini telah berakhir.');
+            return redirect()->route('admin-province.pemanfaatan-rtkd.index');
+        }
 
         if (RtkPemanfaatanSubmission::where('user_id', $user->id)->where('period_id', $activePeriod->id)->where('created_by', $user->id)->exists()) {
             ToastMagic::error('Anda sudah mengisi kuesioner untuk periode ini.');
@@ -124,9 +134,12 @@ class PemanfaatanRtkdController extends Controller
             abort(403);
         }
 
-
-
         $activePeriod = RtkSurveyPeriod::aktif()->first();
+
+        if ($activePeriod && $activePeriod->tanggal_selesai && now()->gt($activePeriod->tanggal_selesai->endOfDay())) {
+            ToastMagic::error('Batas waktu pengisian kuesioner periode ini telah berakhir.');
+            return redirect()->route('admin-province.pemanfaatan-rtkd.index');
+        }
         
         $latestRtk = null;
         if (Auth::user()->hasCompleteScope()) {
@@ -148,6 +161,12 @@ class PemanfaatanRtkdController extends Controller
     {
         if ($pemanfaatan_rtkd->user_id !== Auth::id()) {
             abort(403);
+        }
+
+        $activePeriod = RtkSurveyPeriod::aktif()->first();
+        if ($activePeriod && $activePeriod->tanggal_selesai && now()->gt($activePeriod->tanggal_selesai->endOfDay())) {
+            ToastMagic::error('Batas waktu pengisian kuesioner periode ini telah berakhir.');
+            return redirect()->route('admin-province.pemanfaatan-rtkd.index');
         }
 
         $latestRtk = null;

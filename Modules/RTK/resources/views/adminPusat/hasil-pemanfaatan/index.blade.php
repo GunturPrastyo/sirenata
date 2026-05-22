@@ -1,27 +1,6 @@
 <x-dashboard::layouts.dashboard title="Hasil Kuesioner Pemanfaatan RTKD">
     <div class="p-2 sm:p-6">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.99 9a.75.75 0 1 1-1.06 1.06l-1.06-1.06V20.25a1.75 1.75 0 0 1-1.75 1.75h-3a.75.75 0 0 1-.75-.75v-3.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v3.5a.75.75 0 0 1-.75.75h-3a1.75 1.75 0 0 1-1.75-1.75v-7.409l-1.06 1.06a.75.75 0 0 1-1.06-1.06l8.99-9Z"></path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Hasil Pemanfaatan RTKD</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[['label' => 'Hasil Pemanfaatan RTKD']]" />
 
         <x-flash-message class="mb-4" />
 
@@ -31,12 +10,10 @@
             :resetUrl="route('admin-pusat.hasil-pemanfaatan-rtkd.index')">
             
             <x-slot name="actions">
-                <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.export') }}?{{ http_build_query(request()->only(['period_id', 'q1_punya_rtkd', 'q2_jadi_acuan', 'search'])) }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-                    title="Ekspor Data">
-                    <i class="fas fa-download text-xs"></i>
-                    <span class="hidden sm:inline">Ekspor</span>
-                </a>
+                <x-button href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.export') }}?{{ http_build_query(request()->only(['period_id', 'q1_punya_rtkd', 'q2_jadi_acuan', 'search'])) }}"
+                    variant="success" icon="fas fa-download" title="Ekspor Data">
+                    Ekspor
+                </x-button>
             </x-slot>
 
             <x-slot name="filter_inputs">
@@ -92,123 +69,123 @@
                 </div>
             </x-slot>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
-                        <tr class="text-slate-500 uppercase text-xs text-left">
-                            <th class="px-4 py-3 text-center w-12">No</th>
-                            <th class="px-4 py-3">Provinsi</th>
-                            <th class="px-4 py-3">Tanggal Isi</th>
-                            <th class="px-4 py-3 text-center">Punya RTKD</th>
-                            <th class="px-4 py-3 text-center">Masa Berlaku</th>
-                            <th class="px-4 py-3 text-center">Jadi Acuan</th>
-                            <th class="px-4 py-3 text-center">Dok. Acuan</th>
-                            <th class="px-4 py-3 text-center">Status</th>
-                            <th class="px-4 py-3 text-center">Oleh</th>
-                            <th class="px-4 py-3 text-center">Aksi</th>
-                        </tr>
-                    </thead>
+            <x-table.table plain>
+                <thead>
+                    <tr>
+                        <x-table.th align="center" class="w-12">No</x-table.th>
+                        <x-table.th>Provinsi</x-table.th>
+                        <x-table.th>Tanggal Isi</x-table.th>
+                        <x-table.th align="center">Punya RTKD</x-table.th>
+                        <x-table.th align="center">Masa Berlaku</x-table.th>
+                        <x-table.th align="center">Jadi Acuan</x-table.th>
+                        <x-table.th align="center">Dok. Acuan</x-table.th>
+                        <x-table.th align="center">Status</x-table.th>
+                        <x-table.th align="center">Oleh</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </tr>
+                </thead>
                     <tbody class="divide-y divide-slate-200">
                         @forelse($submissions as $key => $sub)
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 py-3 text-center text-slate-600">
+                                <x-table.td align="center">
                                     {{ $key + $submissions->firstItem() }}
-                                </td>
-                                <td class="px-4 py-3 font-medium text-slate-800">
+                                </x-table.td>
+                                <x-table.td class="font-medium text-slate-800">
                                     {{ $sub->user->scopeArea?->province?->name ?? $sub->user->name ?? 'Unknown' }}
-                                </td>
-                                <td class="px-4 py-3 text-slate-600">
+                                </x-table.td>
+                                <x-table.td>
                                     {{ $sub->created_at->format('d M Y H:i') }}
-                                </td>
-                                <td class="px-4 py-3 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     @if($sub->rtk_document_id)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">Ya</span>
+                                        <x-badge color="success" text="Ya" />
                                     @else
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Tidak</span>
+                                        <x-badge color="danger" text="Tidak" />
                                     @endif
-                                </td>
-                                <td class="px-4 py-3 text-center text-slate-600">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     {{ $sub->rtk_document_id ? $sub->rtkDocument->start_date . ' - ' . $sub->rtkDocument->end_date : '—' }}
-                                </td>
-                                <td class="px-4 py-3 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     @if($sub->q2_jadi_acuan === 'ya')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">Ya</span>
+                                        <x-badge color="indigo" text="Ya" />
                                     @elseif($sub->q2_jadi_acuan === 'tidak')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">Belum</span>
+                                        <x-badge color="amber" text="Belum" />
                                     @else
                                         <span class="text-slate-400">—</span>
                                     @endif
-                                </td>
-                                <td class="px-4 py-3 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     @if($sub->dokumen_acuan && count($sub->dokumen_acuan) > 0)
                                         <div class="flex justify-center gap-1 flex-wrap">
                                             @foreach($sub->dokumen_acuan as $doc)
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-200 text-slate-700">
-                                                    {{ strtoupper($doc['doc_type']) }}
-                                                </span>
+                                                <x-badge color="slate" :text="strtoupper($doc['doc_type'])" />
                                             @endforeach
                                         </div>
                                     @else
                                         <span class="text-slate-400">—</span>
                                     @endif
-                                </td>
-                                <td class="px-4 py-3 text-center">
-                                    @if($sub->status_verifikasi === 'verified')
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                            Disetujui
-                                        </span>
-                                    @elseif($sub->status_verifikasi === 'rejected')
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-200">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                            Revisi
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                            Pending
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
+                                    @php
+                                        $verifColor = match($sub->status_verifikasi) {
+                                            'verified' => 'success',
+                                            'rejected' => 'danger',
+                                            default => 'amber'
+                                        };
+                                        $verifText = match($sub->status_verifikasi) {
+                                            'verified' => 'Disetujui',
+                                            'rejected' => 'Revisi',
+                                            default => 'Pending'
+                                        };
+                                    @endphp
+                                    <x-badge :color="$verifColor" :text="$verifText" />
+                                </x-table.td>
+                                <x-table.td align="center">
                                     @if($sub->creator && $sub->creator->hasRole('admin-pusat'))
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-100">
-                                            Admin Pusat
-                                        </span>
+                                        <x-badge color="red" text="Admin Pusat" />
                                     @else
                                         <span class="text-xs text-slate-500">Mandiri</span>
                                     @endif
-                                </td>
-                                <td class="px-4 md:px-6 py-3 text-center">
-                                    @php
-                                        $isOverridden = in_array($sub->user_id, $overriddenUserIds ?? []) && $sub->created_by === $sub->user_id;
-                                    @endphp
-                                    @if($sub->status_verifikasi === 'pending' && !$isOverridden)
-                                        <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.show', $sub->id) }}"
-                                            class="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition shadow-sm">
-                                            Verifikasi
-                                        </a>
-                                    @else
-                                        <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.show', $sub->id) }}"
-                                            class="inline-flex items-center justify-center px-4 py-2 bg-slate-100 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-200 transition border border-slate-200">
-                                            Detail
-                                        </a>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="px-6 py-12 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    <p class="text-sm text-slate-500">Belum ada data kuesioner yang sesuai dengan filter.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                </x-table.td>
+                                <x-table.td align="center">
+                                    <x-table.action>
+                                        @if($sub->status_verifikasi === 'verified' || $sub->status_verifikasi === 'rejected')
+                                            <li>
+                                                <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.show', $sub->id) }}"
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-blue-600 cursor-pointer">
+                                                    Detail
+                                                </a>
+                                            </li>
+                                        @else
+                                            <li>
+                                                <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.show', $sub->id) }}"
+                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-indigo-600 cursor-pointer font-medium">
+                                                    Verifikasi
+                                                </a>
+                                            </li>
+                                        @endif
+                                        <li>
+                                            <a href="{{ route('admin-pusat.hasil-pemanfaatan-rtkd.edit-on-behalf', $sub->id) }}"
+                                                class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-amber-600 cursor-pointer">
+                                                Ubah
+                                            </a>
+                                        </li>
+                                    </x-table.action>
+                            </x-table.td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <x-table.td colspan="10" align="center" class="py-12">
+                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <p class="text-sm text-slate-500">Belum ada data kuesioner yang sesuai dengan filter.</p>
+                            </x-table.td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </x-table.table>
 
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $submissions->links('pagination::tailwind') }}

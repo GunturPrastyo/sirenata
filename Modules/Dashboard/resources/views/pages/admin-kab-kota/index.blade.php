@@ -31,30 +31,7 @@
         </div>
 
         <!-- Breadcrumb Navigation -->
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-kab-kota.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Dashboard</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Dashboard']]" />
 
         <!-- Card: Informasi E-Learning -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 sm:mb-8 overflow-hidden transition-all hover:shadow-md">
@@ -133,13 +110,19 @@
                             <h3 class="text-base font-bold text-slate-800">Perbandingan Modul yang Diambil</h3>
                         </div>
                         
-                        <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                <i class="fas fa-book-open text-2xl text-slate-300"></i>
+                        @if ($courses->isEmpty())
+                            <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                    <i class="fas fa-book-open text-2xl text-slate-300"></i>
+                                </div>
+                                <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
+                                <p class="text-sm mt-1 text-center">Belum ada user yang mengambil modul/course</p>
                             </div>
-                            <p class="text-base font-semibold text-slate-500">Belum Tersedia</p>
-                            <p class="text-sm mt-1 text-center">Data modul belum tersedia di sistem</p>
-                        </div>
+                        @else
+                            <div class="relative h-64 sm:h-80 w-full flex items-center justify-center">
+                                <canvas id="courseDoughnutChart"></canvas>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -294,6 +277,93 @@
                                 }
                             }
                         }
+                    }
+                });
+            }
+
+            // Doughnut Chart: Course Distribution
+            if (document.getElementById('courseDoughnutChart')) {
+                const courseCtx = document.getElementById('courseDoughnutChart').getContext('2d');
+                const courseDataRaw = @json($courses);
+                const courseLabels = Object.keys(courseDataRaw);
+                const courseData = Object.values(courseDataRaw);
+                
+                const backgroundColors = [
+                    'rgba(245, 158, 11, 0.8)',  // Amber
+                    'rgba(99, 102, 241, 0.8)',  // Indigo
+                    'rgba(16, 185, 129, 0.8)',  // Emerald
+                    'rgba(244, 63, 94, 0.8)',   // Rose
+                    'rgba(59, 130, 246, 0.8)',   // Blue
+                    'rgba(139, 92, 246, 0.8)',  // Purple
+                    'rgba(249, 115, 22, 0.8)',  // Orange
+                    'rgba(6, 182, 212, 0.8)',   // Cyan
+                    'rgba(236, 72, 153, 0.8)',  // Pink
+                    'rgba(14, 165, 233, 0.8)'   // Sky
+                ];
+                
+                const borderColors = [
+                    'rgba(245, 158, 11, 1)',
+                    'rgba(99, 102, 241, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(244, 63, 94, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(139, 92, 246, 1)',
+                    'rgba(249, 115, 22, 1)',
+                    'rgba(6, 182, 212, 1)',
+                    'rgba(236, 72, 153, 1)',
+                    'rgba(14, 165, 233, 1)'
+                ];
+
+                new Chart(courseCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: courseLabels,
+                        datasets: [{
+                            data: courseData,
+                            backgroundColor: backgroundColors.slice(0, courseLabels.length),
+                            borderColor: borderColors.slice(0, courseLabels.length),
+                            borderWidth: 2,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    font: {
+                                        size: 11,
+                                        weight: '500'
+                                    },
+                                    boxWidth: 12
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
+                                padding: 12,
+                                cornerRadius: 8,
+                                titleFont: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 13
+                                },
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                        return `${label}: ${value} user (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '60%'
                     }
                 });
             }

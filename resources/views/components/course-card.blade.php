@@ -32,7 +32,38 @@
         </div>
 
         {{-- Title --}}
-        <h3 class="font-bold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-lg line-clamp-2">
+        <h3 x-data="{
+                isShrinking: false,
+                init() {
+                    if (typeof ResizeObserver !== 'undefined') {
+                        const observer = new ResizeObserver(() => {
+                            if (!this.isShrinking) {
+                                this.shrink();
+                            }
+                        });
+                        observer.observe(this.$el);
+                    } else {
+                        window.addEventListener('resize', () => this.shrink());
+                    }
+                },
+                shrink() {
+                    this.isShrinking = true;
+                    const el = this.$el;
+                    el.style.fontSize = '';
+                    let fontSize = parseFloat(window.getComputedStyle(el).fontSize);
+                    if (el.clientWidth > 0) {
+                        while (el.scrollWidth > el.clientWidth && fontSize > 8) {
+                            fontSize -= 0.5;
+                            el.style.fontSize = fontSize + 'px';
+                        }
+                    }
+                    setTimeout(() => {
+                        this.isShrinking = false;
+                    }, 0);
+                }
+            }"
+            class="font-bold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-lg whitespace-nowrap overflow-hidden text-ellipsis"
+        >
             {{ $course->name }}
         </h3>
 
@@ -55,28 +86,42 @@
         @if ($course->status !== 'completed')
             <a
                 href="{{ route('user.course.my-course.detail', ['slug' => $course->slug]) }}"
-                class="block w-full bg-indigo-600 text-white py-2 sm:py-2.5 rounded-lg font-medium sm:font-semibold hover:bg-indigo-700 transition-colors text-center text-xs sm:text-base"
+                class="block w-full bg-indigo-600 text-white py-2 sm:py-2.5 rounded-lg font-medium sm:font-semibold hover:bg-indigo-700 transition-colors text-center text-xs sm:text-sm"
             >
                 Lanjutkan Belajar
             </a>
         @else
-            <a
-                href="{{ route('user.course.my-course.detail', ['slug' => $course->slug]) }}"
-                class="block w-full bg-emerald-600 text-white py-2 sm:py-2.5 rounded-lg font-medium sm:font-semibold hover:bg-emerald-700 transition-colors text-center text-xs sm:text-base"
-            >
-                Detail
-            </a>
-        @endif
-
-        @if($course->status === 'completed')
-            <a href="{{ $course->certificate_file ?? '#' }}"
-                class="mt-2 w-full bg-indigo-600 text-white py-2.5 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Unduh Sertifikat
-            </a>
+            <div class="flex items-center gap-2 w-full">
+                <a
+                    href="{{ route('user.course.my-course.detail', ['slug' => $course->slug]) }}"
+                    class="w-1/2 bg-emerald-600 text-white py-2 sm:py-2.5 rounded-lg font-medium sm:font-semibold hover:bg-emerald-700 transition-colors text-center text-xs sm:text-sm"
+                >
+                    Detail
+                </a>
+                @if (!empty($course->certificate_file))
+                    <a href="{{ $course->certificate_file }}" target="_blank" download
+                        class="w-1/2 bg-indigo-600 text-white py-2 sm:py-2.5 rounded-lg font-medium sm:font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1.5 text-center text-xs sm:text-sm">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        <span class="truncate">Unduh Sertifikat</span>
+                    </a>
+                @else
+                    <a href="#"
+                        onclick="event.preventDefault(); document.getElementById('gen-cert-form-{{ $course->slug }}').submit();"
+                        class="w-1/2 bg-indigo-600 text-white py-2 sm:py-2.5 rounded-lg font-medium sm:font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1.5 text-center text-xs sm:text-sm">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        <span class="truncate">Unduh Sertifikat</span>
+                    </a>
+                    <form id="gen-cert-form-{{ $course->slug }}" action="{{ route('user.course.my-course.generate-certificate', ['slug' => $course->slug]) }}" method="POST" class="hidden">
+                        @csrf
+                    </form>
+                @endif
+            </div>
         @endif
     </div>
 </div>

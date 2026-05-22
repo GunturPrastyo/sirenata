@@ -1,31 +1,16 @@
 <x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah Provinsi">
+    @php
+        $getBadgeColor = function($colorClass) {
+            if (str_contains($colorClass, 'yellow') || str_contains($colorClass, 'amber') || str_contains($colorClass, 'warning')) return 'warning';
+            if (str_contains($colorClass, 'green') || str_contains($colorClass, 'emerald') || str_contains($colorClass, 'success')) return 'success';
+            if (str_contains($colorClass, 'red') || str_contains($colorClass, 'rose') || str_contains($colorClass, 'danger')) return 'danger';
+            if (str_contains($colorClass, 'blue') || str_contains($colorClass, 'indigo') || str_contains($colorClass, 'primary')) return 'indigo';
+            return 'slate';
+        };
+    @endphp
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-province.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Rekapitulasi Rencana Tenaga Kerja
-                            Provinsi</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Rekapitulasi Rencana Tenaga Kerja Provinsi']]" />
 
         <div class="my-2">
             <x-flash-message />
@@ -37,21 +22,29 @@
             :resetUrl="route('admin-province.rtkdp.index')">
             
             <x-slot name="actions">
-                <a href="{{ route('admin-province.rtkdp-export') }}?{{ http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan'])) }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-                    title="Ekspor Data">
+                <x-button 
+                    href="{{ route('admin-province.rtkdp-export') }}?{{ http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan'])) }}"
+                    variant="success" 
+                    size="md"
+                    title="Ekspor Data"
+                    class="gap-2"
+                >
                     <i class="fas fa-download text-xs"></i>
                     <span class="hidden sm:inline">Ekspor</span>
-                </a>
-                <a href="{{ route('admin-province.rtkdp.create') }}"
-                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
+                </x-button>
+                <x-button 
+                    href="{{ route('admin-province.rtkdp.create') }}"
+                    variant="primary" 
+                    size="md"
+                    class="gap-2"
+                >
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 4v16m8-8H4" />
                     </svg>
                     <span class="hidden sm:inline">Upload RTK</span>
                     <span class="sm:hidden">Upload</span>
-                </a>
+                </x-button>
             </x-slot>
 
             <x-slot name="filter_inputs">
@@ -138,66 +131,45 @@
             </x-slot>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
+                <x-table.table plain>
+                    <thead>
                         <tr class="text-slate-500 uppercase text-xs">
-
-                            <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Dokumen RTK</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status Verifikasi</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status Dokumen Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">RTK Acuan</th>
-                            <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
+                            <x-table.th align="left">No.</x-table.th>
+                            <x-table.th align="left">Dokumen RTK</x-table.th>
+                            <x-table.th align="left">Periode Berlaku</x-table.th>
+                            <x-table.th align="left">Status Verifikasi</x-table.th>
+                            <x-table.th align="left">Status Dokumen Berlaku</x-table.th>
+                            <x-table.th align="left">RTK Acuan</x-table.th>
+                            <x-table.th align="center">Aksi</x-table.th>
                         </tr>
                     </thead>
 
                     <tbody id="admin-table-body" class="divide-y divide-slate-200">
                         @forelse ($rtkdps as $key => $rtkdp)
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3 ">
+                                <x-table.td align="left">
                                     <p class="text-slate-600">{{ $key + $rtkdps->firstItem() }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
+                                </x-table.td>
+                                <x-table.td align="left">
                                     <p class="text-slate-600">{{ $rtkdp->name }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
+                                </x-table.td>
+                                <x-table.td align="left">
                                     <p class="text-slate-600">{{ $rtkdp->start_date }} - {{ $rtkdp->end_date }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <span class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkdp->status_verification->color() }}">
-                                        {{ $rtkdp->status_verification->label() }}
-                                    </span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <span class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkdp->status_document->color() }}">
-                                        {{ $rtkdp->status_document->label() }}
-                                    </span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
+                                </x-table.td>
+                                <x-table.td align="left">
+                                    <x-badge :color="$getBadgeColor($rtkdp->status_verification->color())" :text="$rtkdp->status_verification->label()" />
+                                </x-table.td>
+                                <x-table.td align="left">
+                                    <x-badge :color="$getBadgeColor($rtkdp->status_document->color())" :text="$rtkdp->status_document->label()" />
+                                </x-table.td>
+                                <x-table.td align="left">
                                     @if ($rtkdp->is_active)
-                                        <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            Ya
-                                        </span>
+                                        <x-badge color="success" text="Ya" />
                                     @else
-                                        <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M6 6L18 18M6 18L18 6" />
-                                            </svg>
-                                            Tidak
-                                        </span>
+                                        <x-badge color="slate" text="Tidak" />
                                     @endif
-                                </td>
-                                <td class="px-4 md:px-6 py-3 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <x-table.action>
                                         {{-- @if ($rtkdp->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING && $rtkdp->status_document === \Modules\RTK\Enums\StatusDocument::NA)
                                             <li>
@@ -280,17 +252,17 @@
                                             </li>
                                         @endif
                                     </x-table.action>
-                                </td>
+                                </x-table.td>
                             </tr>
                         @empty
                             <tr class="">
-                                <td colspan="5" class="px-6 py-12 text-center">
+                                <x-table.td colspan="7" align="center" class="px-6 py-12">
                                     <p class="text-sm text-slate-500">Tidak ada data RTKD Provinsi</p>
-                                </td>
+                                </x-table.td>
                             </tr>
                         @endforelse
                     </tbody>
-                </table>
+                </x-table.table>
             </div>
 
             <div class="px-5 py-4 border-t border-slate-200">

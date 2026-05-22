@@ -22,7 +22,7 @@ class MyCourseResource extends JsonResource
             'progress'      => $this->pivot->progress,
             'completed_at'  => $this->pivot->completed_at,
             'certificate_code'=> $this->pivot->certificate_code,
-            'certificate_file'=> $this->pivot->certificate_file,
+            'certificate_file'=> $this->pivot->certificate_file ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->pivot->certificate_file) : null,
             'certificate_issued_at'=> $this->pivot->certificate_issued_at,
             'enrolled_at'   => $this->pivot->created_at,
             'benefits'      => CourseBenefitResource::collection($this->whenLoaded('benefits')),

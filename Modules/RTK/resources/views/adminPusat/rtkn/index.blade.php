@@ -1,34 +1,7 @@
 <x-dashboard::layouts.dashboard title="Rekapitulasi Rencana Tenaga Kerja Nasional">
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">
-                            Daftar Laporan Rekapitulasi Rencana
-                            Tenaga Kerja Nasional
-                        </span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
-
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[['label' => 'RTK Nasional']]" />
 
         <x-dashboard::filter-card 
             title="Daftar Rekapitulasi Rencana Tenaga Kerja Nasional" 
@@ -36,21 +9,14 @@
             :resetUrl="route('admin-pusat.rtkn.index')">
             
             <x-slot name="actions">
-                <a href="{{ route('admin-pusat.rtkn.export') }}?{{ http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan'])) }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-                    title="Ekspor Data">
-                    <i class="fas fa-download text-xs"></i>
+                <x-button :href="route('admin-pusat.rtkn.export') . '?' . http_build_query(request()->only(['search', 'status_document', 'status_verification', 'acuan']))" variant="success" icon="fas fa-download" title="Ekspor Data">
                     <span class="hidden sm:inline">Ekspor</span>
-                </a>
+                </x-button>
 
-                <a href="{{ route('admin-pusat.rtkn.create') }}"
-                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
+                <x-button :href="route('admin-pusat.rtkn.create')" variant="primary" icon="fas fa-plus">
                     <span class="hidden sm:inline">Upload RTK</span>
                     <span class="sm:hidden">Upload</span>
-                </a>
+                </x-button>
             </x-slot>
 
             <x-slot name="filter_inputs">
@@ -120,67 +86,45 @@
                 </div>
             </x-slot>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
-                        <tr class="text-slate-500 uppercase text-xs">
+            <x-table.table plain>
+                <thead>
+                    <tr>
+                        <x-table.th>No.</x-table.th>
+                        <x-table.th>Nama Dokumen</x-table.th>
+                        <x-table.th>Periode Berlaku</x-table.th>
+                        <x-table.th>Status Verifikasi</x-table.th>
+                        <x-table.th>Status Dokumen Berlaku</x-table.th>
+                        <x-table.th>RTK Acuan</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </tr>
+                </thead>
 
-                            <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Nama Dokumen</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Periode Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status Verifikasi</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Status Dokumen Berlaku</th>
-                            <th class="px-4 md:px-6 py-3 text-left">RTK Acuan</th>
-                            <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="admin-table-body" class="divide-y divide-slate-200">
-                        @forelse ($rtkns as $key => $rtkn)
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $key + $rtkns->firstItem() }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $rtkn->name }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <p class="text-slate-600">{{ $rtkn->start_date }} - {{ $rtkn->end_date }}</p>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <span class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkn->status_verification->color() }}">
-                                        {{ $rtkn->status_verification->label() }}
-                                    </span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 ">
-                                    <span class="px-2 py-1 text-xs rounded-full font-semibold {{ $rtkn->status_document->color() }}">
-                                        {{ $rtkn->status_document->label() }}
-                                    </span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    @if ($rtkn->is_active)
-                                        <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            Ya
-                                        </span>
-                                    @else
-                                        <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M6 6L18 18M6 18L18 6" />
-                                            </svg>
-                                            Tidak
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 md:px-6 py-3 text-center">
+                <tbody id="admin-table-body" class="divide-y divide-slate-200">
+                    @forelse ($rtkns as $key => $rtkn)
+                        <tr class="hover:bg-slate-50 transition">
+                            <x-table.td>
+                                <span class="text-slate-600">{{ $key + $rtkns->firstItem() }}</span>
+                            </x-table.td>
+                            <x-table.td>
+                                <span class="text-slate-600">{{ $rtkn->name }}</span>
+                            </x-table.td>
+                            <x-table.td>
+                                <span class="text-slate-600">{{ $rtkn->start_date }} - {{ $rtkn->end_date }}</span>
+                            </x-table.td>
+                            <x-table.td>
+                                <x-badge color="{{ $rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED ? 'success' : ($rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING ? 'indigo' : 'red') }}" :text="$rtkn->status_verification->label()" />
+                            </x-table.td>
+                            <x-table.td>
+                                <x-badge color="{{ $rtkn->status_document === \Modules\RTK\Enums\StatusDocument::VALID ? 'success' : ($rtkn->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED ? 'red' : 'slate') }}" :text="$rtkn->status_document->label()" />
+                            </x-table.td>
+                            <x-table.td>
+                                @if ($rtkn->is_active)
+                                    <x-badge color="success" text="Ya" />
+                                @else
+                                    <x-badge color="slate" text="Tidak" />
+                                @endif
+                            </x-table.td>
+                            <x-table.td align="center">
                                     <x-table.action>
                                         {{-- Step 1: Approve verifikasi — muncul kalau PENDING + is_active --}}
                                         @if($rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING && $rtkn->is_active)

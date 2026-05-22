@@ -91,7 +91,7 @@
 
                     <x-modal
                         name="course_sections-{{ $course->slug }}"
-                        title="Create New Section for {{ $course->name }}"
+                        title="Tambah Bagian Baru untuk {{ $course->name }}"
                         maxWidth="sm:max-w-xl"
                     >
                         <x-validation-errors class="mb-4" />
@@ -721,7 +721,7 @@
                                             <!-- Modal Content -->
                                             <x-modal
                                                 name="section-content-{{ $section->id }}"
-                                                title="Create New Content"
+                                                title="Tambah Materi Baru"
                                                 maxWidth="sm:max-w-xl"
                                                 x-init="$errors->has('course_section_id') && old('course_section_id') == '{{ $section->id }}' ? $dispatch('open-modal', 'section-content-{{ $section->id }}') : null"
                                             >

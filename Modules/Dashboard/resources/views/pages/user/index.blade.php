@@ -8,36 +8,7 @@
 
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb -->
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a
-                        href="./index.html"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600"
-                    >
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
-                            ></path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"
-                            ></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">
-                            Dashboard
-                        </span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Dashboard']]" />
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
@@ -229,23 +200,17 @@
                                                 </p>
                                             </div>
                                             @if ($course->pivot->status === 'completed')
-                                                <span
-                                                    class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-600 flex-shrink-0 ml-2"
-                                                >
+                                                <x-badge color="emerald" class="hidden sm:inline-flex flex-shrink-0 ml-2">
                                                     Selesai
-                                                </span>
+                                                </x-badge>
                                             @elseif ($course->pivot->status === 'in_progress')
-                                                <span
-                                                    class="hidden sm:inline-flex items-center justify-center w-32 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-indigo-600 flex-shrink-0 ml-2"
-                                                >
+                                                <x-badge color="indigo" class="hidden sm:inline-flex flex-shrink-0 ml-2">
                                                     Sedang Berjalan
-                                                </span>
+                                                </x-badge>
                                             @else
-                                                <span
-                                                    class="hidden sm:inline-flex items-center justify-center w-32 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 flex-shrink-0 ml-2"
-                                                >
+                                                <x-badge color="slate" class="hidden sm:inline-flex flex-shrink-0 ml-2">
                                                     Terdaftar
-                                                </span>
+                                                </x-badge>
                                             @endif
                                         </div>
                                         <div class="w-full bg-gray-200 rounded-full h-2">

@@ -73,11 +73,20 @@ class DashboardController extends Controller
         $genderMale = $genders->get('male', 0);
         $genderFemale = $genders->get('female', 0);
 
+        // Course comparison stats
+        $courses = (clone $baseUserQuery)
+            ->join('course_student', 'users.id', '=', 'course_student.user_id')
+            ->join('courses', 'course_student.course_id', '=', 'courses.id')
+            ->select('courses.name as course_name', \Illuminate\Support\Facades\DB::raw('count(course_student.user_id) as total'))
+            ->groupBy('courses.id', 'courses.name')
+            ->pluck('total', 'course_name');
+
         return view('dashboard::pages.admin-kab-kota.index', [
             'user' => $user,
             'sdmPerTahun' => $sdmPerTahun,
             'genderMale' => $genderMale,
             'genderFemale' => $genderFemale,
+            'courses' => $courses,
             'years' => $years,
             'selectedYear' => $selectedYear,
         ]);

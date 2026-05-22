@@ -1,43 +1,9 @@
 <x-dashboard::layouts.dashboard title="Perpustakaan - E-Learning">
     <div class="p-2 sm:p-6">
 
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ url('/') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Perpustakaan</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[['label' => 'Perpustakaan']]" />
 
-
-        @if ($errors->any())
-            <div class="mt-2 mb-4 bg-red-50 text-red-600 p-4 rounded-lg border border-red-200">
-                <ul class="list-disc list-inside text-sm">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-
+        <x-validation-errors />
 
         <x-dashboard::filter-card 
             title="Daftar Materi Perpustakaan" 
@@ -45,14 +11,10 @@
             :resetUrl="route('admin-pusat.libraries.index')">
             
             <x-slot name="actions">
-                <button type="button" x-data @click="$dispatch('open-modal', 'create-library')"
-                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors cursor-pointer">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
+                <x-button type="button" x-data @click="$dispatch('open-modal', 'create-library')" icon="fas fa-plus">
                     <span class="hidden sm:inline">Tambah Materi</span>
                     <span class="sm:hidden">Tambah</span>
-                </button>
+                </x-button>
             </x-slot>
 
             <x-slot name="filter_inputs">
@@ -97,76 +59,75 @@
                 </div>
             </x-slot>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
-                        <tr class="text-slate-500 uppercase text-xs">
-                            <th class="px-4 md:px-6 py-3 text-left">No.</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Sampul</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Judul</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Kategori</th>
-                            <th class="px-4 md:px-6 py-3 text-left">Lampiran</th>
-                            <th class="px-4 md:px-6 py-3 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200">
-                        @forelse($libraries as $key => $library)
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 md:px-6 py-3"><p class="text-slate-600">{{ $key + $libraries->firstItem() }}</p></td>
-                                <td class="px-4 md:px-6 py-3">
-                                    @if($library->cover_image)
-                                        <img src="{{ Storage::url($library->cover_image) }}" alt="Cover" class="w-10 h-14 object-cover rounded shadow-sm">
-                                    @else
-                                        <div class="w-10 h-14 bg-slate-200 rounded flex items-center justify-center text-slate-400">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        </div>
-                                    @endif
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <p class="text-slate-600 font-medium">{{ $library->title }}</p>
-                                    @if($library->description)
-                                        <p class="text-xs text-slate-400 mt-0.5 line-clamp-1">{{ $library->description }}</p>
-                                    @endif
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <span class="px-2 py-1 bg-slate-100 text-slate-800 border border-slate-200 rounded text-xs">{{ $library->libraryCategory->name ?? '-' }}</span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3">
-                                    <div class="flex flex-col gap-1">
-                                        @if($library->file_path)
-                                            <span class="inline-flex items-center text-xs text-blue-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ Storage::url($library->file_path) }}', type: 'pdf' })">
-                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
-                                                File PDF
-                                            </span>
-                                        @endif
-                                        @if($library->video_path)
-                                            <span class="inline-flex items-center text-xs text-purple-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ Storage::url($library->video_path) }}', type: 'video' })">
-                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                File Video
-                                            </span>
-                                        @endif
-                                        @if($library->external_link)
-                                            @php
-                                                $isYoutube = str_contains($library->external_link, 'youtube.com') || str_contains($library->external_link, 'youtu.be');
-                                            @endphp
-                                            @if($isYoutube)
-                                                <span class="inline-flex items-center text-xs text-red-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ $library->external_link }}', type: 'youtube' })">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                    Link YouTube
-                                                </span>
-                                            @else
-                                                <a href="{{ $library->external_link }}" target="_blank" class="inline-flex items-center text-xs text-indigo-600 hover:underline">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                                                    Link Eksternal
-                                                </a>
-                                            @endif
-                                        @endif
-                                        @if(!$library->file_path && !$library->video_path && !$library->external_link)
-                                            <span class="text-xs text-slate-400">-</span>
-                                        @endif
+            <x-table.table plain>
+                <thead class="bg-slate-50 border-b border-slate-200">
+                    <tr class="text-slate-500 uppercase text-xs">
+                        <x-table.th>No.</x-table.th>
+                        <x-table.th>Sampul</x-table.th>
+                        <x-table.th>Judul</x-table.th>
+                        <x-table.th>Kategori</x-table.th>
+                        <x-table.th>Lampiran</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    @forelse($libraries as $key => $library)
+                        <tr class="hover:bg-slate-50 transition">
+                            <x-table.td><p class="text-slate-600">{{ $key + $libraries->firstItem() }}</p></x-table.td>
+                            <x-table.td>
+                                @if($library->cover_image)
+                                    <img src="{{ Storage::url($library->cover_image) }}" alt="Cover" class="w-10 h-14 object-cover rounded shadow-sm">
+                                @else
+                                    <div class="w-10 h-14 bg-slate-200 rounded flex items-center justify-center text-slate-400">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     </div>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 text-center">
+                                @endif
+                            </x-table.td>
+                            <x-table.td>
+                                <p class="text-slate-600 font-medium">{{ $library->title }}</p>
+                                @if($library->description)
+                                    <p class="text-xs text-slate-400 mt-0.5 line-clamp-1">{{ $library->description }}</p>
+                                @endif
+                            </x-table.td>
+                            <x-table.td>
+                                <x-badge color="slate">{{ $library->libraryCategory->name ?? '-' }}</x-badge>
+                            </x-table.td>
+                            <x-table.td>
+                                <div class="flex flex-col gap-1">
+                                    @if($library->file_path)
+                                        <span class="inline-flex items-center text-xs text-blue-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ Storage::url($library->file_path) }}', type: 'pdf' })">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                            File PDF
+                                        </span>
+                                    @endif
+                                    @if($library->video_path)
+                                        <span class="inline-flex items-center text-xs text-purple-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ Storage::url($library->video_path) }}', type: 'video' })">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            File Video
+                                        </span>
+                                    @endif
+                                    @if($library->external_link)
+                                        @php
+                                            $isYoutube = str_contains($library->external_link, 'youtube.com') || str_contains($library->external_link, 'youtu.be');
+                                        @endphp
+                                        @if($isYoutube)
+                                            <span class="inline-flex items-center text-xs text-red-600 cursor-pointer hover:underline" @click="$dispatch('open-modal', 'preview-modal'); $dispatch('open-preview', { url: '{{ $library->external_link }}', type: 'youtube' })">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                Link YouTube
+                                            </span>
+                                        @else
+                                            <a href="{{ $library->external_link }}" target="_blank" class="inline-flex items-center text-xs text-indigo-600 hover:underline">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                                                Link Eksternal
+                                            </a>
+                                        @endif
+                                    @endif
+                                    @if(!$library->file_path && !$library->video_path && !$library->external_link)
+                                        <span class="text-xs text-slate-400">-</span>
+                                    @endif
+                                </div>
+                            </x-table.td>
+                            <x-table.td align="center">
                                     <x-table.action>
                                         <li>
                                             <button type="button" x-data @click="$dispatch('open-modal', 'edit-library-{{ $library->id }}')"
@@ -180,18 +141,17 @@
                                         </li>
                                     </x-table.action>
 
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <p class="text-sm text-slate-500">Tidak ada materi perpustakaan yang ditemukan.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                            </x-table.td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <x-table.td colspan="6" align="center" class="py-12">
+                                <p class="text-sm text-slate-500">Tidak ada materi perpustakaan yang ditemukan.</p>
+                            </x-table.td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </x-table.table>
 
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $libraries->links('pagination::tailwind') }}
@@ -287,43 +247,23 @@
 
                 <div class="flex-1 space-y-4">
 
-                    <div>
-                        <label for="create-title" class="block text-sm font-medium text-gray-700 mb-1">
-                            Judul Materi <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="create-title" name="title" required value="{{ old('title') }}"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                            placeholder="Judul buku / dokumen">
-                    </div>
+                    <x-form.input name="title" label="Judul Materi" required placeholder="Judul buku / dokumen" />
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="create-library-type" class="block text-sm font-medium text-gray-700 mb-1">
-                                Tipe Materi <span class="text-red-500">*</span>
-                            </label>
-                            <select id="create-library-type" name="library_category_id" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                <option value="">Pilih Kategori</option>
-                                @foreach($libraryCategories as $category)
-                                    <option value="{{ $category->id }}" {{ old('library_category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Gambar Sampul <span class="text-xs text-gray-500">(max 2MB)</span>
-                            </label>
-                            <input type="file" name="cover_image" accept="image/*"
-                                class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                        </div>
+                        <x-form.select name="library_category_id" label="Tipe Materi" required>
+                            <option value="">Pilih Kategori</option>
+                            @foreach($libraryCategories as $category)
+                                <option value="{{ $category->id }}" @selected(old('library_category_id') == $category->id)>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </x-form.select>
+
+                        <x-form.input type="file" name="cover_image" label="Gambar Sampul" helper="(max 2MB)" accept="image/*"
+                            class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                     </div>
 
-                    <div>
-                        <label for="create-description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat</label>
-                        <textarea id="create-description" name="description" rows="2"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                            placeholder="Deskripsi materi...">{{ old('description') }}</textarea>
-                    </div>
+                    <x-form.textarea name="description" label="Deskripsi Singkat" rows="2" placeholder="Deskripsi materi..." />
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Jenis File <span class="text-red-500">*</span></label>
@@ -353,29 +293,18 @@
                     </div>
 
                     <div x-show="fileType === 'document'">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            File Dokumen PDF <span class="text-xs text-gray-500">(max 20MB)</span>
-                        </label>
-                        <input type="file" name="file_path" accept=".pdf" @change="handleFileChange($event)"
-                            class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
+                        <x-form.input type="file" name="file_path" label="File Dokumen PDF" helper="(max 20MB)" accept=".pdf" @change="handleFileChange($event)"
+                            class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                     </div>
 
                     <div x-show="fileType === 'video'">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            File Video <span class="text-xs text-gray-500">(mp4, webm, max 50MB)</span>
-                        </label>
-                        <input type="file" name="video_path" accept="video/mp4,video/webm" @change="handleVideoChange($event)"
+                        <x-form.input type="file" name="video_path" label="File Video" helper="(mp4, webm, max 50MB)" accept="video/mp4,video/webm" @change="handleVideoChange($event)"
                             x-bind:disabled="fileType !== 'video'"
-                            class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
+                            class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                     </div>
 
                     <div x-show="fileType === 'link'">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            URL Link Eksternal <span class="text-red-500">*</span>
-                        </label>
-                        <input type="url" name="external_link" x-model="linkUrl" x-bind:required="fileType === 'link'"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                            placeholder="https://...">
+                        <x-form.input type="url" name="external_link" label="URL Link Eksternal" placeholder="https://" x-model="linkUrl" x-bind:required="fileType === 'link'" />
                     </div>
                 </div>
 
@@ -414,14 +343,12 @@
             </div>
 
             <div class="flex gap-3 pt-2">
-                <button type="button" x-data @click="$dispatch('close-modal', 'create-library')"
-                    class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 text-sm text-center cursor-pointer">
+                <x-button type="button" x-data @click="$dispatch('close-modal', 'create-library')" variant="white" class="flex-1">
                     Batal
-                </button>
-                <button type="submit"
-                    class="flex-1 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 text-sm cursor-pointer">
+                </x-button>
+                <x-button type="submit" variant="primary" class="flex-1">
                     Simpan Materi
-                </button>
+                </x-button>
             </div>
         </form>
     </x-modal>
@@ -488,47 +415,28 @@
 
                     <div class="flex-1 space-y-4">
 
-                        <div>
-                            <label for="edit-title-{{ $library->id }}" class="block text-sm font-medium text-gray-700 mb-1">
-                                Judul Materi <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="edit-title-{{ $library->id }}" name="title" required
-                                value="{{ old('title', $library->title) }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                                placeholder="Judul buku / dokumen">
-                        </div>
+                        <x-form.input name="title" label="Judul Materi" required placeholder="Judul buku / dokumen" :value="$library->title" />
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <x-form.select name="library_category_id" label="Kategori Materi" required>
+                                <option value="">Pilih Kategori</option>
+                                @foreach($libraryCategories as $category)
+                                    <option value="{{ $category->id }}" @selected(old('library_category_id', $library->library_category_id) == $category->id)>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </x-form.select>
+
                             <div>
-                                <label for="edit-type-{{ $library->id }}" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Kategori Materi <span class="text-red-500">*</span>
-                                </label>
-                                <select id="edit-type-{{ $library->id }}" name="library_category_id" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                    <option value="">Pilih Kategori</option>
-                                    @foreach($libraryCategories as $category)
-                                        <option value="{{ $category->id }}" {{ old('library_category_id', $library->library_category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Gambar Sampul <span class="text-xs text-gray-500">(abaikan jika tidak ubah)</span>
-                                </label>
-                                <input type="file" name="cover_image" accept="image/*"
-                                    class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                <x-form.input type="file" name="cover_image" label="Gambar Sampul" helper="(abaikan jika tidak ubah)" accept="image/*"
+                                    class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                                 @if($library->cover_image)
                                     <p class="text-xs text-gray-500 mt-1">Sampul saat ini sudah terlampir.</p>
                                 @endif
                             </div>
                         </div>
 
-                        <div>
-                            <label for="edit-desc-{{ $library->id }}" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat</label>
-                            <textarea id="edit-desc-{{ $library->id }}" name="description" rows="2"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                                placeholder="Deskripsi materi...">{{ old('description', $library->description) }}</textarea>
-                        </div>
+                        <x-form.textarea name="description" label="Deskripsi Singkat" rows="2" placeholder="Deskripsi materi..." :value="$library->description" />
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Jenis File <span class="text-red-500">*</span></label>
@@ -558,32 +466,21 @@
                         </div>
 
                         <div x-show="fileType === 'document'">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                File Dokumen PDF <span class="text-xs text-gray-500">(max 20MB, abaikan jika tidak ubah)</span>
-                            </label>
-                            <input type="file" name="file_path" accept=".pdf" @change="handleFileChange($event)"
-                                class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
+                            <x-form.input type="file" name="file_path" label="File Dokumen PDF" helper="(max 20MB, abaikan jika tidak ubah)" accept=".pdf" @change="handleFileChange($event)"
+                                class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                             @if($library->file_path)
                                 <p class="text-xs text-gray-500 mt-1">File PDF saat ini sudah terlampir.</p>
                             @endif
                         </div>
 
                         <div x-show="fileType === 'video'">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                File Video <span class="text-xs text-gray-500">(mp4, webm, max 50MB, abaikan jika tidak ubah)</span>
-                            </label>
-                            <input type="file" name="video_path" accept="video/mp4,video/webm" @change="handleVideoChange($event)"
+                            <x-form.input type="file" name="video_path" label="File Video" helper="(mp4, webm, max 50MB, abaikan jika tidak ubah)" accept="video/mp4,video/webm" @change="handleVideoChange($event)"
                                 x-bind:disabled="fileType !== 'video'"
-                                class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
+                                class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                         </div>
 
                         <div x-show="fileType === 'link'">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                URL Link Eksternal <span class="text-red-500">*</span>
-                            </label>
-                            <input type="url" name="external_link" x-model="linkUrl" x-bind:required="fileType === 'link'"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                                placeholder="https://...">
+                            <x-form.input type="url" name="external_link" label="URL Link Eksternal" placeholder="https://" x-model="linkUrl" x-bind:required="fileType === 'link'" />
                         </div>
                     </div>
 
@@ -617,14 +514,12 @@
                 </div>
 
                 <div class="flex gap-3 pt-2">
-                    <button type="button" x-data @click="$dispatch('close-modal', 'edit-library-{{ $library->id }}')"
-                        class="flex-1 bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 text-sm text-center cursor-pointer">
+                    <x-button type="button" x-data @click="$dispatch('close-modal', 'edit-library-{{ $library->id }}')" variant="white" class="flex-1">
                         Batal
-                    </button>
-                    <button type="submit"
-                        class="flex-1 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 text-sm cursor-pointer">
+                    </x-button>
+                    <x-button type="submit" variant="primary" class="flex-1">
                         Simpan Perubahan
-                    </button>
+                    </x-button>
                 </div>
             </form>
         </x-modal>

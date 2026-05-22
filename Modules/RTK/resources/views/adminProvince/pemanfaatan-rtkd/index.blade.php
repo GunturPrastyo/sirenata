@@ -1,31 +1,8 @@
 <x-dashboard::layouts.dashboard title="Pemanfaatan RTKD">
     <div class="p-2 sm:p-6">
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-province.dashboard') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">Pemanfaatan RTKD</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+        <x-breadcrumb :items="[['label' => 'Hasil Pemanfaatan RTKD']]" />
 
-        @if ($activePeriod && !$submission)
+        @if ($activePeriod && !$submission && !($activePeriod->tanggal_selesai && now()->gt($activePeriod->tanggal_selesai->endOfDay())))
             <div class="mb-6 relative overflow-hidden bg-white border border-indigo-100 rounded-2xl shadow-sm">
                 <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-50 rounded-full opacity-50"></div>
                 <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-indigo-50 rounded-full opacity-30"></div>
@@ -50,13 +27,10 @@
                         </div>
                     </div>
                     <div class="flex-shrink-0">
-                        <a href="{{ route('admin-province.pemanfaatan-rtkd.create') }}" 
-                            class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200 hover:-translate-y-0.5 active:translate-y-0">
+                        <x-button href="{{ route('admin-province.pemanfaatan-rtkd.create') }}" 
+                            variant="primary" size="lg" icon="fas fa-arrow-right">
                             Isi Kuesioner Sekarang
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                        </a>
+                        </x-button>
                     </div>
                 </div>
             </div>
@@ -68,101 +42,101 @@
                     <h2 class="text-base font-semibold text-slate-800">Status Pemanfaatan Rencana Tenaga Kerja Daerah</h2>
                 </div>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
-                        <tr class="text-slate-500 uppercase text-xs text-left">
-                            <th class="px-4 py-3 text-center w-12">No</th>
-                            <th class="px-4 py-3">Periode</th>
-                            <th class="px-4 py-3 text-center">Tanggal Pengisian</th>
-                            <th class="px-4 py-3 text-center">Status Verifikasi</th>
-                            <th class="px-4 py-3 text-center">Oleh</th>
-                            <th class="px-4 py-3 text-center">Aksi</th>
+            <x-table.table plain>
+                <thead>
+                    <tr>
+                        <x-table.th align="center" class="w-12">No</x-table.th>
+                        <x-table.th align="left">Periode</x-table.th>
+                        <x-table.th align="center">Tanggal Pengisian</x-table.th>
+                        <x-table.th align="center">Status Verifikasi</x-table.th>
+                        <x-table.th align="center">Oleh</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    @if (!$activePeriod)
+                        <tr>
+                            <x-table.td colspan="6" align="center" class="py-8">
+                                Admin Pusat belum membuka periode survei pemanfaatan RTKD saat ini. Silakan kembali lagi nanti.
+                            </x-table.td>
                         </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200">
-                        @if (!$activePeriod)
-                            <tr>
-                                <td colspan="6" class="px-4 py-8 text-center text-slate-500">
-                                    Admin Pusat belum membuka periode survei pemanfaatan RTKD saat ini. Silakan kembali lagi nanti.
-                                </td>
-                            </tr>
-                        @elseif($submissions->isEmpty())
-                            <tr>
-                                <td colspan="6" class="px-4 py-8 text-center text-slate-500">
-                                    Belum ada kuesioner yang diisi untuk periode aktif.
-                                </td>
-                            </tr>
-                        @else
-                            @foreach($submissions as $key => $item)
-                                <tr class="hover:bg-slate-50 transition">
-                                    <td class="px-4 py-3 text-center text-slate-600">
-                                        {{ $key + 1 }}
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm font-semibold text-slate-900">{{ $activePeriod->nama }}</div>
-                                        <div class="text-xs text-slate-500">Batas: {{ $activePeriod->tanggal_selesai ? $activePeriod->tanggal_selesai->format('d M Y') : '-' }}</div>
-                                    </td>
-                                    <td class="px-4 py-3 text-center text-slate-600">
-                                        {{ $item->created_at->format('d M Y, H:i') }}
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        @if($item->status_verifikasi === 'verified')
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">
-                                                Sudah Disetujui
-                                            </span>
-                                        @elseif($item->status_verifikasi === 'rejected')
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                                                Revisi Diperlukan
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                                Menunggu Verifikasi
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        @if($item->creator && $item->creator->hasRole('admin-pusat'))
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-100">
-                                                Admin Pusat
-                                            </span>
-                                        @else
-                                            <span class="text-xs text-slate-500">Mandiri</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        @php
-                                            $itemHasNotes = false;
-                                            if (is_array($item->field_verifications)) {
-                                                foreach ($item->field_verifications as $v) {
-                                                    if (!empty($v['catatan'])) {
-                                                        $itemHasNotes = true;
-                                                        break;
-                                                    }
+                    @elseif($activePeriod->tanggal_selesai && now()->gt($activePeriod->tanggal_selesai->endOfDay()) && $submissions->isEmpty())
+                        <tr>
+                            <x-table.td colspan="6" align="center" class="py-8 text-red-500 font-medium bg-red-50/50">
+                                Batas waktu pengisian kuesioner untuk periode ini telah berakhir dan Anda belum mengisi kuesioner.
+                            </x-table.td>
+                        </tr>
+                    @elseif($submissions->isEmpty())
+                        <tr>
+                            <x-table.td colspan="6" align="center" class="py-8">
+                                Belum ada kuesioner yang diisi untuk periode aktif.
+                            </x-table.td>
+                        </tr>
+                    @else
+                        @foreach($submissions as $key => $item)
+                            <tr class="hover:bg-slate-50 transition">
+                                <x-table.td align="center">
+                                    {{ $key + 1 }}
+                                </x-table.td>
+                                <x-table.td align="left">
+                                    <div class="text-sm font-semibold text-slate-900">{{ $activePeriod->nama }}</div>
+                                    <div class="text-xs text-slate-500">Batas: {{ $activePeriod->tanggal_selesai ? $activePeriod->tanggal_selesai->format('d M Y') : '-' }}</div>
+                                </x-table.td>
+                                <x-table.td align="center">
+                                    {{ $item->created_at->format('d M Y, H:i') }}
+                                </x-table.td>
+                                <x-table.td align="center">
+                                    @if($item->status_verifikasi === 'verified')
+                                        <x-badge color="success">Sudah Disetujui</x-badge>
+                                    @elseif($item->status_verifikasi === 'rejected')
+                                        <x-badge color="danger">Revisi Diperlukan</x-badge>
+                                    @else
+                                        <x-badge color="indigo">Menunggu Verifikasi</x-badge>
+                                    @endif
+                                </x-table.td>
+                                <x-table.td align="center">
+                                    @if($item->creator && $item->creator->hasRole('admin-pusat'))
+                                        <x-badge color="danger">Admin Pusat</x-badge>
+                                    @else
+                                        <span class="text-xs text-slate-500">Mandiri</span>
+                                    @endif
+                                </x-table.td>
+                                <x-table.td align="center">
+                                    @php
+                                        $itemHasNotes = false;
+                                        if (is_array($item->field_verifications)) {
+                                            foreach ($item->field_verifications as $v) {
+                                                if (!empty($v['catatan'])) {
+                                                    $itemHasNotes = true;
+                                                    break;
                                                 }
                                             }
-                                        @endphp
-                                        
+                                        }
+                                    @endphp
+                                    
+                                    @if($activePeriod && $activePeriod->tanggal_selesai && now()->gt($activePeriod->tanggal_selesai->endOfDay()))
+                                        <x-badge color="secondary">Batas Waktu Habis</x-badge>
+                                    @else
                                         @if($item->status_verifikasi === 'verified')
-                                            <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition shadow-sm">
+                                            <x-button href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" variant="success" size="sm">
                                                 Edit / Isi Ulang
-                                            </a>
+                                            </x-button>
                                         @elseif($item->status_verifikasi === 'rejected')
-                                            <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
+                                            <x-button href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" variant="danger" size="sm">
                                                 Revisi / Edit
-                                            </a>
+                                            </x-button>
                                         @else
-                                            <a href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition shadow-sm">
+                                            <x-button href="{{ route('admin-province.pemanfaatan-rtkd.edit', $item->id) }}" variant="warning" size="sm">
                                                 Edit / Isi Ulang
-                                            </a>
+                                            </x-button>
                                         @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+                                    @endif
+                                </x-table.td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </x-table.table>
             </div>
 
             @if($submission)
@@ -173,9 +147,9 @@
                         <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                             <h3 class="text-base font-semibold text-slate-800">1. Kepemilikan Dokumen RTK Provinsi</h3>
                             @if(isset($submission->field_verifications['q1_punya_rtkd']) && $submission->field_verifications['q1_punya_rtkd']['status'] === 'rejected')
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                                <x-badge color="danger">Revisi Diminta</x-badge>
                             @elseif(isset($submission->field_verifications['q1_punya_rtkd']) && $submission->field_verifications['q1_punya_rtkd']['status'] === 'verified')
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
+                                <x-badge color="success">Disetujui</x-badge>
                             @endif
                         </div>
                         <div class="p-4">
@@ -217,9 +191,9 @@
                             <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                                 <h3 class="text-base font-semibold text-slate-800">Alasan Tidak Memiliki RTKD</h3>
                                 @if(isset($submission->field_verifications['alasan_tidak_punya']) && $submission->field_verifications['alasan_tidak_punya']['status'] === 'rejected')
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                                    <x-badge color="danger">Revisi Diminta</x-badge>
                                 @elseif(isset($submission->field_verifications['alasan_tidak_punya']) && $submission->field_verifications['alasan_tidak_punya']['status'] === 'verified')
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
+                                    <x-badge color="success">Disetujui</x-badge>
                                 @endif
                             </div>
                             <div class="p-4">
@@ -252,9 +226,9 @@
                             <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                                 <h3 class="text-base font-semibold text-slate-800">2. Menjadi Acuan Perencanaan Pembangunan</h3>
                                 @if(isset($submission->field_verifications['q2_jadi_acuan']) && $submission->field_verifications['q2_jadi_acuan']['status'] === 'rejected')
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                                    <x-badge color="danger">Revisi Diminta</x-badge>
                                 @elseif(isset($submission->field_verifications['q2_jadi_acuan']) && $submission->field_verifications['q2_jadi_acuan']['status'] === 'verified')
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
+                                    <x-badge color="success">Disetujui</x-badge>
                                 @endif
                             </div>
                             <div class="p-4">
@@ -324,9 +298,9 @@
                                             @endif
                                         </div>
                                         @if(isset($submission->field_verifications[$fieldKey]) && $submission->field_verifications[$fieldKey]['status'] === 'rejected')
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                                            <x-badge color="danger">Revisi Diminta</x-badge>
                                         @elseif(isset($submission->field_verifications[$fieldKey]) && $submission->field_verifications[$fieldKey]['status'] === 'verified')
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
+                                            <x-badge color="success">Disetujui</x-badge>
                                         @endif
                                     </div>
                                     <div class="p-4 space-y-4">
@@ -387,9 +361,9 @@
                                 <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                                     <h3 class="text-base font-semibold text-slate-800">Alasan Belum Menjadi Acuan</h3>
                                     @if(isset($submission->field_verifications['alasan_belum_acuan']) && $submission->field_verifications['alasan_belum_acuan']['status'] === 'rejected')
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Revisi Diminta</span>
+                                        <x-badge color="danger">Revisi Diminta</x-badge>
                                     @elseif(isset($submission->field_verifications['alasan_belum_acuan']) && $submission->field_verifications['alasan_belum_acuan']['status'] === 'verified')
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Disetujui</span>
+                                        <x-badge color="success">Disetujui</x-badge>
                                     @endif
                                 </div>
                                 <div class="p-4">
