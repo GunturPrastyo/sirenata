@@ -1,17 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\LMS\Http\Controllers\AdminProvince\RekapitulasiController as AdminProvinceRekapitulasiController;
 use Modules\LMS\Http\Controllers\AdminKabKota\RekapitulasiController as AdminKabKotaRekapitulasiController;
-use Modules\LMS\Http\Controllers\AdminPusat\RekapitulasiController;
+use Modules\LMS\Http\Controllers\AdminProvince\RekapitulasiController as AdminProvinceRekapitulasiController;
 use Modules\LMS\Http\Controllers\AdminPusat\CertificateController as AdminPusatCertificateController;
-use Modules\LMS\Http\Controllers\AdminPusat\LibraryCategoryController as AdminPusatLibraryCategoryController;
-use Modules\LMS\Http\Controllers\AdminPusat\LibraryController as AdminPusatLibraryController;
-use Modules\LMS\Http\Controllers\User\LibraryController as UserLibraryController;
-use Modules\LMS\Http\Controllers\User\CourseController as UserCourseController;
 use Modules\LMS\Http\Controllers\AdminPusat\Course\CourseController;
 use Modules\LMS\Http\Controllers\AdminPusat\Course\CourseSectionController;
+use Modules\LMS\Http\Controllers\AdminPusat\Course\PostTestController;
 use Modules\LMS\Http\Controllers\AdminPusat\Course\SectionContentController;
+use Modules\LMS\Http\Controllers\AdminPusat\LibraryCategoryController as AdminPusatLibraryCategoryController;
+use Modules\LMS\Http\Controllers\AdminPusat\LibraryController as AdminPusatLibraryController;
+use Modules\LMS\Http\Controllers\AdminPusat\RekapitulasiController;
+use Modules\LMS\Http\Controllers\User\CourseController as UserCourseController;
+use Modules\LMS\Http\Controllers\User\LibraryController as UserLibraryController;
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(RekapitulasiController::class)->group(function () {
@@ -29,7 +30,17 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::resource('courses', CourseController::class);
         Route::resource('course-sections', CourseSectionController::class);
         Route::resource('course-sections-contents', SectionContentController::class);
+        Route::prefix('post-test')->name('post-tests.')->group(function () {
+            Route::get('/create', [PostTestController::class, 'create'])->name('create');
+            Route::post('/store', [PostTestController::class, 'store'])->name('store');
+
+            // Tambahkan rute edit dan update berikut:
+            Route::get('/{id}/edit', [PostTestController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [PostTestController::class, 'update'])->name('update');
+        });
     });
+
+
 
     Route::resource('library-categories', AdminPusatLibraryCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('libraries', AdminPusatLibraryController::class)->only(['index', 'store', 'update', 'destroy']);

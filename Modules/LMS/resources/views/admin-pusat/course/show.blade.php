@@ -97,7 +97,8 @@
 
                     <div class="p-6">
                         @if (count($course->course_sections) > 0)
-                            <div class="space-y-4">
+                            <div class="space-y-6">
+                                <!-- Looping Bagian Materi -->
                                 @foreach ($course->course_sections as $section)
                                     <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
                                         <!-- Header Section -->
@@ -169,23 +170,65 @@
                                             @endforelse
                                         </ul>
 
-                                        <!-- Footer: Tombol Tambah Materi & Post Test -->
-                                        <div class="bg-white px-4 py-3 border-t border-slate-100 flex items-center justify-center gap-4">
+                                        <!-- Footer: Tombol Tambah Materi & Post Test Section (Dinamis: Tambah / Edit) -->
+                                        @php
+                                            $existingPostTest = \Modules\LMS\Models\PostTest::where('course_section_id', $section->id)->first();
+                                        @endphp
+                                        <div class="bg-white px-4 py-3 border-t border-slate-100 flex flex-wrap items-center justify-center gap-4">
                                             <!-- Tombol Tambah Materi -->
                                             <a href="{{ route('admin-pusat.management-course.course-sections-contents.create', ['course_slug' => $course->slug, 'section_id' => $section->id]) }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center transition-colors">
                                                 <i class="fas fa-plus-circle mr-1.5"></i> Tambah Materi Baru
                                             </a>
                                             
-                                            <!-- Divider -->
-                                            <div class="w-px h-4 bg-slate-300"></div>
+                                            <div class="w-px h-4 bg-slate-300 hidden sm:block"></div>
                                             
-                                            <!-- Tombol Tambah Post Test -->
-                                            <a href="#" class="text-sm font-semibold text-emerald-600 hover:text-emerald-800 flex items-center transition-colors">
-                                                <i class="fas fa-clipboard-check mr-1.5"></i> Tambah Post Test
-                                            </a>
+                                            <!-- Tombol Post Test Bagian (Dinamis) -->
+                                            @if($existingPostTest)
+                                                <a href="{{ route('admin-pusat.management-course.post-tests.edit', $existingPostTest->id) }}?course_slug={{ $course->slug }}" class="text-sm font-semibold text-amber-600 hover:text-amber-800 flex items-center transition-colors">
+                                                    <i class="fas fa-edit mr-1.5"></i> Edit Post Test Bagian
+                                                </a>
+                                            @else
+                                                <a href="{{ route('admin-pusat.management-course.post-tests.create', ['course_slug' => $course->slug, 'section_id' => $section->id]) }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-800 flex items-center transition-colors">
+                                                    <i class="fas fa-clipboard-check mr-1.5"></i> Tambah Post Test Bagian
+                                                </a>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
+
+                                <!-- ============================================== -->
+                                <!-- FINAL POST TEST (EVALUASI AKHIR MODUL) CARD    -->
+                                <!-- ============================================== -->
+                                @php
+                                    $existingFinalTest = \Modules\LMS\Models\PostTest::where('course_id', $course->id)->whereNull('course_section_id')->first();
+                                @endphp
+                                <div class="border-2 border-emerald-100 bg-emerald-50/30 rounded-lg overflow-hidden shadow-sm mt-8 relative">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                                    <div class="p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                        <div class="flex items-start gap-4">
+                                            <div class="p-3 bg-emerald-100 text-emerald-600 rounded-full shrink-0 mt-1">
+                                                <i class="fas fa-graduation-cap text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-base font-bold text-slate-800 mb-1">Evaluasi Akhir Course</h3>
+                                                <p class="text-sm text-slate-600">
+                                                    Post Test utama sebagai syarat penyelesaian kursus dan perhitungan nilai akhir.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Tombol Buat / Edit Evaluasi Akhir (Dinamis) -->
+                                        @if($existingFinalTest)
+                                            <a href="{{ route('admin-pusat.management-course.post-tests.edit', $existingFinalTest->id) }}?course_slug={{ $course->slug }}" class="shrink-0 px-4 py-2 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition-colors shadow-sm flex items-center gap-2">
+                                                <i class="fas fa-edit"></i> Edit Evaluasi Akhir
+                                            </a>
+                                        @else
+                                            <a href="{{ route('admin-pusat.management-course.post-tests.create', ['course_slug' => $course->slug, 'course_id' => $course->id]) }}" class="shrink-0 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors shadow-sm flex items-center gap-2">
+                                                <i class="fas fa-plus"></i> Buat Evaluasi Akhir
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         @else
                             <!-- Empty State Kurikulum -->
@@ -206,7 +249,6 @@
 
             <!-- KOLOM KANAN (Sidebar: Aksi, Informasi, Catatan) -->
             <div class="lg:col-span-1 space-y-6">
-                
                 <!-- Card Aksi -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Aksi Course</h3>
@@ -252,7 +294,7 @@
                     <div>
                         <h4 class="text-sm font-semibold text-amber-800 mb-1">Catatan Penting</h4>
                         <p class="text-xs text-amber-700 leading-relaxed">
-                            Anda <strong>wajib menambahkan Post Test</strong> pada setiap akhir bagian (section) materi.
+                            Anda <strong>wajib menambahkan Post Test</strong> pada setiap akhir bagian (section) materi sebagai syarat kelulusan peserta untuk lanjut ke bagian berikutnya.
                         </p>
                     </div>
                 </div>
@@ -267,7 +309,6 @@
                         </p>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
