@@ -26,7 +26,8 @@
                 <li>
                     <div class="flex items-center">
                         <i class="fas fa-chevron-right text-slate-400 text-xs mx-1"></i>
-                        <span class="ml-1 text-sm font-medium text-slate-500 md:ml-2">Detail</span>
+                        <!-- Mengubah tulisan "Detail" menjadi Judul Course -->
+                        <span class="ml-1 text-sm font-medium text-slate-500 md:ml-2">{{ $course->name }}</span>
                     </div>
                 </li>
             </ol>
@@ -60,9 +61,7 @@
                         <h1 class="text-2xl font-bold text-slate-800 mb-4">{{ $course->name }}</h1>
 
                         <div class="prose prose-sm sm:prose max-w-none text-slate-600">
-                            <h3 class="text-lg font-semibold text-slate-800 mb-2">
-                                Deskripsi Course
-                            </h3>
+                           
                             <p>{{ $course->description }}</p>
                         </div>
                     </div>
@@ -309,7 +308,7 @@
                                                                             stroke="currentColor"
                                                                             viewBox="0 0 24 24"
                                                                         >
-                                                                            <path
+                                                                        <path
                                                                                 stroke-linecap="round"
                                                                                 stroke-linejoin="round"
                                                                                 stroke-width="2"

@@ -62,71 +62,87 @@
                 </div>
             </x-slot>
 
-            <x-table.table plain>
-                <thead>
-                    <tr>
-                        <x-table.th align="center">No</x-table.th>
-                        <x-table.th>Category</x-table.th>
-                        <x-table.th>Name</x-table.th>
-                        <x-table.th align="center">Aksi</x-table.th>
-                    </tr>
-                </thead>
-
-                <tbody class="divide-y divide-slate-100 bg-white">
-                @forelse ($courses as $index => $course)
-                    <tr class="hover:bg-slate-50 transition">
-                        <x-table.td align="center">
-                            {{ $meta['current_page'] > 1 ? ($index + 1) + ($meta['per_page'] * ($meta['current_page'] - 1)) : $index + 1 }}
-                        </x-table.td>
-
-                        <x-table.td>
-                            {{ $course->category->name }}
-                        </x-table.td>
-
-                        <x-table.td class="font-medium">
-                            {{ $course->name }}
-                        </x-table.td>
-                        <x-table.td align="center">
-                            <x-table.action>
-                                <li>
-                                    <a href="{{ route('admin-pusat.management-course.courses.edit', $course->slug) }}"
-                                        class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-slate-700 text-xs">Edit</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin-pusat.management-course.courses.show', $course->slug) }}"
-                                        class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-slate-700 text-xs">Detail</a>
-                                </li>
-
-                                <li>
-                                    <div class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded text-slate-700 text-xs">
-                                        <x-modal-delete :id="$course->slug" message="Are you sure delete Course {{ $course->name }}?"
-                                        :item-name="$course->name" :route="route('admin-pusat.management-course.courses.destroy', $course->slug)" />
+            <!-- Wrapper Padding agar card tidak mepet ke container filter-card -->
+            <div class="p-4 sm:p-6 lg:p-8 mt-2">
+                <!-- Card Grid Layout: 1 kolom di mobile, 2 di tablet, 3 di desktop (lg) dengan gap diperbesar -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @forelse ($courses as $index => $course)
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-all duration-200">
+                            
+                            <!-- Thumbnail Section -->
+                            <div class="relative h-48 w-full bg-slate-100 group">
+                                @if (! empty($course->thumbnail_url))
+                                    <img src="{{ $course->thumbnail_url }}" alt="{{ $course->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center">
+                                        <i class="fas fa-image text-slate-400 text-3xl"></i>
                                     </div>
-                                </li>
-                            </x-table.action>
-                        </x-table.td>
-                    </tr>
-                @empty
-                    <tr>
-                        <x-table.td colspan="4" align="center" class="py-12">
-                            <div class="flex flex-col items-center gap-2">
-                                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 text-slate-400">
-                                    <i class="fas fa-list text-xl"></i>
+                                @endif
+                                
+                                <!-- Kategori Badge Overlay -->
+                                <div class="absolute top-3 left-3">
+                                    <span class="px-2.5 py-1 text-[10px] font-semibold text-indigo-700 bg-indigo-50/90 backdrop-blur-sm rounded-full shadow-sm border border-indigo-100">
+                                        {{ $course->category->name ?? 'Tanpa Kategori' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Body (Title & Description) -->
+                            <div class="p-5 flex-1 flex flex-col">
+                                <h3 class="text-base font-bold text-slate-800 mb-2 line-clamp-2" title="{{ $course->name }}">
+                                    {{ $course->name }}
+                                </h3>
+                                <p class="text-sm text-slate-500 mb-4 line-clamp-3 flex-1 leading-relaxed">
+                                    {{ $course->description ?? 'Tidak ada deskripsi tersedia untuk course ini.' }}
+                                </p>
+                            </div>
+
+                            <!-- Footer (Actions) -->
+                            <div class="px-5 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-2">
+                                
+                                <!-- Detail Icon -->
+                                <a href="{{ route('admin-pusat.management-course.courses.show', $course->slug) }}" 
+                                   class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                   title="Lihat Detail">
+                                    <i class="fas fa-eye text-sm"></i>
+                                </a>
+                                
+                                <!-- Edit Icon -->
+                                <a href="{{ route('admin-pusat.management-course.courses.edit', $course->slug) }}" 
+                                   class="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                                   title="Edit Course">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </a>
+
+                                <!-- Delete (Modal Component) -->
+                                <div class="inline-flex items-center p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                    <x-modal-delete :id="$course->slug" 
+                                        message="Are you sure delete Course {{ $course->name }}?"
+                                        :item-name="$course->name" 
+                                        :route="route('admin-pusat.management-course.courses.destroy', $course->slug)" />
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <!-- Empty State -->
+                        <div class="col-span-full py-16 bg-white rounded-xl border border-slate-200 border-dashed">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="w-14 h-14 flex items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                                    <i class="fas fa-list text-2xl"></i>
                                 </div>
                                 <p class="text-base font-medium text-slate-700">Tidak ada data</p>
-                                <p class="text-xs text-slate-500">
+                                <p class="text-sm text-slate-500">
                                     Kursus belum tersedia atau filter yang diterapkan belum menghasilkan data.
                                 </p>
                             </div>
-                        </x-table.td>
-                    </tr>
-                @endforelse
-                </tbody>
-            </x-table.table>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
 
             {{-- Pagination --}}
             @if (! empty($courses))
-                <div class="mt-6 flex justify-center gap-2">
+                <div class="mt-4 mb-6 flex justify-center gap-2">
                     <x-api-pagination :meta="$meta" />
                 </div>
             @endif
