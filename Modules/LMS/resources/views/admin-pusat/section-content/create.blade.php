@@ -3,17 +3,12 @@
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 sm:space-x-3 flex-wrap">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}" class="inline-flex items-center text-sm font-medium text-slate-700 hover:text-indigo-600">
-                        <i class="fas fa-home mr-2"></i>
-                        Dashboard
-                    </a>
-                </li>
+               
                 <li>
                     <div class="flex items-center">
-                        <i class="fas fa-chevron-right text-slate-400 text-xs mx-1"></i>
+                       
                         <a href="{{ route('admin-pusat.management-course.courses.index') }}" class="ml-1 text-sm font-medium text-slate-700 hover:text-indigo-600 md:ml-2">
-                            Daftar Course
+                           <i class="fas fa-home mr-2"></i>  Daftar Course
                         </a>
                     </div>
                 </li>
@@ -35,7 +30,7 @@
         </nav>
 
         <!-- Form Card Container -->
-        <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="max-w-full mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-semibold text-slate-800">Tambah Materi Baru</h2>
@@ -48,7 +43,7 @@
 
             <x-validation-errors class="p-6 pb-0" />
 
-            <form action="{{ route('admin-pusat.management-course.course-sections-contents.store') }}" method="POST" class="p-6 space-y-6">
+            <form action="{{ route('admin-pusat.management-course.course-sections-contents.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
                 @csrf
                 <input type="hidden" name="course_slug" value="{{ $course->slug }}" />
                 <input type="hidden" name="course_section_id" value="{{ $section->id }}" />
@@ -72,7 +67,7 @@
                 <!-- Video URL -->
                 <div>
                     <label for="video" class="block text-sm font-medium text-slate-700 mb-1">
-                        Video URL <span class="text-slate-400 font-normal">(Opsional - YouTube Link)</span>
+                        Video URL <span class="text-slate-400 font-normal">(Opsional)</span>
                     </label>
                     <input 
                         type="url" 
@@ -82,6 +77,15 @@
                         placeholder="https://www.youtube.com/watch?v=..." 
                         class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     />
+                </div>
+
+                <!-- Dokumen -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Dokumen Materi <span class="text-slate-400 font-normal">(Opsional)</span>
+                    </label>
+                    <input type="file" name="document" accept=".pdf,.doc,.docx" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                    <p class="text-[10px] text-slate-400 mt-1">Format: PDF, DOC, DOCX (Max: 10MB)</p>
                 </div>
 
                 <!-- Rich Text Editor (Materi & Gambar) -->
