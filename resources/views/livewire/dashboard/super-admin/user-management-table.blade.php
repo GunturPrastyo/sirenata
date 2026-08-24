@@ -1,16 +1,14 @@
 <div x-data="{
     selected: [],
-    toggle(id) {
-        this.selected.includes(id) ?
-            this.selected = this.selected.filter(i => i !== id) :
-            this.selected.push(id)
-    },
     toggleAll(ids) {
+        // Alpine.js akan otomatis mencentang/menghapus centang semua x-model
         this.selected.length === ids.length ?
             this.selected = [] :
-            this.selected = ids
+            this.selected = ids.map(String) // Konversi ke string agar cocok dengan value checkbox
     }
-}" x-on:bulk-cleared.window="selected = []" x-on:submit.prevent="">
+}" 
+x-on:bulk-cleared.window="selected = []" 
+x-on:submit.prevent="">
 
     <x-dashboard::filter-card
         title="Daftar User"
@@ -56,17 +54,17 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="text-sm text-slate-600">
                     <span class="font-semibold text-slate-900" x-text="selected.length"></span> admin dipilih ·
-                    <button class="text-indigo-600 hover:underline" @click="toggleAll(@js($users->pluck('id')))">Pilih semua</button>
+                    <button type="button" class="text-indigo-600 hover:underline" @click="toggleAll(@js($users->pluck('id')))">Pilih semua</button>
                 </div>
 
                 <div class="flex flex-wrap gap-2">
-                    <button class="px-3 py-1.5 rounded-md text-sm bg-emerald-50 text-emerald-700 hover:bg-emerald-100 cursor-pointer">
+                    <button type="button" @click="$dispatch('open-modal', 'bulk-activate-confirmation')" class="px-3 py-1.5 rounded-md text-sm bg-emerald-50 text-emerald-700 hover:bg-emerald-100 cursor-pointer">
                         <i class="fas fa-user-check mr-1"></i> Aktifkan
                     </button>
-                    <button class="px-3 py-1.5 rounded-md text-sm bg-amber-50 text-amber-700 hover:bg-amber-100 cursor-pointer">
+                    <button type="button" @click="$dispatch('open-modal', 'bulk-deactivate-confirmation')" class="px-3 py-1.5 rounded-md text-sm bg-amber-50 text-amber-700 hover:bg-amber-100 cursor-pointer">
                         <i class="fas fa-user-slash mr-1"></i> Nonaktifkan
                     </button>
-                    <button @click="$wire.bulkDelete(selected)"
+                    <button type="button" @click="$dispatch('open-modal', 'bulk-delete-confirmation')"
                         class="px-3 py-1.5 rounded-md text-sm bg-red-50 text-red-700 hover:bg-red-100 cursor-pointer">
                         <i class="fas fa-trash mr-1"></i> Hapus
                     </button>
@@ -74,13 +72,97 @@
             </div>
         </div>
 
+        <!-- Modal Konfirmasi Aktifkan -->
+        <x-modal name="bulk-activate-confirmation" title="Konfirmasi Aktifkan User" maxWidth="sm:max-w-md">
+            <div class="p-6 text-center">
+                <div class="flex justify-center mb-4">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100">
+                        <svg class="w-6 h-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Aktifkan User</h3>
+                <p class="text-sm text-gray-500 mb-6">
+                    Anda yakin ingin mengaktifkan <strong x-text="selected.length"></strong> user yang dipilih?
+                </p>
+                <div class="flex justify-center gap-3">
+                    <!-- Event close-modal akan dijalankan, backend Livewire Anda akan memanggil bulk-cleared -->
+                    <button type="button" @click="$wire.bulkActivate(selected); $dispatch('close-modal', 'bulk-activate-confirmation')"
+                        class="px-4 py-2 cursor-pointer text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700">
+                        Ya, Aktifkan
+                    </button>
+                    <button type="button" @click="$dispatch('close-modal', 'bulk-activate-confirmation')"
+                        class="px-4 py-2 cursor-pointer text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </x-modal>
+
+        <!-- Modal Konfirmasi Nonaktifkan -->
+        <x-modal name="bulk-deactivate-confirmation" title="Konfirmasi Nonaktifkan User" maxWidth="sm:max-w-md">
+            <div class="p-6 text-center">
+                <div class="flex justify-center mb-4">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100">
+                        <svg class="w-6 h-6 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Nonaktifkan User</h3>
+                <p class="text-sm text-gray-500 mb-6">
+                    Anda yakin ingin menonaktifkan <strong x-text="selected.length"></strong> user yang dipilih?
+                </p>
+                <div class="flex justify-center gap-3">
+                    <button type="button" @click="$wire.bulkDeactivate(selected); $dispatch('close-modal', 'bulk-deactivate-confirmation')"
+                        class="px-4 py-2 cursor-pointer text-sm font-medium text-white bg-amber-600 rounded-md hover:bg-amber-700">
+                        Ya, Nonaktifkan
+                    </button>
+                    <button type="button" @click="$dispatch('close-modal', 'bulk-deactivate-confirmation')"
+                        class="px-4 py-2 cursor-pointer text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </x-modal>
+
+        <!-- Modal Konfirmasi Hapus -->
+        <x-modal name="bulk-delete-confirmation" title="Konfirmasi Hapus User" maxWidth="sm:max-w-md">
+            <div class="p-6 text-center">
+                <div class="flex justify-center mb-4">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100">
+                        <svg class="w-6 h-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Anda yakin?</h3>
+                <p class="text-sm text-gray-500 mb-6">
+                    Anda akan menghapus <strong x-text="selected.length"></strong> user secara permanen. Aksi ini tidak dapat dibatalkan.
+                </p>
+                <div class="flex justify-center gap-3">
+                    <button type="button" @click="$wire.bulkDelete(selected); $dispatch('close-modal', 'bulk-delete-confirmation')"
+                        class="px-4 py-2 cursor-pointer text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+                        Ya, Hapus
+                    </button>
+                    <button type="button" @click="$dispatch('close-modal', 'bulk-delete-confirmation')"
+                        class="px-4 py-2 cursor-pointer text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </x-modal>
+
         <x-table.table plain>
             <thead>
                 <tr>
                     <x-table.th class="w-10">
-                        {{-- <input type="checkbox" @click="toggleAll(@js($users->pluck('id')))"
-                            :checked="selected.length === {{ $users->count() }}"
-                            class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> --}}
+                        {{-- Fitur master checkbox jika diperlukan:
+                        <input type="checkbox" @change="toggleAll(@js($users->pluck('id')))"
+                            :checked="selected.length === {{ $users->count() }} && {{ $users->count() }} > 0"
+                            class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> 
+                        --}}
                     </x-table.th>
                     <x-table.th>Name</x-table.th>
                     <x-table.th>Email</x-table.th>
@@ -94,10 +176,13 @@
 
             <tbody id="admin-table-body" class="divide-y divide-slate-200">
                 @forelse ($users as $user)
-                    <tr class="hover:bg-slate-50 transition">
+                    <!-- PERUBAHAN: Tambahkan wire:key di sini untuk mencegah state DOM tertukar -->
+                    <tr wire:key="user-{{ $user->id }}" class="hover:bg-slate-50 transition">
                         <x-table.td>
-                            <input type="checkbox" @change="toggle(@js($user->id))"
-                                :checked="selected.includes({{ $user->id }})"
+                            <!-- PERUBAHAN: Gunakan x-model="selected" agar terikat langsung dengan array -->
+                            <input type="checkbox" 
+                                x-model="selected" 
+                                value="{{ $user->id }}"
                                 class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                         </x-table.td>
                         <x-table.td>
@@ -120,7 +205,11 @@
                             <p class="text-slate-600">{{ $user->getRoleNames()->first() }}</p>
                         </x-table.td>
                         <x-table.td class="lg:table-cell">
-                            <x-badge color="emerald" text="Aktif" />
+                            @if ($user->is_active)
+                                <x-badge color="emerald" text="Aktif" />
+                            @else
+                                <x-badge color="amber" text="Nonaktif" />
+                            @endif
                         </x-table.td>
                         <x-table.td class="lg:table-cell">
                             <p class="text-slate-600">{{ $user->scopeArea?->province?->name }}</p>

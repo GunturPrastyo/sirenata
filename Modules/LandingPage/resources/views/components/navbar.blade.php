@@ -14,7 +14,7 @@
                         class="px-5 py-2.5 text-gray-700 hover:text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-all">
                         Masuk
                     </a>
-                    <a href="{{ route('register') }}"
+                    <a href="{{ route('login') }}"
                         class="px-5 py-2.5 text-white font-semibold rounded-lg shadow-md transition-all hover:opacity-90"
                         style="background-color: #13416B;">
                         Daftar

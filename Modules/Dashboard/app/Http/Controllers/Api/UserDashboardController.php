@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserProfileResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
+use App\Models\User;
 use Modules\Dashboard\Http\Requests\UpdateInstansiRequest;
 use Modules\Dashboard\Services\DashboardService;
 
@@ -23,8 +25,9 @@ class UserDashboardController extends Controller
      * 
      * @authenticated
      */
-    public function profile(Request $request)
+    public function profile(Request $request): JsonResponse
     {
+        /** @var User $user */
         $user = Auth::User();
         $user->load(['profile', 'scopeArea.province', 'scopeArea.regency']);
         return ResponseHelper::success(
@@ -42,8 +45,9 @@ class UserDashboardController extends Controller
      * 
      * @authenticated
      */
-    public function updateInstansi(UpdateInstansiRequest $request)
+    public function updateInstansi(UpdateInstansiRequest $request): JsonResponse
     {
+        /** @var User $user */
         $user = Auth::User();
 
         $validated = $request->validated();

@@ -3,7 +3,6 @@
 namespace Modules\LMS\Services;
 
 use App\Models\User;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -209,6 +208,7 @@ class CourseService
 
     public function myCourseStats(): array
     {
+       /** @var User $user */
         $user    = Auth::user();
         $courses = $user->enrolledCourses()->get();
         $startedCourses = $courses->where('pivot.progress', '>', 0);
@@ -234,8 +234,11 @@ class CourseService
      */
     public function getLastAccessedCourse(): ?object
     {
-        $course = Auth::user()
-            ->enrolledCourses()
+
+       /** @var User $user */
+        $user = Auth::user();
+
+        $course = $user->enrolledCourses()
             ->wherePivotIn('status', ['enrolled', 'in_progress'])
             ->orderByPivot('updated_at', 'desc')
             ->first();
@@ -256,8 +259,11 @@ class CourseService
      */
     public function getRecentCourses(int $limit = 3): \Illuminate\Support\Collection
     {
-        return Auth::user()
-            ->enrolledCourses()
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        return $user->enrolledCourses()
             ->with('category')
             ->orderByPivot('updated_at', 'desc')
             ->limit($limit)

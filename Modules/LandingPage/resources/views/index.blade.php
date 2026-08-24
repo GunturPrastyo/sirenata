@@ -33,7 +33,7 @@
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 animate-fade-up"
                 style="animation-delay: 0.4s;">
                 @guest
-                    <a href="{{ route('register') }}"
+                    <a href="{{ route('login') }}"
                         class="px-8 py-3.5 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all text-base"
                         style="background-color: #13416B;">
                         Daftar Sekarang
@@ -218,7 +218,7 @@
                     SIRENATA untuk perencanaan ketenagakerjaan.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="{{ route('register') }}"
+                    <a href="{{ route('login') }}"
                         class="px-8 py-3.5 bg-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all text-base"
                         style="color: #13416B;">
                         Daftar Sekarang

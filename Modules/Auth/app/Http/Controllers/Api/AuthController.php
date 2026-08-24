@@ -147,6 +147,7 @@ class AuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         try {
+            /** @var \App\Models\User $user */              
             $user = Auth::user();
             $user->load(['roles.permissions']);
             return ResponseHelper::success(

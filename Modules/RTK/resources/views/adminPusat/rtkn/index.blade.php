@@ -401,7 +401,7 @@
                                             </li>
                                         @endif
                                     </x-table.action>
-                                </td>
+                                </x-table.td>
                             </tr>
                         @empty
                             <tr class="">
@@ -413,8 +413,7 @@
                             </tr>
                         @endforelse
                     </tbody>
-                </table>
-            </div>
+                </x-table.table>
 
             <div class="px-5 py-4 border-t border-slate-200">
                 {{ $rtkns->links() }}
