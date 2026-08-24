@@ -15,7 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('course_section_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('video')->nullable(); // path file di storage
+            $table->string('video')->nullable();
+            $table->longText('content_text')->nullable();
+            $table->string('document')->nullable()->unique();
             $table->unsignedInteger('position')->default(0);
             $table->timestamps();
         });
