@@ -21,6 +21,7 @@ class SectionContent extends Model
         'course_section_id',
         'name',
         'video',
+        'content_text',
         'document',
         'position',
     ];

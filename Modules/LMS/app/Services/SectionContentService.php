@@ -2,60 +2,45 @@
 
 namespace Modules\LMS\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Modules\LMS\Models\SectionContent;
 
 class SectionContentService
 {
-    private string $baseUrl;
-
-    public function __construct()
-    {
-        $this->baseUrl = (string) config('lms.api_url', 'https://e-learning.test/api/v1');
-    }
-
     /**
-     * Store/Post Data Section Content Api Admin Pusat
+     * Store Data Section Content langsung ke Database menggunakan Eloquent
+     * Parameter $token tetap dibiarkan agar tidak membuat error pada Controller yang sudah ada, 
+     * meski tidak lagi digunakan.
      */
     public function storeSectionContent(string $token, array $data, $file = null): array
     {
         try {
-            $client = Http::withToken($token)
-                ->acceptJson()
-                ->timeout(15);
-
+            $documentPath = null;
+            
+            // Simpan file jika ada ke folder 'course-documents' di disk public
             if ($file) {
-                $client->attach(
-                    'document',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                );
+                $documentPath = $file->store('course-documents', 'public');
             }
 
-            $response = $client->post("{$this->baseUrl}/sections/{$data['course_section_id']}/contents", $data);
+            // (Opsional) Mengatur posisi urutan materi secara otomatis di akhir
+            $lastPosition = SectionContent::where('course_section_id', $data['course_section_id'])->max('position');
+            $newPosition = $lastPosition ? $lastPosition + 1 : 1;
 
-            if ($response->failed()) {
-                $errorData = $response->json();
+            // Simpan langsung ke database
+            $content = SectionContent::create([
+                'course_section_id' => $data['course_section_id'],
+                'name'              => $data['name'],
+                'video'             => $data['video'] ?? null,
+                'content_text'      => $data['content_text'] ?? null,
+                'document'          => $documentPath,
+                'position'          => $newPosition,
+            ]);
 
-                Log::error('Failed to store section content', [
-                    'status' => $response->status(),
-                    'body'   => $errorData ?? $response->body(),
-                ]);
-
-                $errorMessage = $errorData['message'] ?? 'Terjadi kesalahan di server API';
-
-                return [
-                    'success' => false,
-                    'message' => 'Gagal: ' . $errorMessage,
-                    'data'    => [],
-                ];
-            }
-
-            $responseData = $response->json();
             return [
                 'success' => true,
-                'message' => $responseData['message'] ?? 'Section content berhasil ditambahkan',
-                'data'    => $responseData['result'] ?? [],
+                'message' => 'Materi berhasil ditambahkan',
+                'data'    => $content,
             ];
         } catch (\Exception $e) {
             Log::error('SectionContentService::storeSectionContent error', [
@@ -64,44 +49,39 @@ class SectionContentService
 
             return [
                 'success' => false,
-                'message' => 'Terjadi kesalahan sistem saat menyimpan data',
+                'message' => 'Terjadi kesalahan sistem saat menyimpan data: ' . $e->getMessage(),
                 'data'    => [],
             ];
         }
     }
 
     /**
-     * Update Data Content
+     * Update Data Content langsung ke Database
      */
     public function updateContent(string $token, string $contentId, array $data, $file = null): array
     {
         try {
-            $client = Http::withToken($token)
-                ->acceptJson()
-                ->timeout(15);
+            // Cari data materi berdasarkan ID
+            $content = SectionContent::findOrFail($contentId);
+            $documentPath = $content->document; // Pertahankan dokumen lama sebagai default
 
-
+            // Jika ada file baru yang diupload
             if ($file) {
-                $client->attach(
-                    'document',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                );
-            }
-            // URL: contents/{content}/update
-            $data['_method'] = 'PUT';
-            $response = $client->post("{$this->baseUrl}/contents/{$contentId}/update", $data);
-
-            if ($response->failed()) {
-                return [
-                    'success' => false,
-                    'message' => $response->json('message') ?? 'Gagal memperbarui materi',
-                ];
+                // Hapus file lama secara fisik dari server jika ada
+                if ($documentPath && Storage::disk('public')->exists($documentPath)) {
+                    Storage::disk('public')->delete($documentPath);
+                }
+                
+                // Simpan file baru
+                $documentPath = $file->store('course-documents', 'public');
             }
 
-            Log::info('SectionContentService::updateContent success', [
-                'contentId' => $contentId,
-                'response' => $response->json(),
+            // Update ke database
+            $content->update([
+                'name'         => $data['name'],
+                'video'        => $data['video'] ?? null,
+                'content_text' => $data['content_text'] ?? null,
+                'document'     => $documentPath,
             ]);
 
             return [
@@ -109,6 +89,10 @@ class SectionContentService
                 'message' => 'Materi berhasil diperbarui',
             ];
         } catch (\Exception $e) {
+            Log::error('SectionContentService::updateContent error', [
+                'error' => $e->getMessage(),
+            ]);
+            
             return [
                 'success' => false,
                 'message' => 'Kesalahan sistem: ' . $e->getMessage(),
@@ -116,32 +100,31 @@ class SectionContentService
         }
     }
 
-
     /**
-     * Delete Data Content
+     * Delete Data Content langsung dari Database
      */
     public function deleteContent(string $token, string $contentId): array
     {
         try {
-            $client = Http::withToken($token)
-                ->acceptJson()
-                ->timeout(15);
+            $content = SectionContent::findOrFail($contentId);
 
-            // URL: contents/{id}/delete
-            $response = $client->delete("{$this->baseUrl}/contents/{$contentId}/delete");
-
-            if ($response->failed()) {
-                return [
-                    'success' => false,
-                    'message' => $response->json('message') ?? 'Gagal menghapus materi',
-                ];
+            // Bersihkan file dokumen secara fisik dari server sebelum data dihapus
+            if ($content->document && Storage::disk('public')->exists($content->document)) {
+                Storage::disk('public')->delete($content->document);
             }
+
+            // Hapus data dari tabel database
+            $content->delete();
 
             return [
                 'success' => true,
                 'message' => 'Materi berhasil dihapus',
             ];
         } catch (\Exception $e) {
+            Log::error('SectionContentService::deleteContent error', [
+                'error' => $e->getMessage(),
+            ]);
+            
             return [
                 'success' => false,
                 'message' => 'Kesalahan sistem: ' . $e->getMessage(),
