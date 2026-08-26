@@ -78,5 +78,7 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(f
         Route::get('/my-course/{slug}', 'myCourseDetail')->name('my-course.detail');
         Route::post('/my-course/{slug}/generate-certificate', 'generateCertificate')->name('my-course.generate-certificate');
         Route::post('/content/{content}/complete', 'completeContent')->name('content.complete');
+        
+        Route::get('/my-course/{slug}/content/{content}', 'showContent')->name('content.show');
     });
 });
