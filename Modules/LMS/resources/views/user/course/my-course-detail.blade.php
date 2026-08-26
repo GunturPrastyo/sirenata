@@ -1,158 +1,225 @@
-<x-dashboard::layouts.dashboard title="Kursus Saya | {{ $course->course_name }} | SIRENATA">
-    <div class="p-2 sm:p-6 max-w-7xl mx-auto">
+<x-dashboard::layouts.dashboard
+    title="Kursus Saya | {{ data_get($course, 'course_name') ?? data_get($course, 'name') }} | SIRENATA">
+    <div class="p-2 sm:p-6 max-w-full mx-auto">
         {{-- Breadcrumb --}}
-        <x-breadcrumb :items="[['label' => 'Kursus Saya', 'url' => route('user.course.my-course')], ['label' => $course->course_name]]" />
+        <x-breadcrumb :items="[
+            ['label' => 'Kursus Saya', 'url' => route('user.course.my-course')],
+            ['label' => data_get($course, 'course_name') ?? data_get($course, 'name')],
+        ]" />
 
-        {{-- Header Status Banner --}}
-        <div class="relative overflow-hidden bg-slate-900 rounded-2xl p-5 sm:p-6 text-white mb-6 border border-indigo-500/20 shadow-md">
-            <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-            <div class="absolute bottom-0 left-0 w-60 h-60 bg-blue-500/10 rounded-full blur-2xl -ml-20 -mb-20"></div>
-            
-            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="space-y-2 max-w-2xl">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ $course->status === 'completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' }}">
-                        {{ $course->status === 'completed' ? 'Selesai' : 'Sedang Berjalan' }}
-                    </span>
-                    <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white leading-snug">
-                        {{ $course->course_name }}
-                    </h1>
-                </div>
-                
-                <div class="flex items-center gap-3 shrink-0 bg-white/5 border border-white/10 rounded-xl p-3 backdrop-blur-sm">
-                    <div class="text-right">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Progress Belajar</p>
-                        <p class="text-lg sm:text-xl font-extrabold text-indigo-300">{{ $course->progress }}%</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-full border-2 border-indigo-500/20 flex items-center justify-center relative overflow-hidden shrink-0">
-                        <div class="absolute inset-x-0 bottom-0 bg-indigo-500 opacity-30 w-full" style="height: {{ $course->progress }}%"></div>
-                        <svg class="w-5 h-5 text-indigo-400 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                </div>
+        {{-- Header Card --}}
+        @php
+            $thumbnailUrl = data_get($course, 'thumbnail_url');
+            $courseName = data_get($course, 'course_name') ?? data_get($course, 'name', 'Course');
+            $currentProgress = data_get($course, 'progress', 0);
+            $courseSlug = data_get($course, 'slug') ?? request()->route('slug');
+
+            if (empty($thumbnailUrl)) {
+                $encodedName = urlencode($courseName);
+                $thumbnailUrl = "https://ui-avatars.com/api/?name={$encodedName}&background=eff6ff&color=1e3a8a&size=512&font-size=0.33&bold=true";
+            }
+        @endphp
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 flex flex-col md:flex-row gap-6 lg:gap-8 items-start transition-all">
+
+            {{-- Bagian Kiri: Thumbnail --}}
+            <div class="w-full md:w-1/3 lg:w-1/4 shrink-0 rounded-xl overflow-hidden bg-slate-100 aspect-video md:aspect-square lg:aspect-[4/3] relative border border-slate-100">
+                <img src="{{ $thumbnailUrl }}" alt="{{ $courseName }}" class="w-full h-full object-cover" />
             </div>
-            
-            <div class="mt-4 w-full bg-slate-800/80 rounded-full h-2 border border-slate-700/50">
-                <div class="bg-indigo-600 h-full rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" style="width: {{ $course->progress }}%"></div>
+
+            {{-- Bagian Kanan: Informasi Kursus --}}
+            <div class="flex-1 flex flex-col w-full h-full">
+                {{-- Badges --}}
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#13416B] bg-[#13416B]/10 border border-[#13416B]/20 rounded-md">
+                        {{ data_get($course, 'category.name', 'Tanpa Kategori') }}
+                    </span>
+                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider {{ data_get($course, 'status') === 'completed' ? 'text-emerald-700 bg-emerald-100 border border-emerald-200' : 'text-amber-700 bg-amber-100 border border-amber-200' }} rounded-md flex items-center gap-1">
+                        <i class="fas {{ data_get($course, 'status') === 'completed' ? 'fa-check-circle' : 'fa-clock' }}"></i>
+                        {{ data_get($course, 'status') === 'completed' ? 'Selesai' : 'Sedang Berjalan' }}
+                    </span>
+                </div>
+
+                {{-- Judul --}}
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">
+                    {{ $courseName }}
+                </h1>
+
+                {{-- Deskripsi --}}
+                <div class="prose prose-sm text-slate-600 mb-6">
+                    <p class="leading-relaxed">
+                        {{ data_get($course, 'description', 'Tidak ada deskripsi tersedia untuk course ini.') }}
+                    </p>
+                </div>
+
+                {{-- Progress Bar --}}
+                <div class="mt-auto pt-5 border-t border-slate-100 max-w-md">
+                    <div class="flex justify-between items-center mb-2.5">
+                        <span class="text-xs font-semibold text-slate-500">Progress Pembelajaran</span>
+                        <span class="text-sm font-bold {{ $currentProgress >= 100 ? 'text-[#13416B]' : 'text-amber-600' }}">
+                            {{ $currentProgress }}%
+                        </span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div class="{{ $currentProgress >= 100 ? 'bg-[#13416B]' : 'bg-amber-500' }} h-full rounded-full transition-all duration-700"
+                            style="width: {{ $currentProgress }}%"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        {{-- Grid Layout --}}
+        {{-- Grid Layout (Materi & Widget Samping) --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            
-            {{-- Left column: List Modul --}}
-            <div class="lg:col-span-2 space-y-4">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6">
+
+            {{-- Left column: List Modul & Evaluasi Akhir --}}
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-                        <div class="flex items-center gap-2">
-                            <span class="text-base">📚</span>
-                            <h2 class="text-base font-bold text-slate-850">Daftar Modul</h2>
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-slate-50 text-slate-600 rounded-lg">
+                                <i class="fas fa-list-ul text-lg"></i>
+                            </div>
+                            <h2 class="text-base sm:text-lg font-bold text-slate-800">Daftar Modul Pembelajaran</h2>
                         </div>
-                        <span class="text-[11px] text-slate-500 font-bold bg-slate-100 px-2.5 py-1 rounded-full">
-                            Total: {{ count($course->sections ?? []) }} Modul
+                        <span class="text-xs text-slate-500 font-bold bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200">
+                            {{ count(data_get($course, 'sections', [])) }} Modul
                         </span>
                     </div>
 
-                    <div 
-                        x-data="{ activeAccordion: localStorage.getItem('active_section_{{ request()->route('slug') }}') || 'section-0' }"
-                        x-init="$watch('activeAccordion', value => localStorage.setItem('active_section_{{ request()->route('slug') }}', value))"
-                        class="space-y-3"
-                    >
-                        @forelse ($course->sections ?? [] as $index => $section)
+                    <div x-data="{ activeAccordion: localStorage.getItem('active_section_{{ $courseSlug }}') || 'section-0' }" x-init="$watch('activeAccordion', value => localStorage.setItem('active_section_{{ $courseSlug }}', value))" class="space-y-3">
+                        @php
+                            // Inisiasi Variabel Kunci: Bab pertama selalu terbuka
+                            $isPreviousSectionDone = true;
+                        @endphp
+
+                        @forelse (data_get($course, 'sections', []) as $index => $section)
                             @php
-                                $section = (object) $section;
-                                $sectionContents = collect($section->section_contents ?? []);
-                                $completedCount = $sectionContents->where('is_completed', true)->count();
-                                $totalCount = $sectionContents->count();
-                                $isSectionCompleted = $totalCount > 0 && $completedCount === $totalCount;
+                                $sectionId = data_get($section, 'id') ?? data_get($section, 'section_id');
+                                $sectionName = data_get($section, 'name', 'Bagian ' . ($index + 1));
+                                $sectionContentsRaw = data_get($section, 'section_contents', []);
+                                
+                                // Hitung materi selesai dengan logic aman (truthy)
+                                $totalCount = count($sectionContentsRaw);
+                                $completedCount = 0;
+                                foreach ($sectionContentsRaw as $content) {
+                                    if (data_get($content, 'is_completed')) {
+                                        $completedCount++;
+                                    }
+                                }
+
+                                $isContentCompleted = ($totalCount === 0) || ($completedCount === $totalCount);
+
+                                // Cek keberadaan Post Test di Section ini
+                                $postTestBab = $sectionId
+                                    ? \Modules\LMS\Models\PostTest::where('course_section_id', $sectionId)->first()
+                                    : null;
+
+                                // Baca kelulusan evaluasi bab langsung dari DB lokal
+                                $isPostTestBabCompleted = true; // Anggap true jika tak ada post test
+                                if ($postTestBab) {
+                                    $isPostTestBabCompleted = \Illuminate\Support\Facades\DB::table('post_test_results')
+                                        ->where('user_id', auth()->id())
+                                        ->where('post_test_id', $postTestBab->id)
+                                        ->where('is_passed', 1) 
+                                        ->exists();
+                                }
+
+                                // Section tuntas jika materi selesai & post test (jika ada) lulus
+                                $isSectionCompleted = $isContentCompleted && $isPostTestBabCompleted;
+                                $isLocked = !$isPreviousSectionDone;
                             @endphp
 
-                            <div 
-                                x-data="{ id: 'section-{{ $index }}' }" 
-                                class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm transition-all duration-200"
-                                :class="{ 'border-indigo-500 shadow-md ring-1 ring-indigo-500/10': activeAccordion == id }"
-                            >
-                                <button
-                                    @click="activeAccordion = (activeAccordion == id ? '' : id)"
-                                    class="flex items-center justify-between w-full p-4 text-left hover:bg-slate-50/50 transition-colors border-l-4 border-l-transparent"
-                                    :class="{ 'bg-slate-50/80 border-l-indigo-600': activeAccordion == id }"
-                                >
-                                    <div class="flex items-start gap-3">
-                                        @if($isSectionCompleted)
-                                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 text-xs font-extrabold mt-0.5 shrink-0 border border-emerald-100">
-                                                ✓
+                            <div x-data="{ id: 'section-{{ $index }}', locked: {{ $isLocked ? 'true' : 'false' }} }"
+                                class="border {{ $isLocked ? 'border-slate-100 bg-slate-50' : 'border-slate-200 bg-white' }} rounded-xl overflow-hidden shadow-sm transition-all duration-200"
+                                :class="{ 'border-[#13416B] shadow-md ring-1 ring-[#13416B]/30': activeAccordion == id && !locked }">
+                                <button @click="if(!locked) activeAccordion = (activeAccordion == id ? '' : id)"
+                                    class="flex items-center justify-between w-full p-4 text-left transition-colors border-l-4 border-l-transparent {{ $isLocked ? 'cursor-not-allowed opacity-80' : 'hover:bg-slate-50/50' }}"
+                                    :class="{ 'bg-slate-50/80 border-l-[#13416B]': activeAccordion == id && !locked }">
+                                    <div class="flex items-start gap-4">
+                                        @if ($isLocked)
+                                            <span class="flex items-center justify-center w-7 h-7 rounded-full bg-slate-200 text-slate-400 text-xs mt-0.5 shrink-0 border border-slate-300">
+                                                <i class="fas fa-lock"></i>
+                                            </span>
+                                        @elseif($isSectionCompleted)
+                                            <span class="flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 text-xs mt-0.5 shrink-0 border border-emerald-200">
+                                                <i class="fas fa-check"></i>
                                             </span>
                                         @else
-                                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-50 text-slate-600 text-xs font-bold mt-0.5 shrink-0 border border-slate-150">
+                                            <span class="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 text-slate-600 text-xs font-bold mt-0.5 shrink-0 border border-slate-200">
                                                 {{ $index + 1 }}
                                             </span>
                                         @endif
+
                                         <div>
-                                            <h3 class="font-bold text-slate-800 text-sm sm:text-base leading-snug">
-                                                {{ $section->name }}
+                                            <h3 class="font-bold {{ $isLocked ? 'text-slate-500' : 'text-slate-800' }} text-sm sm:text-base leading-snug">
+                                                {{ $sectionName }}
                                             </h3>
-                                            <div class="flex items-center gap-2 mt-0.5">
-                                                <span class="text-xs text-slate-400 font-medium">
-                                                    {{ $totalCount }} Materi
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <span class="text-xs text-slate-500 font-medium flex items-center gap-1">
+                                                    <i class="far fa-file-alt text-slate-400"></i> {{ $totalCount }} Materi
                                                 </span>
+                                                @if ($postTestBab)
+                                                    <span class="text-[10px] text-slate-300">•</span>
+                                                    <span class="text-xs text-slate-500 font-medium flex items-center gap-1">
+                                                        <i class="fas fa-clipboard-list text-slate-400"></i> 1 Evaluasi
+                                                    </span>
+                                                @endif
                                                 <span class="text-[10px] text-slate-300">•</span>
-                                                <span class="text-xs font-semibold {{ $isSectionCompleted ? 'text-emerald-600' : 'text-indigo-600' }}">
-                                                    {{ $completedCount }}/{{ $totalCount }} Selesai
-                                                </span>
+
+                                                @if ($isLocked)
+                                                    <span class="text-xs font-semibold text-slate-400">Terkunci</span>
+                                                @else
+                                                    <span class="text-xs font-semibold {{ $isSectionCompleted ? 'text-[#13416B]' : 'text-amber-600' }}">
+                                                        {{ $completedCount }}/{{ $totalCount }} Selesai
+                                                    </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
-                                    <svg
-                                        class="w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2"
-                                        :class="{ 'rotate-180 text-indigo-600': activeAccordion == id }"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        stroke-width="2.5"
-                                    >
+                                    <svg class="w-4 h-4 {{ $isLocked ? 'text-slate-300' : 'text-slate-400' }} transition-transform duration-200 shrink-0 ml-2"
+                                        :class="{ 'rotate-180 text-[#13416B]': activeAccordion == id && !locked }"
+                                        viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5">
                                         <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </button>
 
-                                <div x-show="activeAccordion == id" x-collapse x-cloak>
-                                    <div class="p-4 pt-2 border-t border-slate-100 bg-slate-50/20 space-y-2.5">
-                                        @forelse ($section->section_contents ?? [] as $content)
+                                <div x-show="activeAccordion == id && !locked" x-collapse x-cloak>
+                                    <div class="p-4 pt-2 border-t border-slate-100 bg-slate-50/30 space-y-3">
+                                        {{-- Looping Materi --}}
+                                        @forelse ($sectionContentsRaw as $content)
                                             @php
-                                                $content = (object) $content;
+                                                $contentId = data_get($content, 'id', Str::random(5));
+                                                $contentName = data_get($content, 'name', 'Materi Tanpa Judul');
+                                                $videoUrlRaw = data_get($content, 'video_url');
+                                                $documentUrlRaw = data_get($content, 'document_url');
+                                                $isContentItemCompleted = data_get($content, 'is_completed', false);
                                             @endphp
-
-                                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-slate-150 bg-white hover:border-slate-350 hover:shadow-sm transition-all duration-200 gap-3">
-                                                <div class="flex items-center gap-3">
-                                                    @if(!empty($content->video_url))
-                                                        <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-50 text-blue-600 shrink-0 border border-blue-100/50">
-                                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
-                                                            </svg>
+                                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-white hover:border-[#13416B]/40 hover:shadow-sm transition-all duration-200 gap-4">
+                                                <div class="flex items-center gap-4">
+                                                    @if (!empty($videoUrlRaw))
+                                                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0 border border-blue-100">
+                                                            <i class="fas fa-play text-sm"></i>
                                                         </span>
-                                                    @elseif(!empty($content->document_url))
-                                                        <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-rose-50 text-rose-600 shrink-0 border border-rose-100/50">
-                                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A1 1 0 0112 2.586L15.414 6A1 1 0 0116 6.586V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
-                                                            </svg>
+                                                    @elseif(!empty($documentUrlRaw))
+                                                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0 border border-blue-100">
+                                                            <i class="fas fa-file-pdf text-lg"></i>
                                                         </span>
                                                     @else
-                                                        <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 shrink-0 border border-amber-100/50">
-                                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
-                                                            </svg>
+                                                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0 border border-blue-100">
+                                                            <i class="fas fa-file-alt text-lg"></i>
                                                         </span>
                                                     @endif
                                                     <div>
                                                         <p class="font-bold text-slate-800 text-sm leading-tight">
-                                                            {{ $content->name }}
+                                                            {{ $contentName }}
                                                         </p>
-                                                        <div class="mt-1 flex items-center gap-1.5">
-                                                            @if ($content->is_completed)
-                                                                <span class="inline-flex items-center text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                                                                    Selesai ✓
+                                                        <div class="mt-1.5 flex items-center gap-1.5">
+                                                            @if ($isContentItemCompleted)
+                                                                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#13416B] bg-[#13416B]/10 px-2 py-0.5 rounded-md border border-[#13416B]/20">
+                                                                    <i class="fas fa-check"></i> Selesai
                                                                 </span>
                                                             @else
-                                                                <span class="inline-flex items-center text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                                                                <span class="inline-flex items-center text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                                                                     Belum Selesai
                                                                 </span>
                                                             @endif
@@ -160,324 +227,252 @@
                                                     </div>
                                                 </div>
 
-                                                @php
-                                                    $embedUrl = null;
-                                                    $url = $content->video_url ?? null;
-
-                                                    if ($url) {
-                                                        if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
-                                                            $embedUrl = 'https://www.youtube.com/embed/' . $matches[1];
-                                                        } elseif (preg_match('/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/', $url, $matches)) {
-                                                            $embedUrl = 'https://www.youtube.com/embed/' . $matches[1];
-                                                        } elseif (preg_match('/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
-                                                            $embedUrl = $url;
-                                                        } else {
-                                                            $embedUrl = $url;
-                                                        }
-                                                    }
-                                                @endphp
-
-                                                @if ($content->is_completed)
-                                                    <button
-                                                        type="button"
-                                                        @click="$dispatch('open-modal', 'show-content-{{ $content->id }}')"
-                                                        class="sm:self-center px-3.5 py-1.5 border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 rounded-xl text-xs font-semibold transition-colors text-center shrink-0"
-                                                    >
-                                                        Lihat Kembali
-                                                    </button>
-                                                @else
-                                                    <button
-                                                        type="button"
-                                                        @click="$dispatch('open-modal', 'show-content-{{ $content->id }}')"
-                                                        class="sm:self-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all hover:shadow-sm text-center shrink-0"
-                                                    >
-                                                        Mulai Belajar
-                                                    </button>
-                                                @endif
-
-                                                {{-- Modal --}}
-                                                <x-modal
-                                                    name="show-content-{{ $content->id }}"
-                                                    title="Lihat Materi"
-                                                    maxWidth="sm:max-w-3xl"
-                                                >
-                                                    <div
-                                                        x-data="{ videoUrl: '{{ $embedUrl }}' }"
-                                                        x-on:close-modal.window="if ($event.detail.name === 'show-content-{{ $content->id }}') { 
-                                                            let tempUrl = videoUrl; 
-                                                            videoUrl = ''; 
-                                                            setTimeout(() => videoUrl = tempUrl, 100); 
-                                                        }"
-                                                    >
-                                                        {{-- Header --}}
-                                                        <div
-                                                            class="px-6 py-4 border-b border-slate-100 flex items-start justify-between gap-3"
-                                                        >
-                                                            <div>
-                                                                <p
-                                                                    class="text-xs text-slate-400 mb-0.5"
-                                                                >
-                                                                    Materi
-                                                                </p>
-                                                                <h2
-                                                                    class="text-base font-bold text-slate-800 leading-tight"
-                                                                >
-                                                                    {{ $content->name }}
-                                                                </h2>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="p-6 space-y-5">
-                                                            {{-- Video Section --}}
-                                                            @if ($embedUrl)
-                                                                <div>
-                                                                    <p
-                                                                        class="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1.5"
-                                                                    >
-                                                                        🎥 Video Materi
-                                                                    </p>
-                                                                    <div
-                                                                        class="aspect-video w-full rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-black"
-                                                                    >
-                                                                        <iframe
-                                                                            class="w-full h-full"
-                                                                            x-bind:src="videoUrl"
-                                                                            frameborder="0"
-                                                                            allow="
-                                                                                accelerometer;
-                                                                                autoplay;
-                                                                                clipboard-write;
-                                                                                encrypted-media;
-                                                                                gyroscope;
-                                                                                picture-in-picture;
-                                                                            "
-                                                                            allowfullscreen
-                                                                        ></iframe>
-                                                                    </div>
-                                                                    <div class="mt-2 flex justify-end">
-                                                                        <a
-                                                                            href="{{ $content->video_url }}"
-                                                                            target="_blank"
-                                                                            class="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-indigo-600 transition-colors"
-                                                                        >
-                                                                            Buka di YouTube
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            @endif
-
-                                                            {{-- Document Section --}}
-                                                            @if ($content->document_url)
-                                                                <div>
-                                                                    <p
-                                                                        class="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1.5"
-                                                                    >
-                                                                        📄 Dokumen Pendukung
-                                                                    </p>
-                                                                    <div
-                                                                        class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between hover:border-indigo-200 transition-colors"
-                                                                    >
-                                                                        <div
-                                                                            class="flex items-center gap-3"
-                                                                        >
-                                                                            <div
-                                                                                class="p-2.5 bg-white rounded-lg border border-slate-100 shadow-sm shrink-0"
-                                                                            >
-                                                                                <svg
-                                                                                    class="w-5 h-5 text-red-500"
-                                                                                    fill="currentColor"
-                                                                                    viewBox="0 0 24 24"
-                                                                                >
-                                                                                    <path
-                                                                                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"
-                                                                                    />
-                                                                                </svg>
-                                                                            </div>
-                                                                            <div>
-                                                                                <p
-                                                                                    class="text-sm font-medium text-slate-700"
-                                                                                >
-                                                                                    Dokumen
-                                                                                </p>
-                                                                                <p
-                                                                                    class="text-xs text-slate-400"
-                                                                                >
-                                                                                    Klik untuk membuka dokumen
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <a
-                                                                            href="{{ $content->document_url }}"
-                                                                            target="_blank"
-                                                                            class="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white text-xs font-medium rounded-lg hover:bg-indigo-700 transition-colors shrink-0"
-                                                                        >
-                                                                            Buka
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            @endif
-
-                                                            {{-- Empty State --}}
-                                                            @if (! $embedUrl && ! $content->document_url)
-                                                                <div
-                                                                    class="text-center py-10 text-slate-400"
-                                                                >
-                                                                    <p class="text-sm font-medium">
-                                                                        Belum ada media
-                                                                    </p>
-                                                                    <p class="text-xs mt-1">
-                                                                        Materi ini belum memiliki video atau dokumen pendukung.
-                                                                    </p>
-                                                                </div>
-                                                            @endif
-                                                        </div>
-
-                                                        {{-- Footer --}}
-                                                        <div
-                                                            class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end items-center gap-3"
-                                                        >
-                                                            @if (!$content->is_completed)
-                                                                <form action="{{ route('user.course.content.complete', ['content' => $content->id]) }}" method="POST" class="m-0">
-                                                                    @csrf
-                                                                    <button
-                                                                        type="submit"
-                                                                        class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-1.5"
-                                                                    >
-                                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                                        </svg>
-                                                                        Tandai Selesai
-                                                                    </button>
-                                                                </form>
-                                                            @else
-                                                                <span class="inline-flex items-center text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
-                                                                    <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                                                    </svg>
-                                                                    Materi Selesai ✓
-                                                                </span>
-                                                            @endif
-
-                                                            <button
-                                                                type="button"
-                                                                @click="$dispatch('close-modal', 'show-content-{{ $content->id }}')"
-                                                                class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                                                            >
-                                                                Tutup
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </x-modal>
+                                                {{-- Tombol Pelajari Materi --}}
+                                                <a href="{{ route('user.course.content.show', ['slug' => $courseSlug, 'content' => $contentId]) }}"
+                                                    class="sm:self-center px-5 py-2 {{ $isContentItemCompleted ? 'bg-white border border-[#13416B]/30 text-[#13416B] hover:bg-[#13416B]/10' : 'bg-[#13416B] hover:bg-[#0f3354] text-white shadow-sm' }} rounded-xl text-xs font-bold transition-all text-center shrink-0 flex items-center justify-center gap-2">
+                                                    <i class="fas {{ $isContentItemCompleted ? 'fa-eye' : 'fa-play' }}"></i>
+                                                    {{ $isContentItemCompleted ? 'Lihat Kembali' : 'Pelajari Materi' }}
+                                                </a>
                                             </div>
                                         @empty
-                                            <p class="text-slate-400 py-3 text-sm italic">Belum ada materi di modul ini.</p>
+                                            <div class="p-4 text-center text-slate-500 text-sm bg-white rounded-xl border border-dashed border-slate-200">
+                                                <i class="fas fa-folder-open mb-2 text-slate-300 text-xl block"></i>
+                                                Materi sedang disiapkan.
+                                            </div>
                                         @endforelse
+
+                                        {{-- Post Test per Bab --}}
+                                        @if ($postTestBab)
+                                            <div class="mt-4 pt-4 border-t border-slate-200/80">
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-amber-200 bg-amber-50 hover:shadow-sm transition-all gap-4">
+                                                    <div class="flex items-center gap-4">
+                                                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-100 text-amber-600 shrink-0 border border-amber-200">
+                                                            <i class="fas fa-clipboard-check text-lg"></i>
+                                                        </span>
+                                                        <div>
+                                                            <p class="font-bold text-slate-800 text-sm leading-tight">
+                                                                {{ data_get($postTestBab, 'title', 'Post Test: ' . $sectionName) }}
+                                                            </p>
+                                                            @if (data_get($postTestBab, 'description'))
+                                                                <p class="text-xs text-slate-500 mt-1 line-clamp-2">
+                                                                    {{ data_get($postTestBab, 'description') }}
+                                                                </p>
+                                                            @endif
+                                                            <div class="mt-1.5 flex items-center gap-1.5">
+                                                                @if ($isPostTestBabCompleted)
+                                                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                                                        <i class="fas fa-check"></i> Selesai
+                                                                    </span>
+                                                                @else
+                                                                    <span class="inline-flex items-center text-[10px] font-bold text-amber-700 bg-white px-2 py-0.5 rounded-md border border-amber-200">
+                                                                        Wajib Dikerjakan
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Tombol Kerjakan Evaluasi --}}
+                                                    <a href="{{ route('user.course.test.show', ['slug' => $courseSlug, 'postTestId' => $postTestBab->id]) }}"
+                                                        class="sm:self-center px-5 py-2.5 {{ $isPostTestBabCompleted ? 'bg-white border border-[#13416B]/30 text-[#13416B] hover:bg-[#13416B]/10' : 'bg-[#13416B] hover:bg-[#0f3354] text-white shadow-sm' }} rounded-xl text-xs font-bold transition-all text-center shrink-0 flex items-center justify-center gap-2">
+                                                        <i class="fas {{ $isPostTestBabCompleted ? 'fa-eye' : 'fa-pencil-alt' }}"></i>
+                                                        {{ $isPostTestBabCompleted ? 'Lihat Hasil' : 'Kerjakan Evaluasi' }}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
+
+                            @php
+                                // Update flag kunci untuk iterasi bab selanjutnya
+                                $isPreviousSectionDone = $isSectionCompleted;
+                            @endphp
                         @empty
-                            <p class="p-4 text-slate-400 text-center">Belum ada modul.</p>
+                            <div class="p-8 text-center text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                <i class="fas fa-layer-group mb-3 text-slate-300 text-3xl block"></i>
+                                <p class="font-semibold text-sm">Belum ada modul pembelajaran.</p>
+                            </div>
                         @endforelse
                     </div>
                 </div>
+
+                {{-- CARD EVALUASI AKHIR --}}
+                @php
+                    $courseId = data_get($course, 'id') ?? data_get($course, 'course_id');
+                    $evaluasiAkhir = $courseId
+                        ? \Modules\LMS\Models\PostTest::where('course_id', $courseId)
+                            ->whereNull('course_section_id')
+                            ->first()
+                        : null;
+
+                    $isEvaluasiAkhirCompleted = false;
+                    if ($evaluasiAkhir) {
+                        $isEvaluasiAkhirCompleted = \Illuminate\Support\Facades\DB::table('post_test_results')
+                            ->where('user_id', auth()->id())
+                            ->where('post_test_id', $evaluasiAkhir->id)
+                            ->where('is_passed', 1)
+                            ->exists();
+                    }
+
+                    $isEvaluasiAkhirLocked = !$isPreviousSectionDone;
+                @endphp
+
+                @if ($evaluasiAkhir)
+                    <div class="bg-white rounded-2xl shadow-sm border {{ $isEvaluasiAkhirLocked ? 'border-slate-200 opacity-90' : 'border-[#13416B]/60 ring-2 ring-[#13416B]/20' }} overflow-hidden transition-all relative">
+                        <div class="px-6 py-5 {{ $isEvaluasiAkhirLocked ? 'bg-slate-50 border-b border-slate-200' : 'bg-gradient-to-r from-[#13416B] to-[#0f3354] text-white' }} flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $isEvaluasiAkhirLocked ? 'bg-slate-200 text-slate-400' : 'bg-white/20 text-white border border-white/30' }}">
+                                    <i class="fas {{ $isEvaluasiAkhirLocked ? 'fa-lock' : 'fa-graduation-cap' }} text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider {{ $isEvaluasiAkhirLocked ? 'text-slate-400' : 'text-blue-100' }} mb-1">
+                                        Tahap Akhir
+                                    </p>
+                                    <h3 class="text-lg font-extrabold {{ $isEvaluasiAkhirLocked ? 'text-slate-800' : 'text-white' }} leading-tight">
+                                        {{ data_get($evaluasiAkhir, 'title', 'Evaluasi Akhir Course') }}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            @if ($isEvaluasiAkhirLocked)
+                                <span class="px-4 py-2 text-xs font-bold text-slate-500 bg-white border border-slate-200 rounded-xl text-center shadow-sm">
+                                    Selesaikan Modul Dahulu
+                                </span>
+                            @elseif($isEvaluasiAkhirCompleted)
+                                <a href="{{ route('user.course.test.show', ['slug' => $courseSlug, 'postTestId' => $evaluasiAkhir->id]) }}" 
+                                    class="px-5 py-2.5 text-sm font-bold text-[#13416B] bg-white hover:bg-slate-50 rounded-xl text-center shadow-sm transition-all flex items-center justify-center gap-2 border border-transparent">
+                                    <i class="fas fa-eye"></i> Lihat Hasil
+                                </a>
+                            @else
+                                <a href="{{ route('user.course.test.show', ['slug' => $courseSlug, 'postTestId' => $evaluasiAkhir->id]) }}"
+                                    class="px-5 py-2.5 text-sm font-bold text-[#13416B] bg-white hover:bg-slate-50 rounded-xl text-center shadow-sm transition-all flex items-center justify-center gap-2 border border-transparent">
+                                    <i class="fas fa-play"></i> Mulai Evaluasi
+                                </a>
+                            @endif
+                        </div>
+
+                        <div class="p-6 bg-white">
+                            <p class="text-sm {{ $isEvaluasiAkhirLocked ? 'text-slate-500' : 'text-slate-600' }} leading-relaxed">
+                                {{ data_get($evaluasiAkhir, 'description', 'Ujian utama ini adalah syarat mutlak penyelesaian kursus. Pastikan Anda telah menguasai seluruh materi sebelum memulai. Nilai dari evaluasi ini akan menentukan kelayakan Anda untuk mendapatkan sertifikat kelulusan.') }}
+                            </p>
+
+                            <div class="mt-5 flex flex-wrap items-center gap-3">
+                                <span class="text-xs font-semibold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 flex items-center gap-1.5">
+                                    <i class="fas fa-list-ol text-slate-400"></i>
+                                    {{ data_get($evaluasiAkhir, 'questions', collect())->count() ?? 0 }} Soal
+                                </span>
+                                <span class="text-xs font-semibold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 flex items-center gap-1.5">
+                                    <i class="fas fa-stopwatch text-slate-400"></i>
+                                    {{ data_get($evaluasiAkhir, 'duration', 0) }} Menit
+                                </span>
+                                <span class="text-xs font-semibold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 flex items-center gap-1.5">
+                                    <i class="fas fa-bullseye text-slate-400"></i> KKM:
+                                    {{ data_get($evaluasiAkhir, 'passing_score', 0) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
 
-            {{-- Right Column: Side Widget (Sticky on desktop) --}}
-            <div class="space-y-6 lg:sticky lg:top-[72px] lg:self-start">
-                
+            {{-- Right Column: Side Widget --}}
+            <div class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+
                 {{-- Course Stats Card --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6">
-                    <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-                        <span class="text-base">📊</span>
-                        <h3 class="text-sm font-bold text-slate-800">Informasi Belajar</h3>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
+                        <div class="p-2 bg-[#13416B]/10 text-[#13416B] border border-[#13416B]/20 rounded-lg shrink-0">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800">Statistik Belajar</h3>
                     </div>
-                    
+
                     @php
-                        $totalContents = collect($course->sections ?? [])->sum(fn($s) => count($s['section_contents'] ?? []));
+                        $totalContents = collect(data_get($course, 'sections', []))->sum(
+                            fn($s) => count(data_get($s, 'section_contents', [])),
+                        );
                     @endphp
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Status</span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold {{ $course->status === 'completed' ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' : 'bg-indigo-500/10 text-indigo-600 border border-indigo-500/20' }}">
-                                {{ $course->status === 'completed' ? 'Selesai' : 'Berjalan' }}
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-500 mb-2 flex items-center gap-1"><i class="fas fa-info-circle"></i> Status</span>
+                            <span class="inline-flex items-center justify-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider {{ data_get($course, 'status') === 'completed' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-amber-100 text-amber-700 border border-amber-200' }}">
+                                {{ data_get($course, 'status') === 'completed' ? 'Selesai' : 'Berjalan' }}
                             </span>
                         </div>
-                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Total Modul</span>
-                            <span class="text-xs font-bold text-slate-850">{{ count($course->sections ?? []) }} Modul</span>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-500 mb-1 flex items-center gap-1"><i class="fas fa-layer-group"></i> Modul</span>
+                            <span class="text-sm font-extrabold text-slate-800">{{ count(data_get($course, 'sections', [])) }}</span>
                         </div>
-                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Total Materi</span>
-                            <span class="text-xs font-bold text-slate-850">{{ $totalContents }} Materi</span>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-500 mb-1 flex items-center gap-1"><i class="fas fa-file-alt"></i> Materi</span>
+                            <span class="text-sm font-extrabold text-slate-800">{{ $totalContents }}</span>
                         </div>
-                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Selesai</span>
-                            <span class="text-xs font-bold text-slate-850">{{ $course->completed_count }} / {{ $totalContents }}</span>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-between">
+                            <span class="text-[10px] uppercase font-bold text-slate-500 mb-1 flex items-center gap-1"><i class="fas fa-check-double"></i> Selesai</span>
+                            <span class="text-sm font-extrabold text-[#13416B]">{{ data_get($course, 'completed_count', 0) }}
+                                <span class="text-xs text-slate-400 font-medium">/ {{ $totalContents }}</span></span>
                         </div>
                     </div>
                 </div>
 
                 {{-- Certificate Widget --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6">
-                    <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-                        <span class="text-base">🎓</span>
-                        <h3 class="text-sm font-bold text-slate-800">Sertifikat Kelulusan</h3>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
+                        <div class="p-2 bg-[#13416B]/10 text-[#13416B] border border-[#13416B]/20 rounded-lg shrink-0">
+                            <i class="fas fa-certificate text-lg"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800">Sertifikat Kelulusan</h3>
                     </div>
-                    
-                    @if (($course->status ?? '') === 'completed' || ($course->progress ?? 0) >= 100)
-                        @if (!empty($course->certificate_file))
-                            <div class="space-y-4">
-                                <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center">
-                                    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg">✓</div>
-                                    <p class="font-bold text-emerald-800 text-sm">Sertifikat Siap di Unduh</p>
-                                </div>
-                                <div class="space-y-2 text-xs">
-                                    <div class="flex justify-between border-b border-slate-50 pb-1.5">
-                                        <span class="text-slate-400">Nomor</span>
-                                        <span class="font-mono font-bold text-slate-800">{{ $course->certificate_code }}</span>
+
+                    @if (data_get($course, 'status') === 'completed' || data_get($course, 'progress', 0) >= 100)
+                        @if (!empty(data_get($course, 'certificate_file')))
+                            <div class="space-y-5">
+                                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 text-center">
+                                    <div class="w-12 h-12 bg-white text-emerald-600 rounded-full shadow-sm flex items-center justify-center mx-auto mb-3 text-xl border border-emerald-100">
+                                        <i class="fas fa-award"></i>
                                     </div>
-                                    <div class="flex justify-between pb-1.5">
-                                        <span class="text-slate-400">Tanggal Terbit</span>
-                                        <span class="font-bold text-slate-800">{{ \Carbon\Carbon::parse($course->certificate_issued_at)->translatedFormat('d M Y') }}</span>
+                                    <p class="font-bold text-emerald-800 text-sm">Sertifikat Tersedia</p>
+                                    <p class="text-xs text-emerald-600 mt-1">Selamat! Anda telah menyelesaikan kursus.</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-3 text-xs">
+                                    <div class="flex justify-between border-b border-slate-200 pb-2">
+                                        <span class="text-slate-500 font-semibold">Nomor</span>
+                                        <span class="font-mono font-bold text-slate-800">{{ data_get($course, 'certificate_code') }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-500 font-semibold">Tgl Terbit</span>
+                                        <span class="font-bold text-slate-800">{{ \Carbon\Carbon::parse(data_get($course, 'certificate_issued_at'))->translatedFormat('d M Y') }}</span>
                                     </div>
                                 </div>
-                                <a href="{{ $course->certificate_file }}" target="_blank" download
-                                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                    </svg>
-                                    Unduh Sertifikat
+                                <a href="{{ data_get($course, 'certificate_file') }}" target="_blank" download
+                                    class="w-full bg-[#13416B] hover:bg-[#0f3354] text-white py-3 rounded-xl font-bold transition-all shadow-sm flex items-center justify-center gap-2 text-sm">
+                                    <i class="fas fa-download"></i> Unduh PDF
                                 </a>
                             </div>
                         @else
-                            <div class="space-y-4">
-                                <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 text-center">
-                                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-2 text-lg">🎉</div>
-                                    <p class="font-bold text-indigo-800 text-sm">Kursus Selesai!</p>
+                            <div class="space-y-5">
+                                <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 text-center">
+                                    <div class="w-12 h-12 bg-white text-amber-500 rounded-full shadow-sm flex items-center justify-center mx-auto mb-3 text-xl border border-amber-100">
+                                        <i class="fas fa-trophy"></i>
+                                    </div>
+                                    <p class="font-bold text-amber-800 text-sm">Kursus Selesai!</p>
+                                    <p class="text-xs text-amber-600 mt-1">Silakan terbitkan sertifikat Anda.</p>
                                 </div>
-                                <form action="{{ route('user.course.my-course.generate-certificate', ['slug' => request()->route('slug')]) }}" method="POST"
-                                    x-data="{ loading: false }"
-                                    @submit="loading = true">
+                                <form action="{{ route('user.course.my-course.generate-certificate', ['slug' => request()->route('slug')]) }}" method="POST" x-data="{ loading: false }" @submit="loading = true">
                                     @csrf
-                                    <button type="submit"
-                                        :disabled="loading"
-                                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-55 disabled:cursor-not-allowed shadow-sm">
+                                    <button type="submit" :disabled="loading"
+                                        class="w-full bg-[#13416B] hover:bg-[#0f3354] text-white py-3 rounded-xl font-bold transition-all shadow-sm flex items-center justify-center gap-2 text-sm disabled:opacity-70 disabled:cursor-not-allowed">
                                         <template x-if="!loading">
-                                            <span class="flex items-center gap-1.5">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                </svg>
-                                                Generate Sertifikat
+                                            <span class="flex items-center gap-2">
+                                                <i class="fas fa-cogs"></i> Terbitkan Sertifikat
                                             </span>
                                         </template>
                                         <template x-if="loading">
-                                            <span class="flex items-center gap-1.5">
-                                                <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                </svg>
-                                                Memproses...
+                                            <span class="flex items-center gap-2">
+                                                <i class="fas fa-spinner fa-spin"></i> Memproses...
                                             </span>
                                         </template>
                                     </button>
@@ -485,25 +480,23 @@
                             </div>
                         @endif
                     @else
-                        <div class="py-4 flex flex-col items-center justify-center text-center">
-                            <div class="w-12 h-12 bg-slate-50 border border-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-3">
-                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
+                        <div class="py-6 flex flex-col items-center justify-center text-center px-2">
+                            <div class="w-16 h-16 bg-slate-50 border border-slate-200 text-slate-300 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-lock text-2xl"></i>
                             </div>
-                            <p class="text-xs font-bold text-slate-700">Sertifikat Belum Terbuka</p>
-                            
+                            <p class="text-sm font-bold text-slate-800 mb-1.5">Sertifikat Terkunci</p>
+
                             @php
-                                $remaining = $totalContents - ($course->completed_count ?? 0);
+                                $remaining = $totalContents - data_get($course, 'completed_count', 0);
                             @endphp
-                            
-                            @if($remaining > 0)
-                                <p class="text-[10px] text-slate-400 mt-2 max-w-[220px] leading-relaxed">
-                                    Selesaikan <span class="font-extrabold text-indigo-600">{{ $remaining }} materi</span> lagi untuk menerbitkan sertifikat kelulusan Anda.
+
+                            @if ($remaining > 0)
+                                <p class="text-xs text-slate-500 leading-relaxed">
+                                    Selesaikan <span class="font-bold text-slate-800">{{ $remaining }} materi</span> dan evaluasi akhir untuk membuka sertifikat kelulusan.
                                 </p>
                             @else
-                                <p class="text-[10px] text-slate-400 mt-2 max-w-[220px] leading-relaxed">
-                                    Selesaikan seluruh modul materi hingga progress mencapai 100% untuk mengunduh sertifikat.
+                                <p class="text-xs text-slate-500 leading-relaxed">
+                                    Selesaikan seluruh tahapan hingga progress mencapai 100% untuk mengunduh sertifikat.
                                 </p>
                             @endif
                         </div>
