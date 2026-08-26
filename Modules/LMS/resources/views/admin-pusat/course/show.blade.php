@@ -3,16 +3,12 @@
         <!-- Breadcrumb -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 sm:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('admin-pusat.dashboard') }}" class="inline-flex items-center text-sm font-medium text-slate-700 hover:text-indigo-600">
-                        <i class="fas fa-home mr-2"></i> Dashboard
-                    </a>
-                </li>
+               
                 <li>
                     <div class="flex items-center">
-                        <i class="fas fa-chevron-right text-slate-400 text-xs mx-1"></i>
+                       
                         <a href="{{ route('admin-pusat.management-course.courses.index') }}" class="ml-1 text-sm font-medium text-slate-700 hover:text-indigo-600 md:ml-2">
-                            Daftar Course
+                          <i class="fas fa-home mr-2"></i>  Daftar Course
                         </a>
                     </div>
                 </li>
@@ -115,7 +111,7 @@
                                         <ul class="divide-y divide-slate-100">
                                             @forelse ($section->contents as $content)
                                                 <li class="px-4 py-3 hover:bg-slate-50 flex items-start gap-3 transition-colors group">
-                                                    <div class="mt-0.5 text-indigo-500">
+                                                    <div class=" text-indigo-500">
                                                         @if ($content->video_url)
                                                             <i class="fas fa-play-circle"></i>
                                                         @else
@@ -125,7 +121,7 @@
 
                                                     <div class="flex-1">
                                                         <p class="text-sm text-slate-700 font-medium">
-                                                            {{ $content->position }}. {{ $content->name }}
+                                                            {{ $content->name }}
                                                         </p>
                                                     </div>
 

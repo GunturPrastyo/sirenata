@@ -87,12 +87,28 @@ class CourseController extends Controller
     {
         $token = (string) session('api_token', '');
 
+        // 1. Ambil data progress dan struktur materi dari API
         $result = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
 
-        $course = (object) $result['data'];
+        // Jadikan array terlebih dahulu agar mudah digabungkan
+        $apiCourseData = $result['data'] ?? [];
+
+        // 2. Ambil data master dari Database lokal untuk melengkapi (deskripsi, kategori, dll)
+        $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
+
+        // 3. Gabungkan data API dengan data Database
+        if ($dbCourse) {
+            $apiCourseData['description']   = $dbCourse->description;
+            $apiCourseData['category']      = $dbCourse->category ? $dbCourse->category->toArray() : null;
+            $apiCourseData['thumbnail_url'] = $dbCourse->thumbnail_url;
+            $apiCourseData['course_name']   = $dbCourse->name;
+        }
+
+        // Trik konversi aman: ubah array bertingkat kembali menjadi Object utuh
+        $course = json_decode(json_encode($apiCourseData));
 
         return view('lms::user.course.my-course-detail', [
-            'course' => $course,
+            'course'  => $course,
             'success' => $result['success'],
             'message' => $result['message'],
         ]);
@@ -213,5 +229,29 @@ class CourseController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function showContent(string $slug, string $contentId)
+    {
+        $token = (string) session('api_token', '');
+
+        // Ambil data detail course untuk navigasi sidebar/breadcrumb jika diperlukan
+        $result = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
+        $apiCourseData = $result['data'] ?? [];
+
+        $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
+        if ($dbCourse) {
+            $apiCourseData['course_name'] = $dbCourse->name;
+        }
+        $course = json_decode(json_encode($apiCourseData));
+
+        // Ambil data materi spesifik berdasarkan ID
+        $content = \Modules\LMS\Models\SectionContent::findOrFail($contentId);
+
+        return view('lms::user.course.content-show', [
+            'course'  => $course,
+            'content' => $content,
+            'slug'    => $slug,
+        ]);
     }
 }
