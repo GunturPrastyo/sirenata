@@ -1,70 +1,34 @@
-<x-dashboard::layouts.dashboard title="My Course | SIRENATA">
-    <div class="p-2 sm:p-6">
-        {{-- Breadcrumb --}}
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1">
-                <li class="inline-flex items-center">
-                    <a
-                        href="{{ url('/') }}"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600"
-                    >
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
-                            ></path>
-                        </svg>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"
-                            ></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2">
-                            My Course
-                        </span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
+<x-dashboard::layouts.dashboard title="Kursus Saya - Selesai | SIRENATA">
+    <div class="p-4 sm:p-6 lg:p-8 bg-slate-50/50 min-h-screen">
+        
+        {{-- Header (Pengganti Breadcrumb) --}}
+        <div class="mb-6 sm:mb-8">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Kursus Saya</h1>
+            <p class="text-sm text-slate-500 mt-1.5">Lanjutkan pembelajaran Anda dan tingkatkan kompetensi melalui modul yang tersedia.</p>
+        </div>
 
         <div>
-            <div class="mb-4 sm:mb-6">
-                <div class="border-b border-gray-200">
-                    <nav class="flex space-x-2 sm:space-x-4 overflow-x-auto pb-2 -mx-2 px-2">
+            {{-- Navigasi Tab --}}
+            <div class="mb-6 sm:mb-8">
+                <div class="border-b border-slate-200">
+                    <nav class="flex space-x-6 overflow-x-auto pb-[-1px]">
                         <a
                             href="{{ route('user.course.my-course') }}"
-                            class="border-b-2 py-2 sm:py-3 px-1 text-xs sm:text-sm whitespace-nowrap transition-colors {{
-                                request()->routeIs('user.course.my-course')
-                                    ? 'border-indigo-600 text-indigo-600 font-semibold'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium'
-                            }}"
+                            class="border-b-2 py-3 px-1 text-sm whitespace-nowrap transition-colors border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 font-medium"
                         >
-                            <span>Semua </span>
+                            <span>Semua</span>
                         </a>
 
                         <a
                             href="{{ route('user.course.my-course.progress') }}"
-                            class="border-b-2 py-2 sm:py-3 px-1 text-xs sm:text-sm whitespace-nowrap transition-colors {{
-                                request()->routeIs('user.course.my-course.progress')
-                                    ? 'border-indigo-600 text-indigo-600 font-semibold'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium'
-                            }}"
+                            class="border-b-2 py-3 px-1 text-sm whitespace-nowrap transition-colors border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 font-medium"
                         >
                             <span>Belum Selesai</span>
                         </a>
 
                         <a
                             href="{{ route('user.course.my-course.finish') }}"
-                            class="border-b-2 py-2 sm:py-3 px-1 text-xs sm:text-sm whitespace-nowrap transition-colors {{
-                                request()->routeIs('user.course.my-course.finish')
-                                    ? 'border-indigo-600 text-indigo-600 font-semibold'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium'
-                            }}"
+                            class="border-b-2 py-3 px-1 text-sm whitespace-nowrap transition-colors border-indigo-600 text-indigo-600 font-bold"
                         >
                             <span>Selesai ({{ $meta['total'] ?? 0 }})</span>
                         </a>
@@ -72,20 +36,81 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {{-- Grid Cards (Maksimal 3 per baris) --}}
+            <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
                 @forelse ($courses as $course)
-                    <x-course-card :course="$course" />
+                    <a href="{{ route('user.course.my-course.detail', $course->slug) }}" class="group flex flex-col bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+                        
+                        {{-- Thumbnail & Badge --}}
+                        <div class="relative h-48 overflow-hidden bg-slate-100">
+                            @if (!empty($course->thumbnail_url))
+                                <img src="{{ $course->thumbnail_url }}" alt="{{ $course->course_name ?? $course->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                            @else
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <i class="fas fa-image text-4xl text-slate-300"></i>
+                                </div>
+                            @endif
+                            
+                            {{-- Badge Kategori --}}
+                            <div class="absolute top-3 left-3">
+                                <span class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white bg-slate-900/70 backdrop-blur-md rounded-full shadow-sm">
+                                    {{ $course->category->name ?? 'Umum' }}
+                                </span>
+                            </div>
+
+                            {{-- Badge Status (Selesai) --}}
+                            <div class="absolute top-3 right-3">
+                                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 rounded-lg shadow-sm flex items-center gap-1">
+                                    <i class="fas fa-check-circle"></i> Selesai
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Konten Text --}}
+                        <div class="p-5 flex flex-col flex-1">
+                            <h3 class="text-base font-bold text-slate-800 leading-snug mb-2 group-hover:text-emerald-600 transition-colors line-clamp-2" title="{{ $course->course_name ?? $course->name }}">
+                                {{ $course->course_name ?? $course->name }}
+                            </h3>
+                            
+                            {{-- Deskripsi Kursus --}}
+                            <p class="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed flex-1">
+                                {{ $course->description ?? 'Deskripsi kursus belum tersedia. Silakan masuk untuk melihat detail materi pembelajaran.' }}
+                            </p>
+
+                            {{-- Progress Bar & Tombol Lanjutkan --}}
+                            <div class="mt-auto pt-4 border-t border-slate-100">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Progress Belajar</span>
+                                    <span class="text-xs font-extrabold text-emerald-600">
+                                        100%
+                                    </span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mb-4">
+                                    <div class="bg-emerald-500 h-full rounded-full transition-all duration-700" style="width: 100%"></div>
+                                </div>
+
+                                {{-- Tombol CTA --}}
+                                <div class="w-full py-2.5 text-xs font-bold text-center rounded-xl transition-colors bg-emerald-50 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white">
+                                    Lihat Sertifikat
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 @empty
-                    <div class="col-span-full text-center py-12 text-gray-500">
-                        <div class="text-4xl mb-3">📚</div>
-                        <p class="text-sm">Belum ada course di kategori ini.</p>
+                    {{-- Empty State --}}
+                    <div class="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center bg-white rounded-2xl border border-dashed border-slate-200">
+                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                            <span class="text-4xl">🎓</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800 mb-1">Belum Ada Kursus Selesai</h3>
+                        <p class="text-sm text-slate-500 max-w-sm">Anda belum menyelesaikan kursus apapun. Terus tingkatkan progress belajar Anda untuk mendapatkan sertifikat kelulusan.</p>
                     </div>
                 @endforelse
             </div>
 
             {{-- Pagination --}}
-            @if (! empty($courses))
-                <div class="mt-6 flex justify-center gap-2">
+            @if (! empty($courses) && count($courses) > 0)
+                <div class="mt-8 flex justify-center gap-2">
                     <x-api-pagination :meta="$meta" />
                 </div>
             @endif

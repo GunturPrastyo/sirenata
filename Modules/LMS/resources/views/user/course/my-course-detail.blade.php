@@ -215,7 +215,7 @@
                                                         </p>
                                                         <div class="mt-1.5 flex items-center gap-1.5">
                                                             @if ($isContentItemCompleted)
-                                                                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#13416B] bg-[#13416B]/10 px-2 py-0.5 rounded-md border border-[#13416B]/20">
+                                                                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
                                                                     <i class="fas fa-check"></i> Selesai
                                                                 </span>
                                                             @else
@@ -244,9 +244,10 @@
                                         {{-- Post Test per Bab --}}
                                         @if ($postTestBab)
                                             <div class="mt-4 pt-4 border-t border-slate-200/80">
-                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-amber-200 bg-amber-50 hover:shadow-sm transition-all gap-4">
+                                                {{-- Jika sudah selesai (lulus), gunakan border dan background bernuansa Biru Tua/Netral. Jika belum, gunakan Amber/Kuning --}}
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border {{ $isPostTestBabCompleted ? 'border-[#13416B]/20 bg-[#13416B]/5' : 'border-amber-200 bg-amber-50' }} hover:shadow-sm transition-all gap-4">
                                                     <div class="flex items-center gap-4">
-                                                        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-100 text-amber-600 shrink-0 border border-amber-200">
+                                                        <span class="flex items-center justify-center w-10 h-10 rounded-xl {{ $isPostTestBabCompleted ? 'bg-[#13416B] text-white border border-[#13416B]' : 'bg-amber-100 text-amber-600 border border-amber-200' }} shrink-0">
                                                             <i class="fas fa-clipboard-check text-lg"></i>
                                                         </span>
                                                         <div>
@@ -272,9 +273,9 @@
                                                         </div>
                                                     </div>
 
-                                                    {{-- Tombol Kerjakan Evaluasi --}}
+                                                    {{-- Tombol Kerjakan Evaluasi / Lihat Hasil --}}
                                                     <a href="{{ route('user.course.test.show', ['slug' => $courseSlug, 'postTestId' => $postTestBab->id]) }}"
-                                                        class="sm:self-center px-5 py-2.5 {{ $isPostTestBabCompleted ? 'bg-white border border-[#13416B]/30 text-[#13416B] hover:bg-[#13416B]/10' : 'bg-[#13416B] hover:bg-[#0f3354] text-white shadow-sm' }} rounded-xl text-xs font-bold transition-all text-center shrink-0 flex items-center justify-center gap-2">
+                                                        class="sm:self-center px-5 py-2.5 {{ $isPostTestBabCompleted ? 'bg-white border border-[#13416B]/30 text-[#13416B] hover:bg-[#13416B]/10' : 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm' }} rounded-xl text-xs font-bold transition-all text-center shrink-0 flex items-center justify-center gap-2">
                                                         <i class="fas {{ $isPostTestBabCompleted ? 'fa-eye' : 'fa-pencil-alt' }}"></i>
                                                         {{ $isPostTestBabCompleted ? 'Lihat Hasil' : 'Kerjakan Evaluasi' }}
                                                     </a>
@@ -454,12 +455,12 @@
                             </div>
                         @else
                             <div class="space-y-5">
-                                <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 text-center">
-                                    <div class="w-12 h-12 bg-white text-amber-500 rounded-full shadow-sm flex items-center justify-center mx-auto mb-3 text-xl border border-amber-100">
+                                <div class="bg-[#13416B]/5 border border-[#13416B]/20 rounded-xl p-5 text-center">
+                                    <div class="w-12 h-12 bg-white text-[#13416B] rounded-full shadow-sm flex items-center justify-center mx-auto mb-3 text-xl border border-[#13416B]/20">
                                         <i class="fas fa-trophy"></i>
                                     </div>
-                                    <p class="font-bold text-amber-800 text-sm">Kursus Selesai!</p>
-                                    <p class="text-xs text-amber-600 mt-1">Silakan terbitkan sertifikat Anda.</p>
+                                    <p class="font-bold text-[#13416B] text-sm">Kursus Selesai!</p>
+                                    <p class="text-xs text-slate-600 mt-1">Silakan terbitkan sertifikat Anda.</p>
                                 </div>
                                 <form action="{{ route('user.course.my-course.generate-certificate', ['slug' => request()->route('slug')]) }}" method="POST" x-data="{ loading: false }" @submit="loading = true">
                                     @csrf
