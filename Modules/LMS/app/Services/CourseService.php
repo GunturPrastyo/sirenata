@@ -623,4 +623,48 @@ class CourseService
             ];
         }
     }
+
+    /**
+     * Submit Hasil Post Test/Evaluasi ke API agar progress terupdate
+     */
+    public function submitPostTestResult(string $token, string $slug, string $postTestId, int $score, bool $isPassed): array
+    {
+        try {
+            $response = Http::withoutVerifying()
+                ->withToken($token)
+                ->acceptJson()
+                ->timeout(15)
+                ->post("{$this->baseUrl}/courses/{$slug}/post-test/submit", [
+                    'post_test_id' => $postTestId,
+                    'score'        => $score,
+                    'is_passed'    => $isPassed,
+                ]);
+
+            if ($response->failed()) {
+                Log::error('Failed to submit post test result', [
+                    'status' => $response->status(),
+                    'body'   => $response->json() ?? $response->body(),
+                ]);
+
+                return [
+                    'success' => false,
+                    'message' => 'Gagal menyinkronkan hasil evaluasi ke server.',
+                ];
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Hasil evaluasi berhasil disimpan.',
+            ];
+        } catch (\Exception $e) {
+            Log::error('CourseService::submitPostTestResult error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem saat menyimpan hasil evaluasi.',
+            ];
+        }
+    }
 }
