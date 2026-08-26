@@ -47,7 +47,7 @@
                         <h1 class="text-2xl font-bold text-slate-800 mb-4">{{ $course->name }}</h1>
 
                         <div class="prose prose-sm sm:prose max-w-none text-slate-600">
-                            <h3 class="text-lg font-semibold text-slate-800 mb-2">Deskripsi Course</h3>
+                            
                             <p>{{ $course->description }}</p>
                         </div>
                     </div>
