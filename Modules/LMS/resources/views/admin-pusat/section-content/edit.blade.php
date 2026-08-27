@@ -63,15 +63,6 @@
                         class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
                 </div>
 
-                <!-- Video URL -->
-                <div>
-                    <label for="video" class="block text-sm font-medium text-slate-700 mb-1">
-                        Video URL <span class="text-slate-400 font-normal">(Opsional)</span>
-                    </label>
-                    <input type="url" id="video" name="video" value="{{ old('video', $content->video) }}"
-                        class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
-                </div>
-
                 <!-- Dokumen -->
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">
@@ -124,6 +115,48 @@
         </div>
     </div>
 
+    <!-- ========================================================================= -->
+    <!-- MODAL KUSTOM UNTUK INSERT LINK (GAYA CANVA) -->
+    <!-- ========================================================================= -->
+    <div id="custom-link-modal"
+        class="fixed inset-0 z-[9999] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm transition-opacity">
+        <div
+            class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 border border-slate-200 transform scale-100 transition-transform">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-link text-[#13416B]"></i> Tambahkan Tautan
+                </h3>
+                <button type="button" id="btn-close-link"
+                    class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Teks yang ditampilkan</label>
+                    <input type="text" id="link-text-input" placeholder="Contoh: Klik disini untuk mengunduh"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-[#13416B] focus:ring-1 focus:ring-[#13416B] transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">URL / Tautan <span
+                            class="text-red-500">*</span></label>
+                    <input type="url" id="link-url-input" placeholder="https://..."
+                        class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-[#13416B] focus:ring-1 focus:ring-[#13416B] transition-all">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-8">
+                <button type="button" id="btn-cancel-link"
+                    class="px-5 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">Batal</button>
+                <button type="button" id="btn-save-link"
+                    class="px-5 py-2.5 text-sm font-bold text-white bg-[#13416B] hover:bg-[#0f3354] shadow-sm rounded-xl transition-colors flex items-center gap-2">
+                    <i class="fas fa-check"></i> Simpan
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Quill, Highlight.js, KaTeX, dan BlotFormatter Scripts -->
     @push('scripts')
         <!-- Highlight.js (Untuk sintaks blok kode) -->
@@ -143,12 +176,9 @@
         <script src="https://cdn.jsdelivr.net/npm/quill-blot-formatter@1.0.5/dist/quill-blot-formatter.min.js"></script>
 
         <script>
-            // 1. Mendaftarkan modul tambahan ke Quill
+            // Mendaftarkan modul resize & perbaikan bug quill format gambar
             Quill.register('modules/blotFormatter', QuillBlotFormatter.default);
 
-            // =========================================================================
-            // 2. KUNCI UTAMA: MEMBUAT CUSTOM BLOT AGAR QUILL TIDAK MENGHAPUS STYLE/UKURAN
-            // =========================================================================
             const BaseImage = Quill.import('formats/image');
             class CustomImage extends BaseImage {
                 static formats(domNode) {
@@ -161,9 +191,14 @@
                 }
                 format(name, value) {
                     if (['style', 'width', 'height'].includes(name)) {
-                        if (value) { this.domNode.setAttribute(name, value); } 
-                        else { this.domNode.removeAttribute(name); }
-                    } else { super.format(name, value); }
+                        if (value) {
+                            this.domNode.setAttribute(name, value);
+                        } else {
+                            this.domNode.removeAttribute(name);
+                        }
+                    } else {
+                        super.format(name, value);
+                    }
                 }
             }
             Quill.register(CustomImage, true);
@@ -180,15 +215,19 @@
                 }
                 format(name, value) {
                     if (['style', 'width', 'height'].includes(name)) {
-                        if (value) { this.domNode.setAttribute(name, value); } 
-                        else { this.domNode.removeAttribute(name); }
-                    } else { super.format(name, value); }
+                        if (value) {
+                            this.domNode.setAttribute(name, value);
+                        } else {
+                            this.domNode.removeAttribute(name);
+                        }
+                    } else {
+                        super.format(name, value);
+                    }
                 }
             }
             Quill.register(CustomVideo, true);
-            // =========================================================================
 
-            // Setup bahasa pemrograman yang didukung highlight.js
+            // Setup Highlight.js
             hljs.configure({
                 languages: ['javascript', 'php', 'html', 'css', 'python', 'java', 'sql', 'bash']
             });
@@ -197,28 +236,124 @@
             var quill = new Quill('#editor-container', {
                 modules: {
                     syntax: true,
-                    blotFormatter: {}, // Modul resize dan posisi gambar/video
-                    toolbar: [
-                        [{ 'size': ['small', false, 'large', 'huge'] }],
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'color': [] }, { 'background': [] }],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        [{ 'indent': '-1' }, { 'indent': '+1' }],
-                        [{ 'align': [] }],
-                        ['blockquote', 'code-block', 'formula'],
-                        ['link', 'image', 'video'],
-                        ['clean']
-                    ]
+                    blotFormatter: {},
+                    toolbar: {
+                        container: [
+                            [{
+                                'size': ['small', false, 'large', 'huge']
+                            }],
+                            [{
+                                'header': [1, 2, 3, false]
+                            }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{
+                                'color': []
+                            }, {
+                                'background': []
+                            }],
+                            [{
+                                'list': 'ordered'
+                            }, {
+                                'list': 'bullet'
+                            }],
+                            [{
+                                'indent': '-1'
+                            }, {
+                                'indent': '+1'
+                            }],
+                            [{
+                                'align': []
+                            }],
+                            ['blockquote', 'code-block', 'formula'],
+                            ['link', 'image', 'video'],
+                            ['clean']
+                        ],
+                        handlers: {
+                            // MENGGANTI FUNGSI TOMBOL LINK BAWAAN
+                            'link': function(value) {
+                                // 1. Ambil posisi kursor / teks yang diblok
+                                var range = quill.getSelection(true);
+                                var text = '';
+
+                                // 2. Jika ada teks yang diblok, ambil teksnya
+                                if (range && range.length > 0) {
+                                    text = quill.getText(range.index, range.length);
+                                }
+
+                                // 3. Tampilkan modal & isi otomatis input teks
+                                document.getElementById('link-text-input').value = text;
+                                document.getElementById('link-url-input').value = '';
+
+                                const modal = document.getElementById('custom-link-modal');
+                                modal.classList.remove('hidden');
+                                modal.classList.add('flex');
+
+                                // Fokus ke input URL agar user bisa langsung paste
+                                setTimeout(() => document.getElementById('link-url-input').focus(), 100);
+
+                                // Simpan posisi kursor sementara secara global
+                                window.quillLinkRange = range;
+                            }
+                        }
+                    }
                 },
                 placeholder: 'Tuliskan materi pembelajaran di sini...',
                 theme: 'snow'
             });
 
-            // LOGIKA UTAMA SINKRONISASI DATA
+            // LOGIKA MENYIMPAN HASIL DARI MODAL LINK KE DALAM EDITOR
+            function closeLinkModal() {
+                const modal = document.getElementById('custom-link-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            document.getElementById('btn-close-link').addEventListener('click', closeLinkModal);
+            document.getElementById('btn-cancel-link').addEventListener('click', closeLinkModal);
+
+            document.getElementById('btn-save-link').addEventListener('click', function() {
+                var text = document.getElementById('link-text-input').value.trim();
+                var url = document.getElementById('link-url-input').value.trim();
+                var range = window.quillLinkRange;
+
+                if (!url) {
+                    alert('URL / Tautan wajib diisi!');
+                    return;
+                }
+
+                // Tambahkan 'https://' jika pengguna lupa mengetiknya
+                if (!/^https?:\/\//i.test(url) && !/^mailto:/i.test(url) && !/^tel:/i.test(url)) {
+                    url = 'https://' + url;
+                }
+
+                // Jika kolom teks kosong, gunakan URL sebagai teks
+                if (!text) {
+                    text = url;
+                }
+
+                // Kembalikan fokus ke editor
+                quill.focus();
+
+                if (range && range.length > 0) {
+                    // Jika sebelumnya memblok teks: Hapus teks lama, ganti dengan yang baru, lalu jadikan link
+                    quill.deleteText(range.index, range.length);
+                    quill.insertText(range.index, text, 'link', url);
+                    quill.setSelection(range.index + text.length);
+                } else {
+                    // Jika sebelumnya tidak memblok teks (kursor berkedip biasa): Sisipkan di titik kursor
+                    var cursorPosition = range ? range.index : quill.getLength();
+                    quill.insertText(cursorPosition, text, 'link', url);
+                    quill.setSelection(cursorPosition + text.length);
+                }
+
+                closeLinkModal();
+            });
+
+            // LOGIKA SINKRONISASI DATA KE DATABASE
             quill.on('text-change', function() {
                 var contentText = document.getElementById('content_text');
-                if (quill.getText().trim().length === 0 && !quill.root.innerHTML.includes('<img') && !quill.root.innerHTML.includes('<iframe')) {
+                if (quill.getText().trim().length === 0 && !quill.root.innerHTML.includes('<img') && !quill.root
+                    .innerHTML.includes('<iframe')) {
                     contentText.value = '';
                 } else {
                     contentText.value = quill.root.innerHTML;
@@ -226,7 +361,7 @@
             });
         </script>
 
-       <style>
+        <style>
             /* Customizing Quill UI to fit Tailwind better */
             .ql-toolbar.ql-snow {
                 border-top-left-radius: 0.5rem;
@@ -257,9 +392,9 @@
             }
 
             /* ======================================================
-               PERBAIKAN TOOLTIP (MODAL INPUT LINK & VIDEO)
-               ====================================================== */
-            
+                       PERBAIKAN TOOLTIP (MODAL INPUT LINK & VIDEO)
+                       ====================================================== */
+
             /* Mengubah kotak input menjadi Modal di tengah layar */
             .ql-snow .ql-tooltip {
                 position: fixed !important;
@@ -279,7 +414,7 @@
 
             /* Sembunyikan segitiga panah bawaan tooltip */
             .ql-snow .ql-tooltip::after {
-                display: none !important; 
+                display: none !important;
             }
 
             /* Ubah teks label menjadi lebih jelas */
@@ -305,6 +440,7 @@
                 box-sizing: border-box !important;
                 transition: all 0.2s ease-in-out;
             }
+
             .ql-snow .ql-tooltip input[type="text"]:focus {
                 border-color: #13416B !important;
                 box-shadow: 0 0 0 1px #13416B !important;
@@ -322,6 +458,7 @@
                 float: right !important;
                 transition: background-color 0.2s;
             }
+
             .ql-snow .ql-tooltip a.ql-action:hover {
                 background-color: #0f3354 !important;
             }
@@ -340,6 +477,7 @@
                 margin-right: 0.5rem !important;
                 transition: all 0.2s;
             }
+
             .ql-snow .ql-tooltip a.ql-remove:hover {
                 background-color: #fee2e2 !important;
             }

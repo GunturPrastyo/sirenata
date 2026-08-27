@@ -42,49 +42,14 @@
             </div>
 
             <div class="p-6 md:p-8 space-y-8">
-                <!-- Bagian Video Player -->
-                @php
-                    $videoRaw = $content->video ?? $content->video_url;
-                    $embedUrl = null;
 
-                    if ($videoRaw) {
-                        // Regex Super Akurat untuk semua format YouTube
-                        if (
-                            preg_match(
-                                '/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|live\/|shorts\/))([\w-]{11})/',
-                                $videoRaw,
-                                $matches,
-                            )
-                        ) {
-                            $embedUrl = 'https://www.youtube.com/embed/' . $matches[1] . '?rel=0';
-                        } else {
-                            $embedUrl = $videoRaw;
-                        }
-                    }
-                @endphp
-
-                @if ($embedUrl)
-                    <div class="w-full">
-                        <h3 class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
-                            <i class="fas fa-play-circle text-[#13416B]"></i> Video Pembelajaran
-                        </h3>
-                        <div
-                            class="aspect-video w-full rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-black">
-                            <iframe class="w-full h-full" src="{{ $embedUrl }}" frameborder="0"
-                                allowfullscreen></iframe>
-                        </div>
-                    </div>
-                @endif
-
-                <!-- Bagian Konten Teks (Rich Text) -->
+                <!-- Bagian Konten Teks & Media (Rich Text) -->
                 @if (!empty($content->content_text))
                     <div class="w-full">
                         <h3 class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
-                            <i class="fas fa-file-alt text-[#13416B]"></i> Materi Teks
+                            <i class="fas fa-file-alt text-[#13416B]"></i> Materi Pembelajaran
                         </h3>
-                        <!-- PERBAIKAN: Menambahkan class 'quill-content-render' -->
-                        <div
-                            class="prose prose-sm sm:prose max-w-none text-slate-700 bg-slate-50 p-6 rounded-xl border border-slate-100 quill-content-render">
+                        <div class="prose prose-sm sm:prose max-w-none text-slate-700 bg-slate-50 p-6 rounded-xl border border-slate-100 quill-content-render">
                             {!! $content->content_text !!}
                         </div>
                     </div>
@@ -96,8 +61,7 @@
                         <h3 class="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                             <i class="fas fa-download text-[#13416B]"></i> Lampiran Dokumen
                         </h3>
-                        <div
-                            class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <div class="p-3 bg-white rounded-lg border border-slate-100 shadow-sm shrink-0">
                                     <i class="fas fa-file-pdf text-red-500 text-lg"></i>
@@ -117,17 +81,18 @@
                 @endif
 
                 <!-- State Kosong -->
-                @if (!$embedUrl && empty($content->content_text) && !$content->document_url)
+                @if (empty($content->content_text) && !$content->document_url)
                     <div class="text-center py-12">
                         <i class="fas fa-box-open text-4xl text-slate-300 mb-3"></i>
                         <p class="text-sm font-medium text-slate-600">Konten Kosong</p>
-                        <p class="text-xs text-slate-400">Materi ini belum memiliki video, teks, maupun dokumen
+                        <p class="text-xs text-slate-400">Materi ini belum memiliki teks, media, maupun dokumen
                             lampiran.</p>
                     </div>
                 @endif
             </div>
         </div>
     </div>
+
 {{-- CSS Khusus untuk Mencegah Tailwind Prose Menimpa Gaya Quill --}}
     @push('styles')
     <style>
