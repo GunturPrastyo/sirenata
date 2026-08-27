@@ -3,10 +3,8 @@
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 sm:space-x-3 flex-wrap">
-               
                 <li>
                     <div class="flex items-center">
-                        
                         <a href="{{ route('admin-pusat.management-course.courses.index') }}"
                             class="ml-1 text-sm font-medium text-slate-700 hover:text-indigo-600 md:ml-2">
                             <i class="fas fa-home mr-2"></i> Daftar Course
@@ -29,7 +27,6 @@
                             class="ml-1 text-sm font-medium text-slate-500 md:ml-2">{{ $content->section->name }}</span>
                     </div>
                 </li>
-               
             </ol>
         </nav>
 
@@ -97,14 +94,18 @@
                         ingin mengganti dokumen lama.</p>
                 </div>
 
-                <!-- Rich Text Editor (Materi & Gambar) -->
+                <!-- Rich Text Editor (Quill.js) -->
                 <div>
-                    <label for="editor" class="block text-sm font-medium text-slate-700 mb-1">
-                        Isi Materi (Teks & Gambar) <span class="text-slate-400 font-normal">(Opsional)</span>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Isi Materi (Teks, Gambar, Kode, Video) <span
+                            class="text-slate-400 font-normal">(Opsional)</span>
                     </label>
-                    <div class="prose max-w-none">
-                        <textarea id="editor" name="content_text" placeholder="Tuliskan materi pembelajaran di sini..."
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">{{ old('content_text', $content->content_text) }}</textarea>
+                    <div class="prose max-w-none bg-white">
+                        <!-- Hidden input untuk menampung data update -->
+                        <input type="hidden" name="content_text" id="content_text"
+                            value="{{ old('content_text', $content->content_text) }}">
+                        <!-- Container untuk Quill -->
+                        <div id="editor-container">{!! old('content_text', $content->content_text) !!}</div>
                     </div>
                 </div>
 
@@ -123,26 +124,224 @@
         </div>
     </div>
 
-    <!-- Script CKEditor 5 -->
+    <!-- Quill, Highlight.js, KaTeX, dan BlotFormatter Scripts -->
     @push('scripts')
-        <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+        <!-- Highlight.js (Untuk sintaks blok kode) -->
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+        <!-- KaTeX (Untuk rumus matematika) -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+        <!-- Quill Core -->
+        <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+        <!-- MODUL BARU: Quill Blot Formatter (Untuk Resize & Posisi Gambar/Video) -->
+        <script src="https://cdn.jsdelivr.net/npm/quill-blot-formatter@1.0.5/dist/quill-blot-formatter.min.js"></script>
+
         <script>
-            ClassicEditor
-                .create(document.querySelector('#editor'), {
+            // 1. Mendaftarkan modul tambahan ke Quill
+            Quill.register('modules/blotFormatter', QuillBlotFormatter.default);
+
+            // =========================================================================
+            // 2. KUNCI UTAMA: MEMBUAT CUSTOM BLOT AGAR QUILL TIDAK MENGHAPUS STYLE/UKURAN
+            // =========================================================================
+            const BaseImage = Quill.import('formats/image');
+            class CustomImage extends BaseImage {
+                static formats(domNode) {
+                    return ['style', 'width', 'height'].reduce(function(formats, attribute) {
+                        if (domNode.hasAttribute(attribute)) {
+                            formats[attribute] = domNode.getAttribute(attribute);
+                        }
+                        return formats;
+                    }, {});
+                }
+                format(name, value) {
+                    if (['style', 'width', 'height'].includes(name)) {
+                        if (value) { this.domNode.setAttribute(name, value); } 
+                        else { this.domNode.removeAttribute(name); }
+                    } else { super.format(name, value); }
+                }
+            }
+            Quill.register(CustomImage, true);
+
+            const BaseVideo = Quill.import('formats/video');
+            class CustomVideo extends BaseVideo {
+                static formats(domNode) {
+                    return ['style', 'width', 'height'].reduce(function(formats, attribute) {
+                        if (domNode.hasAttribute(attribute)) {
+                            formats[attribute] = domNode.getAttribute(attribute);
+                        }
+                        return formats;
+                    }, {});
+                }
+                format(name, value) {
+                    if (['style', 'width', 'height'].includes(name)) {
+                        if (value) { this.domNode.setAttribute(name, value); } 
+                        else { this.domNode.removeAttribute(name); }
+                    } else { super.format(name, value); }
+                }
+            }
+            Quill.register(CustomVideo, true);
+            // =========================================================================
+
+            // Setup bahasa pemrograman yang didukung highlight.js
+            hljs.configure({
+                languages: ['javascript', 'php', 'html', 'css', 'python', 'java', 'sql', 'bash']
+            });
+
+            // Inisialisasi Quill
+            var quill = new Quill('#editor-container', {
+                modules: {
+                    syntax: true,
+                    blotFormatter: {}, // Modul resize dan posisi gambar/video
                     toolbar: [
-                        'heading', '|',
-                        'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|',
-                        'insertTable', 'imageUpload', '|',
-                        'undo', 'redo'
+                        [{ 'size': ['small', false, 'large', 'huge'] }],
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        [{ 'indent': '-1' }, { 'indent': '+1' }],
+                        [{ 'align': [] }],
+                        ['blockquote', 'code-block', 'formula'],
+                        ['link', 'image', 'video'],
+                        ['clean']
                     ]
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+                },
+                placeholder: 'Tuliskan materi pembelajaran di sini...',
+                theme: 'snow'
+            });
+
+            // LOGIKA UTAMA SINKRONISASI DATA
+            quill.on('text-change', function() {
+                var contentText = document.getElementById('content_text');
+                if (quill.getText().trim().length === 0 && !quill.root.innerHTML.includes('<img') && !quill.root.innerHTML.includes('<iframe')) {
+                    contentText.value = '';
+                } else {
+                    contentText.value = quill.root.innerHTML;
+                }
+            });
         </script>
-        <style>
-            .ck-editor__editable_inline {
-                min-height: 350px;
+
+       <style>
+            /* Customizing Quill UI to fit Tailwind better */
+            .ql-toolbar.ql-snow {
+                border-top-left-radius: 0.5rem;
+                border-top-right-radius: 0.5rem;
+                border-color: #cbd5e1;
+                background-color: #f8fafc;
+            }
+
+            .ql-container.ql-snow {
+                border-bottom-left-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
+                border-color: #cbd5e1;
+                min-height: 400px;
+                font-family: inherit;
+                font-size: 0.875rem;
+            }
+
+            .ql-editor {
+                min-height: 400px;
+            }
+
+            /* Fix Tailwind Prose conflict with Quill Code Block */
+            .ql-editor pre.ql-syntax {
+                background-color: #1e1e1e;
+                color: #d4d4d4;
+                padding: 1rem;
+                border-radius: 0.5rem;
+            }
+
+            /* ======================================================
+               PERBAIKAN TOOLTIP (MODAL INPUT LINK & VIDEO)
+               ====================================================== */
+            
+            /* Mengubah kotak input menjadi Modal di tengah layar */
+            .ql-snow .ql-tooltip {
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                z-index: 9999 !important;
+                background-color: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+                border-radius: 0.75rem !important;
+                padding: 1.5rem !important;
+                width: 90% !important;
+                max-width: 450px !important;
+                white-space: normal !important;
+            }
+
+            /* Sembunyikan segitiga panah bawaan tooltip */
+            .ql-snow .ql-tooltip::after {
+                display: none !important; 
+            }
+
+            /* Ubah teks label menjadi lebih jelas */
+            .ql-snow .ql-tooltip::before {
+                display: block !important;
+                content: "Masukkan Tautan (URL) Video atau Link:" !important;
+                font-size: 1rem !important;
+                font-weight: 700 !important;
+                color: #1e293b !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            /* Percantik kolom input URL */
+            .ql-snow .ql-tooltip input[type="text"] {
+                width: 100% !important;
+                margin: 0.5rem 0 1.25rem 0 !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 0.5rem !important;
+                padding: 0.6rem 1rem !important;
+                font-size: 0.875rem !important;
+                color: #334155 !important;
+                outline: none !important;
+                box-sizing: border-box !important;
+                transition: all 0.2s ease-in-out;
+            }
+            .ql-snow .ql-tooltip input[type="text"]:focus {
+                border-color: #13416B !important;
+                box-shadow: 0 0 0 1px #13416B !important;
+            }
+
+            /* Percantik tombol Action (Simpan/Save) */
+            .ql-snow .ql-tooltip a.ql-action {
+                color: #fff !important;
+                background-color: #13416B !important;
+                padding: 0.5rem 1.25rem !important;
+                border-radius: 0.5rem !important;
+                font-weight: 600 !important;
+                text-decoration: none !important;
+                display: inline-block !important;
+                float: right !important;
+                transition: background-color 0.2s;
+            }
+            .ql-snow .ql-tooltip a.ql-action:hover {
+                background-color: #0f3354 !important;
+            }
+
+            /* Percantik tombol Remove (Batal/Clear) */
+            .ql-snow .ql-tooltip a.ql-remove {
+                color: #ef4444 !important;
+                background-color: #fef2f2 !important;
+                border: 1px solid #fecaca !important;
+                padding: 0.5rem 1.25rem !important;
+                border-radius: 0.5rem !important;
+                font-weight: 600 !important;
+                text-decoration: none !important;
+                display: inline-block !important;
+                float: right !important;
+                margin-right: 0.5rem !important;
+                transition: all 0.2s;
+            }
+            .ql-snow .ql-tooltip a.ql-remove:hover {
+                background-color: #fee2e2 !important;
             }
         </style>
     @endpush
