@@ -16,10 +16,7 @@
         {{-- Top Header Info Card (Kalem & Profesional) --}}
         <section
             class="bg-white rounded-xl p-5 sm:p-6 mb-6 shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center gap-5">
-            <div
-                class="w-16 h-16 bg-[#13416B]/10 rounded-full flex items-center justify-center shrink-0 border border-[#13416B]/20">
-                <i class="fas fa-file-signature text-3xl text-[#13416B]"></i>
-            </div>
+           
             <div class="text-center sm:text-left flex-1">
                 <span
                     class="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#13416B] bg-[#13416B]/10 rounded-md mb-2 border border-[#13416B]/20">
