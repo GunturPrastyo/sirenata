@@ -362,9 +362,9 @@ class CourseController extends Controller
             $course = \Modules\LMS\Models\Course::where('slug', $slug)->first();
             if ($course) {
                 $course->students()->updateExistingPivot($userId, [
-                    'is_final_test_completed' => true,
-                    // 'status' => 'completed', 
-                    // 'progress' => 100,
+                    // 'is_final_test_completed' => true,
+                    'status' => 'completed', 
+                    'progress' => 100,
                 ]);
             }
         }
