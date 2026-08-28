@@ -20,7 +20,7 @@
     @include('dashboard::partials.sidebar')
 
     <!-- Main Content (Dinamis merentang penuh / w-full jika sidebar ditutup) -->
-    <main class="p-2 sm:p-4 mt-24 md:mt-16 transition-all duration-300" :class="sidebarOpen ? 'lg:ml-64' : 'ml-0'">
+    <main class="p-2 sm:p-0 mt-20 md:mt-18 transition-all duration-300" :class="sidebarOpen ? 'lg:ml-64' : 'ml-0'">
         {{ $slot }}
     </main>
 
