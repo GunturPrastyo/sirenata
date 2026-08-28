@@ -1,77 +1,96 @@
 @props(['faqs', 'backRoute'])
 
-<div class="p-2 sm:p-6">
-    <x-breadcrumb :home="$backRoute" :items="[['label' => 'Bantuan']]" />
-
+<div class="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto min-h-screen">
+    
+    {{-- Breadcrumb --}}
     <div class="mb-6">
-        <x-form.input name="searchFaq" placeholder="Cari bantuan..." class="py-3 shadow-sm" />
+        <x-breadcrumb :home="$backRoute" :items="[['label' => 'Bantuan']]" />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div
-            class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all cursor-pointer group">
-            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+    {{-- Search Section --}}
+    <div class="mb-6 relative">
+        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+        <input id="searchFaq" type="text" placeholder="Cari bantuan atau pertanyaan..." 
+               class="w-full bg-white border border-slate-200 shadow-sm rounded-lg pl-11 pr-4 py-3 sm:py-3.5 text-sm sm:text-base focus:ring-[#13416B] focus:border-[#13416B] transition-colors text-slate-800 placeholder-slate-400">
+    </div>
+
+    {{-- Contact Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
+        <!-- Card FAQ -->
+        <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center gap-4 sm:gap-5 hover:border-[#13416B]/30 hover:shadow transition-all group cursor-default">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#13416B]/5 text-[#13416B] rounded-lg flex items-center justify-center shrink-0 border border-[#13416B]/10 group-hover:bg-[#13416B]/10 transition-colors">
+                <i class="fas fa-info-circle text-xl sm:text-2xl"></i>
             </div>
-            <h3 class="font-bold text-gray-900 mb-2">FAQ</h3>
-            <p class="text-sm text-gray-600">Pertanyaan yang sering ditanyakan</p>
+            <div>
+                <h3 class="font-bold text-slate-800 text-sm sm:text-base mb-0.5">FAQ</h3>
+                <p class="text-xs sm:text-sm text-slate-500">Pertanyaan yang sering ditanyakan</p>
+            </div>
         </div>
-        <div
-            class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-indigo-500 hover:shadow-md transition-all cursor-pointer group">
-            <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
-                <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+        
+        <!-- Card Email Support -->
+        <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center gap-4 sm:gap-5 hover:border-amber-300 hover:shadow transition-all group">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center shrink-0 border border-amber-100 group-hover:bg-amber-100 transition-colors">
+                <i class="fas fa-envelope text-xl sm:text-2xl"></i>
             </div>
-            <h3 class="font-bold text-gray-900 mb-2">Email Support</h3>
-            <p class="text-sm text-gray-600">support@sirenata.go.id</p>
+            <div>
+                <h3 class="font-bold text-slate-800 text-sm sm:text-base mb-0.5">Email Support</h3>
+                <a href="mailto:support@sirenata.go.id" class="text-xs sm:text-sm font-semibold text-amber-600 hover:text-amber-800 transition-colors">support@sirenata.go.id</a>
+            </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200">
-        <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Pertanyaan Umum</h2>
-        <div class="space-y-4" id="faqList">
+    {{-- FAQ Section --}}
+    <div class="bg-white rounded-lg p-5 sm:p-8 shadow-sm border border-slate-200">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-800 mb-5 sm:mb-6 border-b border-slate-100 pb-4">
+            Pertanyaan Umum
+        </h2>
+        
+        <div class="space-y-3" id="faqList">
             @forelse($faqs as $faq)
-                <details class="border border-gray-200 rounded-lg faq-item" data-question="{{ strtolower($faq->question) }}"
-                    data-answer="{{ strtolower($faq->answer) }}">
-                    <summary class="px-4 py-3 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
-                        {{ $faq->question }}
-                    </summary>
-                    <div class="px-4 py-3 text-sm text-gray-600 border-t border-gray-200">
-                        {!! nl2br(e($faq->answer)) !!}
+                <div class="faq-item border border-slate-200 rounded-lg overflow-hidden transition-all duration-200 bg-white"
+                     data-question="{{ strtolower($faq->question) }}"
+                     data-answer="{{ strtolower($faq->answer) }}"
+                     x-data="{ expanded: false }"
+                     :class="expanded ? 'border-[#13416B]/30 ring-1 ring-[#13416B]/10' : 'hover:border-slate-300'">
+                     
+                    <button @click="expanded = !expanded" class="w-full px-4 py-3.5 sm:px-5 sm:py-4 flex items-start sm:items-center justify-between text-left focus:outline-none gap-4 bg-slate-50/50 hover:bg-slate-50 transition-colors" :class="expanded ? 'bg-slate-50' : ''">
+                        <span class="font-semibold text-sm text-slate-700 transition-colors" :class="expanded ? 'text-[#13416B]' : ''">
+                            {{ $faq->question }}
+                        </span>
+                        <div class="w-6 h-6 rounded flex items-center justify-center shrink-0 transition-colors mt-0.5 sm:mt-0" :class="expanded ? 'bg-[#13416B]/10 text-[#13416B]' : 'text-slate-400'">
+                            <i class="fas fa-chevron-down transition-transform duration-200 text-[10px] sm:text-xs" :class="expanded ? 'rotate-180' : ''"></i>
+                        </div>
+                    </button>
+                    
+                    <div x-show="expanded" x-collapse>
+                        <div class="px-4 pb-4 sm:px-5 sm:pb-5 pt-2 text-sm text-slate-600 leading-relaxed border-t border-slate-100 bg-white">
+                            {!! nl2br(e($faq->answer)) !!}
+                        </div>
                     </div>
-                </details>
+                </div>
             @empty
-                <div class="text-center py-8" id="emptyState">
-                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                <div class="text-center py-10" id="emptyState">
+                    <div class="w-16 h-16 bg-slate-50 rounded-lg flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                        <i class="fas fa-box-open text-2xl text-slate-300"></i>
                     </div>
-                    <p class="text-gray-500 font-medium">Belum ada FAQ tersedia.</p>
-                    <p class="text-sm text-gray-400 mt-1">Hubungi admin jika Anda memerlukan bantuan.</p>
+                    <p class="text-sm font-bold text-slate-700">Belum ada FAQ tersedia.</p>
+                    <p class="text-xs text-slate-500 mt-1">Panduan akan ditambahkan segera oleh tim admin.</p>
                 </div>
             @endforelse
         </div>
 
-        <div class="hidden text-center py-8" id="noResults">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+        {{-- No Results State --}}
+        <div class="hidden text-center py-10" id="noResults">
+            <div class="w-16 h-16 bg-slate-50 rounded-lg flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                <i class="fas fa-search text-2xl text-slate-300"></i>
             </div>
-            <p class="text-gray-500 font-medium">Tidak ditemukan FAQ yang cocok.</p>
-            <p class="text-sm text-gray-400 mt-1">Coba gunakan kata kunci lain.</p>
+            <p class="text-sm font-bold text-slate-700">Tidak ditemukan hasil.</p>
+            <p class="text-xs text-slate-500 mt-1">Coba gunakan kata kunci pencarian lain.</p>
         </div>
 
+        {{-- Pagination --}}
         @if($faqs->hasPages())
-            <div class="mt-6 pt-4 border-t border-gray-200">
+            <div class="mt-6 pt-5 border-t border-slate-100">
                 {{ $faqs->links('pagination::tailwind') }}
             </div>
         @endif
