@@ -480,7 +480,7 @@
 
                         if (provinsiCode) {
                             if (asalInstansi === 'kabkota') {
-                                // Fetch Kab/Kota data via AJAX
+                              
                                 $.ajax({
                                     url: '{{ route('user.get-regencies') }}',
                                     type: 'GET',

@@ -1,115 +1,82 @@
-<nav class="fixed top-0 z-50 w-full bg-white border-b border-slate-200">
-    <div class="px-3 py-3 lg:px-5 h-16 flex items-center">
-        <div class="flex justify-between items-center w-full">
+<!-- Navbar berada di lapisan bawah Sidebar (z-40). Padding kiri otomatis menyesuaikan status Sidebar -->
+<nav class="fixed top-0 z-40 w-full bg-white border-b border-slate-200 transition-all duration-300" :class="sidebarOpen ? 'lg:pl-64' : 'pl-0'">
+    
+    <!-- PERUBAHAN PADDING: Diperlebar menjadi px-5 sm:px-6 lg:px-8 dan py-4 -->
+    <div class="px-5 sm:px-6 lg:px-8 py-4 flex items-center justify-between w-full gap-4 sm:gap-6 min-h-[80px]">
 
-            <!-- Left -->
-            <div class="flex items-center">
-                <!-- Toggle Sidebar (Mobile) -->
-                <button @click="sidebarOpen = !sidebarOpen"
-                    class="sm:hidden p-2 rounded-lg cursor-pointer hover:bg-gray-200 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h10" />
-                    </svg>
-                </button>
+        <!-- Bagian Kiri & Tengah (Toggle + Searchbar Full Width) -->
+        <div class="flex items-center flex-1 gap-3 sm:gap-5">
+            
+            <!-- Toggle Sidebar -->
+            <button @click="sidebarOpen = !sidebarOpen"
+                class="p-2 sm:p-2.5 rounded-xl cursor-pointer text-slate-500 hover:bg-slate-100 hover:text-[#13416B] focus:outline-none transition-colors shrink-0">
+                <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
 
-                <!-- Logo -->
-                <a href="{{ route('landingpage.index') }}" class="flex items-center ms-2">
-                    <img src="{{ asset('images/logo.png') }}" alt="SIRENATA Logo" class="h-8 w-auto">
-                    <span class="text-lg font-semibold ms-2" style="color: #13416B;">SIRENATA</span>
-                </a>
-            </div>
-
-            <!-- Right -->
-            @auth
-                <div class="relative" x-data="{ open: false }">
-                    <div class="flex items-center gap-x-5">
-                        <button @click="open = !open"
-                            class="rounded-full overflow-hidden focus:outline-none cursor-pointer">
-                            <img class="w-8 h-8 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ auth()->user()->profile?->full_name ?? auth()->user()->name }}&background=13416b&color=fff"
-                                alt="user">
-                        </button>
+            <!-- Searchbar (w-full) -->
+            <div class="flex-1 w-full max-w-4xl">
+                <div class="relative w-full group">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
+                        <i class="fas fa-search text-slate-400 group-focus-within:text-[#13416B] transition-colors text-sm sm:text-base"></i>
                     </div>
-
-                    <!-- Dropdown -->
-                    <div x-show="open" @click.outside="open = false" x-transition x-cloak
-                        class="absolute right-0 top-full mt-2 bg-gray-50 border border-slate-200 rounded-lg shadow-lg w-60 z-50">
-                        <div class="px-4 py-3 border-2 border-b border-slate-200">
-                            <p class="text-sm font-medium">{{ auth()->user()->name }}</p>
-                        </div>
-                        <ul class="p-2 text-sm">
-                            @role('super-admin')
-                                <li>
-                                    <a href="{{ route('super-admin.profile') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('super-admin.dashboard') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">
-                                        Dashboard Superadmin
-                                    </a>
-                                </li>
-                            @endrole
-                            @role('admin-pusat')
-                                <li>
-                                    <a href="{{ route('admin-pusat.profile') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin-pusat.dashboard') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">
-                                        Dashboard Admin Pusat
-                                    </a>
-                                </li>
-                            @endrole
-                            @role('admin-province')
-                                <li>
-                                    <a href="{{ route('admin-province.profile') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin-province.dashboard') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">
-                                        Dashboard Admin Provinsi
-                                    </a>
-                                </li>
-                            @endrole
-                            @role('admin-kab-kota')
-                                <li>
-                                    <a href="{{ route('admin-kab-kota.profile') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin-kab-kota.dashboard') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">
-                                        Dashboard Admin Kab/Kota
-                                    </a>
-                                </li>
-                            @endrole
-                            @role('user')
-                                <li>
-                                    <a href="{{ route('user.profile') }}"
-                                        class="block p-2 rounded hover:bg-[#13416B]/30">Profil</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('user.dashboard') }}" class="block p-2 rounded hover:bg-[#13416B]/30">Dashboard
-                                        User/Peserta</a>
-                                </li>
-                            @endrole
-
-                            <li>
-                                <form action="{{ route('logout') }}" method="POST" class="w-full">
-                                    @csrf
-                                    <button type="submit"
-                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-[#13416B]/30 hover:text-[#13416B] transition text-left">
-                                        Keluar
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
+                    <input type="text" class="bg-slate-50 border border-slate-200 text-slate-900 text-sm sm:text-base rounded-xl focus:ring-[#13416B] focus:border-[#13416B] block w-full ps-11 sm:ps-12 p-3 transition-colors shadow-sm" placeholder="Cari modul, buku, atau materi kursus...">
                 </div>
-            @endauth
+            </div>
         </div>
+
+        <!-- Bagian Kanan (Profil) -->
+        @auth
+            <div class="relative shrink-0" x-data="{ open: false }">
+                <div class="flex items-center">
+                    <button @click="open = !open"
+                        class="rounded-full overflow-hidden focus:outline-none cursor-pointer border-2 border-transparent hover:border-[#13416B] transition-colors">
+                        <img class="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover"
+                            src="https://ui-avatars.com/api/?name={{ auth()->user()->profile?->full_name ?? auth()->user()->name }}&background=13416b&color=fff"
+                            alt="user">
+                    </button>
+                </div>
+
+                <!-- Dropdown Profil -->
+                <div x-show="open" @click.outside="open = false" x-transition x-cloak
+                    class="absolute right-0 top-full mt-3 bg-white border border-slate-200 rounded-xl shadow-lg w-60 z-50 overflow-hidden">
+                    <div class="px-4 py-3 border-b border-slate-100 bg-slate-50">
+                        <p class="text-sm font-bold text-slate-800 truncate">{{ auth()->user()->name }}</p>
+                    </div>
+                    <ul class="p-2 text-sm text-slate-700 space-y-1">
+                        @role('super-admin')
+                            <li><a href="{{ route('super-admin.profile') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Profil</a></li>
+                            <li><a href="{{ route('super-admin.dashboard') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Dashboard Superadmin</a></li>
+                        @endrole
+                        @role('admin-pusat')
+                            <li><a href="{{ route('admin-pusat.profile') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Profil</a></li>
+                            <li><a href="{{ route('admin-pusat.dashboard') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Dashboard Admin Pusat</a></li>
+                        @endrole
+                        @role('admin-province')
+                            <li><a href="{{ route('admin-province.profile') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Profil</a></li>
+                            <li><a href="{{ route('admin-province.dashboard') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Dashboard Admin Provinsi</a></li>
+                        @endrole
+                        @role('admin-kab-kota')
+                            <li><a href="{{ route('admin-kab-kota.profile') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Profil</a></li>
+                            <li><a href="{{ route('admin-kab-kota.dashboard') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Dashboard Admin Kab/Kota</a></li>
+                        @endrole
+                        @role('user')
+                            <li><a href="{{ route('user.profile') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Profil</a></li>
+                            <li><a href="{{ route('user.dashboard') }}" class="block p-2 rounded-lg hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">Dashboard User/Peserta</a></li>
+                        @endrole
+
+                        <li class="pt-1 mt-1 border-t border-slate-100">
+                            <form action="{{ route('logout') }}" method="POST" class="w-full">
+                                @csrf
+                                <button type="submit" class="flex w-full cursor-pointer items-center gap-2 p-2 rounded-lg text-red-600 hover:bg-red-50 font-bold transition-colors text-left">
+                                    Keluar
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        @endauth
     </div>
 </nav>

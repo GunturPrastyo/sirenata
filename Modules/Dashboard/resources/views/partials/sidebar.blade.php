@@ -1,16 +1,25 @@
+<!-- Sidebar berada di lapisan atas (z-50) sehingga menimpa Navbar -->
 <aside
-    class="fixed top-0 left-0 z-40 w-64 h-full bg-white border-e border-gray-200
-    transform -translate-x-full transition-transform duration-300
-    sm:translate-x-0"
-    :class="sidebarOpen ? 'translate-x-0' : ''" @keydown.escape.window="sidebarOpen = false" x-cloak>
-    <div class="h-full px-3 py-4 overflow-y-auto pt-20 sm:pt-4">
+    class="fixed top-0 left-0 z-50 w-64 h-full bg-white border-e border-slate-200 transform transition-transform duration-300"
+    :class="sidebarOpen ? 'translate-x-0 shadow-2xl lg:shadow-none' : '-translate-x-full'" 
+    @keydown.escape.window="sidebarOpen = false" x-cloak>
+    
+    <div class="h-full py-4 overflow-y-auto">
 
-        <a href="#" class="flex items-center ps-2.5 mb-5">
-            <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto" alt="logo">
-            <span class="ms-2 text-lg font-semibold" style="color:#13416B;">SIRENATA</span>
-        </a>
+        <!-- Logo dipindahkan ke dalam Sidebar -->
+        <div class="flex items-center justify-between px-5 mb-8 mt-2">
+            <a href="{{ route('landingpage.index') }}" class="flex items-center">
+                <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto" alt="logo">
+                <span class="ms-2 text-xl font-extrabold tracking-tight" style="color:#13416B;">SIRENATA</span>
+            </a>
+            
+            <!-- Tombol Close Sidebar Manual Khusus Mobile/Tablet -->
+            <button @click="sidebarOpen = false" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-slate-100 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
 
-        <ul class="space-y-2 font-medium">
+        <ul class="space-y-1.5 px-3 font-medium">
             @role('super-admin')
                 @include('dashboard::partials.super-admin.sidebar-item')
             @endrole

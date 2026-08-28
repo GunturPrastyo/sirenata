@@ -173,12 +173,6 @@ class CourseController extends Controller
             return redirect()->back();
         }
 
-        // Check if already generated
-        if (!empty($enrollment->pivot->certificate_file)) {
-            ToastMagic::warning('Sertifikat Anda sudah digenerate.');
-            return redirect()->back();
-        }
-
         // Get active certificate setting
         $activeSetting = CertificateSetting::getActive();
         if (!$activeSetting) {
@@ -186,13 +180,20 @@ class CourseController extends Controller
             return redirect()->back();
         }
 
-        // Generate unique certificate code
-        do {
-            $certificateCode = 'CERT-' . date('Y') . '-' . strtoupper(Str::random(6));
-            $codeExists = DB::table('course_student')
-                ->where('certificate_code', $certificateCode)
-                ->exists();
-        } while ($codeExists);
+        // MENGIZINKAN PEMBARUAN: Cek apakah sebelumnya sudah punya nomor sertifikat
+        $certificateCode = $enrollment->pivot->certificate_code;
+        $issuedAt = $enrollment->pivot->certificate_issued_at ?? now();
+
+        if (empty($certificateCode)) {
+            // Jika ini pertama kali, buat kode baru
+            do {
+                $certificateCode = 'CERT-' . date('Y') . '-' . strtoupper(Str::random(6));
+                $codeExists = DB::table('course_student')
+                    ->where('certificate_code', $certificateCode)
+                    ->exists();
+            } while ($codeExists);
+            $issuedAt = now();
+        }
 
         // Convert template background and signature to base64 for PDF rendering stability
         $backgroundPath = storage_path('app/public/' . $activeSetting->background_image);
@@ -212,7 +213,7 @@ class CourseController extends Controller
             $signatureBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
         }
 
-        $completedDate = Carbon::parse($enrollment->pivot->completed_at)->translatedFormat('d F Y');
+        $completedDate = Carbon::parse($issuedAt)->translatedFormat('d F Y');
         $fullName = $user->profile?->full_name ?? $user->name;
 
         // Render certificate using dompdf
@@ -227,7 +228,7 @@ class CourseController extends Controller
             'signer_title' => $activeSetting->signer_title,
         ]);
 
-        $pdf->setPaper('a4', 'landscape');
+        $pdf->setPaper('a5', 'landscape');
         $pdf->getDomPDF()->set_option('isRemoteEnabled', true);
 
         // Define file path
@@ -238,20 +239,19 @@ class CourseController extends Controller
             Storage::disk('public')->makeDirectory('certificates/pdfs');
         }
 
-        // Put the generated PDF content into storage
+        // Put the generated PDF content into storage (Akan otomatis menimpa file lama)
         Storage::disk('public')->put($pdfFileName, $pdf->output());
 
         // Update the pivot table
         $course->students()->updateExistingPivot($user->id, [
             'certificate_code' => $certificateCode,
             'certificate_file' => $pdfFileName,
-            'certificate_issued_at' => now(),
+            'certificate_issued_at' => $issuedAt,
         ]);
 
-        ToastMagic::success('Sertifikat Anda berhasil dibuat!');
+        ToastMagic::success('Sertifikat Anda berhasil disiapkan dengan data terbaru!');
         return redirect()->back();
     }
-
     public function completeContent(SectionContent $content)
     {
         $progressService = app(CourseProgressService::class);
@@ -295,7 +295,7 @@ class CourseController extends Controller
         ]);
     }
 
-    
+
 
     public function submitTest(Request $request, string $slug, string $postTestId)
     {
@@ -362,8 +362,8 @@ class CourseController extends Controller
             $course = \Modules\LMS\Models\Course::where('slug', $slug)->first();
             if ($course) {
                 $course->students()->updateExistingPivot($userId, [
-                
-                    'status' => 'completed', 
+
+                    'status' => 'completed',
                     'progress' => 100,
                 ]);
             }

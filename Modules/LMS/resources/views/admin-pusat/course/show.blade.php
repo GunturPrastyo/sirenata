@@ -284,6 +284,22 @@
                     </div>
                 </div>
 
+                <!-- Card Pengaturan Sertifikat (WIDGET BARU) -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
+                            <i class="fas fa-certificate text-lg"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800">Sertifikat Kelulusan</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                        Pastikan Anda telah mengatur template dan tanda tangan digital untuk sertifikat yang akan diterbitkan ke peserta kursus.
+                    </p>
+                    <a href="{{ route('admin-pusat.certificates.index') }}" class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm">
+                        <i class="fas fa-cog mr-2"></i> Atur Sertifikat
+                    </a>
+                </div>
+
                 <!-- Card Peringatan / Wajib Post Test -->
                 <div class="bg-amber-50 rounded-xl border border-amber-200 p-5 flex items-start gap-3">
                     <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5"></i>
