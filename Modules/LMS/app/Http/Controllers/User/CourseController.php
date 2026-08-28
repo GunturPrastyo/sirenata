@@ -36,15 +36,23 @@ class CourseController extends Controller
 
         $courses = collect($result['data'])->map(function ($item) {
             $courseObj = (object) $item;
-
-            // Ambil data asli dari database berdasarkan ID atau Slug
             $slug = $courseObj->slug ?? null;
+
+            // Inisialisasi default
+            $courseObj->total_modul = 0;
+            $courseObj->total_materi = 0;
+
             if ($slug) {
                 $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
                     $courseObj->thumbnail_url = $dbCourse->thumbnail_url ?? $courseObj->thumbnail_url;
+                    
+                    // Hitung Modul & Materi dari Database Lokal
+                    $sectionIds = $dbCourse->sections()->pluck('id');
+                    $courseObj->total_modul = $sectionIds->count();
+                    $courseObj->total_materi = \Modules\LMS\Models\SectionContent::whereIn('course_section_id', $sectionIds)->count();
                 }
             }
             return $courseObj;
@@ -70,12 +78,20 @@ class CourseController extends Controller
         $courses = collect($result['data'])->map(function ($item) {
             $courseObj = (object) $item;
             $slug = $courseObj->slug ?? null;
+
+            $courseObj->total_modul = 0;
+            $courseObj->total_materi = 0;
+
             if ($slug) {
                 $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
                     $courseObj->thumbnail_url = $dbCourse->thumbnail_url ?? $courseObj->thumbnail_url;
+
+                    $sectionIds = $dbCourse->sections()->pluck('id');
+                    $courseObj->total_modul = $sectionIds->count();
+                    $courseObj->total_materi = \Modules\LMS\Models\SectionContent::whereIn('course_section_id', $sectionIds)->count();
                 }
             }
             return $courseObj;
@@ -101,12 +117,20 @@ class CourseController extends Controller
         $courses = collect($result['data'])->map(function ($item) {
             $courseObj = (object) $item;
             $slug = $courseObj->slug ?? null;
+
+            $courseObj->total_modul = 0;
+            $courseObj->total_materi = 0;
+
             if ($slug) {
                 $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
                     $courseObj->thumbnail_url = $dbCourse->thumbnail_url ?? $courseObj->thumbnail_url;
+
+                    $sectionIds = $dbCourse->sections()->pluck('id');
+                    $courseObj->total_modul = $sectionIds->count();
+                    $courseObj->total_materi = \Modules\LMS\Models\SectionContent::whereIn('course_section_id', $sectionIds)->count();
                 }
             }
             return $courseObj;
@@ -121,22 +145,14 @@ class CourseController extends Controller
         ]);
     }
 
-
-
     public function myCourseDetail(string $slug)
     {
         $token = (string) session('api_token', '');
 
-        // 1. Ambil data progress dan struktur materi dari API
         $result = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
-
-        // Jadikan array terlebih dahulu agar mudah digabungkan
         $apiCourseData = $result['data'] ?? [];
-
-        // 2. Ambil data master dari Database lokal untuk melengkapi (deskripsi, kategori, dll)
         $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
 
-        // 3. Gabungkan data API dengan data Database
         if ($dbCourse) {
             $apiCourseData['description']   = $dbCourse->description;
             $apiCourseData['category']      = $dbCourse->category ? $dbCourse->category->toArray() : null;
@@ -144,7 +160,6 @@ class CourseController extends Controller
             $apiCourseData['course_name']   = $dbCourse->name;
         }
 
-        // Trik konversi aman: ubah array bertingkat kembali menjadi Object utuh
         $course = json_decode(json_encode($apiCourseData));
 
         return view('lms::user.course.my-course-detail', [
@@ -159,7 +174,6 @@ class CourseController extends Controller
         $user = Auth::user();
         $course = Course::where('slug', $slug)->firstOrFail();
 
-        // Check if student is enrolled
         $enrollment = $course->students()->wherePivot('user_id', $user->id)->first();
 
         if (!$enrollment) {
@@ -167,25 +181,21 @@ class CourseController extends Controller
             return redirect()->back();
         }
 
-        // Check completion status
         if ($enrollment->pivot->status !== 'completed' || $enrollment->pivot->progress < 100) {
             ToastMagic::error('Anda belum menyelesaikan kursus ini.');
             return redirect()->back();
         }
 
-        // Get active certificate setting
         $activeSetting = CertificateSetting::getActive();
         if (!$activeSetting) {
             ToastMagic::error('Pengaturan sertifikat aktif belum diatur oleh admin.');
             return redirect()->back();
         }
 
-        // MENGIZINKAN PEMBARUAN: Cek apakah sebelumnya sudah punya nomor sertifikat
         $certificateCode = $enrollment->pivot->certificate_code;
         $issuedAt = $enrollment->pivot->certificate_issued_at ?? now();
 
         if (empty($certificateCode)) {
-            // Jika ini pertama kali, buat kode baru
             do {
                 $certificateCode = 'CERT-' . date('Y') . '-' . strtoupper(Str::random(6));
                 $codeExists = DB::table('course_student')
@@ -195,7 +205,6 @@ class CourseController extends Controller
             $issuedAt = now();
         }
 
-        // Convert template background and signature to base64 for PDF rendering stability
         $backgroundPath = storage_path('app/public/' . $activeSetting->background_image);
         $signaturePath = storage_path('app/public/' . $activeSetting->signature_image);
 
@@ -216,7 +225,6 @@ class CourseController extends Controller
         $completedDate = Carbon::parse($issuedAt)->translatedFormat('d F Y');
         $fullName = $user->profile?->full_name ?? $user->name;
 
-        // Render certificate using dompdf
         $pdf = Pdf::loadView('lms::admin-pusat.certificates.certificate-template', [
             'nama_peserta' => $fullName,
             'nama_kursus' => $course->name,
@@ -231,18 +239,14 @@ class CourseController extends Controller
         $pdf->setPaper('a5', 'landscape');
         $pdf->getDomPDF()->set_option('isRemoteEnabled', true);
 
-        // Define file path
         $pdfFileName = 'certificates/pdfs/cert-' . $course->slug . '-' . $user->id . '.pdf';
 
-        // Ensure directories exist
         if (!Storage::disk('public')->exists('certificates/pdfs')) {
             Storage::disk('public')->makeDirectory('certificates/pdfs');
         }
 
-        // Put the generated PDF content into storage (Akan otomatis menimpa file lama)
         Storage::disk('public')->put($pdfFileName, $pdf->output());
 
-        // Update the pivot table
         $course->students()->updateExistingPivot($user->id, [
             'certificate_code' => $certificateCode,
             'certificate_file' => $pdfFileName,
@@ -252,6 +256,7 @@ class CourseController extends Controller
         ToastMagic::success('Sertifikat Anda berhasil disiapkan dengan data terbaru!');
         return redirect()->back();
     }
+
     public function completeContent(SectionContent $content)
     {
         $progressService = app(CourseProgressService::class);
@@ -275,7 +280,6 @@ class CourseController extends Controller
     {
         $token = (string) session('api_token', '');
 
-        // Ambil data detail course untuk navigasi sidebar/breadcrumb jika diperlukan
         $result = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
         $apiCourseData = $result['data'] ?? [];
 
@@ -285,7 +289,6 @@ class CourseController extends Controller
         }
         $course = json_decode(json_encode($apiCourseData));
 
-        // Ambil data materi spesifik berdasarkan ID
         $content = \Modules\LMS\Models\SectionContent::findOrFail($contentId);
 
         return view('lms::user.course.content-show', [
@@ -295,12 +298,10 @@ class CourseController extends Controller
         ]);
     }
 
-
-
     public function submitTest(Request $request, string $slug, string $postTestId)
     {
         $postTest = \Modules\LMS\Models\PostTest::with('questions.choices')->findOrFail($postTestId);
-        $userAnswers = $request->input('answers', []); // Format: [question_id => choice_id]
+        $userAnswers = $request->input('answers', []); 
 
         $totalQuestions = $postTest->questions->count();
         if ($totalQuestions === 0) {
@@ -320,11 +321,9 @@ class CourseController extends Controller
             }
         }
 
-        // 1. Kalkulasi Nilai & Status Lulus
         $score = round(($correctCount / $totalQuestions) * 100);
         $isPassed = $score >= $postTest->passing_score;
 
-        // 2. Simpan hasil ke Database Lokal (dengan penanganan UUID manual)
         $userId = \Illuminate\Support\Facades\Auth::id();
 
         $existingRecord = \Illuminate\Support\Facades\DB::table('post_test_results')
@@ -333,7 +332,6 @@ class CourseController extends Controller
             ->first();
 
         if ($existingRecord) {
-            // Jika sudah ada, cukup update nilainya
             \Illuminate\Support\Facades\DB::table('post_test_results')
                 ->where('id', $existingRecord->id)
                 ->update([
@@ -343,7 +341,6 @@ class CourseController extends Controller
                     'updated_at'   => now(),
                 ]);
         } else {
-            // Jika belum ada, insert baru dengan menambahkan generate UUID
             \Illuminate\Support\Facades\DB::table('post_test_results')->insert([
                 'id'           => \Illuminate\Support\Str::uuid()->toString(),
                 'user_id'      => $userId,
@@ -356,20 +353,16 @@ class CourseController extends Controller
             ]);
         }
 
-        // 3. Jika ini adalah Evaluasi Akhir (tidak terikat bab tertentu) dan Lulus
-        // Update tabel pivot course_student agar status kursusnya selesai / bisa cetak sertifikat
         if (is_null($postTest->course_section_id) && $isPassed) {
             $course = \Modules\LMS\Models\Course::where('slug', $slug)->first();
             if ($course) {
                 $course->students()->updateExistingPivot($userId, [
-
                     'status' => 'completed',
                     'progress' => 100,
                 ]);
             }
         }
 
-        // 4. Berikan Feedback ke User
         if ($isPassed) {
             ToastMagic::success("Selamat! Anda lulus ujian dengan nilai {$score} (KKM: {$postTest->passing_score}). Modul selanjutnya telah terbuka! 🎉");
         } else {
@@ -383,7 +376,6 @@ class CourseController extends Controller
     {
         $token = (string) session('api_token', '');
 
-        // Ambil detail course
         $resultData = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
         $apiCourseData = $resultData['data'] ?? [];
         $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
@@ -392,16 +384,13 @@ class CourseController extends Controller
         }
         $course = json_decode(json_encode($apiCourseData));
 
-        // Ambil data Post Test beserta soal dan pilihan jawabannya
         $postTest = \Modules\LMS\Models\PostTest::with('questions.choices')->findOrFail($postTestId);
 
-        // Ambil data riwayat hasil jika sudah pernah mengerjakan
         $result = \Illuminate\Support\Facades\DB::table('post_test_results')
             ->where('user_id', \Illuminate\Support\Facades\Auth::id())
             ->where('post_test_id', $postTestId)
             ->first();
 
-        // Jika user klik tombol "Ulangi Tes" (?retake=1), maka abaikan hasil sebelumnya agar form tes kembali muncul
         if ($request->query('retake')) {
             $result = null;
         }
@@ -410,7 +399,7 @@ class CourseController extends Controller
             'course'   => $course,
             'slug'     => $slug,
             'postTest' => $postTest,
-            'result'   => $result, // Kirim variabel result ke view
+            'result'   => $result,
         ]);
     }
 }
