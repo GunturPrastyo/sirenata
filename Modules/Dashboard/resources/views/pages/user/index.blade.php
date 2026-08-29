@@ -1,208 +1,232 @@
 <x-dashboard::layouts.dashboard title="Dashboard Pembelajaran">
     @push('styles')
-        <link
-            href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-            rel="stylesheet"
-        />
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <!-- Script Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @endpush
 
-    <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto">
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <!-- Card 1: Total Kursus -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:shadow-md">
+    <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6">
+        
+        <!-- ===================================== -->
+        <!-- 1. STATS GRID                         -->
+        <!-- ===================================== -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">
-                        Total Kursus
-                    </p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                        {{ $stats['total'] }}
-                    </h3>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Total Kursus</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['total'] }}</h3>
                 </div>
-                <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
+                <div class="w-12 h-12 rounded-lg bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0 border border-[#13416B]/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                 </div>
             </div>
 
-            <!-- Card 2: Rata-rata Progress -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:shadow-md">
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">
-                        Rata-rata Progress
-                    </p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                        {{ $stats['avg_progress'] }}%
-                    </h3>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Rata-rata Progress</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['avg_progress'] }}%</h3>
                 </div>
-                <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                    </svg>
+                <div class="w-12 h-12 rounded-lg bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0 border border-[#13416B]/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                 </div>
             </div>
 
-            <!-- Card 3: Kursus Selesai -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:shadow-md">
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">
-                        Kursus Selesai
-                    </p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                        {{ $stats['selesai'] }}
-                    </h3>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Kursus Selesai</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['selesai'] }}</h3>
                 </div>
-                <div class="w-12 h-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                    </svg>
+                <div class="w-12 h-12 rounded-lg bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0 border border-[#13416B]/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
                 </div>
             </div>
         </div>
 
-        <!-- Grid Layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <!-- Left Column: Lanjutkan Belajar -->
-            <div class="space-y-6">
-                <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200">
-                    <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-                        <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                            <i class="fas fa-play-circle text-base"></i>
-                        </div>
-                        <h2 class="text-base font-bold text-slate-800">
-                            Lanjutkan Belajar
-                        </h2>
+        <!-- ===================================== -->
+        <!-- 2. ANALITIK EVALUASI FULL WIDTH       -->
+        <!-- ===================================== -->
+        <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-[#13416B]/10 text-[#13416B] rounded-lg shrink-0">
+                        <i class="fas fa-chart-bar text-lg"></i>
                     </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-800">Evaluasi Anda per Kursus</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Perbandingan skor post-test Anda dengan rata-rata peserta lain</p>
+                    </div>
+                </div>
 
-                    @if ($lastCourse)
-                        <div class="bg-slate-900 rounded-lg p-5 sm:p-6 text-white relative overflow-hidden border border-slate-800 shadow-sm">
-                            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                <!-- Dropdown Filter Kursus -->
+                @if(isset($chartDataByCourse) && count($chartDataByCourse) > 0)
+                    <div class="w-full sm:w-auto sm:max-w-xs shrink-0">
+                        <select id="courseChartFilter" class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden pr-8 cursor-pointer">
+                            @foreach($chartDataByCourse as $cId => $cData)
+                                <option value="{{ $cId }}">{{ $cData['course_name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+            </div>
+
+            @if(isset($chartDataByCourse) && count($chartDataByCourse) > 0)
+                <div class="relative w-full overflow-hidden" style="min-height: 280px;">
+                    <canvas id="postTestChart"></canvas>
+                </div>
+            @else
+                <div class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4">
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
+                        <i class="fas fa-chart-area text-xl"></i>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-700">Belum ada data evaluasi</p>
+                    <p class="text-xs text-slate-500 mt-1">Daftar dan selesaikan modul kursus untuk memunculkan laporan analitik evaluasi.</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- ===================================== -->
+        <!-- 3. GRID BAWAH (LANJUTKAN & RECENT)    -->
+        <!-- ===================================== -->
+        <!-- Menggunakan items-stretch agar tinggi kolom kiri dan kanan sama (sejajar) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+            
+            <!-- KOLOM KIRI: Lanjutkan Belajar -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
+                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100 shrink-0">
+                    <div class="p-2 bg-[#13416B]/10 text-[#13416B] rounded-lg">
+                        <i class="fas fa-play-circle text-base"></i>
+                    </div>
+                    <h2 class="text-base font-bold text-slate-800">
+                        Lanjutkan Belajar
+                    </h2>
+                </div>
+
+                @if ($lastCourse)
+                    <!-- Mengubah rounded-2xl menjadi rounded-lg agar selaras -->
+                    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm flex flex-col flex-1 transition-shadow hover:shadow-md">
+                        
+                        <!-- Header / Thumbnail -->
+                        <div class="h-36 sm:h-40 bg-[#184A78] relative flex items-center justify-center overflow-hidden shrink-0">
+                            <div class="absolute inset-0 bg-white/5 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
                             
-                            <div class="relative z-10">
-                                <div class="flex items-center justify-between mb-4 gap-4">
-                                    <div class="min-w-0 flex-1">
-                                        <p class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">
-                                            Terakhir diakses
-                                        </p>
-                                        <h3 class="text-base sm:text-lg font-bold truncate text-white">
-                                            {{ $lastCourse->name }}
-                                        </h3>
-                                    </div>
-                                    <div class="bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-1.5 text-right shrink-0">
-                                        <p class="text-lg font-extrabold text-blue-300">
-                                            {{ $lastCourse->progress }}%
-                                        </p>
-                                        <p class="text-[10px] text-slate-300 uppercase tracking-wider font-medium">Selesai</p>
-                                    </div>
+                            @if(isset($lastCourse->category_name))
+                                <span class="absolute top-4 left-4 px-3 py-1 text-[10px] font-bold rounded-full bg-white/20 border border-white/30 text-white uppercase tracking-wider backdrop-blur-sm z-10">
+                                    {{ $lastCourse->category_name }}
+                                </span>
+                            @endif
+
+                            @php
+                                $words = explode(' ', $lastCourse->name);
+                                $initials = '';
+                                foreach(array_slice($words, 0, 2) as $w) { $initials .= strtoupper(substr($w, 0, 1)); }
+                                if(strlen($initials) < 2) $initials = substr(strtoupper($lastCourse->name), 0, 2);
+                            @endphp
+                            <h2 class="text-[64px] font-normal text-white leading-none tracking-tight relative z-10" style="font-family: Arial, sans-serif;">
+                                {{ $initials }}
+                            </h2>
+                        </div>
+                        
+                        <!-- Body & Deskripsi -->
+                        <div class="p-5 sm:p-6 flex flex-col flex-1">
+                            <p class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">Aktivitas Terakhir</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-slate-800 mb-2 leading-snug line-clamp-2">
+                                {{ $lastCourse->name }}
+                            </h3>
+                            
+                            <p class="text-sm text-slate-500 line-clamp-3 mb-6 leading-relaxed">
+                                {{ $lastCourse->description ?? 'Lanjutkan materi pembelajaran Anda pada kursus ini untuk meningkatkan kompetensi dan mendapatkan sertifikat kelulusan.' }}
+                            </p>
+                            
+                            <div class="mt-auto">
+                                <div class="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
+                                    <span>Progress Belajar</span>
+                                    <span class="text-[#13416B] text-sm">{{ $lastCourse->progress }}%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2 mb-6 overflow-hidden">
+                                    <div class="bg-[#13416B] rounded-full h-full transition-all duration-500" style="width: {{ $lastCourse->progress }}%"></div>
                                 </div>
                                 
-                                <div class="w-full bg-slate-800 rounded-full h-2 mb-5 overflow-hidden">
-                                    <div
-                                        class="bg-blue-500 rounded-full h-full transition-all duration-500"
-                                        style="width: {{ $lastCourse->progress }}%"
-                                    ></div>
-                                </div>
-                                
-                                <a
-                                    href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}"
-                                    class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-bold transition-all text-xs sm:text-sm w-full sm:w-auto shadow-sm"
-                                >
-                                    <span>Lanjutkan Belajar</span>
+                                <a href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}" class="flex items-center justify-center gap-2 w-full bg-[#13416B] hover:bg-[#0f3354] text-white px-5 py-3 rounded-lg font-bold transition-all text-sm shadow-sm">
+                                    <i class="fas fa-play"></i>
+                                    <span>Lanjutkan Materi</span>
                                 </a>
                             </div>
                         </div>
-                    @else
-                        <div class="bg-slate-50 rounded-lg p-8 text-center border border-dashed border-slate-200">
-                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
-                                <i class="fas fa-book-open text-lg"></i>
-                            </div>
-                            <p class="text-sm font-semibold text-slate-700">Belum ada kursus yang sedang dipelajari</p>
-                            <a
-                                href="{{ route('user.course.my-course') }}"
-                                class="inline-flex items-center gap-1.5 mt-3 text-blue-600 text-xs font-bold hover:underline"
-                            >
-                                <span>Lihat semua kursus</span>
-                            </a>
+                    </div>
+                @else
+                    <div class="bg-slate-50 rounded-lg p-12 text-center border border-dashed border-slate-200 mt-2 flex-1 flex flex-col justify-center items-center">
+                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-slate-400">
+                            <i class="fas fa-book-open text-2xl"></i>
                         </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Right Column: Kursus Saya (Recent Courses) -->
-            <div class="space-y-6">
-                <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                        <div class="flex items-center gap-2">
-                            <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                                <i class="fas fa-graduation-cap text-base"></i>
-                            </div>
-                            <h2 class="text-base font-bold text-slate-800">Kursus Saya</h2>
-                        </div>
-                        <a
-                            href="{{ route('user.course.my-course') }}"
-                            class="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
-                        >
-                            <span>Lihat semua</span>
+                        <p class="text-sm font-semibold text-slate-700">Belum ada aktivitas belajar</p>
+                        <a href="{{ route('user.course.my-course') }}" class="inline-flex items-center justify-center gap-2 mt-4 px-6 py-2.5 bg-white border border-slate-200 rounded-lg text-[#13416B] text-sm font-bold hover:bg-slate-50 shadow-sm transition-all">
+                            <span>Lihat Katalog Kursus</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
                         </a>
                     </div>
+                @endif
+            </div>
 
-                    <div class="space-y-3">
-                        @forelse ($recentCourses as $course)
-                            <a
-                                href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                                class="block bg-white border border-slate-200 rounded-lg p-3.5 transition-all duration-200 hover:border-blue-400 hover:shadow-sm group"
-                            >
-                                <div class="flex items-center gap-3.5">
-                                    <img
-                                        src="{{ $course->thumbnail_url ?? 'https://picsum.photos/seed/' . $course->id . '/120/80' }}"
-                                        alt="{{ $course->name }}"
-                                        class="w-16 h-14 rounded-lg object-cover flex-shrink-0 border border-slate-100"
-                                    />
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-start justify-between gap-2 mb-1.5">
-                                            <h3 class="font-bold text-slate-800 text-sm truncate group-hover:text-blue-600 transition-colors">
-                                                {{ $course->name }}
-                                            </h3>
-                                            
-                                            @if ($course->pivot->status === 'completed')
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200 shrink-0">
-                                                    Selesai
-                                                </span>
-                                            @elseif ($course->pivot->status === 'in_progress')
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 shrink-0">
-                                                    Berjalan
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 shrink-0">
-                                                    Terdaftar
-                                                </span>
-                                            @endif
-                                        </div>
-                                        
-                                        <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5 font-medium">
-                                            <span>Progress Belajar</span>
-                                            <span class="font-bold text-slate-700">{{ $course->pivot->progress }}%</span>
-                                        </div>
-                                        
-                                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                                            <div
-                                                class="{{ $course->pivot->status === 'completed' ? 'bg-blue-600' : 'bg-amber-500' }} h-full rounded-full transition-all duration-300"
-                                                style="width: {{ $course->pivot->progress }}%"
-                                            ></div>
-                                        </div>
+            <!-- KOLOM KANAN: Kursus Saya (Recent Courses - Maks 4) -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 shrink-0">
+                    <div class="flex items-center gap-2">
+                        <div class="p-2 bg-[#13416B]/10 text-[#13416B] rounded-lg">
+                            <i class="fas fa-graduation-cap text-base"></i>
+                        </div>
+                        <h2 class="text-base font-bold text-slate-800">Kursus Saya</h2>
+                    </div>
+                    <a href="{{ route('user.course.my-course') }}" class="text-xs font-bold text-[#13416B] hover:underline flex items-center gap-1">
+                        <span>Lihat semua</span>
+                    </a>
+                </div>
+
+                <div class="space-y-3 flex-1 flex flex-col justify-between">
+                    @forelse ($recentCourses as $course)
+                        <a href="{{ route('user.course.my-course.detail', $course->slug) }}" class="block bg-white border border-slate-200 rounded-lg p-3.5 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group">
+                            <div class="flex items-start gap-3.5">
+                                <div class="w-14 h-14 bg-[#184A78] rounded-lg flex items-center justify-center shrink-0 mt-1 shadow-inner relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-white/5 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:10px_10px] opacity-20"></div>
+                                    @php
+                                        $words = explode(' ', $course->name);
+                                        $initials = '';
+                                        foreach(array_slice($words, 0, 2) as $w) { $initials .= strtoupper(substr($w, 0, 1)); }
+                                        if(strlen($initials) < 2) $initials = substr(strtoupper($course->name), 0, 2);
+                                    @endphp
+                                    <span class="text-xl font-normal tracking-tight text-white relative z-10" style="font-family: Arial, sans-serif;">{{ $initials }}</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-start justify-between gap-2 mb-1">
+                                        <h3 class="font-bold text-slate-800 text-sm truncate group-hover:text-[#13416B] transition-colors">{{ $course->name }}</h3>
+                                        @if ($course->pivot->status === 'completed')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-[#13416B] bg-[#13416B]/10 border border-[#13416B]/20 shrink-0">Selesai</span>
+                                        @elseif ($course->pivot->status === 'in_progress')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-slate-700 bg-slate-100 border border-slate-200 shrink-0">Berjalan</span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border border-slate-200 shrink-0">Terdaftar</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-slate-500 line-clamp-2 mb-2 leading-relaxed">
+                                        {{ $course->description ?? 'Deskripsi kursus tidak tersedia.' }}
+                                    </p>
+                                    <div class="flex items-center justify-between text-[11px] text-slate-500 mb-1.5 font-medium">
+                                        <span>Progress Belajar</span>
+                                        <span class="font-bold text-slate-700">{{ $course->pivot->progress }}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                        <div class="bg-[#13416B] h-full rounded-full transition-all duration-300" style="width: {{ $course->pivot->progress }}%"></div>
                                     </div>
                                 </div>
-                            </a>
-                        @empty
-                            <div class="text-center py-10 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-auto mb-2 text-slate-400 shadow-sm">
-                                    <i class="fas fa-folder-open text-sm"></i>
-                                </div>
-                                <p class="text-xs font-semibold text-slate-600">Belum ada kursus yang diikuti.</p>
                             </div>
-                        @endforelse
-                    </div>
+                        </a>
+                    @empty
+                        <div class="text-center py-10 bg-slate-50 rounded-lg border border-dashed border-slate-200 flex-1 flex flex-col justify-center">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-auto mb-2 text-slate-400 shadow-sm">
+                                <i class="fas fa-folder-open text-sm"></i>
+                            </div>
+                            <p class="text-xs font-semibold text-slate-600">Belum ada kursus yang diikuti.</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -210,212 +234,76 @@
 
     @if (! $profile || empty($profile->instansi))
         <!-- Modal Card Instansi -->
-        <div
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-            style="background-color: rgba(15, 23, 42, 0.6)"
-        >
-            <div
-                class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200"
-            >
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm" style="background-color: rgba(15, 23, 42, 0.6)">
+            <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200">
                 <div class="p-6 sm:p-8">
                     <!-- Header -->
                     <div class="text-center mb-6">
-                        <div
-                            class="bg-blue-50 text-blue-600 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 border border-blue-100 shadow-sm"
-                        >
-                            <svg
-                                class="w-7 h-7"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                                />
-                            </svg>
+                        <div class="bg-[#13416B]/10 text-[#13416B] w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 border border-[#13416B]/20 shadow-sm">
+                            <i class="fas fa-building text-2xl"></i>
                         </div>
                         <h2 class="text-xl font-extrabold text-slate-900">Pilih Instansi Anda</h2>
-                        <p class="text-sm text-slate-500 mt-1">
-                            Lengkapi informasi institusi untuk melanjutkan akses pembelajaran
-                        </p>
+                        <p class="text-sm text-slate-500 mt-1">Lengkapi informasi institusi untuk melanjutkan akses pembelajaran</p>
                     </div>
 
-                    <!-- Form -->
-                    <form
-                        id="instansiForm"
-                        method="POST"
-                        action="{{ route('user.update-instansi') }}"
-                        class="space-y-5"
-                    >
+                    <!-- Form Instansi -->
+                    <form id="instansiForm" method="POST" action="{{ route('user.update-instansi') }}" class="space-y-5">
                         @csrf
-
-                        <!-- Asal Instansi -->
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
-                                Asal Instansi
-                                <span class="text-red-500">*</span>
-                            </label>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Asal Instansi <span class="text-red-500">*</span></label>
                             <div class="grid grid-cols-3 gap-3">
-                                <label
-                                    class="flex items-center justify-center px-3 py-2.5 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition-all font-semibold text-sm text-slate-700"
-                                >
-                                    <input
-                                        type="radio"
-                                        name="asalInstansi"
-                                        value="pusat"
-                                        class="mr-2 text-blue-600 focus:ring-blue-500"
-                                    />
-                                    <span>Pusat</span>
+                                <label class="flex items-center justify-center px-3 py-2.5 border border-slate-200 rounded-lg cursor-pointer hover:border-[#13416B] hover:bg-[#13416B]/5 transition-all font-semibold text-sm text-slate-700">
+                                    <input type="radio" name="asalInstansi" value="pusat" class="mr-2 text-[#13416B] focus:ring-[#13416B]"> <span>Pusat</span>
                                 </label>
-                                <label
-                                    class="flex items-center justify-center px-3 py-2.5 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition-all font-semibold text-sm text-slate-700"
-                                >
-                                    <input
-                                        type="radio"
-                                        name="asalInstansi"
-                                        value="provinsi"
-                                        class="mr-2 text-blue-600 focus:ring-blue-500"
-                                    />
-                                    <span>Provinsi</span>
+                                <label class="flex items-center justify-center px-3 py-2.5 border border-slate-200 rounded-lg cursor-pointer hover:border-[#13416B] hover:bg-[#13416B]/5 transition-all font-semibold text-sm text-slate-700">
+                                    <input type="radio" name="asalInstansi" value="provinsi" class="mr-2 text-[#13416B] focus:ring-[#13416B]"> <span>Provinsi</span>
                                 </label>
-                                <label
-                                    class="flex items-center justify-center px-3 py-2.5 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition-all font-semibold text-sm text-slate-700"
-                                >
-                                    <input
-                                        type="radio"
-                                        name="asalInstansi"
-                                        value="kabkota"
-                                        class="mr-2 text-blue-600 focus:ring-blue-500"
-                                    />
-                                    <span>Kab/Kota</span>
+                                <label class="flex items-center justify-center px-3 py-2.5 border border-slate-200 rounded-lg cursor-pointer hover:border-[#13416B] hover:bg-[#13416B]/5 transition-all font-semibold text-sm text-slate-700">
+                                    <input type="radio" name="asalInstansi" value="kabkota" class="mr-2 text-[#13416B] focus:ring-[#13416B]"> <span>Kab/Kota</span>
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Kementerian (Show if Pusat) -->
                         <div id="kementerianSection" class="hidden">
-                            <label
-                                for="kementerian"
-                                class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2"
-                            >
-                                Kementerian/Lembaga
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <select id="kementerian" class="w-full">
-                                <option value="">Pilih Kementerian/Lembaga</option>
-                            </select>
+                            <label for="kementerian" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kementerian/Lembaga <span class="text-red-500">*</span></label>
+                            <select id="kementerian" class="w-full"><option value="">Pilih Kementerian/Lembaga</option></select>
                             <input type="hidden" name="instansi" id="finalInstansi" />
                         </div>
 
-                        <!-- Provinsi (Show if Provinsi or Kab/Kota) -->
                         <div id="provinsiSection" class="hidden">
-                            <label
-                                for="provinsi"
-                                class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2"
-                            >
-                                Provinsi
-                                <span class="text-red-500">*</span>
-                            </label>
+                            <label for="provinsi" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Provinsi <span class="text-red-500">*</span></label>
                             <select id="provinsi" class="w-full" name="province_code">
                                 <option value="">Pilih Provinsi</option>
                                 @foreach ($provinces as $prov)
-                                    <option
-                                        value="{{ $prov->code }}"
-                                        data-name="{{ $prov->name }}"
-                                    >
-                                        {{ $prov->name }}
-                                    </option>
+                                    <option value="{{ $prov->code }}" data-name="{{ $prov->name }}">{{ $prov->name }}</option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <!-- Kab/Kota (Show only if Kab/Kota selected) -->
                         <div id="kabkotaSection" class="hidden">
-                            <label
-                                for="kabkota"
-                                class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2"
-                            >
-                                Kabupaten/Kota
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <select id="kabkota" class="w-full" name="regency_code">
-                                <option value="">Pilih Kabupaten/Kota</option>
-                            </select>
+                            <label for="kabkota" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kabupaten/Kota <span class="text-red-500">*</span></label>
+                            <select id="kabkota" class="w-full" name="regency_code"><option value="">Pilih Kabupaten/Kota</option></select>
                         </div>
 
-                        <!-- Instansi (Show for Provinsi and Kab/Kota) -->
                         <div id="instansiSection" class="hidden">
-                            <label
-                                for="instansi"
-                                class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2"
-                            >
-                                Instansi
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <select id="instansi" class="w-full">
-                                <option value="">Pilih Instansi</option>
-                            </select>
-                            <p class="mt-1.5 text-xs text-slate-500">
-                                Pilih opsi "Lainnya" apabila instansi Anda tidak ditemukan dalam daftar.
-                            </p>
+                            <label for="instansi" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Instansi <span class="text-red-500">*</span></label>
+                            <select id="instansi" class="w-full"><option value="">Pilih Instansi</option></select>
+                            <p class="mt-1.5 text-xs text-slate-500">Pilih opsi "Lainnya" apabila instansi Anda tidak ditemukan.</p>
                         </div>
 
-                        <!-- Custom Instansi Input -->
                         <div id="customInstansiSection" class="hidden">
-                            <label
-                                for="customInstansi"
-                                class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2"
-                            >
-                                Nama Instansi
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="instansi_lainnya"
-                                id="customInstansi"
-                                placeholder="Masukkan nama instansi"
-                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            />
-                            <div class="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                                <p class="text-xs text-blue-800 font-bold mb-1">
-                                    Petunjuk Penulisan:
-                                </p>
-                                <ul class="text-xs text-blue-700 space-y-0.5 ml-4 list-disc">
-                                    <li>Gunakan huruf kapital pada awal setiap kata (Title Case).</li>
-                                    <li>Contoh: <span class="font-semibold">"Dinas Pendidikan dan Kebudayaan"</span>.</li>
-                                </ul>
-                            </div>
+                            <label for="customInstansi" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Instansi <span class="text-red-500">*</span></label>
+                            <input type="text" name="instansi_lainnya" id="customInstansi" placeholder="Masukkan nama instansi" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#13416B] focus:border-[#13416B]"/>
                         </div>
 
-                        <!-- Unit Kerja -->
                         <div id="unitKerjaSection" class="hidden">
-                            <label
-                                for="unitKerja"
-                                class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2"
-                            >
-                                Unit Kerja
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="unit_kerja"
-                                id="unitKerja"
-                                placeholder="Contoh: Bagian SDM"
-                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            />
+                            <label for="unitKerja" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Unit Kerja <span class="text-red-500">*</span></label>
+                            <input type="text" name="unit_kerja" id="unitKerja" placeholder="Contoh: Bagian SDM" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#13416B] focus:border-[#13416B]"/>
                         </div>
 
-                        <!-- Submit Button -->
                         <div class="pt-3">
-                            <button
-                                type="submit"
-                                class="w-full bg-blue-600 text-white py-3 px-5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2"
-                            >
-                                <i class="fas fa-save"></i>
-                                <span>Simpan & Lanjutkan</span>
+                            <button type="submit" class="w-full bg-[#13416B] text-white py-3 px-5 rounded-lg text-sm font-bold hover:bg-[#0f3354] transition-colors shadow-sm flex items-center justify-center gap-2">
+                                <i class="fas fa-save"></i> <span>Simpan & Lanjutkan</span>
                             </button>
                         </div>
                     </form>
@@ -425,87 +313,157 @@
     @endif
 
     @push('scripts')
-        <!-- jQuery (required for Select2) -->
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
+            // --- SCRIPT UNTUK GRAFIK BAR CHART (HORIZONTAL) POST-TEST ---
+            document.addEventListener('DOMContentLoaded', function () {
+                const ctx = document.getElementById('postTestChart');
+                
+                if (ctx && @json(isset($chartDataByCourse) ? count($chartDataByCourse) : 0) > 0) {
+                    const allChartData = @json($chartDataByCourse ?? []);
+                    
+                    const courseKeys = Object.keys(allChartData);
+                    let currentCourseId = courseKeys[0];
+                    let currentData = allChartData[currentCourseId];
+                    
+                    const postTestChart = new Chart(ctx.getContext('2d'), {
+                        type: 'bar', 
+                        data: {
+                            labels: currentData.labels,
+                            datasets: [
+                                {
+                                    label: 'Skor Anda',
+                                    data: currentData.user_scores,
+                                    backgroundColor: '#13416B',
+                                    borderRadius: 4,
+                                    barPercentage: 0.7,
+                                    categoryPercentage: 0.8
+                                },
+                                {
+                                    label: 'Rata-rata Peserta',
+                                    data: currentData.avg_scores,
+                                    backgroundColor: '#cbd5e1',
+                                    borderRadius: 4,
+                                    barPercentage: 0.7,
+                                    categoryPercentage: 0.8
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y', 
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        usePointStyle: true,
+                                        boxWidth: 8,
+                                        font: { size: 11, family: "'Inter', sans-serif" }
+                                    }
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                    titleFont: { size: 13 },
+                                    bodyFont: { size: 12 },
+                                    padding: 10,
+                                    cornerRadius: 8,
+                                }
+                            },
+                            scales: {
+                                x: { 
+                                    beginAtZero: true,
+                                    max: 100,
+                                    grid: { color: '#f1f5f9' },
+                                    ticks: { font: { size: 10 }, stepSize: 20 }
+                                },
+                                y: { 
+                                    grid: { display: false },
+                                    ticks: { font: { size: 10 }, autoSkip: false }
+                                }
+                            },
+                            interaction: {
+                                mode: 'index',
+                                axis: 'y',
+                                intersect: false
+                            }
+                        }
+                    });
+
+                    const filterSelect = document.getElementById('courseChartFilter');
+                    if (filterSelect) {
+                        filterSelect.addEventListener('change', function() {
+                            const selectedId = this.value;
+                            const newData = allChartData[selectedId];
+                            
+                            if(newData) {
+                                const newHeight = Math.max(280, newData.labels.length * 60);
+                                ctx.parentElement.style.height = newHeight + 'px';
+
+                                postTestChart.data.labels = newData.labels;
+                                postTestChart.data.datasets[0].data = newData.user_scores;
+                                postTestChart.data.datasets[1].data = newData.avg_scores;
+                                postTestChart.update();
+                            }
+                        });
+                        
+                        const initialHeight = Math.max(280, currentData.labels.length * 60);
+                        ctx.parentElement.style.height = initialHeight + 'px';
+                    }
+                }
+            });
+
             // --- Instansi Form Logic ---
             @if (!$profile || empty($profile->instansi))
                 $(document).ready(function() {
-                    // Fetch Kementerian/Lembaga via API
                     $.ajax({
                         url: '{{ route("api.masterdata.institutions.index") }}?type=pusat',
                         type: 'GET',
                         success: function(response) {
                             if(response.success) {
-                                response.data.forEach(k => {
-                                    $('#kementerian').append(new Option(k.name, k.name));
-                                });
+                                response.data.forEach(k => { $('#kementerian').append(new Option(k.name, k.name)); });
                             }
                         }
                     });
 
-                    // Initialize Select2
                     $('#kementerian, #provinsi, #kabkota, #instansi').select2({
-                        placeholder: function() {
-                            return $(this).find('option:first').text();
-                        },
+                        placeholder: function() { return $(this).find('option:first').text(); },
                         allowClear: true,
                         width: '100%'
                     });
 
-                    // Handle Asal Instansi Selection
                     $('input[name="asalInstansi"]').on('change', function() {
                         const value = $(this).val();
+                        $('#kementerianSection, #provinsiSection, #kabkotaSection, #instansiSection, #customInstansiSection, #unitKerjaSection').addClass('hidden');
+                        $('#kementerian, #provinsi, #kabkota, #instansi, #customInstansi, #unitKerja').val('').trigger('change');
 
-                        // Reset all sections
-                        $('#kementerianSection, #provinsiSection, #kabkotaSection, #instansiSection, #customInstansiSection, #unitKerjaSection')
-                            .addClass('hidden');
-                        $('#kementerian, #provinsi, #kabkota, #instansi, #customInstansi, #unitKerja').val('')
-                            .trigger('change');
-
-                        if (value === 'pusat') {
-                            $('#kementerianSection, #unitKerjaSection').removeClass('hidden');
-                        } else if (value === 'provinsi') {
-                            $('#provinsiSection').removeClass('hidden');
-                        } else if (value === 'kabkota') {
-                            $('#provinsiSection').removeClass('hidden');
-                        }
+                        if (value === 'pusat') { $('#kementerianSection, #unitKerjaSection').removeClass('hidden'); } 
+                        else if (value === 'provinsi' || value === 'kabkota') { $('#provinsiSection').removeClass('hidden'); }
                     });
 
-                    // Handle Provinsi Selection
                     $('#provinsi').on('change', function() {
                         const provinsiCode = $(this).val();
                         const asalInstansi = $('input[name="asalInstansi"]:checked').val();
 
                         if (provinsiCode) {
                             if (asalInstansi === 'kabkota') {
-                              
                                 $.ajax({
                                     url: '{{ route('user.get-regencies') }}',
                                     type: 'GET',
-                                    data: {
-                                        province_code: provinsiCode
-                                    },
+                                    data: { province_code: provinsiCode },
                                     success: function(response) {
                                         if (response.success) {
-                                            $('#kabkota').empty().append(new Option(
-                                                'Pilih Kabupaten/Kota', ''));
-                                            response.data.forEach(regency => {
-                                                $('#kabkota').append(new Option(regency
-                                                    .name, regency.code));
-                                            });
+                                            $('#kabkota').empty().append(new Option('Pilih Kabupaten/Kota', ''));
+                                            response.data.forEach(regency => { $('#kabkota').append(new Option(regency.name, regency.code)); });
                                             $('#kabkotaSection').removeClass('hidden');
-                                            $('#instansiSection, #customInstansiSection, #unitKerjaSection')
-                                                .addClass('hidden');
+                                            $('#instansiSection, #customInstansiSection, #unitKerjaSection').addClass('hidden');
                                         }
-                                    },
-                                    error: function(xhr) {
-                                        console.error('Failed to load regencies');
                                     }
                                 });
                             } else if (asalInstansi === 'provinsi') {
-                                // For provinsi, show instansi directly
                                 populateInstansi();
                                 $('#instansiSection').removeClass('hidden');
                                 $('#kabkotaSection, #customInstansiSection').addClass('hidden');
@@ -513,7 +471,6 @@
                         }
                     });
 
-                    // Function to populate Instansi dropdown
                     function populateInstansi() {
                         $('#instansi').empty().append(new Option('Pilih Instansi', ''));
                         $.ajax({
@@ -521,27 +478,21 @@
                             type: 'GET',
                             success: function(response) {
                                 if(response.success) {
-                                    response.data.forEach(i => {
-                                        $('#instansi').append(new Option(i.name, i.name));
-                                    });
-                                    // Add "Lainnya" option
+                                    response.data.forEach(i => { $('#instansi').append(new Option(i.name, i.name)); });
                                     $('#instansi').append(new Option('Lainnya (Instansi tidak ada dalam daftar)', 'lainnya'));
                                 }
                             }
                         });
                     }
 
-                    // Handle Kab/Kota Selection
                     $('#kabkota').on('change', function() {
-                        const kabkota = $(this).val();
-                        if (kabkota) {
+                        if ($(this).val()) {
                             populateInstansi();
                             $('#instansiSection').removeClass('hidden');
                             $('#customInstansiSection, #unitKerjaSection').addClass('hidden');
                         }
                     });
 
-                    // Handle Instansi Selection
                     $('#instansi').on('change', function() {
                         const value = $(this).val();
                         if (value === 'lainnya') {
@@ -555,42 +506,25 @@
                         }
                     });
 
-                    // Handle Custom Instansi Input
                     $('#customInstansi').on('input', function() {
-                        if ($(this).val().trim()) {
-                            $('#unitKerjaSection').removeClass('hidden');
-                        } else {
-                            $('#unitKerjaSection').addClass('hidden');
-                        }
+                        if ($(this).val().trim()) { $('#unitKerjaSection').removeClass('hidden'); } 
+                        else { $('#unitKerjaSection').addClass('hidden'); }
                     });
 
                     $('#instansiForm').on('submit', function(e) {
                         const asalInstansi = $('input[name="asalInstansi"]:checked').val();
+                        if (!asalInstansi) { e.preventDefault(); alert('Pilih asal instansi terlebih dahulu!'); return; }
 
-                        if (!asalInstansi) {
-                            e.preventDefault();
-                            alert('Pilih asal instansi terlebih dahulu!');
-                            return;
-                        }
-
-                        // Force sync Select2 values ke elemen asli sebelum submit
                         if (asalInstansi === 'pusat') {
                             const kemVal = $('#kementerian').val();
-                            if (!kemVal) {
-                                e.preventDefault();
-                                alert('Pilih Kementerian/Lembaga!');
-                                return;
-                            }
+                            if (!kemVal) { e.preventDefault(); alert('Pilih Kementerian/Lembaga!'); return; }
                             $('#finalInstansi').val(kemVal);
                         }
 
                         if (asalInstansi === 'provinsi' || asalInstansi === 'kabkota') {
                             const instansiVal = $('#instansi').val();
-                            if (instansiVal === 'lainnya') {
-                                $('#finalInstansi').val($('#customInstansi').val().trim());
-                            } else {
-                                $('#finalInstansi').val(instansiVal);
-                            }
+                            if (instansiVal === 'lainnya') { $('#finalInstansi').val($('#customInstansi').val().trim()); } 
+                            else { $('#finalInstansi').val(instansiVal); }
                         }
                     });
                 });
