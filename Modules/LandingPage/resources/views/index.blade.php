@@ -150,12 +150,12 @@
                     </a>
                 </div>
 
-                <!-- Avatar Social Proof -->
+                <!-- Avatar Social Proof dengan Inisial Random (2 Huruf) -->
                 <div class="flex items-center gap-4">
                     <div class="flex -space-x-3">
-                        <img src="https://ui-avatars.com/api/?name=A&background=random" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="User">
-                        <img src="https://ui-avatars.com/api/?name=B&background=random" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="User">
-                        <img src="https://ui-avatars.com/api/?name=C&background=random" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="User">
+                        <img src="https://ui-avatars.com/api/?name=JD&background=random" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="User">
+                        <img src="https://ui-avatars.com/api/?name=FW&background=random" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="User">
+                        <img src="https://ui-avatars.com/api/?name=RM&background=random" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="User">
                         <div class="w-10 h-10 rounded-full border-2 border-white shadow-sm bg-slate-50 flex items-center justify-center text-xs font-bold text-slate-600">+1K</div>
                     </div>
                     <p class="text-sm font-medium text-slate-600">Bergabung dengan pengguna lainnya.</p>
@@ -610,9 +610,7 @@
         </button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- SCRIPT OBSERVER UNTUK ANIMASI & COUNTER    -->
-    <!-- ========================================== -->
+    <!-- SCRIPT OBSERVER UNTUK ANIMASI MUNCUL (REVEAL) -->
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -628,7 +626,6 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        // observer.unobserve(entry.target); // Buka komen ini jika animasi hanya ingin dimainkan 1x
                     }
                 });
             }, revealOptions);
@@ -650,14 +647,13 @@
                         const targetNum = parseFloat(targetEl.getAttribute('data-target'));
                         const isFloat = targetNum % 1 !== 0;
                         const suffix = targetEl.getAttribute('data-suffix') || '';
-                        const duration = 2000; // Durasi animasi 2 detik
+                        const duration = 2000;
                         let startTime = null;
 
                         const animateCount = (timestamp) => {
                             if (!startTime) startTime = timestamp;
                             const progress = Math.min((timestamp - startTime) / duration, 1);
                             
-                            // Easing (ease-out-cubic) agar berhitung makin lambat di akhir
                             const easeProgress = 1 - Math.pow(1 - progress, 3);
                             let currentNum = easeProgress * targetNum;
                             
@@ -674,7 +670,7 @@
                             }
                         };
                         requestAnimationFrame(animateCount);
-                        observer.unobserve(targetEl); // Counter cuma jalan 1x
+                        observer.unobserve(targetEl); 
                     }
                 });
             }, statOptions);
