@@ -342,8 +342,8 @@
                     </div>
                 </div>
 
-                <!-- Kanan: Judul & Deskripsi Section Sticky (Teks Rata Kiri & Diangkat Sedikit) -->
-                <div class="lg:sticky lg:top-24 order-1 lg:order-2 w-full text-left">
+                <!-- Kanan: Judul & Deskripsi Section Sticky (Posisi dinaikkan: top-16) -->
+                <div class="lg:sticky lg:top-16 order-1 lg:order-2 w-full text-left">
                     <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">E-Learning Terintegrasi</span>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                         Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
@@ -364,11 +364,11 @@
                         </div>
                     </div>
 
-                    <!-- DEKORASI PANAH (Arah ke Kursus untuk dorong elemen atas) -->
-                    <!-- Desktop: Panah menunjuk ke kiri (ke arah daftar kursus) -->
-                    <div class="mt-16 hidden lg:flex items-start gap-4 text-[#13416B]/60">
+                    <!-- DEKORASI PANAH (Diperbesar & diatur marginnya) -->
+                    <!-- Desktop: Panah menunjuk ke kiri -->
+                    <div class="mt-12 hidden lg:flex items-start gap-4 text-[#13416B]/60">
                         <svg width="120" height="60" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0 animate-pulse mt-1">
-                            <!-- Garis lengkung putus-putus ke arah kiri -->
+                            <!-- Garis lengkung putus-putus ke arah kiri (lebih melengkung panjang) -->
                             <path d="M115 15 C 80 15 40 40 15 40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 6"/>
                             <!-- Kepala panah ke arah kiri -->
                             <path d="M25 30 L 12 40 L 25 50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -378,9 +378,9 @@
                         </span>
                     </div>
                     
-                    <!-- Mobile: Panah menunjuk ke bawah (karena kursus ada di bawahnya) -->
+                    <!-- Mobile: Panah menunjuk ke bawah -->
                     <div class="mt-8 flex lg:hidden items-center justify-center gap-3 text-[#13416B]/60">
-                        <span class="font-bold italic tracking-wide text-sm opacity-90">Selesaikan kursus di bawah ini</span>
+                        <span class="font-bold italic tracking-wide text-sm opacity-90">Selesaikan kursus ini untuk mendapatkan sertifikat</span>
                         <i class="fas fa-arrow-down animate-bounce"></i>
                     </div>
 
@@ -427,19 +427,21 @@
     <!-- ========================================== -->
     <footer class="py-16 px-4" style="background-color: #0b2641;">
         <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-12 gap-10 mb-12">
-                <div class="md:col-span-5">
+            <div class="grid md:grid-cols-12 gap-8 lg:gap-10 mb-12">
+                <!-- Kolom 1: Brand & Deskripsi Singkat -->
+                <div class="md:col-span-4">
                     <div class="flex items-center gap-3 mb-4">
                         <img src="{{ asset('images/logo.png') }}" alt="SIRENATA" class="h-10 w-auto brightness-0 invert">
                         <span class="text-xl font-extrabold text-white">SIRENATA</span>
                     </div>
-                    <!-- Deskripsi sesuai konteks PPT SIRENATA -->
-                    <p class="text-slate-400 max-w-sm leading-relaxed mb-6 text-sm">
-                        Aplikasi SIRENATA dikembangkan untuk kebutuhan penyusunan RTK Makro, RTK Mikro, dan pengukuran Indeks Pembangunan Ketenagakerjaan (IPK). Sekaligus menjadi sarana transfer pengetahuan yang berkelanjutan dari pusat ke daerah.
+                    <!-- Deskripsi diperpendek & dibedakan -->
+                    <p class="text-slate-400 leading-relaxed mb-6 text-sm">
+                        Platform digital untuk penyusunan Rencana Tenaga Kerja dan pengukuran Indeks Pembangunan Ketenagakerjaan yang terintegrasi antara pusat dan daerah.
                     </p>
                 </div>
                 
-                <div class="md:col-span-3">
+                <!-- Kolom 2: Navigasi -->
+                <div class="md:col-span-2">
                     <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Navigasi</h3>
                     <ul class="space-y-3 text-slate-400 text-sm">
                         <li><a href="#fitur" class="hover:text-white transition-colors">Fitur Platform</a></li>
@@ -448,9 +450,20 @@
                     </ul>
                 </div>
 
-                <div class="md:col-span-4">
-                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Pusat Bantuan</h3>
+                <!-- Kolom 3: Tautan Terkait (Baru Ditambahkan) -->
+                <div class="md:col-span-3">
+                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Tautan Terkait</h3>
                     <ul class="space-y-3 text-slate-400 text-sm">
+                        <li><a href="https://kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">Kemnaker RI</a></li>
+                        <li><a href="https://siapkerja.kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">SIAPkerja Kemnaker</a></li>
+                        <li><a href="https://satudata.kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">Satu Data Ketenagakerjaan</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kolom 4: Hubungi Kami & Media Sosial -->
+                <div class="md:col-span-3">
+                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Hubungi Kami</h3>
+                    <ul class="space-y-3 text-slate-400 text-sm mb-6">
                         <li class="flex items-start gap-3">
                             <i class="fas fa-envelope mt-1 shrink-0"></i>
                             <a href="mailto:support@sirenata.go.id" class="hover:text-white">support@sirenata.go.id</a>
@@ -460,8 +473,15 @@
                             <span>Kementerian Ketenagakerjaan RI<br>Jakarta, Indonesia</span>
                         </li>
                     </ul>
+                    <!-- Ikon Sosial Media -->
+                    <div class="flex items-center gap-3">
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                    </div>
                 </div>
             </div>
+            
             <div class="pt-8 border-t border-slate-700/50 text-center text-slate-400 text-sm font-medium">
                 <p>&copy; 2026 Kementerian Ketenagakerjaan Republik Indonesia. All rights reserved.</p>
             </div>
