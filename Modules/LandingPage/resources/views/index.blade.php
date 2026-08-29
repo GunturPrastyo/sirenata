@@ -13,6 +13,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
         
+        /* Floating Animasi */
         @keyframes float {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-15px) scale(1.01); }
@@ -26,20 +27,35 @@
             0% { transform: translateY(0%); }
             100% { transform: translateY(-50%); }
         }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
         
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-card-float-1 { animation: cardFloat 5s ease-in-out infinite; }
         .animate-card-float-2 { animation: cardFloat 7s ease-in-out infinite 0.5s; }
         .animate-card-float-3 { animation: cardFloat 6s ease-in-out infinite 1.5s; }
-        .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-        
-        /* Animasi auto-scroll vertikal */
         .animate-scroll-y { animation: scrollVertical 25s linear infinite; }
         .animate-scroll-y:hover { animation-play-state: paused; }
+
+        /* --- KELAS ANIMASI REVEAL DARI SAMPING / BAWAH --- */
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .reveal-left.active, .reveal-right.active, .reveal-up.active {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
     </style>
     @endpush
 
@@ -105,7 +121,7 @@
     <!-- HERO SECTION (Split Layout & Kalem)        -->
     <!-- ========================================== -->
     <section class="min-h-screen pt-28 pb-16 flex items-center relative overflow-hidden bg-slate-50/50" id="home">
-        <!-- Latar Belakang Dekoratif (Sangat Lembut) -->
+        <!-- Latar Belakang Dekoratif -->
         <div class="absolute inset-0 pointer-events-none z-0">
             <div class="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-40"></div>
             <div class="absolute -top-[10%] -right-[5%] w-[500px] h-[500px] bg-[#13416B]/5 rounded-full blur-3xl animate-float"></div>
@@ -114,7 +130,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
             
             <!-- Kiri: Teks & CTA -->
-            <div>
+            <div class="reveal-left">
                 <span class="inline-block py-1.5 px-4 rounded-full bg-[#13416B]/10 text-[#13416B] font-bold text-xs tracking-wider uppercase mb-5 border border-[#13416B]/20">
                     Platform Perencanaan Terpadu
                 </span>
@@ -146,17 +162,14 @@
                 </div>
             </div>
 
-            <!-- Kanan: Floating Cards & Orang (Tema Biru Tua Sirenata) -->
-            <div class="relative h-[500px] hidden lg:block">
-                <!-- Lingkaran Latar (Sangat Lembut) - z-0 -->
+            <!-- Kanan: Floating Cards & Orang -->
+            <div class="relative h-[500px] hidden lg:block reveal-right" style="transition-delay: 0.2s;">
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] rounded-full border border-slate-200/60 animate-[spin_60s_linear_infinite] z-0"></div>
 
-                <!-- Gambar Orang Tanpa Background - z-20 -->
                 <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 w-[340px] pointer-events-none drop-shadow-2xl">
                     <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana" class="w-full h-auto object-contain">
                 </div>
 
-                <!-- Card 1: Perencanaan Tenaga Kerja Makro (Dibelakang Orang) -->
                 <div class="absolute top-4 -right-4 w-[260px] bg-white rounded-2xl shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
                     <div class="h-24 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-3 left-3 bg-white/10 border border-white/20 text-white text-[9px] font-bold px-2.5 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perkiraan</span>
@@ -168,7 +181,6 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Perencanaan Tenaga Kerja Mikro (Di Depan Orang/Laptop) -->
                 <div class="absolute bottom-8 -left-8 w-[250px] bg-white rounded-2xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
                     <div class="h-20 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perencanaan</span>
@@ -180,7 +192,6 @@
                     </div>
                 </div>
 
-                <!-- Card 3: IPK (Di Belakang Orang Kiri Atas) -->
                 <div class="absolute top-36 -left-12 w-[240px] bg-white rounded-2xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
                     <div class="h-16 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase tracking-wider">Teori</span>
@@ -196,25 +207,40 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- STATS BANNER                               -->
+    <!-- STATS BANNER (Dengan Animasi Counter)      -->
     <!-- ========================================== -->
-    <section class="py-12 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    @php
+        // Helper fungsi PHP murni untuk memisahkan angka dan suffix
+        function parseStat($val, $defaultSuffix = '') {
+            $val = (string)$val;
+            $num = floatval(preg_replace('/[^0-9.]/', '', $val));
+            $suf = preg_replace('/[0-9.]/', '', $val);
+            if (strpos($val, '+') !== false && strpos($suf, '+') === false) $suf .= '+';
+            return ['num' => $num ? $num : 0, 'suf' => $suf ?: $defaultSuffix];
+        }
+        $sProv = parseStat($stats['provinces'] ?? 38);
+        $sReg = parseStat($stats['regencies'] ?? 514);
+        $sRtk = parseStat($stats['rtk'] ?? '1.2K', '+');
+        $sCourse = parseStat($stats['courses'] ?? 15);
+    @endphp
+
+    <section class="py-12 bg-slate-900 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-up">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x-0 md:divide-x divide-slate-700">
                 <div class="text-center p-4">
-                    <h4 class="text-4xl font-extrabold text-white mb-2">{{ $stats['provinces'] ?? 38 }}</h4>
+                    <h4 class="text-4xl font-extrabold text-white mb-2 stat-counter" data-target="{{ $sProv['num'] }}" data-suffix="{{ $sProv['suf'] }}">0</h4>
                     <p class="text-sm font-medium text-slate-400">Provinsi Terlibat</p>
                 </div>
                 <div class="text-center p-4">
-                    <h4 class="text-4xl font-extrabold text-white mb-2">{{ $stats['regencies'] ?? 514 }}</h4>
+                    <h4 class="text-4xl font-extrabold text-white mb-2 stat-counter" data-target="{{ $sReg['num'] }}" data-suffix="{{ $sReg['suf'] }}">0</h4>
                     <p class="text-sm font-medium text-slate-400">Kabupaten/Kota</p>
                 </div>
                 <div class="text-center p-4">
-                    <h4 class="text-4xl font-extrabold text-white mb-2">{{ $stats['rtk'] ?? '1.2K' }}+</h4>
+                    <h4 class="text-4xl font-extrabold text-white mb-2 stat-counter" data-target="{{ $sRtk['num'] }}" data-suffix="{{ $sRtk['suf'] }}">0</h4>
                     <p class="text-sm font-medium text-slate-400">Dokumen RTK</p>
                 </div>
                 <div class="text-center p-4">
-                    <h4 class="text-4xl font-extrabold text-white mb-2">{{ $stats['courses'] ?? 15 }}</h4>
+                    <h4 class="text-4xl font-extrabold text-white mb-2 stat-counter" data-target="{{ $sCourse['num'] }}" data-suffix="{{ $sCourse['suf'] }}">0</h4>
                     <p class="text-sm font-medium text-slate-400">Pelatihan Aktif</p>
                 </div>
             </div>
@@ -228,7 +254,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
                 
-                <div class="lg:sticky lg:top-32">
+                <div class="lg:sticky lg:top-32 reveal-left">
                     <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">Fitur Utama</span>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                         Solusi Terpadu <span class="text-[#13416B]">Perencanaan Ketenagakerjaan</span>
@@ -250,7 +276,7 @@
                     </ul>
                 </div>
 
-                <div class="relative h-[600px] overflow-hidden" style="mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);">
+                <div class="relative h-[600px] overflow-hidden reveal-right" style="mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);">
                     <div class="flex flex-col gap-6 animate-scroll-y hover:[animation-play-state:paused]">
                         @php
                             $features = [
@@ -280,7 +306,7 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- COURSES SECTION (Scroll Auto Kiri - Kanan Deskripsi Sticky) -->
+    <!-- COURSES SECTION (LMS)                      -->
     <!-- ========================================== -->
     @if(isset($courses) && $courses->count() > 0)
     <section id="courses" class="py-24 px-4 bg-slate-50/50 border-t border-slate-200 relative overflow-hidden">
@@ -289,7 +315,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
                 
                 <!-- Kiri: Daftar Kursus Auto Scroll -->
-                <div class="relative h-[600px] overflow-hidden order-2 lg:order-1" style="mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);">
+                <div class="relative h-[600px] overflow-hidden order-2 lg:order-1 reveal-left" style="mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);">
                     <div class="flex flex-col gap-5 animate-scroll-y hover:[animation-play-state:paused] pr-2 sm:pr-4">
                         @php
                             $loopCourses = collect($courses)->concat($courses)->concat($courses);
@@ -336,7 +362,7 @@
                 </div>
 
                 <!-- Kanan: Judul & Deskripsi Section Sticky -->
-                <div class="lg:sticky lg:top-24 order-1 lg:order-2 w-full text-left">
+                <div class="lg:sticky lg:top-16 order-1 lg:order-2 w-full text-left reveal-right">
                     <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">LMS Terintegrasi</span>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                         Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
@@ -358,7 +384,7 @@
                     </div>
 
                     <!-- Dekorasi Panah -->
-                    <div class="mt-16 hidden lg:flex items-start gap-4 text-[#13416B]/60">
+                    <div class="mt-12 hidden lg:flex items-start gap-4 text-[#13416B]/60">
                         <svg width="120" height="60" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0 animate-pulse mt-1">
                             <path d="M115 15 C 80 15 40 40 15 40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 6"/>
                             <path d="M25 30 L 12 40 L 25 50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -382,9 +408,9 @@
     <!-- ========================================== -->
     <!-- FAQ SECTION                                -->
     <!-- ========================================== -->
-    <section id="faq" class="py-24 px-4 bg-white border-t border-slate-200">
+    <section id="faq" class="py-24 px-4 bg-white border-t border-slate-200 overflow-hidden">
         <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 reveal-left">
                 <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">Pusat Bantuan</span>
                 <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                     Pertanyaan yang Sering <span class="text-[#13416B]">Diajukan</span>
@@ -395,9 +421,8 @@
             </div>
 
             <!-- Accordion FAQ menggunakan Alpine.js -->
-            <div x-data="{ activeAccordion: null }" class="space-y-4">
+            <div x-data="{ activeAccordion: null }" class="space-y-4 reveal-up">
                 
-                <!-- FAQ 1 -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
                      :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 1 }">
                     <button @click="activeAccordion = activeAccordion === 1 ? null : 1" 
@@ -415,7 +440,6 @@
                     </div>
                 </div>
 
-                <!-- FAQ 2 -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
                      :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 2 }">
                     <button @click="activeAccordion = activeAccordion === 2 ? null : 2" 
@@ -433,7 +457,6 @@
                     </div>
                 </div>
 
-                <!-- FAQ 3 -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
                      :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 3 }">
                     <button @click="activeAccordion = activeAccordion === 3 ? null : 3" 
@@ -455,7 +478,6 @@
                     </div>
                 </div>
 
-                <!-- FAQ 4 -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
                      :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 4 }">
                     <button @click="activeAccordion = activeAccordion === 4 ? null : 4" 
@@ -483,13 +505,13 @@
     <section class="py-24 px-4 relative overflow-hidden" style="background-color: #13416B;">
         <div class="absolute inset-0 bg-blue-500/20 blur-[100px] rounded-full w-[80%] h-[80%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
         
-        <div class="max-w-4xl mx-auto text-center relative z-10">
+        <div class="max-w-4xl mx-auto text-center relative z-10 reveal-left">
             @guest
                 <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">Siap Memulai Perencanaan?</h2>
                 <p class="text-slate-300 mb-10 max-w-2xl mx-auto text-lg">
                     Bergabunglah dengan {{ $stats['regencies'] ?? 514 }}+ daerah di seluruh Indonesia yang telah menggunakan aplikasi SIRENATA.
                 </p>
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal-up" style="transition-delay: 0.2s;">
                     <a href="{{ route('login') }}" class="w-full sm:w-auto px-8 py-3.5 bg-white font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all" style="color: #13416B;">
                         Daftar Gratis Sekarang
                     </a>
@@ -501,7 +523,7 @@
             @auth
                 <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6">Selamat Datang Kembali, {{ auth()->user()->name }}!</h2>
                 <p class="text-slate-300 mb-10 max-w-xl mx-auto text-lg">Lanjutkan aktivitas perencanaan ketenagakerjaan Anda dari dashboard.</p>
-                <a href="{{ route('user.dashboard') }}" class="px-8 py-3.5 bg-white font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 inline-block" style="color: #13416B;">
+                <a href="{{ route('user.dashboard') }}" class="px-8 py-3.5 bg-white font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 inline-block reveal-up" style="color: #13416B; transition-delay: 0.2s;">
                     Masuk ke Ruang Kerja
                 </a>
             @endauth
@@ -511,11 +533,9 @@
     <!-- ========================================== -->
     <!-- FOOTER                                     -->
     <!-- ========================================== -->
-    <footer class="py-16 px-4" style="background-color: #0b2641;">
-        <div class="max-w-7xl mx-auto">
-            <!-- Grid 4 Kolom di layur besar -->
+    <footer class="py-16 px-4 overflow-hidden" style="background-color: #0b2641;">
+        <div class="max-w-7xl mx-auto reveal-up">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 mb-12">
-                <!-- Kolom 1: Brand & Deskripsi Singkat -->
                 <div class="md:col-span-4 text-left">
                     <div class="flex items-center gap-3 mb-4">
                         <img src="{{ asset('images/logo.png') }}" alt="SIRENATA" class="h-10 w-auto brightness-0 invert">
@@ -526,7 +546,6 @@
                     </p>
                 </div>
                 
-                <!-- Kolom 2: Navigasi -->
                 <div class="md:col-span-2 text-left">
                     <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Navigasi</h3>
                     <ul class="space-y-3 text-slate-400 text-sm">
@@ -537,10 +556,18 @@
                     </ul>
                 </div>
 
-                <!-- Kolom 3: Pusat Bantuan (Rata Kiri Semua Resolusi) -->
                 <div class="md:col-span-3 text-left">
-                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Pusat Bantuan</h3>
+                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Tautan Terkait</h3>
                     <ul class="space-y-3 text-slate-400 text-sm">
+                        <li><a href="https://kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">Kemnaker RI</a></li>
+                        <li><a href="https://siapkerja.kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">SIAPkerja Kemnaker</a></li>
+                        <li><a href="https://satudata.kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">Satu Data Ketenagakerjaan</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-3 text-left">
+                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Hubungi Kami</h3>
+                    <ul class="space-y-3 text-slate-400 text-sm mb-6">
                         <li class="flex items-start gap-3">
                             <i class="fas fa-envelope mt-1 shrink-0"></i>
                             <a href="mailto:support@sirenata.go.id" class="hover:text-white">support@sirenata.go.id</a>
@@ -550,12 +577,6 @@
                             <span>Kementerian Ketenagakerjaan RI<br>Jakarta, Indonesia</span>
                         </li>
                     </ul>
-                </div>
-
-                <!-- Kolom 4: Sosial Media & Tautan (Bagian Baru) -->
-                <div class="md:col-span-3 text-left">
-                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Sosial Media</h3>
-                    <p class="text-slate-400 text-sm mb-4">Ikuti kami untuk mendapatkan informasi terbaru ketenagakerjaan.</p>
                     <div class="flex items-center gap-3">
                         <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
                         <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-youtube"></i></a>
@@ -588,5 +609,80 @@
             <i class="fas fa-arrow-up"></i>
         </button>
     </div>
+
+    <!-- ========================================== -->
+    <!-- SCRIPT OBSERVER UNTUK ANIMASI & COUNTER    -->
+    <!-- ========================================== -->
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // 1. OBSERVER UNTUK ANIMASI MUNCUL (REVEAL)
+            const revealOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // observer.unobserve(entry.target); // Buka komen ini jika animasi hanya ingin dimainkan 1x
+                    }
+                });
+            }, revealOptions);
+
+            const revealElements = document.querySelectorAll('.reveal-left, .reveal-right, .reveal-up');
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            // 2. OBSERVER UNTUK ANIMASI COUNTER STATISTIK
+            const statOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5
+            };
+
+            const statObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const targetEl = entry.target;
+                        const targetNum = parseFloat(targetEl.getAttribute('data-target'));
+                        const isFloat = targetNum % 1 !== 0;
+                        const suffix = targetEl.getAttribute('data-suffix') || '';
+                        const duration = 2000; // Durasi animasi 2 detik
+                        let startTime = null;
+
+                        const animateCount = (timestamp) => {
+                            if (!startTime) startTime = timestamp;
+                            const progress = Math.min((timestamp - startTime) / duration, 1);
+                            
+                            // Easing (ease-out-cubic) agar berhitung makin lambat di akhir
+                            const easeProgress = 1 - Math.pow(1 - progress, 3);
+                            let currentNum = easeProgress * targetNum;
+                            
+                            if(isFloat) {
+                                targetEl.innerText = currentNum.toFixed(1) + suffix;
+                            } else {
+                                targetEl.innerText = Math.floor(currentNum) + suffix;
+                            }
+
+                            if(progress < 1) {
+                                requestAnimationFrame(animateCount);
+                            } else {
+                                targetEl.innerText = targetNum + suffix;
+                            }
+                        };
+                        requestAnimationFrame(animateCount);
+                        observer.unobserve(targetEl); // Counter cuma jalan 1x
+                    }
+                });
+            }, statOptions);
+
+            const statCounters = document.querySelectorAll('.stat-counter');
+            statCounters.forEach(counter => statObserver.observe(counter));
+        });
+    </script>
+    @endpush
 
 </x-landingpage::layouts.master>
