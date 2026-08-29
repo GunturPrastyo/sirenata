@@ -26,16 +26,11 @@
             0% { transform: translateY(0%); }
             100% { transform: translateY(-50%); }
         }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
         
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-card-float-1 { animation: cardFloat 5s ease-in-out infinite; }
         .animate-card-float-2 { animation: cardFloat 7s ease-in-out infinite 0.5s; }
         .animate-card-float-3 { animation: cardFloat 6s ease-in-out infinite 1.5s; }
-        .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
         /* Animasi auto-scroll vertikal */
         .animate-scroll-y { animation: scrollVertical 25s linear infinite; }
@@ -142,13 +137,19 @@
                 </div>
             </div>
 
-            <!-- Kanan: Floating Cards Mockup (Warna Seragam: #184A78) -->
+            <!-- Kanan: Floating Cards & Orang (Tema Biru Tua Sirenata) -->
             <div class="relative h-[500px] hidden lg:block">
-                <!-- Lingkaran Latar (Sangat Lembut) -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] rounded-full border border-slate-200/60 animate-[spin_60s_linear_infinite]"></div>
+                <!-- Lingkaran Latar (Sangat Lembut) - z-0 -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] rounded-full border border-slate-200/60 animate-[spin_60s_linear_infinite] z-0"></div>
 
-                <!-- Card 1: Perencanaan Tenaga Kerja Makro -->
-                <div class="absolute top-0 right-0 w-[260px] bg-white rounded-2xl shadow-lg border border-slate-100 animate-card-float-1 z-20 overflow-hidden">
+                <!-- Gambar Orang Tanpa Background - z-20 -->
+                <!-- Diposisikan di tengah, sedikit ke bawah agar sejajar -->
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 w-[340px] pointer-events-none drop-shadow-2xl">
+                    <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana" class="w-full h-auto object-contain">
+                </div>
+
+                <!-- Card 1: Perencanaan Tenaga Kerja Makro (Dibelakang Orang) -->
+                <div class="absolute top-4 -right-4 w-[260px] bg-white rounded-2xl shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
                     <div class="h-24 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-3 left-3 bg-white/10 border border-white/20 text-white text-[9px] font-bold px-2.5 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perkiraan</span>
                         <h2 class="text-[54px] font-medium text-white/95 leading-none" style="font-family: Arial, sans-serif; letter-spacing: -2px;">PM</h2>
@@ -159,8 +160,8 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Perencanaan Tenaga Kerja Mikro -->
-                <div class="absolute bottom-12 left-0 w-[250px] bg-white rounded-2xl shadow-md border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
+                <!-- Card 2: Perencanaan Tenaga Kerja Mikro (Di Depan Orang/Laptop) -->
+                <div class="absolute bottom-8 -left-8 w-[250px] bg-white rounded-2xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
                     <div class="h-20 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perencanaan</span>
                         <h2 class="text-4xl font-medium text-white/95 leading-none" style="font-family: Arial, sans-serif; letter-spacing: -1px;">PM</h2>
@@ -171,8 +172,8 @@
                     </div>
                 </div>
 
-                <!-- Card 3: IPK -->
-                <div class="absolute top-44 -left-10 w-[240px] bg-white rounded-2xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
+                <!-- Card 3: IPK (Di Belakang Orang Kiri Atas) -->
+                <div class="absolute top-36 -left-12 w-[240px] bg-white rounded-2xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
                     <div class="h-16 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase tracking-wider">Teori</span>
                         <h2 class="text-3xl font-medium text-white/95 leading-none" style="font-family: Arial, sans-serif; letter-spacing: -1px;">IK</h2>
@@ -407,6 +408,7 @@
                         <img src="{{ asset('images/logo.png') }}" alt="SIRENATA" class="h-10 w-auto brightness-0 invert">
                         <span class="text-xl font-extrabold text-white">SIRENATA</span>
                     </div>
+                    <!-- Deskripsi sesuai konteks PPT SIRENATA -->
                     <p class="text-slate-400 max-w-sm leading-relaxed mb-6 text-sm">
                         Aplikasi SIRENATA dikembangkan untuk kebutuhan penyusunan RTK Makro, RTK Mikro, dan pengukuran Indeks Pembangunan Ketenagakerjaan (IPK). Sekaligus menjadi sarana transfer pengetahuan yang berkelanjutan dari pusat ke daerah.
                     </p>
