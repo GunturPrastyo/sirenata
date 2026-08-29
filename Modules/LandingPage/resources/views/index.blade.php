@@ -26,11 +26,16 @@
             0% { transform: translateY(0%); }
             100% { transform: translateY(-50%); }
         }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-card-float-1 { animation: cardFloat 5s ease-in-out infinite; }
         .animate-card-float-2 { animation: cardFloat 7s ease-in-out infinite 0.5s; }
         .animate-card-float-3 { animation: cardFloat 6s ease-in-out infinite 1.5s; }
+        .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
         /* Animasi auto-scroll vertikal */
         .animate-scroll-y { animation: scrollVertical 25s linear infinite; }
@@ -143,7 +148,6 @@
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] rounded-full border border-slate-200/60 animate-[spin_60s_linear_infinite] z-0"></div>
 
                 <!-- Gambar Orang Tanpa Background - z-20 -->
-                <!-- Diposisikan di tengah, sedikit ke bawah agar sejajar -->
                 <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 w-[340px] pointer-events-none drop-shadow-2xl">
                     <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana" class="w-full h-auto object-contain">
                 </div>
@@ -301,7 +305,7 @@
                             <!-- Card Kursus Bersih -->
                             <a href="{{ route('user.course.my-course.detail', $course->slug) }}" class="block bg-white border border-slate-200 rounded-[20px] overflow-hidden hover:shadow-md hover:border-[#13416B]/30 hover:-translate-y-1 transition-all group mx-2">
                                 
-                                {{-- Header Kartu (Warna Biru sesuai gambar) --}}
+                                {{-- Header Kartu (Warna Biru sesuai gambar #184A78) --}}
                                 <div class="relative h-[120px] bg-[#184A78] flex items-center justify-center overflow-hidden">
                                     @if($course->category)
                                         <span class="absolute top-4 left-4 px-2.5 py-1 text-[9px] font-bold rounded bg-transparent border border-white/30 text-white uppercase tracking-wider backdrop-blur-sm">
@@ -338,8 +342,8 @@
                     </div>
                 </div>
 
-                <!-- Kanan: Judul & Deskripsi Section Sticky (Teks Rata Kiri) -->
-                <div class="lg:sticky lg:top-32 order-1 lg:order-2 w-full text-left">
+                <!-- Kanan: Judul & Deskripsi Section Sticky (Teks Rata Kiri & Diangkat Sedikit) -->
+                <div class="lg:sticky lg:top-24 order-1 lg:order-2 w-full text-left">
                     <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">E-Learning Terintegrasi</span>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                         Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
@@ -359,6 +363,27 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- DEKORASI PANAH (Arah ke Kursus untuk dorong elemen atas) -->
+                    <!-- Desktop: Panah menunjuk ke kiri (ke arah daftar kursus) -->
+                    <div class="mt-16 hidden lg:flex items-start gap-4 text-[#13416B]/60">
+                        <svg width="120" height="60" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0 animate-pulse mt-1">
+                            <!-- Garis lengkung putus-putus ke arah kiri -->
+                            <path d="M115 15 C 80 15 40 40 15 40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 6"/>
+                            <!-- Kepala panah ke arah kiri -->
+                            <path d="M25 30 L 12 40 L 25 50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="font-bold italic tracking-wide text-sm opacity-90 leading-relaxed">
+                            Selesaikan kursus ini <br> untuk mendapatkan sertifikat
+                        </span>
+                    </div>
+                    
+                    <!-- Mobile: Panah menunjuk ke bawah (karena kursus ada di bawahnya) -->
+                    <div class="mt-8 flex lg:hidden items-center justify-center gap-3 text-[#13416B]/60">
+                        <span class="font-bold italic tracking-wide text-sm opacity-90">Selesaikan kursus di bawah ini</span>
+                        <i class="fas fa-arrow-down animate-bounce"></i>
+                    </div>
+
                 </div>
 
             </div>
