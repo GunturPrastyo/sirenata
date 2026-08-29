@@ -62,8 +62,10 @@
 
             <!-- Menu Desktop -->
             <div class="hidden md:flex items-center gap-2">
-                <a href="#fitur" class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">Fitur</a>
-                <a href="#courses" class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">E-Learning</a>
+                <a href="#home" class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">Beranda</a>
+                <a href="#features" class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">Fitur</a>
+                <a href="#courses" class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">LMS</a>
+                <a href="#faq" class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">FAQ</a>
             </div>
 
             <!-- Auth Buttons -->
@@ -87,8 +89,10 @@
         <!-- Mobile Menu -->
         <div x-show="mobileMenuOpen" x-collapse class="md:hidden bg-white border-t border-slate-100 shadow-xl absolute w-full">
             <div class="p-4 space-y-2">
-                <a href="#fitur" @click="mobileMenuOpen = false" class="block px-4 py-3 rounded-xl font-bold text-slate-700 bg-slate-50 hover:text-[#13416B]">Fitur</a>
-                <a href="#courses" @click="mobileMenuOpen = false" class="block px-4 py-3 rounded-xl font-bold text-slate-700 bg-slate-50 hover:text-[#13416B]">E-Learning</a>
+                <a href="#home" @click="mobileMenuOpen = false" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">Beranda</a>
+                <a href="#features" @click="mobileMenuOpen = false" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">Fitur</a>
+                <a href="#courses" @click="mobileMenuOpen = false" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">LMS</a>
+                <a href="#faq" @click="mobileMenuOpen = false" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">FAQ</a>
                 <div class="pt-4 mt-2 border-t border-slate-100 flex gap-3">
                     <a href="{{ route('login') }}" class="flex-1 text-center py-3 rounded-xl font-bold bg-slate-100 text-slate-700">Masuk</a>
                     <a href="{{ route('login') }}" class="flex-1 text-center py-3 rounded-xl font-bold text-white" style="background-color: #13416B;">Daftar</a>
@@ -125,7 +129,7 @@
                     <a href="{{ route('login') }}" class="inline-flex justify-center items-center px-8 py-3.5 rounded-full text-white font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all" style="background-color: #13416B;">
                         Daftar Sekarang
                     </a>
-                    <a href="#fitur" class="inline-flex justify-center items-center px-8 py-3.5 rounded-full border border-slate-300 text-slate-700 font-bold hover:bg-slate-100 transition-colors">
+                    <a href="#features" class="inline-flex justify-center items-center px-8 py-3.5 rounded-full border border-slate-300 text-slate-700 font-bold hover:bg-slate-100 transition-colors">
                         Pelajari Fitur
                     </a>
                 </div>
@@ -284,28 +288,22 @@
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
                 
-                <!-- Kiri: Daftar Kursus Auto Scroll (Tanpa Tombol Akses) -->
+                <!-- Kiri: Daftar Kursus Auto Scroll -->
                 <div class="relative h-[600px] overflow-hidden order-2 lg:order-1" style="mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);">
-                    <!-- Wrapper Animasi Scroll Auto -->
                     <div class="flex flex-col gap-5 animate-scroll-y hover:[animation-play-state:paused] pr-2 sm:pr-4">
                         @php
-                            // Menggandakan array agar efek scroll berjalan tanpa henti
                             $loopCourses = collect($courses)->concat($courses)->concat($courses);
                         @endphp
 
                         @foreach($loopCourses as $course)
                             @php
-                                // Ambil inisial nama kursus (maks 2 huruf)
                                 $words = explode(' ', $course->name);
                                 $initials = '';
                                 foreach(array_slice($words, 0, 2) as $w) { $initials .= strtoupper(substr($w, 0, 1)); }
                                 if(strlen($initials) < 2) $initials = substr(strtoupper($course->name), 0, 2);
                             @endphp
 
-                            <!-- Card Kursus Bersih -->
                             <a href="{{ route('user.course.my-course.detail', $course->slug) }}" class="block bg-white border border-slate-200 rounded-[20px] overflow-hidden hover:shadow-md hover:border-[#13416B]/30 hover:-translate-y-1 transition-all group mx-2">
-                                
-                                {{-- Header Kartu (Warna Biru sesuai gambar #184A78) --}}
                                 <div class="relative h-[120px] bg-[#184A78] flex items-center justify-center overflow-hidden">
                                     @if($course->category)
                                         <span class="absolute top-4 left-4 px-2.5 py-1 text-[9px] font-bold rounded bg-transparent border border-white/30 text-white uppercase tracking-wider backdrop-blur-sm">
@@ -316,18 +314,13 @@
                                         {{ $initials }}
                                     </h2>
                                 </div>
-
-                                {{-- Konten Kartu --}}
                                 <div class="p-5">
                                     <h3 class="font-bold text-slate-800 mb-1.5 line-clamp-1 text-base group-hover:text-[#13416B] transition-colors">
                                         {{ $course->name }}
                                     </h3>
-                                    
                                     <p class="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
                                         {{ $course->description ?? "Deskripsi untuk {$course->name}. Kursus ini akan membahas dasar-dasar dan materi mendalam secara terstruktur." }}
                                     </p>
-
-                                    <!-- Info Modul & Materi -->
                                     <div class="flex items-center gap-2 text-[10px] font-medium text-slate-500">
                                         <span class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-md border border-slate-100">
                                             <i class="fas fa-layer-group text-slate-400"></i> {{ collect($course->sections)->count() }} Modul
@@ -342,9 +335,9 @@
                     </div>
                 </div>
 
-                <!-- Kanan: Judul & Deskripsi Section Sticky (Posisi dinaikkan: top-16) -->
-                <div class="lg:sticky lg:top-16 order-1 lg:order-2 w-full text-left">
-                    <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">E-Learning Terintegrasi</span>
+                <!-- Kanan: Judul & Deskripsi Section Sticky -->
+                <div class="lg:sticky lg:top-24 order-1 lg:order-2 w-full text-left">
+                    <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">LMS Terintegrasi</span>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                         Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
                     </h2>
@@ -364,13 +357,10 @@
                         </div>
                     </div>
 
-                    <!-- DEKORASI PANAH (Diperbesar & diatur marginnya) -->
-                    <!-- Desktop: Panah menunjuk ke kiri -->
-                    <div class="mt-12 hidden lg:flex items-start gap-4 text-[#13416B]/60">
+                    <!-- Dekorasi Panah -->
+                    <div class="mt-16 hidden lg:flex items-start gap-4 text-[#13416B]/60">
                         <svg width="120" height="60" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0 animate-pulse mt-1">
-                            <!-- Garis lengkung putus-putus ke arah kiri (lebih melengkung panjang) -->
                             <path d="M115 15 C 80 15 40 40 15 40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 6"/>
-                            <!-- Kepala panah ke arah kiri -->
                             <path d="M25 30 L 12 40 L 25 50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span class="font-bold italic tracking-wide text-sm opacity-90 leading-relaxed">
@@ -378,18 +368,114 @@
                         </span>
                     </div>
                     
-                    <!-- Mobile: Panah menunjuk ke bawah -->
                     <div class="mt-8 flex lg:hidden items-center justify-center gap-3 text-[#13416B]/60">
                         <span class="font-bold italic tracking-wide text-sm opacity-90">Selesaikan kursus ini untuk mendapatkan sertifikat</span>
                         <i class="fas fa-arrow-down animate-bounce"></i>
                     </div>
-
                 </div>
 
             </div>
         </div>
     </section>
     @endif
+
+    <!-- ========================================== -->
+    <!-- FAQ SECTION                                -->
+    <!-- ========================================== -->
+    <section id="faq" class="py-24 px-4 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">Pusat Bantuan</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
+                    Pertanyaan yang Sering <span class="text-[#13416B]">Diajukan</span>
+                </h2>
+                <p class="text-slate-600 text-lg leading-relaxed">
+                    Temukan jawaban cepat untuk pertanyaan seputar penggunaan aplikasi SIRENATA.
+                </p>
+            </div>
+
+            <!-- Accordion FAQ menggunakan Alpine.js -->
+            <div x-data="{ activeAccordion: null }" class="space-y-4">
+                
+                <!-- FAQ 1 -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
+                     :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 1 }">
+                    <button @click="activeAccordion = activeAccordion === 1 ? null : 1" 
+                            class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
+                        <h3 class="font-bold text-slate-800 text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 1 }">
+                            Siapa saja yang dapat menggunakan aplikasi SIRENATA?
+                        </h3>
+                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"
+                           :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 1 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 1" x-collapse x-cloak>
+                        <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Aplikasi ini ditujukan khusus bagi para pemangku kepentingan ketenagakerjaan, termasuk Super Admin, Admin Pusat, Admin Instansi Provinsi, Admin Instansi Kabupaten/Kota, dan Pengguna ASN (Aparatur Sipil Negara) selaku perencana di daerah.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
+                     :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 2 }">
+                    <button @click="activeAccordion = activeAccordion === 2 ? null : 2" 
+                            class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
+                        <h3 class="font-bold text-slate-800 text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 2 }">
+                            Bagaimana cara mendaftar atau masuk ke dalam sistem?
+                        </h3>
+                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"
+                           :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 2 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 2" x-collapse x-cloak>
+                        <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            SIRENATA terintegrasi dengan sistem <strong>Single Sign-On (SSO)</strong> Kemnaker. Anda dapat langsung masuk menggunakan akun <strong>SIAPKerja ID</strong> yang telah terdaftar. Jika Anda mewakili instansi daerah, hubungi Admin Pusat untuk penyesuaian hak akses.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
+                     :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 3 }">
+                    <button @click="activeAccordion = activeAccordion === 3 ? null : 3" 
+                            class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
+                        <h3 class="font-bold text-slate-800 text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 3 }">
+                            Apa perbedaan RTK Makro, RTK Mikro, dan IPK?
+                        </h3>
+                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"
+                           :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 3 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 3" x-collapse x-cloak>
+                        <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>RTK Makro:</strong> Proyeksi tenaga kerja di tingkat wilayah (Nasional/Provinsi/Kabupaten/Kota) berdasarkan ekonomi makro.</li>
+                                <li><strong>RTK Mikro:</strong> Analisis kebutuhan pegawai/tenaga kerja spesifik di dalam internal suatu instansi atau perusahaan.</li>
+                                <li><strong>IPK:</strong> Indeks Pembangunan Ketenagakerjaan, yaitu pengukuran capaian kinerja daerah berdasarkan 7 indikator utama ketenagakerjaan.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
+                     :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 4 }">
+                    <button @click="activeAccordion = activeAccordion === 4 ? null : 4" 
+                            class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
+                        <h3 class="font-bold text-slate-800 text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 4 }">
+                            Apa fungsi fitur LMS Terintegrasi?
+                        </h3>
+                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"
+                           :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 4 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 4" x-collapse x-cloak>
+                        <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Fitur LMS difungsikan sebagai sarana transfer pengetahuan dari pusat ke daerah. Pengguna dapat mengikuti kursus interaktif secara mandiri untuk meningkatkan kompetensi terkait perencanaan, serta mendapatkan <strong>sertifikat resmi</strong> setelah lulus ujian (post-test).
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
 
     <!-- ========================================== -->
     <!-- CTA SECTION                                -->
@@ -427,43 +513,34 @@
     <!-- ========================================== -->
     <footer class="py-16 px-4" style="background-color: #0b2641;">
         <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-12 gap-8 lg:gap-10 mb-12">
+            <!-- Grid 4 Kolom di layur besar -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 mb-12">
                 <!-- Kolom 1: Brand & Deskripsi Singkat -->
-                <div class="md:col-span-4">
+                <div class="md:col-span-4 text-left">
                     <div class="flex items-center gap-3 mb-4">
                         <img src="{{ asset('images/logo.png') }}" alt="SIRENATA" class="h-10 w-auto brightness-0 invert">
                         <span class="text-xl font-extrabold text-white">SIRENATA</span>
                     </div>
-                    <!-- Deskripsi diperpendek & dibedakan -->
                     <p class="text-slate-400 leading-relaxed mb-6 text-sm">
-                        Platform digital untuk penyusunan Rencana Tenaga Kerja dan pengukuran Indeks Pembangunan Ketenagakerjaan yang terintegrasi antara pusat dan daerah.
+                        Aplikasi digital terpadu untuk kebutuhan penyusunan RTK Makro, RTK Mikro, dan pengukuran Indeks Pembangunan Ketenagakerjaan yang mengintegrasikan pusat dan daerah.
                     </p>
                 </div>
                 
                 <!-- Kolom 2: Navigasi -->
-                <div class="md:col-span-2">
+                <div class="md:col-span-2 text-left">
                     <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Navigasi</h3>
                     <ul class="space-y-3 text-slate-400 text-sm">
-                        <li><a href="#fitur" class="hover:text-white transition-colors">Fitur Platform</a></li>
-                        <li><a href="#courses" class="hover:text-white transition-colors">E-Learning</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-white transition-colors">Masuk / Daftar</a></li>
+                        <li><a href="#home" class="hover:text-white transition-colors">Beranda</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Fitur Platform</a></li>
+                        <li><a href="#courses" class="hover:text-white transition-colors">LMS</a></li>
+                        <li><a href="#faq" class="hover:text-white transition-colors">FAQ</a></li>
                     </ul>
                 </div>
 
-                <!-- Kolom 3: Tautan Terkait (Baru Ditambahkan) -->
-                <div class="md:col-span-3">
-                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Tautan Terkait</h3>
+                <!-- Kolom 3: Pusat Bantuan (Rata Kiri Semua Resolusi) -->
+                <div class="md:col-span-3 text-left">
+                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Pusat Bantuan</h3>
                     <ul class="space-y-3 text-slate-400 text-sm">
-                        <li><a href="https://kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">Kemnaker RI</a></li>
-                        <li><a href="https://siapkerja.kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">SIAPkerja Kemnaker</a></li>
-                        <li><a href="https://satudata.kemnaker.go.id" target="_blank" class="hover:text-white transition-colors">Satu Data Ketenagakerjaan</a></li>
-                    </ul>
-                </div>
-
-                <!-- Kolom 4: Hubungi Kami & Media Sosial -->
-                <div class="md:col-span-3">
-                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Hubungi Kami</h3>
-                    <ul class="space-y-3 text-slate-400 text-sm mb-6">
                         <li class="flex items-start gap-3">
                             <i class="fas fa-envelope mt-1 shrink-0"></i>
                             <a href="mailto:support@sirenata.go.id" class="hover:text-white">support@sirenata.go.id</a>
@@ -473,11 +550,16 @@
                             <span>Kementerian Ketenagakerjaan RI<br>Jakarta, Indonesia</span>
                         </li>
                     </ul>
-                    <!-- Ikon Sosial Media -->
+                </div>
+
+                <!-- Kolom 4: Sosial Media & Tautan (Bagian Baru) -->
+                <div class="md:col-span-3 text-left">
+                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Sosial Media</h3>
+                    <p class="text-slate-400 text-sm mb-4">Ikuti kami untuk mendapatkan informasi terbaru ketenagakerjaan.</p>
                     <div class="flex items-center gap-3">
-                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-youtube"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
             </div>
@@ -487,5 +569,24 @@
             </div>
         </div>
     </footer>
+
+    <!-- ========================================== -->
+    <!-- SCROLL TO TOP BUTTON                       -->
+    <!-- ========================================== -->
+    <div x-data="{ showScrollTop: false }" 
+         @scroll.window="showScrollTop = (window.pageYOffset > 400)"
+         class="fixed bottom-6 right-6 z-50">
+        <button x-show="showScrollTop" 
+                @click="window.scrollTo({top: 0, behavior: 'smooth'})"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-10"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 translate-y-10"
+                class="w-12 h-12 flex items-center justify-center bg-[#13416B] text-white rounded-full shadow-lg hover:bg-blue-800 hover:-translate-y-1 transition-all focus:outline-none border-2 border-white/20">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
 
 </x-landingpage::layouts.master>
