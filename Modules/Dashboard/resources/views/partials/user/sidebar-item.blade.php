@@ -1,10 +1,11 @@
-<ul class="flex flex-row lg:flex-col gap-1 sm:gap-2 lg:gap-0 lg:space-y-2 px-2 sm:px-4 lg:px-4 font-medium w-full h-full lg:h-auto items-center lg:items-stretch justify-around lg:justify-start">
+<ul class="flex flex-row lg:flex-col gap-1 sm:gap-2 lg:gap-1.5 lg:space-y-1 px-2 sm:px-4 lg:px-4 font-medium w-full h-full lg:h-auto items-center lg:items-stretch justify-around lg:justify-start">
     
     <!-- Dashboard -->
     @php $isDashboard = request()->routeIs('user.dashboard'); @endphp
     <li class="flex-1 lg:flex-none">
         <a href="{{ route('user.dashboard') }}"
-            class="flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-3 py-1.5 sm:py-2 lg:py-2.5 rounded-xl transition-colors group {{ $isDashboard ? 'text-[#13416B] font-bold' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B]' }}">
+            class="relative flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-xl transition-all duration-300 group {{ $isDashboard ? 'text-[#13416B] font-bold lg:bg-[#13416B]/5' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B] lg:hover:bg-slate-50' }}">
+            
             <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 shrink-0 transition duration-200 {{ $isDashboard ? 'text-[#13416B]' : 'group-hover:text-[#13416B]' }}"
                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                 fill="{{ $isDashboard ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $isDashboard ? '1' : '2' }}">
@@ -19,7 +20,8 @@
     @php $isKursus = request()->routeIs('user.course.my-course*'); @endphp
     <li class="flex-1 lg:flex-none">
         <a href="{{ route('user.course.my-course') }}"
-            class="flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-3 py-1.5 sm:py-2 lg:py-2.5 rounded-xl transition-colors group {{ $isKursus ? 'text-[#13416B] font-bold' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B]' }}">
+            class="relative flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-xl transition-all duration-300 group {{ $isKursus ? 'text-[#13416B] font-bold lg:bg-[#13416B]/5' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B] lg:hover:bg-slate-50' }}">
+            
             <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 shrink-0 transition duration-200 {{ $isKursus ? 'text-[#13416B]' : 'group-hover:text-[#13416B]' }}" 
                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                 fill="{{ $isKursus ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $isKursus ? '0.5' : '2' }}">
@@ -30,11 +32,11 @@
     </li>
 
     <!-- Katalog -->
-    <!-- Jika route katalog sudah ada, ganti # di bawah menjadi route-nya, lalu perbarui $isKatalog -->
     @php $isKatalog = request()->routeIs('user.course.catalog*'); @endphp
     <li class="flex-1 lg:flex-none">
         <a href="#"
-            class="flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-3 py-1.5 sm:py-2 lg:py-2.5 rounded-xl transition-colors group {{ $isKatalog ? 'text-[#13416B] font-bold' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B]' }}">
+            class="relative flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-xl transition-all duration-300 group {{ $isKatalog ? 'text-[#13416B] font-bold lg:bg-[#13416B]/5' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B] lg:hover:bg-slate-50' }}">
+            
             <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 shrink-0 transition duration-200 {{ $isKatalog ? 'text-[#13416B]' : 'group-hover:text-[#13416B]' }}" 
                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                 fill="{{ $isKatalog ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $isKatalog ? '0.5' : '2' }}">
@@ -48,7 +50,8 @@
     @php $isLibrary = request()->routeIs('user.library.index'); @endphp
     <li class="flex-1 lg:flex-none">
         <a href="{{ route('user.library.index') }}"
-            class="flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-3 py-1.5 sm:py-2 lg:py-2.5 rounded-xl transition-colors group {{ $isLibrary ? 'text-[#13416B] font-bold' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B]' }}">
+            class="relative flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-xl transition-all duration-300 group {{ $isLibrary ? 'text-[#13416B] font-bold lg:bg-[#13416B]/5' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B] lg:hover:bg-slate-50' }}">
+            
             <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 shrink-0 transition duration-200 {{ $isLibrary ? 'text-[#13416B]' : 'group-hover:text-[#13416B]' }}" 
                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                 fill="{{ $isLibrary ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $isLibrary ? '0.5' : '2' }}">
@@ -62,7 +65,8 @@
     @php $isKalkulator = request()->routeIs('user.kalkulator.sandbox'); @endphp
     <li class="flex-1 lg:flex-none">
         <a href="{{ route('user.kalkulator.sandbox') }}" target="_blank"
-            class="flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-3 py-1.5 sm:py-2 lg:py-2.5 rounded-xl transition-colors group {{ $isKalkulator ? 'text-[#13416B] font-bold' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B]' }}">
+            class="relative flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-xl transition-all duration-300 group {{ $isKalkulator ? 'text-[#13416B] font-bold lg:bg-[#13416B]/5' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B] lg:hover:bg-slate-50' }}">
+            
             <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 shrink-0 transition duration-200 {{ $isKalkulator ? 'text-[#13416B]' : 'group-hover:text-[#13416B]' }}" 
                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                 fill="{{ $isKalkulator ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $isKalkulator ? '1' : '2' }}">
@@ -82,7 +86,8 @@
     @if($userProjects)
     <li class="flex-1 lg:flex-none">
         <a href="{{ route('user.tim-kerja.index') }}"
-            class="flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-3 py-1.5 sm:py-2 lg:py-2.5 rounded-xl transition-colors group {{ $isTimKerja ? 'text-[#13416B] font-bold' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B]' }}">
+            class="relative flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-xl transition-all duration-300 group {{ $isTimKerja ? 'text-[#13416B] font-bold lg:bg-[#13416B]/5' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B] lg:hover:bg-slate-50' }}">
+            
             <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 shrink-0 transition duration-200 {{ $isTimKerja ? 'text-[#13416B]' : 'group-hover:text-[#13416B]' }}" 
                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                 fill="{{ $isTimKerja ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $isTimKerja ? '0.5' : '2' }}">

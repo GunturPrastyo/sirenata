@@ -15,15 +15,196 @@
                     </svg>
                 </button>
 
-                <!-- Searchbar KHUSUS USER (Lebar penuh di semua resolusi) -->
-                <div class="flex-1 w-full max-w-4xl">
+                <!-- Searchbar AUTO-SUGGEST KHUSUS USER -->
+                <div class="flex-1 w-full max-w-4xl relative" x-data="searchSuggest()" @click.outside="isOpen = false">
                     <div class="relative w-full group">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 sm:ps-4 pointer-events-none">
                             <i class="fas fa-search text-slate-400 group-focus-within:text-[#13416B] transition-colors text-sm sm:text-base"></i>
                         </div>
-                        <input type="text" class="bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm rounded-xl focus:ring-[#13416B] focus:border-[#13416B] block w-full ps-10 sm:ps-11 p-2.5 sm:p-3 transition-colors shadow-sm" placeholder="Cari modul atau buku...">
+                        
+                        <!-- Input Pencarian (Placeholder Diperpendek & Termasuk Buku) -->
+                        <input type="text" 
+                            x-model="query" 
+                            @input.debounce.500ms="fetchResults"
+                            @focus="if(query.length > 1) isOpen = true"
+                            class="bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm rounded-xl focus:ring-[#13416B] focus:border-[#13416B] block w-full ps-9 sm:ps-11 pe-8 sm:pe-10 py-2.5 sm:py-3 transition-colors shadow-sm" 
+                            placeholder="Cari kursus, modul, topik, buku..."
+                            autocomplete="off">
+
+                        <!-- Ikon Loading -->
+                        <div x-show="isLoading" x-cloak class="absolute inset-y-0 end-0 flex items-center pe-3 sm:pe-4 pointer-events-none">
+                            <i class="fas fa-circle-notch fa-spin text-[#13416B] text-xs sm:text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Hasil Pencarian (Dibuat Agak Mojok / Sesuai Lebar Proporsional) -->
+                    <div x-show="isOpen" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-1"
+                         x-cloak
+                         class="absolute top-full left-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden w-[calc(100vw-2rem)] sm:w-[500px] max-h-[70vh] flex flex-col">
+                        
+                        <div class="overflow-y-auto py-2 hide-scrollbar">
+                            
+                            <!-- State Kosong / Tidak Ditemukan -->
+                            <template x-if="!isLoading && courses.length === 0 && modules.length === 0 && contents.length === 0 && libraries.length === 0 && query.length > 1">
+                                <div class="p-6 text-center">
+                                    <div class="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3 border border-slate-100">
+                                        <i class="fas fa-search text-xl"></i>
+                                    </div>
+                                    <p class="text-sm font-bold text-slate-700">Tidak ada hasil ditemukan</p>
+                                    <p class="text-xs text-slate-500 mt-1">Coba gunakan kata kunci yang lebih umum.</p>
+                                </div>
+                            </template>
+
+                            <!-- Hasil: Kursus -->
+                            <template x-if="courses.length > 0">
+                                <div>
+                                    <div class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Katalog Kursus</div>
+                                    <ul>
+                                        <template x-for="item in courses">
+                                            <li>
+                                                <a :href="item.url" class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
+                                                    <!-- Ikon Visual Inisial -->
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold" :class="item.color">
+                                                        <span x-text="item.initials"></span>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]" x-text="item.title"></p>
+                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5" x-text="item.subtitle"></p>
+                                                    </div>
+                                                    <i class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                </a>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </template>
+
+                            <!-- Hasil: Modul (Course Section) -->
+                            <template x-if="modules.length > 0">
+                                <div>
+                                    <div class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Modul</div>
+                                    <ul>
+                                        <template x-for="item in modules">
+                                            <li>
+                                                <a :href="item.url" class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold" :class="item.color">
+                                                        <span x-text="item.initials"></span>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]" x-text="item.title"></p>
+                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5" x-text="item.subtitle"></p>
+                                                    </div>
+                                                    <i class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                </a>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </template>
+
+                            <!-- Hasil: Topik (Section Content) -->
+                            <template x-if="contents.length > 0">
+                                <div>
+                                    <div class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Topik</div>
+                                    <ul>
+                                        <template x-for="item in contents">
+                                            <li>
+                                                <a :href="item.url" class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold" :class="item.color">
+                                                        <span x-text="item.initials"></span>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]" x-text="item.title"></p>
+                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5" x-text="item.subtitle"></p>
+                                                    </div>
+                                                    <i class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                </a>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </template>
+
+                            <!-- Hasil: Perpustakaan / Buku -->
+                            <template x-if="libraries.length > 0">
+                                <div>
+                                    <div class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Buku / Perpustakaan</div>
+                                    <ul>
+                                        <template x-for="item in libraries">
+                                            <li>
+                                                <a :href="item.url" class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold" :class="item.color">
+                                                        <span x-text="item.initials"></span>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]" x-text="item.title"></p>
+                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5" x-text="item.subtitle"></p>
+                                                    </div>
+                                                    <i class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                </a>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </template>
+
+                        </div>
                     </div>
                 </div>
+
+                <!-- SCRIPT ALPINE AJAX -->
+                <script>
+                    function searchSuggest() {
+                        return {
+                            query: '',
+                            isOpen: false,
+                            isLoading: false,
+                            courses: [],
+                            modules: [],
+                            contents: [],
+                            libraries: [],
+                            fetchResults() {
+                                if (this.query.trim().length < 2) {
+                                    this.isOpen = false;
+                                    this.courses = [];
+                                    this.modules = [];
+                                    this.contents = [];
+                                    this.libraries = [];
+                                    return;
+                                }
+
+                                this.isLoading = true;
+                                this.isOpen = true;
+
+                                fetch(`{{ route('user.search.suggest') }}?q=${encodeURIComponent(this.query)}`, {
+                                    headers: {
+                                        'Accept': 'application/json',
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    }
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    this.courses = data.courses || [];
+                                    this.modules = data.modules || [];
+                                    this.contents = data.contents || [];
+                                    this.libraries = data.libraries || [];
+                                    this.isLoading = false;
+                                })
+                                .catch(err => {
+                                    console.error('Pencarian gagal:', err);
+                                    this.isLoading = false;
+                                });
+                            }
+                        }
+                    }
+                </script>
+
             @else
                 <!-- Toggle Sidebar SEMUA ROLE LAIN (Muncul di Mobile & Desktop) -->
                 <button @click="sidebarOpen = !sidebarOpen"
