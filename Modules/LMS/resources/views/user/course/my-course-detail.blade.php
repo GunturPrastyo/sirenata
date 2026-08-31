@@ -422,7 +422,7 @@
                 @endphp
 
                 @if ($evaluasiAkhir)
-                    <div class="bg-white rounded-2xl shadow-sm border {{ $isEvaluasiAkhirLocked ? 'border-slate-200 opacity-90' : 'border-[#13416B]/60 ring-2 ring-[#13416B]/20' }} overflow-hidden transition-all relative">
+                    <div class="bg-white rounded-lg shadow-sm border-slate-200 overflow-hidden transition-all relative">
                         <div class="px-5 sm:px-6 py-5 {{ $isEvaluasiAkhirLocked ? 'bg-slate-50 border-b border-slate-200' : 'bg-gradient-to-r from-[#13416B] to-[#0f3354] text-white' }} flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
                             <div class="flex items-start sm:items-center gap-4 flex-1 min-w-0">
                                 <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $isEvaluasiAkhirLocked ? 'bg-slate-200 text-slate-400' : 'bg-white/20 text-white border border-white/30' }}">
