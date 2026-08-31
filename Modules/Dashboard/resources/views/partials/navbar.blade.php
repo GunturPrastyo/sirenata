@@ -3,26 +3,37 @@
     
     <div class="px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between w-full gap-3 sm:gap-6 min-h-[72px] sm:min-h-[80px]">
 
-        <!-- Bagian Kiri & Tengah (Toggle + Searchbar Full Width) -->
+        <!-- Bagian Kiri & Tengah (Toggle + Searchbar) -->
         <div class="flex items-center flex-1 gap-3 sm:gap-5">
             
-            <!-- Toggle Sidebar (KINI HANYA MUNCUL DI DESKTOP / lg) -->
-            <button @click="sidebarOpen = !sidebarOpen"
-                class="hidden lg:block p-2 sm:p-2.5 rounded-xl cursor-pointer text-slate-500 hover:bg-slate-100 hover:text-[#13416B] focus:outline-none transition-colors shrink-0">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
+            @if(auth()->check() && auth()->user()->hasRole('user'))
+                <!-- Toggle Sidebar KHUSUS USER (Hanya di Desktop karena mobile pakai Bottom Nav) -->
+                <button @click="sidebarOpen = !sidebarOpen"
+                    class="hidden lg:block p-2 sm:p-2.5 rounded-xl cursor-pointer text-slate-500 hover:bg-slate-100 hover:text-[#13416B] focus:outline-none transition-colors shrink-0">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
 
-            <!-- Searchbar (Lebar penuh di semua resolusi) -->
-            <div class="flex-1 w-full max-w-4xl">
-                <div class="relative w-full group">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
-                        <i class="fas fa-search text-slate-400 group-focus-within:text-[#13416B] transition-colors text-sm sm:text-base"></i>
+                <!-- Searchbar KHUSUS USER (Lebar penuh di semua resolusi) -->
+                <div class="flex-1 w-full max-w-4xl">
+                    <div class="relative w-full group">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
+                            <i class="fas fa-search text-slate-400 group-focus-within:text-[#13416B] transition-colors text-sm sm:text-base"></i>
+                        </div>
+                        <input type="text" class="bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm rounded-xl focus:ring-[#13416B] focus:border-[#13416B] block w-full ps-10 sm:ps-11 p-2.5 sm:p-3 transition-colors shadow-sm" placeholder="Cari modul atau buku...">
                     </div>
-                    <input type="text" class="bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm rounded-xl focus:ring-[#13416B] focus:border-[#13416B] block w-full ps-10 sm:ps-11 p-2.5 sm:p-3 transition-colors shadow-sm" placeholder="Cari modul atau buku...">
                 </div>
-            </div>
+            @else
+                <!-- Toggle Sidebar SEMUA ROLE LAIN (Muncul di Mobile & Desktop) -->
+                <button @click="sidebarOpen = !sidebarOpen"
+                    class="block p-2 sm:p-2.5 rounded-xl cursor-pointer text-slate-500 hover:bg-slate-100 hover:text-[#13416B] focus:outline-none transition-colors shrink-0">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            @endif
+
         </div>
 
         <!-- Bagian Kanan (Profil) -->
@@ -51,7 +62,6 @@
                         @endrole
                         @role('user')
                             <li><a href="{{ route('user.profile') }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i class="fas fa-user-cog w-4 text-center"></i> Profil Saya</a></li>
-                            <!-- Tautan Area Kerja / Dashboard User Dihapus -->
                         @endrole
 
                         <li class="my-1 border-t border-slate-100"></li>
