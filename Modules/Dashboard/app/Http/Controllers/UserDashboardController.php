@@ -30,12 +30,11 @@ class UserDashboardController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        
+
         $profile = UserProfile::firstOrCreate(['user_id' => $user->id]);
         $provinces = Province::all();
         $stats = $this->courseService->myCourseStats();
-        
-        // --- DATA LAST COURSE ---
+
         $lastCourse = $this->courseService->getLastAccessedCourse();
         if ($lastCourse) {
             $dbLastCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $lastCourse->slug)->first();
@@ -44,8 +43,7 @@ class UserDashboardController extends Controller
                 $lastCourse->category_name = $dbLastCourse->category ? $dbLastCourse->category->name : null;
             }
         }
-        
-        // --- DATA RECENT COURSES ---
+
         $recentCourses = $this->courseService->getRecentCourses()->take(4);
         $recentCourses->transform(function ($course) {
             $dbCourse = \Modules\LMS\Models\Course::where('slug', $course->slug)->first();
@@ -55,17 +53,14 @@ class UserDashboardController extends Controller
             return $course;
         });
 
-        // =====================================================================================
-        // DATA ANALITIK: PERBANDINGAN SKOR GLOBAL POST-TEST
-        // =====================================================================================
         $userId = $user->id;
-        $myCourses = $user->enrolledCourses()->get(); 
-        
+        $myCourses = $user->enrolledCourses()->get();
+
         $chartDataByCourse = [];
 
         if ($myCourses->count() > 0) {
             $courseIds = $myCourses->pluck('id');
-            
+
             $allPostTests = PostTest::whereIn('course_id', $courseIds)->orderBy('id')->get();
             $postTestIds = $allPostTests->pluck('id');
 
@@ -85,17 +80,17 @@ class UserDashboardController extends Controller
 
             foreach ($myCourses as $c) {
                 $courseTests = $allPostTests->where('course_id', $c->id);
-                
+
                 $labels = [];
                 $uScores = [];
                 $aScores = [];
-                
+
                 foreach ($courseTests as $test) {
                     $labels[] = strlen($test->title) > 15 ? substr($test->title, 0, 15) . '...' : $test->title;
                     $uScores[] = $userResults[$test->id] ?? 0;
                     $aScores[] = isset($avgResults[$test->id]) ? round($avgResults[$test->id], 1) : 0;
                 }
-                
+
                 $chartDataByCourse[$c->id] = [
                     'course_id' => $c->id,
                     'course_name' => $c->name,
@@ -105,7 +100,7 @@ class UserDashboardController extends Controller
                 ];
             }
         }
-        
+
         return view('dashboard::pages.user.index', [
             'profile' => $profile,
             'provinces' => $provinces,
@@ -161,7 +156,7 @@ class UserDashboardController extends Controller
         ToastMagic::success("Data instansi berhasil disimpan!");
         return redirect()->route('user.dashboard')->with('success', 'Data instansi berhasil disimpan.');
     }
-    
+
     public function profile(Request $request)
     {
         /** @var \App\Models\User $user */
@@ -170,7 +165,7 @@ class UserDashboardController extends Controller
         return view('dashboard::pages.user.profile', compact('user', 'provinces'));
     }
 
-    public function storeOrUpdateProfile(UpdateProfileRequest $request) :RedirectResponse
+    public function storeOrUpdateProfile(UpdateProfileRequest $request): RedirectResponse
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
@@ -179,5 +174,105 @@ class UserDashboardController extends Controller
         Log::info($data);
         ToastMagic::success("Profile berhasil diupdate!");
         return to_route('user.profile');
+    }
+
+    /**
+     * API Endpoint untuk Auto-Suggest Searchbar
+     */
+    public function searchSuggest(Request $request)
+    {
+        $keyword = $request->input('q');
+
+        if (empty($keyword)) {
+            return response()->json(['courses' => [], 'modules' => [], 'contents' => [], 'libraries' => []]);
+        }
+
+        // Helper: Pembuat Initial (Maks 2 huruf)
+        $getInitials = function ($name) {
+            $words = explode(' ', trim($name));
+            $initials = '';
+            foreach (array_slice($words, 0, 2) as $w) {
+                if (!empty($w)) $initials .= strtoupper(substr($w, 0, 1));
+            }
+            return strlen($initials) < 1 ? 'S' : (strlen($initials) > 2 ? substr($initials, 0, 2) : $initials);
+        };
+
+        // 1. Pencarian Kursus (Warna: Biru SIRENATA)
+        $courses = \Modules\LMS\Models\Course::where('name', 'like', "%{$keyword}%")
+            ->orWhere('description', 'like', "%{$keyword}%")
+            ->with('category')
+            ->limit(4)
+            ->get()
+            ->map(function ($item) use ($getInitials) {
+                return [
+                    'title' => $item->name,
+                    'subtitle' => $item->category->name ?? 'Kategori Umum',
+                    'url' => route('user.course.my-course.detail', $item->slug),
+                    'initials' => $getInitials($item->name),
+                    'color' => 'bg-[#184A78]'
+                ];
+            });
+
+        // 2. Pencarian Modul (Course Section) (Warna: Hijau Emerald)
+        $modules = \Modules\LMS\Models\CourseSection::where('name', 'like', "%{$keyword}%")
+            ->orWhere('description', 'like', "%{$keyword}%")
+            ->with('course')
+            ->limit(3)
+            ->get()
+            ->map(function ($item) use ($getInitials) {
+                $slug = $item->course->slug ?? '#';
+                return [
+                    'title' => $item->name,
+                    'subtitle' => 'Kursus: ' . ($item->course->name ?? 'Tidak diketahui'),
+                   
+                    'url' => route('user.course.my-course.detail', $slug) . '?target=' . $item->id,
+                    'initials' => $getInitials($item->name),
+                    'color' => 'bg-emerald-600'
+                ];
+            });
+
+        // 3. Pencarian Topik (Section Content) (Warna: Ungu Indigo) 
+        $contents = \Modules\LMS\Models\SectionContent::where('name', 'like', "%{$keyword}%")
+            ->orWhere('content_text', 'like', "%{$keyword}%")
+            ->with('section.course')
+            ->limit(4)
+            ->get()
+            ->map(function ($item) use ($getInitials) {
+                $courseName = $item->section->course->name ?? 'Kursus';
+                $sectionName = $item->section->name ?? 'Modul';
+                $slug = $item->section->course->slug ?? '#';
+
+                return [
+                    'title' => $item->name,
+                    // Format: Nama Kursus • Modul: Nama Modul
+                    'subtitle' => $courseName . ' • Modul: ' . $sectionName,
+                    'url' => route('user.course.content.show', ['slug' => $slug, 'content' => $item->id]),
+                    'initials' => $getInitials($item->name),
+                    'color' => 'bg-indigo-600'
+                ];
+            });
+
+        // 4. Pencarian Perpustakaan / Buku (Warna: Oranye Amber)
+        $libraries = \Modules\LMS\Models\Library::where('title', 'like', "%{$keyword}%")
+            ->orWhere('description', 'like', "%{$keyword}%")
+            ->with('libraryCategory')
+            ->limit(3)
+            ->get()
+            ->map(function ($item) use ($getInitials) {
+                return [
+                    'title' => $item->title,
+                    'subtitle' => $item->libraryCategory->name ?? 'Dokumen Perpustakaan',
+                    'url' => route('user.library.index') . '?search=' . urlencode($item->title),
+                    'initials' => $getInitials($item->title),
+                    'color' => 'bg-amber-600'
+                ];
+            });
+
+        return response()->json([
+            'courses' => $courses,
+            'modules' => $modules,
+            'contents' => $contents,
+            'libraries' => $libraries,
+        ]);
     }
 }

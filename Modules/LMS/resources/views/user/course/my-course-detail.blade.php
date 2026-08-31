@@ -178,7 +178,7 @@
             </div>
         </div>
 
-        {{-- INFO PANDUAN (VERSI MOBILE) - Hanya tampil di bawah layar lg (Desktop) --}}
+        {{-- INFO PANDUAN (VERSI MOBILE) --}}
         @if(!$isFullyCompleted)
         <div class="block lg:hidden bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm">
             <i class="fas fa-info-circle text-slate-400 mt-0.5 text-base shrink-0"></i>
@@ -195,21 +195,43 @@
             <div class="lg:col-span-2 space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
                     
+                    {{-- PERBAIKAN: Menghapus items-center di container dan menggantinya dengan sm:items-center. 
+                         Menambahkan self-start pada badge agar rata kiri pada versi mobile. --}}
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-5 sm:mb-6 pb-4 border-b border-slate-100 gap-3 sm:gap-4">
-                        <div class="flex items-start sm:items-center gap-3">
-                            <div class="p-2 bg-slate-50 text-slate-600 rounded-lg shrink-0 mt-1 sm:mt-0">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2.5 bg-slate-50 text-slate-600 rounded-xl shrink-0 mt-0">
                                 <i class="fas fa-list-ul text-lg"></i>
                             </div>
-                            <h2 class="text-base sm:text-lg font-bold text-slate-800 leading-tight">Daftar Modul Pembelajaran</h2>
+                            <h2 class="text-md sm:text-lg font-bold text-slate-800 leading-tight">Daftar Modul Pembelajaran</h2>
                         </div>
-                        <span class="text-[11px] sm:text-xs text-slate-600 font-bold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 shrink-0 text-center">
+                        <span class="text-[11px] sm:text-xs text-slate-600 font-bold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 shrink-0 self-start sm:self-auto">
                             {{ count(data_get($course, 'sections', [])) }} Modul
                         </span>
                     </div>
 
-                    <div x-data="{ activeAccordion: localStorage.getItem('active_section_{{ $courseSlug }}') || 'section-0' }" x-init="$watch('activeAccordion', value => localStorage.setItem('active_section_{{ $courseSlug }}', value))" class="space-y-3 sm:space-y-4">
+                    <div x-data="{ 
+                            activeAccordion: localStorage.getItem('active_section_{{ $courseSlug }}') || 'section-0',
+                            init() {
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const targetId = urlParams.get('target');
+                                
+                                if (targetId) {
+                                    setTimeout(() => {
+                                        const el = document.querySelector(`[data-section-id='${targetId}']`);
+                                        if (el) {
+                                            this.activeAccordion = el.getAttribute('id');
+                                            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                            el.classList.add('ring-2', 'ring-[#13416B]');
+                                            setTimeout(() => el.classList.remove('ring-2', 'ring-[#13416B]'), 2000);
+                                        }
+                                    }, 300);
+                                }
+                            }
+                        }" 
+                        x-init="init(); $watch('activeAccordion', value => localStorage.setItem('active_section_{{ $courseSlug }}', value))" 
+                        class="space-y-3 sm:space-y-4">
+                        
                         @php
-                            // Inisiasi Variabel Kunci: Bab pertama selalu terbuka
                             $isPreviousSectionDone = true;
                         @endphp
 
@@ -247,7 +269,9 @@
                             @endphp
 
                             <div x-data="{ id: 'section-{{ $index }}', locked: {{ $isLocked ? 'true' : 'false' }} }"
-                                class="border {{ $isLocked ? 'border-slate-100 bg-slate-50' : 'border-slate-200 bg-white' }} rounded-xl overflow-hidden shadow-sm transition-all duration-200"
+                                id="section-{{ $index }}"
+                                data-section-id="{{ $sectionId }}"
+                                class="border {{ $isLocked ? 'border-slate-100 bg-slate-50' : 'border-slate-200 bg-white' }} rounded-xl overflow-hidden shadow-sm transition-all duration-500"
                                 :class="{ 'border-[#13416B] shadow-md ring-1 ring-[#13416B]/30': activeAccordion == id && !locked }">
 
                                 <button @click="if(!locked) activeAccordion = (activeAccordion == id ? '' : id)"
@@ -276,7 +300,7 @@
 
                                             <div class="flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1.5 mt-1.5">
                                                 <span class="text-[11px] sm:text-xs text-slate-500 font-medium flex items-center gap-1 whitespace-nowrap">
-                                                    <i class="far fa-file-alt text-slate-400"></i> {{ $totalCount }} Materi
+                                                    <i class="far fa-file-alt text-slate-400"></i> {{ $totalCount }} Topik
                                                 </span>
 
                                                 @if ($postTestBab)
@@ -355,7 +379,7 @@
                                                 <a href="{{ route('user.course.content.show', ['slug' => $courseSlug, 'content' => $contentId]) }}"
                                                     class="w-full sm:w-auto mt-2 sm:mt-0 px-4 py-2.5 sm:py-2 {{ $isContentItemCompleted ? 'bg-white border border-[#13416B]/30 text-[#13416B] hover:bg-[#13416B]/10' : 'bg-[#13416B] hover:bg-[#0f3354] text-white shadow-sm' }} rounded-xl text-xs font-bold transition-all text-center shrink-0 flex items-center justify-center gap-2">
                                                     <i class="fas {{ $isContentItemCompleted ? 'fa-eye' : 'fa-play' }}"></i>
-                                                    {{ $isContentItemCompleted ? 'Lihat Kembali' : 'Pelajari Materi' }}
+                                                    {{ $isContentItemCompleted ? 'Lihat Kembali' : 'Pelajari Topik' }}
                                                 </a>
                                             </div>
                                         @empty

@@ -5,6 +5,7 @@ namespace Modules\LMS\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\LMS\Models\LibraryCategory;
+use Modules\LMS\Models\Library;
 use Modules\LMS\Services\LibraryService;
 
 class LibraryController extends Controller
@@ -29,6 +30,25 @@ class LibraryController extends Controller
 
         $libraryCategories = LibraryCategory::orderBy('name')->get();
 
-        return view('lms::user.library.index', compact('libraries', 'libraryCategories', 'type', 'search'));
+        // Statistik Nyata untuk Header
+        $totalKoleksi = Library::count();
+        $totalKategori = $libraryCategories->count();
+        $totalDokumen = Library::whereNotNull('file_path')->count();
+        $totalVideo = Library::where(function($q) {
+            $q->whereNotNull('video_path')
+              ->orWhere('external_link', 'like', '%youtube%')
+              ->orWhere('external_link', 'like', '%youtu.be%');
+        })->count();
+
+        return view('lms::user.library.index', compact(
+            'libraries', 
+            'libraryCategories', 
+            'type', 
+            'search',
+            'totalKoleksi',
+            'totalKategori',
+            'totalDokumen',
+            'totalVideo'
+        ));
     }
 }

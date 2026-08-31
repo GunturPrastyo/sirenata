@@ -18,6 +18,9 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(f
 
     Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
     Route::post('/profile', [UserDashboardController::class, 'storeOrUpdateProfile'])->name('profile.update');
+    
+    Route::get('/search', [UserDashboardController::class, 'search'])->name('search');
+    Route::get('/search-suggest', [UserDashboardController::class, 'searchSuggest'])->name('search.suggest');
 });
 
 Route::prefix('super-admin')->middleware(['auth', 'role:super-admin'])->name('super-admin.')->group(function () {
