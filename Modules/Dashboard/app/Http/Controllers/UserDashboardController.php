@@ -86,7 +86,9 @@ class UserDashboardController extends Controller
                 $aScores = [];
 
                 foreach ($courseTests as $test) {
-                    $labels[] = strlen($test->title) > 15 ? substr($test->title, 0, 15) . '...' : $test->title;
+                   
+                    $labels[] = $test->title;
+
                     $uScores[] = $userResults[$test->id] ?? 0;
                     $aScores[] = isset($avgResults[$test->id]) ? round($avgResults[$test->id], 1) : 0;
                 }
@@ -224,7 +226,7 @@ class UserDashboardController extends Controller
                 return [
                     'title' => $item->name,
                     'subtitle' => 'Kursus: ' . ($item->course->name ?? 'Tidak diketahui'),
-                   
+
                     'url' => route('user.course.my-course.detail', $slug) . '?target=' . $item->id,
                     'initials' => $getInitials($item->name),
                     'color' => 'bg-emerald-600'
