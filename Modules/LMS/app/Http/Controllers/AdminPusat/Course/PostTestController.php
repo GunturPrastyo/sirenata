@@ -37,7 +37,8 @@ class PostTestController extends Controller
             'questions'                   => 'required|array|min:1',
             'questions.*.question'        => 'required|string',
             'questions.*.choices'         => 'required|array|min:2',
-            'questions.*.correct_choice'  => 'required',
+            'questions.*.choices.*'       => 'required|string', // PERBAIKAN: Pastikan setiap opsi pilihan bukan null
+            'questions.*.correct_choice'  => 'required|integer', // PERBAIKAN: Pastikan format index benar
         ]);
 
         $result = $this->postTestService->storePostTestWithQuestions($validated);
@@ -90,7 +91,8 @@ class PostTestController extends Controller
             'questions'                   => 'required|array|min:1',
             'questions.*.question'        => 'required|string',
             'questions.*.choices'         => 'required|array|min:2',
-            'questions.*.correct_choice'  => 'required',
+            'questions.*.choices.*'       => 'required|string', // PERBAIKAN
+            'questions.*.correct_choice'  => 'required|integer', // PERBAIKAN
         ]);
 
         $postTest = \Modules\LMS\Models\PostTest::findOrFail($id);
@@ -105,5 +107,26 @@ class PostTestController extends Controller
 
         ToastMagic::success($result['message']);
         return redirect()->route('admin-pusat.management-course.courses.show', $validated['course_slug']);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        // Validasi gambar
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Maksimal 2MB
+        ]);
+
+        if ($request->hasFile('image')) {
+            // Gambar akan disimpan di folder storage/app/public/post-test-images
+            $path = $request->file('image')->store('post-test-images', 'public');
+            
+            // Kembalikan URL asli agar disisipkan oleh Quill.js
+            return response()->json([
+                'success' => true,
+                'url' => asset('storage/' . $path) 
+            ]);
+        }
+
+        return response()->json(['success' => false], 400);
     }
 }

@@ -30,13 +30,13 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::resource('courses', CourseController::class);
         Route::resource('course-sections', CourseSectionController::class);
         Route::resource('course-sections-contents', SectionContentController::class);
-        Route::prefix('post-test')->name('post-tests.')->group(function () {
+       Route::prefix('post-test')->name('post-tests.')->group(function () {
             Route::get('/create', [PostTestController::class, 'create'])->name('create');
             Route::post('/store', [PostTestController::class, 'store'])->name('store');
-
-            // Tambahkan rute edit dan update berikut:
             Route::get('/{id}/edit', [PostTestController::class, 'edit'])->name('edit');
             Route::put('/{id}', [PostTestController::class, 'update'])->name('update');
+            
+            Route::post('/upload-image', [PostTestController::class, 'uploadImage'])->name('upload-image');
         });
     });
 

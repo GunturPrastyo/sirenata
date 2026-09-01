@@ -22,18 +22,20 @@ class PostTestService
                 'duration'          => $data['duration'] ?? 30,
             ]);
 
-            // 2. Simpan Soal dan Pilihan Ganda
+            // 2. Simpan Soal dan Pilihan Ganda (Berisi teks atau HTML)
             if (!empty($data['questions'])) {
                 foreach ($data['questions'] as $qData) {
                     $question = $postTest->questions()->create([
-                        'question' => $qData['question'],
+                        'question' => $qData['question'], // Menyimpan HTML utuh
                     ]);
 
                     if (!empty($qData['choices'])) {
-                        foreach ($qData['choices'] as $cIndex => $choiceText) {
+                        // Pastikan array key di-reset agar konsisten mulai dari 0, 1, 2, 3
+                        $choices = array_values($qData['choices']); 
+                        foreach ($choices as $cIndex => $choiceText) {
                             $question->choices()->create([
-                                'choice'     => $choiceText,
-                                'is_correct' => (string) $qData['correct_choice'] === (string) $cIndex,
+                                'choice'     => $choiceText, // Menyimpan HTML utuh
+                                'is_correct' => (int) $qData['correct_choice'] === $cIndex,
                             ]);
                         }
                     }
@@ -55,9 +57,9 @@ class PostTestService
         }
     }
 
-    public function updatePostTestWithQuestions(\Modules\LMS\Models\PostTest $postTest, array $data): array
+    public function updatePostTestWithQuestions(PostTest $postTest, array $data): array
     {
-        \Illuminate\Support\Facades\DB::beginTransaction();
+        DB::beginTransaction();
         try {
             // 1. Update Header Post Test
             $postTest->update([
@@ -67,8 +69,7 @@ class PostTestService
                 'duration'      => $data['duration'] ?? 30,
             ]);
 
-            // 2. Pendekatan Sederhana: Hapus soal & pilihan lama, lalu buat ulang yang baru
-            // (Atau bisa di-sync, tapi menghapus dan membuat ulang lebih aman untuk struktur soal pilihan ganda dinamis)
+            // 2. Pendekatan: Hapus soal & pilihan lama, lalu buat ulang yang baru
             foreach ($postTest->questions as $question) {
                 $question->choices()->delete();
                 $question->delete();
@@ -81,24 +82,26 @@ class PostTestService
                     ]);
 
                     if (!empty($qData['choices'])) {
-                        foreach ($qData['choices'] as $cIndex => $choiceText) {
+                        // Pastikan array key di-reset
+                        $choices = array_values($qData['choices']);
+                        foreach ($choices as $cIndex => $choiceText) {
                             $question->choices()->create([
                                 'choice'     => $choiceText,
-                                'is_correct' => (string) $qData['correct_choice'] === (string) $cIndex,
+                                'is_correct' => (int) $qData['correct_choice'] === $cIndex,
                             ]);
                         }
                     }
                 }
             }
 
-            \Illuminate\Support\Facades\DB::commit();
+            DB::commit();
             return [
                 'success' => true,
                 'message' => 'Post Test berhasil diperbarui',
             ];
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\DB::rollBack();
-            \Illuminate\Support\Facades\Log::error('PostTestService update error: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('PostTestService update error: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Gagal memperbarui: ' . $e->getMessage(),
