@@ -16,7 +16,7 @@
                 </button>
 
                 <!-- Searchbar AUTO-SUGGEST KHUSUS USER -->
-                <div class="flex-1 w-full max-w-4xl relative" x-data="searchSuggest()" @click.outside="isOpen = false">
+                <div class="flex-1 w-full max-w-full relative" x-data="searchSuggest()" @click.outside="isOpen = false">
                     <div class="relative w-full group">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 sm:ps-4 pointer-events-none">
                             <i class="fas fa-search text-slate-400 group-focus-within:text-[#13416B] transition-colors text-sm sm:text-base"></i>
@@ -46,7 +46,7 @@
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
                          x-cloak
-                         class="absolute top-full left-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden w-[calc(100vw-2rem)] sm:w-[500px] max-h-[70vh] flex flex-col">
+                         class="absolute top-full left-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden w-[calc(100vw-2rem)] max-w-full sm:w-full max-h-[70vh] flex flex-col">
                         
                         <div class="overflow-y-auto py-2 hide-scrollbar">
                             
