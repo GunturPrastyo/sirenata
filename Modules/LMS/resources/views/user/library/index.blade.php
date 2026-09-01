@@ -31,10 +31,10 @@
                 <span class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-md text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-blue-100 border border-white/10 mb-5 shadow-sm">
                     Pusat Sumber Belajar
                 </span>
-                <h1 class="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
                     Koleksi Pustaka & Referensi
                 </h1>
-                <p class="text-sm sm:text-base text-blue-100/80 leading-relaxed max-w-xl mx-0 font-medium">
+                <p class="text-sm md:text-sm sm:text-base text-blue-100/80 leading-relaxed max-w-xl mx-0 font-medium">
                     Jelajahi berbagai modul pembelajaran, bahan bacaan, dokumen peraturan, hingga video interaktif yang dirancang khusus untuk meningkatkan kompetensi Anda.
                 </p>
 
