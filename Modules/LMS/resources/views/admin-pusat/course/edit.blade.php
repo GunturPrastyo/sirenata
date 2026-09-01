@@ -37,10 +37,11 @@
                         <x-form.input name="name" label="Nama Course" :value="$course->name" placeholder="Contoh: Perencanaan Tenaga Kerja" required />
                     </div>
 
-                    <!-- Thumbnail -->
+                  <!-- Thumbnail -->
                     <div class="col-span-1 md:col-span-2">
-                        <x-form.input type="file" name="thumbnail" label="Thumbnail Course" accept="image/*"
+                        <x-form.input type="file" name="thumbnail" label="Thumbnail Course (Opsional)" accept="image/*"
                             class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                        <p class="text-xs text-slate-500 mt-1">Biarkan kosong jika tidak ingin mengubah thumbnail saat ini.</p>
                     </div>
 
                     <!-- Deskripsi -->

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('category_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('slug');
-            $table->string('thumbnail');
+            $table->string('thumbnail')->nullable(); 
             $table->text('description');
             $table->timestamps();
         });
