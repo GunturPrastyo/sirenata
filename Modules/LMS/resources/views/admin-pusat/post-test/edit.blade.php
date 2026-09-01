@@ -1,12 +1,12 @@
 <x-dashboard::layouts.dashboard title="Edit Post Test & Soal">
     <div class="p-2 sm:p-6" x-data="postTestEditForm()">
         <!-- Breadcrumb Navigation -->
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
+        <nav class="flex mt-4 mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 sm:space-x-3 flex-wrap">
                 <li>
                     <div class="flex items-center">
                         <a href="{{ route('admin-pusat.management-course.courses.show', $course->slug) }}" class="ml-1 text-sm font-medium text-slate-700 hover:text-[#13416B] md:ml-2">
-                        <i class="fas fa-home mr-2"></i>    {{ $course->name }}
+                         {{ $course->name }}
                         </a>
                     </div>
                 </li>
