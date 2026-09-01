@@ -1,9 +1,11 @@
 <x-dashboard::layouts.dashboard
     title="Kursus Saya | {{ data_get($course, 'course_name') ?? data_get($course, 'name') }} | SIRENATA">
-    <div class="p-2 sm:p-6 max-w-full mx-auto">
+    
+    <!-- PERBAIKAN: Menghapus padding horizontal di mobile (px-0) -->
+    <div class="px-0 py-4 sm:p-6 max-w-full mx-auto">
         
         {{-- Breadcrumb Custom (Responsif & Tanpa Icon Home) --}}
-        <nav class="hidden md:flex mb-5 sm:mb-6" aria-label="Breadcrumb">
+        <nav class="hidden md:flex mb-5 sm:mb-6 mt-4 px-4 sm:px-0" aria-label="Breadcrumb">
             <ol class="inline-flex items-center flex-wrap gap-y-1.5 gap-x-2">
                 <li>
                     <a href="{{ route('user.course.my-course') }}"
@@ -90,7 +92,8 @@
         @endphp
 
         {{-- Header Card --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8 mb-6 flex flex-col md:flex-row gap-6 lg:gap-8 items-start transition-all">
+        <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
+        <div class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6 lg:p-8 mb-6 flex flex-col md:flex-row gap-6 lg:gap-8 items-start transition-all">
             {{-- Bagian Kiri: Thumbnail --}}
             <div class="w-full md:w-1/3 lg:w-1/4 shrink-0 rounded-xl overflow-hidden bg-slate-100 aspect-video md:aspect-[4/3] relative border border-slate-100">
                 <img src="{{ $thumbnailUrl }}" alt="{{ $courseName }}" class="w-full h-full object-cover" />
@@ -138,7 +141,8 @@
         </div>
 
         {{-- WIDGET STATISTIK BELAJAR --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 mb-6">
+        <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
+        <div class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6 mb-6">
             <div class="flex items-center gap-3 mb-4 sm:mb-5 pb-3 sm:pb-4 border-b border-slate-100">
                 <div class="p-2 bg-[#13416B]/10 text-[#13416B] border border-[#13416B]/20 rounded-lg shrink-0">
                     <i class="fas fa-chart-pie text-lg sm:text-base"></i>
@@ -180,7 +184,8 @@
 
         {{-- INFO PANDUAN (VERSI MOBILE) --}}
         @if(!$isFullyCompleted)
-        <div class="block lg:hidden bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm">
+        <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
+        <div class="block lg:hidden bg-slate-50 border-y border-x-0 sm:border sm:border-x border-slate-200 rounded-none sm:rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm mx-0">
             <i class="fas fa-info-circle text-slate-400 mt-0.5 text-base shrink-0"></i>
             <p class="text-[11px] sm:text-xs text-slate-600 leading-relaxed font-medium">
                 Materi dipelajari berurutan. Buka kunci modul berikutnya dengan menekan <strong class="text-slate-800">Tandai Selesai</strong> di setiap materi dan lulus <strong class="text-slate-800">Evaluasi</strong>.
@@ -193,10 +198,9 @@
 
             {{-- Left column: List Modul & Evaluasi Akhir --}}
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
+                <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
+                <div class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6">
                     
-                    {{-- PERBAIKAN: Menghapus items-center di container dan menggantinya dengan sm:items-center. 
-                         Menambahkan self-start pada badge agar rata kiri pada versi mobile. --}}
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-5 sm:mb-6 pb-4 border-b border-slate-100 gap-3 sm:gap-4">
                         <div class="flex items-center gap-3">
                             <div class="p-2.5 bg-slate-50 text-slate-600 rounded-xl shrink-0 mt-0">
@@ -446,8 +450,9 @@
                 @endphp
 
                 @if ($evaluasiAkhir)
-                    <div class="bg-white rounded-lg shadow-sm border-slate-200 overflow-hidden transition-all relative">
-                        <div class="px-5 sm:px-6 py-5 {{ $isEvaluasiAkhirLocked ? 'bg-slate-50 border-b border-slate-200' : 'bg-gradient-to-r from-[#13416B] to-[#0f3354] text-white' }} flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
+                    <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
+                    <div class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 overflow-hidden transition-all relative">
+                        <div class="px-4 py-4 sm:px-6 sm:py-5 {{ $isEvaluasiAkhirLocked ? 'bg-slate-50 border-b border-slate-200' : 'bg-gradient-to-r from-[#13416B] to-[#0f3354] text-white' }} flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
                             <div class="flex items-start sm:items-center gap-4 flex-1 min-w-0">
                                 <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 {{ $isEvaluasiAkhirLocked ? 'bg-slate-200 text-slate-400' : 'bg-white/20 text-white border border-white/30' }}">
                                     <i class="fas {{ $isEvaluasiAkhirLocked ? 'fa-lock' : 'fa-graduation-cap' }} text-xl"></i>
@@ -504,8 +509,9 @@
             </div>
 
             {{-- Right Column: Side Widget (Sertifikat & Info) --}}
-            <div class="space-y-6 lg:sticky lg:top-24 lg:self-start">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
+            <div class="space-y-0 lg:sticky lg:top-24 lg:self-start">
+                <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
+                <div class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6">
                     <div class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
                         <div class="p-2 bg-[#13416B]/10 text-[#13416B] border border-[#13416B]/20 rounded-lg shrink-0">
                             <i class="fas fa-certificate text-lg"></i>
@@ -628,7 +634,8 @@
 
                 {{-- KOTAK INFO PANDUAN (Versi Desktop: Hanya Tampil di Layar Besar) --}}
                 @if(!$isFullyCompleted)
-                <div class="hidden lg:flex bg-slate-50 border border-slate-200 rounded-xl p-4 items-start gap-3 shadow-sm">
+                <!-- PERBAIKAN: rounded-none border-x-0 di mobile (meski disembunyikan di mobile, tetap dikonsistensikan kelasnya) -->
+                <div class="hidden lg:flex bg-slate-50 border-y sm:border border-x-0 sm:border-x border-slate-200 rounded-none sm:rounded-xl p-4 items-start gap-3 shadow-sm mx-0 sm:mx-auto">
                     <i class="fas fa-info-circle text-[#13416B]/60 mt-0.5 text-base shrink-0"></i>
                     <p class="text-xs text-slate-600 leading-relaxed font-medium">
                         Materi dipelajari berurutan. Buka kunci modul berikutnya dengan menekan <strong class="text-slate-800">Tandai Selesai</strong> di setiap materi dan lulus <strong class="text-slate-800">Evaluasi</strong>.

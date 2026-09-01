@@ -4,7 +4,7 @@
       {{-- ========================================== --}}
         {{-- HEADER KURSUS SAYA DENGAN ILUSTRASI GRUP   --}}
         {{-- ========================================== --}}
-        <div class="relative bg-[#13416B] rounded-2xl p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 flex items-center justify-between border border-blue-900/20 shadow-lg overflow-hidden min-h-[220px] sm:min-h-[280px] lg:min-h-[320px]">
+        <div class="relative bg-[#13416B] rounded-xl p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 flex items-center justify-between border border-blue-900/20 shadow-lg overflow-hidden min-h-[220px] sm:min-h-[280px] lg:min-h-[320px]">
             
             <!-- Efek Dekoratif Bubbles Geometris Profesional -->
             <div class="absolute inset-0 pointer-events-none z-0">
@@ -33,12 +33,12 @@
                 </span>
                 
                 <!-- Judul Diperlebar -->
-                <h1 class="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+                <h1 class="text-xl md:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
                     Pelatihan & Pengembangan Kompetensi
                 </h1>
                 
                 <!-- Deskripsi Diperpanjang -->
-                <p class="text-sm sm:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
+                <p class="text-sm md:text-sm sm:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
                     Selesaikan modul pelatihan Anda, ikuti evaluasi dengan baik, dan raih sertifikat kelulusan untuk mendukung perjalanan karier serta profesionalisme Anda.
                 </p>
 
