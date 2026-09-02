@@ -55,8 +55,7 @@ class DashbordController extends Controller
             $sdmYears[] = $y;
         }
 
-        // SDM per Provinsi: count users (role 'user') grouped by province
-        // Note: roles table uses 'uuid' as PK, model_has_roles uses 'model_uuid' and 'role_id'
+        // SDM per Provinsi
         $userCountsByProvince = DB::table('user_scopes')
             ->join('users', 'user_scopes.user_id', '=', 'users.id')
             ->join('model_has_roles', function ($join) {
@@ -71,7 +70,6 @@ class DashbordController extends Controller
             ->groupBy('user_scopes.province_code')
             ->get();
 
-        // Map province codes to province names using Nusa Province model (separate SQLite DB)
         $provinceCodes = $userCountsByProvince->pluck('province_code')->toArray();
         $provinces = Province::whereIn('code', $provinceCodes)->pluck('name', 'code');
 
@@ -82,7 +80,9 @@ class DashbordController extends Controller
             ];
         })->sortBy('province_name')->values();
 
-        // Masa Aktif RTK per Provinsi (active RTK per province with remaining years)
+        // ====================================================================
+        // PERBAIKAN 1: Masa Aktif RTK per Provinsi (Group By Province)
+        // ====================================================================
         $availableRtkYears = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
             ->berlaku()
             ->pluck('start_date')
@@ -93,8 +93,7 @@ class DashbordController extends Controller
 
         $selectedRtkYear = $request->input('rtk_year', 'all');
         
-        $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
-            ->berlaku();
+        $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)->berlaku();
             
         if ($selectedRtkYear !== 'all') {
             $queryRtk->where('end_date', '>=', (int) $selectedRtkYear);
@@ -105,16 +104,20 @@ class DashbordController extends Controller
         $rtkProvinceCodes = $rtkProvinsi->pluck('province_code')->toArray();
         $rtkProvinceNames = Province::whereIn('code', $rtkProvinceCodes)->pluck('name', 'code');
 
-        $rtkMasaAktifPerProvinsi = $rtkProvinsi->map(function ($rtk) use ($rtkProvinceNames) {
+        $rtkMasaAktifPerProvinsi = $rtkProvinsi->groupBy('province_code')->map(function ($items, $code) use ($rtkProvinceNames) {
+            $rtk = $items->first();
             return (object) [
-                'province_name' => $rtkProvinceNames[$rtk->province_code] ?? 'Unknown',
-                'sisa_tahun' => max(0, (int) $rtk->end_date - (int) date('Y')),
-                'start_date' => $rtk->start_date,
-                'end_date' => $rtk->end_date,
+                'province_name' => $rtkProvinceNames[$code] ?? 'Unknown',
+                'sisa_tahun'    => max(0, (int) $rtk->end_date - (int) date('Y')),
+                'start_date'    => (int) $rtk->start_date,
+                'end_date'      => (int) $rtk->end_date,
+                'total'         => $items->count(), // Tambahan agar grafik yang butuh jumlah tetap jalan
             ];
         })->sortBy('province_name')->values();
 
-        // Data for second chart: RTK filtered by end_date
+        // ====================================================================
+        // PERBAIKAN 2: Data RTK filtered by end_date (Group By Province)
+        // ====================================================================
         $availableRtkEndYears = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
             ->berlaku()
             ->pluck('end_date')
@@ -125,8 +128,7 @@ class DashbordController extends Controller
 
         $selectedRtkEndYear = $request->input('rtk_end_year', 'all');
         
-        $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)
-            ->berlaku();
+        $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)->berlaku();
             
         if ($selectedRtkEndYear !== 'all') {
             $queryRtkEnd->where('end_date', (int) $selectedRtkEndYear);
@@ -136,16 +138,18 @@ class DashbordController extends Controller
         $rtkEndProvinceCodes = $rtkProvinsiEnd->pluck('province_code')->toArray();
         $rtkEndProvinceNames = Province::whereIn('code', $rtkEndProvinceCodes)->pluck('name', 'code');
 
-        $rtkMasaBerakhirPerProvinsi = $rtkProvinsiEnd->map(function ($rtk) use ($rtkEndProvinceNames) {
+        $rtkMasaBerakhirPerProvinsi = $rtkProvinsiEnd->groupBy('province_code')->map(function ($items, $code) use ($rtkEndProvinceNames) {
+            $rtk = $items->first();
             return (object) [
-                'province_name' => $rtkEndProvinceNames[$rtk->province_code] ?? 'Unknown',
-                'sisa_tahun' => max(0, (int) $rtk->end_date - (int) date('Y')),
-                'start_date' => $rtk->start_date,
-                'end_date' => $rtk->end_date,
+                'province_name' => $rtkEndProvinceNames[$code] ?? 'Unknown',
+                'sisa_tahun'    => max(0, (int) $rtk->end_date - (int) date('Y')),
+                'start_date'    => (int) $rtk->start_date,
+                'end_date'      => (int) $rtk->end_date,
+                'total'         => $items->count(),
             ];
         })->sortBy('province_name')->values();
 
-        // Status Distribusi RTK (all types)
+        // Status Distribusi RTK
         $rtkStatusDistribution = DB::table('rencana_tenaga_kerjas')
             ->select('status_verification as status', DB::raw('count(*) as total'))
             ->groupBy('status_verification')
