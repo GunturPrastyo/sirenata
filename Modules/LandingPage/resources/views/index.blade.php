@@ -1,8 +1,15 @@
 <x-landingpage::layouts.master title="SIRENATA - Sistem Informasi Perencanaan Ketenagakerjaan">
 
-    {{-- CSS Kustom untuk Animasi & Custom Scrollbar --}}
+    {{-- CSS Kustom untuk Animasi, Custom Scrollbar & Font Kalam --}}
     @push('styles')
         <style>
+            /* Import Font Kalam dari Google Fonts */
+            @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
+
+            .font-kalam {
+                font-family: 'Kalam', cursive;
+            }
+
             html {
                 scroll-behavior: smooth;
             }
@@ -36,41 +43,19 @@
 
             /* Floating Animasi */
             @keyframes float {
-
-                0%,
-                100% {
-                    transform: translateY(0) scale(1);
-                }
-
-                50% {
-                    transform: translateY(-15px) scale(1.01);
-                }
+                0%, 100% { transform: translateY(0) scale(1); }
+                50% { transform: translateY(-15px) scale(1.01); }
             }
 
             @keyframes cardFloat {
-
-                0%,
-                100% {
-                    transform: translateY(0) rotate(0deg);
-                }
-
-                33% {
-                    transform: translateY(-8px) rotate(1deg);
-                }
-
-                66% {
-                    transform: translateY(-4px) rotate(-1deg);
-                }
+                0%, 100% { transform: translateY(0) rotate(0deg); }
+                33% { transform: translateY(-8px) rotate(1deg); }
+                66% { transform: translateY(-4px) rotate(-1deg); }
             }
 
             @keyframes scrollVertical {
-                0% {
-                    transform: translateY(0%);
-                }
-
-                100% {
-                    transform: translateY(-50%);
-                }
+                0% { transform: translateY(0%); }
+                100% { transform: translateY(-50%); }
             }
 
             .animate-float {
@@ -145,14 +130,16 @@
 
             <!-- Menu Desktop -->
             <div class="hidden md:flex items-center gap-2">
-                <a href="#home"
-                    class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">Beranda</a>
+                <!-- Beranda ditambahkan kembali agar urutan natural -->
+               
                 <a href="#features"
                     class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">Fitur</a>
                 <a href="#courses"
                     class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">LMS</a>
                 <a href="#faq"
                     class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">FAQ</a>
+                <a href="#cta"
+                    class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">CTA</a>
             </div>
 
             <!-- Auth Buttons (Normal Landing Page) -->
@@ -175,14 +162,15 @@
         <div x-show="mobileMenuOpen" x-collapse
             class="md:hidden bg-white border-t border-slate-100 shadow-xl absolute w-full">
             <div class="p-4 space-y-2">
-                <a href="#home" @click="mobileMenuOpen = false"
-                    class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">Beranda</a>
+                
                 <a href="#features" @click="mobileMenuOpen = false"
                     class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">Fitur</a>
                 <a href="#courses" @click="mobileMenuOpen = false"
                     class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">LMS</a>
                 <a href="#faq" @click="mobileMenuOpen = false"
                     class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">FAQ</a>
+                <a href="#cta" @click="mobileMenuOpen = false"
+                    class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:text-[#13416B]">CTA</a>
                 <div class="pt-4 mt-2 border-t border-slate-100 flex gap-3">
                     <a href="{{ route('login') }}"
                         class="flex-1 text-center py-3 rounded-xl font-bold bg-slate-100 text-slate-700">Masuk</a>
@@ -260,7 +248,6 @@
                     class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-slate-200/60 animate-[spin_60s_linear_infinite] z-0">
                 </div>
 
-                <!-- PERBAIKAN: Lebar gambar orang diperbesar -->
                 <div
                     class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 w-[420px] pointer-events-none drop-shadow-2xl">
                     <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana"
@@ -319,7 +306,6 @@
     <!-- STATS BANNER (Dengan Animasi Counter)      -->
     <!-- ========================================== -->
     @php
-        // Helper fungsi PHP murni untuk memisahkan angka dan suffix
         function parseStat($val, $defaultSuffix = '')
         {
             $val = (string) $val;
@@ -371,8 +357,10 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
 
                 <div class="lg:sticky lg:top-32 reveal-left">
-                    <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">Fitur
-                        Utama</span>
+                    <!-- FONT KALAM DIAPLIKASIKAN DISINI -->
+                    <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block tracking-wide">
+                        Fitur Utama
+                    </span>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                         Solusi Terpadu <span class="text-[#13416B]">Perencanaan Ketenagakerjaan</span>
                     </h2>
@@ -405,33 +393,28 @@
                                 [
                                     'icon' => 'fa-calculator',
                                     'title' => 'Kalkulator RTK',
-                                    'desc' =>
-                                        'Alat bantu simulasi perhitungan rencana tenaga kerja makro sesuai kondisi daerah.',
+                                    'desc' => 'Alat bantu simulasi perhitungan rencana tenaga kerja makro sesuai kondisi daerah.',
                                 ],
                                 [
                                     'icon' => 'fa-chart-pie',
                                     'title' => 'Pengukuran IPK',
-                                    'desc' =>
-                                        'Penilaian otomatis 7 indikator dengan verifikasi berjenjang dari pusat dan daerah.',
+                                    'desc' => 'Penilaian otomatis 7 indikator dengan verifikasi berjenjang dari pusat dan daerah.',
                                 ],
                                 [
                                     'icon' => 'fa-graduation-cap',
                                     'title' => 'LMS Terintegrasi',
-                                    'desc' =>
-                                        'Transfer pengetahuan terstruktur melalui modul pelatihan, video, dan sertifikasi.',
+                                    'desc' => 'Transfer pengetahuan terstruktur melalui modul pelatihan, video, dan sertifikasi.',
                                 ],
                                 [
                                     'icon' => 'fa-file-invoice',
                                     'title' => 'Pelaporan & Arsip',
-                                    'desc' =>
-                                        'Pemantauan dokumen RTKD dan fitur sanggahan nilai dengan bukti pendukung.',
+                                    'desc' => 'Pemantauan dokumen RTKD dan fitur sanggahan nilai dengan bukti pendukung.',
                                 ],
                             ];
                             $loopFeatures = array_merge($features, $features);
                         @endphp
 
                         @foreach ($loopFeatures as $feat)
-                            <!-- PERBAIKAN: Ikon Fitur Menjadi Biru Sirenata & Ikon Putih -->
                             <div
                                 class="bg-slate-50 rounded-3xl p-8 border border-slate-100 flex items-start gap-5 mx-2 hover:border-[#13416B]/20 hover:shadow-sm transition-all">
                                 <div
@@ -524,8 +507,10 @@
 
                     <!-- Kanan: Judul & Deskripsi Section Sticky -->
                     <div class="lg:sticky lg:top-16 order-1 lg:order-2 w-full text-left reveal-right">
-                        <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">LMS
-                            Terintegrasi</span>
+                        <!-- FONT KALAM DIAPLIKASIKAN DISINI -->
+                        <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block tracking-wide">
+                            LMS Terintegrasi
+                        </span>
                         <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                             Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
                         </h2>
@@ -536,7 +521,6 @@
 
                         <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-left">
                             <div class="flex items-center gap-4">
-                                <!-- PERBAIKAN: Ikon LMS Menjadi Biru Sirenata & Ikon Putih -->
                                 <div
                                     class="w-12 h-12 bg-[#13416B] text-white rounded-xl flex items-center justify-center shrink-0 shadow-md border border-[#0f3354]">
                                     <i class="fas fa-award text-xl"></i>
@@ -550,7 +534,6 @@
                             </div>
                         </div>
 
-                        <!-- Dekorasi Panah -->
                         <div class="mt-12 hidden lg:flex items-start gap-4 text-[#13416B]/60">
                             <svg width="120" height="60" viewBox="0 0 120 60" fill="none"
                                 xmlns="http://www.w3.org/2000/svg" class="shrink-0 animate-pulse mt-1">
@@ -560,12 +543,12 @@
                                     stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                             <span class="font-bold italic tracking-wide text-sm opacity-90 leading-relaxed">
-                                Selesaikan kursus ini <br> untuk mendapatkan sertifikat
+                                Selesaikan kursus <br> untuk mendapatkan sertifikat
                             </span>
                         </div>
 
                         <div class="mt-8 flex lg:hidden items-center justify-center gap-3 text-[#13416B]/60">
-                            <span class="font-bold italic tracking-wide text-sm opacity-90">Selesaikan kursus ini untuk
+                            <span class="font-bold italic tracking-wide text-sm opacity-90">Selesaikan kursus untuk
                                 mendapatkan sertifikat</span>
                             <i class="fas fa-arrow-down animate-bounce"></i>
                         </div>
@@ -579,15 +562,17 @@
     <!-- ========================================== -->
     <!-- FAQ SECTION                                -->
     <!-- ========================================== -->
-    <section id="faq" class="py-24 px-4 bg-white border-t border-slate-200 overflow-hidden">
+    <section id="faq" class="py-24 md:py-24 lg:py-12 px-4 bg-white border-t border-slate-200 overflow-hidden">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
                 <!-- Kolom Kiri: Judul & Accordion -->
                 <div class="reveal-left">
                     <div class="text-left mb-10">
-                        <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">Pusat
-                            Bantuan</span>
+                        <!-- FONT KALAM DIAPLIKASIKAN DISINI -->
+                        <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block tracking-wide">
+                            Pusat Bantuan
+                        </span>
                         <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
                             Pertanyaan yang Sering <span class="text-[#13416B]">Diajukan</span>
                         </h2>
@@ -601,7 +586,6 @@
 
                     <!-- Accordion FAQ menggunakan Alpine.js -->
                     <div x-data="{ activeAccordion: null }" class="space-y-4">
-
                         <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
                             :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 1 }">
                             <button @click="activeAccordion = activeAccordion === 1 ? null : 1"
@@ -692,7 +676,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -711,9 +694,9 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- CTA SECTION (Inverted V Watermark)         -->
+    <!-- CTA SECTION        -->
     <!-- ========================================== -->
-    <section class="py-24 md:py-36 lg:py-8 px-4 md:px-16 relative overflow-hidden" style="background-color: #13416B;">
+    <section id="cta" class="py-24 md:py-36 lg:py-8 px-4 md:px-16 relative overflow-hidden" style="background-color: #13416B;" >
         <!-- Efek Glow Latar Belakang -->
         <div
             class="absolute inset-0 bg-blue-400/20 blur-[120px] rounded-full w-[80%] h-[80%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
@@ -736,17 +719,14 @@
         </div>
 
         <div class="max-w-7xl mx-auto relative z-10">
-            <!-- Ubah grid menjadi 12 kolom agar porsi teks bisa lebih lebar -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
-                <!-- Kolom Kiri: Teks & Tombol (Mengambil 7 dari 12 kolom) -->
+                <!-- Kolom Kiri: Teks & Tombol -->
                 <div class="text-left reveal-left lg:col-span-7 xl:col-span-8 lg:pr-10">
-                    <!-- Hapus tag <br> agar teks memanjang secara natural -->
                     <h2
                         class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm">
                         Siap Memulai Perencanaan?
                     </h2>
-                    <!-- Ubah max-w-lg menjadi max-w-2xl atau hapus agar paragraf meluas ke kanan -->
                     <p class="text-slate-300 mb-10 max-w-2xl text-md md:text-xl leading-relaxed">
                         Tingkatkan efisiensi dan akurasi data dengan bergabung bersama
                         {{ $stats['regencies'] ?? 514 }}+ daerah lain di seluruh Indonesia menggunakan SIRENATA.
@@ -766,16 +746,11 @@
                     </div>
                 </div>
 
-                <!-- Kolom Kanan: Tempat Ilustrasi Orang (Mengambil 5 dari 12 kolom) -->
+                <!-- Kolom Kanan: Tempat Ilustrasi Orang -->
                 <div
                     class="relative hidden lg:flex justify-end items-end reveal-right h-full lg:col-span-5 xl:col-span-4">
-                    <!-- Lingkaran Sorotan di Belakang -->
                     <div class="absolute right-10 bottom-10 w-[300px] h-[300px] bg-white/5 rounded-full blur-xl z-0">
                     </div>
-
-                    <!--
-                      Gambar Bapak Kepala Pusat Perencanaan Ketenagakerjaan
-                    -->
                     <img src="{{ asset('images/cta-illustration.webp') }}"
                         alt="Kepala Pusat Perencanaan Ketenagakerjaan"
                         class="relative z-10 w-full max-w-[360px] lg:max-w-[340px] h-auto object-contain drop-shadow-2xl animate-float translate-y-8"
@@ -786,75 +761,99 @@
         </div>
     </section>
 
-    <!-- ========================================== -->
+   <!-- ========================================== -->
     <!-- FOOTER                                     -->
     <!-- ========================================== -->
-    <footer class="py-16 px-4 overflow-hidden" style="background-color: #0b2641;">
-        <div class="max-w-7xl mx-auto reveal-up">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 mb-12">
-                <div class="md:col-span-4 text-left">
-                    <div class="flex items-center gap-3 mb-4">
-                        <img src="{{ asset('images/logo.png') }}" alt="SIRENATA"
-                            class="h-10 w-auto brightness-0 invert">
-                        <span class="text-xl font-extrabold text-white">SIRENATA</span>
+    <footer class="relative py-20 px-4 overflow-hidden" style="background-color: #0b2641;">
+        <!-- Dekorasi Latar Belakang Footer -->
+        <div class="absolute top-0 right-0 -mt-20 -mr-20 w-[500px] h-[500px] rounded-full bg-blue-500/5 blur-[100px] pointer-events-none z-0"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10 reveal-up">
+            <div class="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-16">
+                
+                <!-- Kiri: Brand, Deskripsi & Sosial Media -->
+                <div class="lg:w-5/12 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-4 mb-6">
+                            <img src="{{ asset('images/logo.png') }}" alt="SIRENATA" class="h-12 w-auto brightness-0 invert">
+                            <span class="text-3xl font-extrabold text-white tracking-tight">SIRENATA</span>
+                        </div>
+                        <p class="text-slate-400 leading-relaxed text-base mb-10 max-w-md">
+                            Aplikasi digital terpadu untuk kebutuhan penyusunan RTK Makro, RTK Mikro, dan pengukuran Indeks Pembangunan Ketenagakerjaan.
+                        </p>
                     </div>
-                    <p class="text-slate-400 leading-relaxed mb-6 text-sm">
-                        Aplikasi digital terpadu untuk kebutuhan penyusunan RTK Makro, RTK Mikro, dan pengukuran Indeks
-                        Pembangunan Ketenagakerjaan yang mengintegrasikan pusat dan daerah.
-                    </p>
+
+                    <!-- Sosial Media -->
+                    <div>
+                        <h3 class="font-bold text-white mb-5 uppercase tracking-widest text-xs opacity-60">Terhubung Bersama Kami</h3>
+                        <div class="flex items-center gap-4">
+                            <a href="#" class="group w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-[#13416B] hover:text-white hover:border-[#13416B] hover:-translate-y-1 transition-all duration-300 shadow-lg">
+                                <i class="fab fa-instagram text-xl"></i>
+                            </a>
+                            <a href="#" class="group w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-[#13416B] hover:text-white hover:border-[#13416B] hover:-translate-y-1 transition-all duration-300 shadow-lg">
+                                <i class="fab fa-youtube text-xl"></i>
+                            </a>
+                            <!-- Ikon X Menggunakan Inline SVG agar pasti muncul -->
+                            <a href="#" class="group w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-[#13416B] hover:text-white hover:border-[#13416B] hover:-translate-y-1 transition-all duration-300 shadow-lg">
+                                <svg class="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="md:col-span-2 text-left">
-                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Navigasi</h3>
-                    <ul class="space-y-3 text-slate-400 text-sm">
-                        <li><a href="#home" class="hover:text-white transition-colors">Beranda</a></li>
-                        <li><a href="#features" class="hover:text-white transition-colors">Fitur Platform</a></li>
-                        <li><a href="#courses" class="hover:text-white transition-colors">LMS</a></li>
-                        <li><a href="#faq" class="hover:text-white transition-colors">FAQ</a></li>
-                    </ul>
-                </div>
+                <!-- Kanan: Tautan & Hubungi Kami (Layout Kalem) -->
+                <div class="lg:w-7/12 grid grid-cols-1 sm:grid-cols-2 gap-10 lg:gap-16 pt-2">
+                    
+                    <!-- Tautan Publik -->
+                    <div>
+                        <h3 class="font-bold text-white mb-6 uppercase tracking-widest text-xs border-b border-white/10 pb-4 inline-block">Tautan Publik</h3>
+                        <ul class="space-y-4 text-slate-400 text-sm">
+                            <li>
+                                <a href="https://kemnaker.go.id" target="_blank" class="hover:text-white transition-colors flex items-center gap-2 group">
+                                    <i class="fas fa-arrow-right text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-blue-400"></i> Kemnaker RI
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://siapkerja.kemnaker.go.id" target="_blank" class="hover:text-white transition-colors flex items-center gap-2 group">
+                                    <i class="fas fa-arrow-right text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-blue-400"></i> SIAPkerja Kemnaker
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://satudata.kemnaker.go.id" target="_blank" class="hover:text-white transition-colors flex items-center gap-2 group">
+                                    <i class="fas fa-arrow-right text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-blue-400"></i> Satu Data Ketenagakerjaan
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
-                <div class="md:col-span-3 text-left">
-                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Tautan Terkait</h3>
-                    <ul class="space-y-3 text-slate-400 text-sm">
-                        <li><a href="https://kemnaker.go.id" target="_blank"
-                                class="hover:text-white transition-colors">Kemnaker RI</a></li>
-                        <li><a href="https://siapkerja.kemnaker.go.id" target="_blank"
-                                class="hover:text-white transition-colors">SIAPkerja Kemnaker</a></li>
-                        <li><a href="https://satudata.kemnaker.go.id" target="_blank"
-                                class="hover:text-white transition-colors">Satu Data Ketenagakerjaan</a></li>
-                    </ul>
-                </div>
-
-                <div class="md:col-span-3 text-left">
-                    <h3 class="font-bold text-white mb-4 uppercase tracking-wider text-sm">Hubungi Kami</h3>
-                    <ul class="space-y-3 text-slate-400 text-sm mb-6">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-envelope mt-1 shrink-0"></i>
-                            <a href="mailto:support@sirenata.go.id"
-                                class="hover:text-white">support@sirenata.go.id</a>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-map-marker-alt mt-1 shrink-0"></i>
-                            <span>Kementerian Ketenagakerjaan RI<br>Jakarta, Indonesia</span>
-                        </li>
-                    </ul>
-                    <div class="flex items-center gap-3">
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i
-                                class="fab fa-instagram"></i></a>
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i
-                                class="fab fa-youtube"></i></a>
-                        <a href="#"
-                            class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#13416B] hover:text-white transition-colors"><i
-                                class="fab fa-twitter"></i></a>
+                    <!-- Hubungi Kami (Kalem & Rata Kiri) -->
+                    <div>
+                        <h3 class="font-bold text-white mb-6 uppercase tracking-widest text-xs border-b border-white/10 pb-4 inline-block">Pusat Informasi</h3>
+                        
+                        <ul class="space-y-5 text-slate-400 text-sm">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-envelope mt-1 shrink-0 text-white"></i>
+                                <div>
+                                    <a href="mailto:support@sirenata.go.id" class="hover:text-white transition-colors">support@sirenata.go.id</a>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-map-marker-alt mt-1 shrink-0 text-white"></i>
+                                <div>
+                                    <span>Kementerian Ketenagakerjaan RI<br>Jakarta, Indonesia</span>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-8 border-t border-slate-700/50 text-center text-slate-400 text-sm font-medium">
-                <p>&copy; 2026 Kementerian Ketenagakerjaan Republik Indonesia. All rights reserved.</p>
+            <!-- Garis Bawah & Copyright -->
+            <div class="pt-8 border-t border-slate-700/50 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-400 text-sm font-medium">
+                <p>&copy; 2026 Kementerian Ketenagakerjaan Republik Indonesia.</p>
+                <p class="text-xs opacity-60 tracking-wider">ALL RIGHTS RESERVED.</p>
             </div>
         </div>
     </footer>
@@ -878,7 +877,6 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
-                // 1. OBSERVER UNTUK ANIMASI MUNCUL (REVEAL)
                 const revealOptions = {
                     root: null,
                     rootMargin: '0px',
@@ -896,7 +894,6 @@
                 const revealElements = document.querySelectorAll('.reveal-left, .reveal-right, .reveal-up');
                 revealElements.forEach(el => revealObserver.observe(el));
 
-                // 2. OBSERVER UNTUK ANIMASI COUNTER STATISTIK
                 const statOptions = {
                     root: null,
                     rootMargin: '0px',
