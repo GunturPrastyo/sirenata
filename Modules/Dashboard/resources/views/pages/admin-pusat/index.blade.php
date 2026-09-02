@@ -2,7 +2,7 @@
     <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6 sm:space-y-8 bg-slate-50/50 min-h-screen">
         
         <!-- ===================================== -->
-        <!-- 1. STATS GRID (Sirenata Theme)        -->
+        <!-- 1. STATS GRID (Full Sirenata Theme)   -->
         <!-- ===================================== -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             
@@ -82,9 +82,11 @@
             </div>
             
             <div class="p-5 sm:p-6">
-                <!-- CHART CONTAINER -->
-                <div id="rtkCombinedChartContainer" class="relative w-full overflow-hidden {{ $rtkMasaAktifPerProvinsi->count() > 0 ? '' : 'hidden' }}" style="min-height: 400px;">
-                    <canvas id="rtkCombinedBarChart"></canvas>
+                <!-- CHART CONTAINER DENGAN SCROLL VERTICAL -->
+                <div class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? '' : 'hidden' }}">
+                    <div id="rtkCombinedChartContainer" class="relative w-full" style="min-height: 400px;">
+                        <canvas id="rtkCombinedBarChart"></canvas>
+                    </div>
                 </div>
                 
                 <!-- EMPTY STATE -->
@@ -201,25 +203,42 @@
                                 }
                             ]
                         },
-                        options: {
+                      options: {
                             indexAxis: 'y', // HORIZONTAL
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
                                     position: 'bottom',
-                                    labels: { usePointStyle: true, boxWidth: 8, font: { family: "'Inter', sans-serif", size: 11 }, padding: 20 }
+                                    labels: { 
+                                        usePointStyle: true, 
+                                        boxWidth: 12, 
+                                        boxPadding: 12, // <-- TAMBAHKAN INI UNTUK JARAK IKON & TEKS
+                                        font: { family: "'Inter', sans-serif", size: 11 }, 
+                                        padding: 20 
+                                    }
                                 },
                                 tooltip: {
                                     mode: 'index',
                                     intersect: false,
-                                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                    backgroundColor: 'rgba(19, 65, 107, 0.95)',
                                     padding: 12,
                                     cornerRadius: 6,
                                     titleFont: { size: 13, weight: 'bold' },
                                     callbacks: {
                                         title: function(context) {
                                             return Array.isArray(context[0].label) ? context[0].label.join(' ') : context[0].label;
+                                        },
+                                        label: function(context) {
+                                            // Menghilangkan koma ribuan (contoh: 2,025 jadi 2025) pada tooltip hover
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.x !== null) {
+                                                label += context.parsed.x;
+                                            }
+                                            return label;
                                         }
                                     }
                                 }
@@ -232,7 +251,7 @@
                                     ticks: { 
                                         font: { size: 11 }, 
                                         stepSize: 1,
-                                        // MENGHILANGKAN KOMA PADA TAHUN
+                                        // MENGHILANGKAN KOMA PADA LABEL SUMBU X
                                         callback: function(value) {
                                             return value; 
                                         }
@@ -249,6 +268,7 @@
                         }
                     });
 
+                    // Penyesuaian tinggi canvas dinamis agar tidak gepeng ketika provinsinya banyak
                     const initialRtkHeight = Math.max(400, rtkLabelsRaw.length * 60);
                     document.getElementById('rtkCombinedChartContainer').style.height = initialRtkHeight + 'px';
                 @endif
@@ -260,14 +280,15 @@
                     .then(response => response.json())
                     .then(data => {
                         const rtkData = data.rtkMasaAktifPerProvinsi;
+                        const containerScroll = document.querySelector('#rtkCombinedChartContainer').parentElement;
                         const container = document.getElementById('rtkCombinedChartContainer');
                         const emptyState = document.getElementById('rtkCombinedEmptyState');
                         
                         if (!rtkData || rtkData.length === 0) {
-                            container.classList.add('hidden');
+                            containerScroll.classList.add('hidden');
                             emptyState.classList.remove('hidden');
                         } else {
-                            container.classList.remove('hidden');
+                            containerScroll.classList.remove('hidden');
                             emptyState.classList.add('hidden');
                             
                             const rawLabels = rtkData.map(item => item.province_name);
