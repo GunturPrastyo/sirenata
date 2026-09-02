@@ -2,7 +2,7 @@
     <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6 sm:space-y-8 bg-slate-50/50 min-h-screen">
         
         <!-- ===================================== -->
-        <!-- 1. STATS GRID (Full Sirenata Theme)   -->
+        <!-- 1. STATS GRID (Sirenata Theme)        -->
         <!-- ===================================== -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             
@@ -99,17 +99,17 @@
         </div>
 
         <!-- ========================================================= -->
-        <!-- 3. GRAFIK E-LEARNING (HORIZONTAL)                         -->
+        <!-- 3. DISTRIBUSI E-LEARNING (LEADERBOARD UI)                 -->
         <!-- ========================================================= -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-            <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
                         <i class="fas fa-users text-lg"></i>
                     </div>
                     <div>
                         <h2 class="text-base font-bold text-slate-800">Distribusi Pendaftar E-Learning</h2>
-                        <p class="text-[11px] sm:text-xs text-slate-500">Jumlah pengguna terdaftar di platform berdasarkan Provinsi</p>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Peringkat jumlah pengguna terdaftar berdasarkan Provinsi</p>
                     </div>
                 </div>
 
@@ -123,8 +123,9 @@
             </div>
             
             <div class="p-5 sm:p-6">
-                <div id="sdmChartContainer" class="relative w-full overflow-hidden {{ $sdmPerProvinsi->count() > 0 ? '' : 'hidden' }}" style="min-height: 400px;">
-                    <canvas id="sdmBarChart"></canvas>
+                <!-- LEADERBOARD CONTAINER -->
+                <div id="sdmListContainer" class="space-y-5 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar {{ $sdmPerProvinsi->count() > 0 ? '' : 'hidden' }}">
+                    <!-- Di-render via JavaScript agar dinamis -->
                 </div>
                 
                 <div id="sdmEmptyState" class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $sdmPerProvinsi->count() > 0 ? 'hidden' : '' }}">
@@ -145,10 +146,10 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
 
-                // Fungsi untuk memecah teks panjang menjadi array string agar turun baris (Wrap)
+                // Fungsi untuk memecah teks panjang menjadi array string agar turun baris (Wrap) di Canvas
                 function formatMultilineLabel(text) {
                     if (!text) return text;
-                    const maxChars = window.innerWidth >= 640 ? 25 : 15; // Batas karakter per baris
+                    const maxChars = window.innerWidth >= 640 ? 25 : 15;
                     const words = text.split(' ');
                     let lines = [];
                     let currentLine = '';
@@ -218,7 +219,6 @@
                                     titleFont: { size: 13, weight: 'bold' },
                                     callbacks: {
                                         title: function(context) {
-                                            // Gabungkan kembali array string menjadi satu baris pada tooltip
                                             return Array.isArray(context[0].label) ? context[0].label.join(' ') : context[0].label;
                                         }
                                     }
@@ -228,8 +228,15 @@
                                 x: {
                                     min: Math.min(...rtkStartData) - 1, 
                                     max: Math.max(...rtkEndData) + 1,
-                                    ticks: { font: { size: 10 }, stepSize: 1 },
-                                    grid: { color: '#f1f5f9' }
+                                    grid: { color: '#f1f5f9' },
+                                    ticks: { 
+                                        font: { size: 11 }, 
+                                        stepSize: 1,
+                                        // MENGHILANGKAN KOMA PADA TAHUN
+                                        callback: function(value) {
+                                            return value; 
+                                        }
+                                    }
                                 },
                                 y: {
                                     grid: { display: false },
@@ -242,7 +249,6 @@
                         }
                     });
 
-                    // Penyesuaian tinggi canvas dinamis (agar label multiline tidak menumpuk)
                     const initialRtkHeight = Math.max(400, rtkLabelsRaw.length * 60);
                     document.getElementById('rtkCombinedChartContainer').style.height = initialRtkHeight + 'px';
                 @endif
@@ -287,99 +293,63 @@
                     });
                 };
 
-
                 // =========================================================
-                // 2. GRAFIK E-LEARNING SDM (HORIZONTAL)
+                // 2. FUNGSI RENDER LEADERBOARD E-LEARNING
                 // =========================================================
-                @if($sdmPerProvinsi->count() > 0)
-                    const sdmCtx = document.getElementById('sdmBarChart').getContext('2d');
-                    
-                    const sdmLabelsRaw = @json($sdmPerProvinsi->pluck('province_name'));
-                    const sdmLabels = sdmLabelsRaw.map(label => formatMultilineLabel(label));
-                    
-                    const sdmData = @json($sdmPerProvinsi->pluck('total'));
+                function renderSdmLeaderboard(data) {
+                    const container = document.getElementById('sdmListContainer');
+                    const emptyState = document.getElementById('sdmEmptyState');
 
-                    window.sdmBarChartInstance = new Chart(sdmCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: sdmLabels,
-                            datasets: [{
-                                label: 'Jumlah Pengguna',
-                                data: sdmData,
-                                backgroundColor: '#13416B',
-                                borderRadius: 4,
-                                barPercentage: 0.6,
-                                categoryPercentage: 0.8
-                            }]
-                        },
-                        options: {
-                            indexAxis: 'y', // HORIZONTAL
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                                    padding: 12,
-                                    cornerRadius: 6,
-                                    callbacks: {
-                                        title: function(context) {
-                                            return Array.isArray(context[0].label) ? context[0].label.join(' ') : context[0].label;
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    beginAtZero: true,
-                                    ticks: { font: { size: 10 }, stepSize: 1 },
-                                    grid: { color: '#f1f5f9' }
-                                },
-                                y: {
-                                    grid: { display: false },
-                                    ticks: { font: { size: 11, family: "'Inter', sans-serif" }, autoSkip: false },
-                                    afterFit: function(scaleInstance) {
-                                        scaleInstance.width = window.innerWidth >= 640 ? 160 : 120;
-                                    }
-                                }
-                            }
-                        }
+                    if (!data || data.length === 0) {
+                        container.classList.add('hidden');
+                        emptyState.classList.remove('hidden');
+                        return;
+                    }
+
+                    container.classList.remove('hidden');
+                    emptyState.classList.add('hidden');
+
+                    // Cari nilai tertinggi untuk persentase bar
+                    let maxTotal = Math.max(...data.map(item => item.total));
+                    if (maxTotal === 0) maxTotal = 1;
+
+                    // Mengurutkan dari yang terbanyak
+                    const sortedData = [...data].sort((a, b) => b.total - a.total);
+
+                    let htmlContent = '';
+                    sortedData.forEach((item, index) => {
+                        const percentage = (item.total / maxTotal) * 100;
+                        htmlContent += `
+                            <div class="flex items-center gap-3.5 group">
+                                <div class="w-6 text-sm font-bold text-slate-400 text-right shrink-0 group-hover:text-[#13416B] transition-colors">${index + 1}.</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <span class="text-sm font-semibold text-slate-700 truncate pr-2 group-hover:text-[#13416B] transition-colors">${item.province_name}</span>
+                                        <span class="text-sm font-extrabold text-[#13416B] shrink-0">${item.total} <span class="text-[10px] font-medium text-slate-500">Peserta</span></span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-[#13416B] h-full rounded-full transition-all duration-700 ease-out" style="width: ${percentage}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                     });
 
-                    // Penyesuaian tinggi canvas dinamis
-                    const initialSdmHeight = Math.max(400, sdmLabelsRaw.length * 50);
-                    document.getElementById('sdmChartContainer').style.height = initialSdmHeight + 'px';
-                @endif
-                
+                    container.innerHTML = htmlContent;
+                }
+
+                // Render pertama kali saat halaman dimuat
+                const initialSdmData = @json($sdmPerProvinsi);
+                renderSdmLeaderboard(initialSdmData);
+
+                // Fungsi AJAX saat filter SDM diganti
                 window.fetchSdmPusatData = function(year) {
                     fetch(`{{ route('admin-pusat.dashboard') }}?sdm_year=${year}`, {
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
                     })
                     .then(response => response.json())
                     .then(data => {
-                        const sdmDataRaw = data.sdmPerProvinsi;
-                        const container = document.getElementById('sdmChartContainer');
-                        const emptyState = document.getElementById('sdmEmptyState');
-                        
-                        if (!sdmDataRaw || sdmDataRaw.length === 0) {
-                            container.classList.add('hidden');
-                            emptyState.classList.remove('hidden');
-                        } else {
-                            container.classList.remove('hidden');
-                            emptyState.classList.add('hidden');
-                            
-                            const rawLabels = sdmDataRaw.map(item => item.province_name);
-                            const labels = rawLabels.map(label => formatMultilineLabel(label));
-                            const totals = sdmDataRaw.map(item => item.total);
-                            
-                            if (window.sdmBarChartInstance) {
-                                container.style.height = Math.max(400, rawLabels.length * 50) + 'px';
-
-                                window.sdmBarChartInstance.data.labels = labels;
-                                window.sdmBarChartInstance.data.datasets[0].data = totals;
-                                window.sdmBarChartInstance.update();
-                            }
-                        }
+                        renderSdmLeaderboard(data.sdmPerProvinsi);
                     });
                 };
             });
