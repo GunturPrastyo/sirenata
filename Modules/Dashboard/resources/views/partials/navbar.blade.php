@@ -1,12 +1,14 @@
 <!-- Navbar berada di lapisan bawah Sidebar (z-40). -->
-<nav class="fixed top-0 z-40 w-full bg-white border-b border-slate-200 transition-all duration-300" :class="sidebarOpen ? 'lg:pl-64' : 'pl-0'">
-    
-    <div class="px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between w-full gap-3 sm:gap-6 min-h-[72px] sm:min-h-[80px]">
+<nav class="fixed top-0 z-40 w-full bg-white border-b border-slate-200 transition-all duration-300"
+    :class="sidebarOpen ? 'lg:pl-64' : 'pl-0'">
+
+    <div
+        class="px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between w-full gap-3 sm:gap-6 min-h-[72px] sm:min-h-[80px]">
 
         <!-- Bagian Kiri & Tengah (Toggle + Searchbar) -->
         <div class="flex items-center flex-1 gap-3 sm:gap-5">
-            
-            @if(auth()->check() && auth()->user()->hasRole('user'))
+
+            @if (auth()->check() && auth()->user()->hasRole('user'))
                 <!-- Toggle Sidebar KHUSUS USER (Hanya di Desktop karena mobile pakai Bottom Nav) -->
                 <button @click="sidebarOpen = !sidebarOpen"
                     class="hidden lg:block p-2 sm:p-2.5 rounded-xl cursor-pointer text-slate-500 hover:bg-slate-100 hover:text-[#13416B] focus:outline-none transition-colors shrink-0">
@@ -19,41 +21,40 @@
                 <div class="flex-1 w-full max-w-full relative" x-data="searchSuggest()" @click.outside="isOpen = false">
                     <div class="relative w-full group">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 sm:ps-4 pointer-events-none">
-                            <i class="fas fa-search text-slate-400 group-focus-within:text-[#13416B] transition-colors text-sm sm:text-base"></i>
+                            <i
+                                class="fas fa-search text-slate-400 group-focus-within:text-[#13416B] transition-colors text-sm sm:text-base"></i>
                         </div>
-                        
+
                         <!-- Input Pencarian (Placeholder Diperpendek & Termasuk Buku) -->
-                        <input type="text" 
-                            x-model="query" 
-                            @input.debounce.500ms="fetchResults"
+                        <input type="text" x-model="query" @input.debounce.500ms="fetchResults"
                             @focus="if(query.length > 1) isOpen = true"
-                            class="bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm rounded-xl focus:ring-[#13416B] focus:border-[#13416B] block w-full ps-9 sm:ps-11 pe-8 sm:pe-10 py-2.5 sm:py-3 transition-colors shadow-sm" 
-                            placeholder="Cari kursus, modul, topik, buku..."
-                            autocomplete="off">
+                            class="bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm rounded-xl focus:ring-[#13416B] focus:border-[#13416B] block w-full ps-9 sm:ps-11 pe-8 sm:pe-10 py-2.5 sm:py-3 transition-colors shadow-sm"
+                            placeholder="Cari kursus, modul, topik, buku..." autocomplete="off">
 
                         <!-- Ikon Loading -->
-                        <div x-show="isLoading" x-cloak class="absolute inset-y-0 end-0 flex items-center pe-3 sm:pe-4 pointer-events-none">
+                        <div x-show="isLoading" x-cloak
+                            class="absolute inset-y-0 end-0 flex items-center pe-3 sm:pe-4 pointer-events-none">
                             <i class="fas fa-circle-notch fa-spin text-[#13416B] text-xs sm:text-sm"></i>
                         </div>
                     </div>
 
                     <!-- Dropdown Hasil Pencarian (Dibuat Agak Mojok / Sesuai Lebar Proporsional) -->
-                    <div x-show="isOpen" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 translate-y-1"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-1"
-                         x-cloak
-                         class="absolute top-full left-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden w-[calc(100vw-2rem)] max-w-full sm:w-full max-h-[70vh] flex flex-col">
-                        
+                    <div x-show="isOpen" x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 translate-y-1" x-cloak
+                        class="absolute top-full left-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden w-[calc(100vw-2rem)] max-w-full sm:w-full max-h-[70vh] flex flex-col">
+
                         <div class="overflow-y-auto py-2 hide-scrollbar">
-                            
+
                             <!-- State Kosong / Tidak Ditemukan -->
-                            <template x-if="!isLoading && courses.length === 0 && modules.length === 0 && contents.length === 0 && libraries.length === 0 && query.length > 1">
+                            <template
+                                x-if="!isLoading && courses.length === 0 && modules.length === 0 && contents.length === 0 && libraries.length === 0 && query.length > 1">
                                 <div class="p-6 text-center">
-                                    <div class="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3 border border-slate-100">
+                                    <div
+                                        class="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3 border border-slate-100">
                                         <i class="fas fa-search text-xl"></i>
                                     </div>
                                     <p class="text-sm font-bold text-slate-700">Tidak ada hasil ditemukan</p>
@@ -64,20 +65,27 @@
                             <!-- Hasil: Kursus -->
                             <template x-if="courses.length > 0">
                                 <div>
-                                    <div class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Katalog Kursus</div>
+                                    <div
+                                        class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                        Katalog Kursus</div>
                                     <ul>
                                         <template x-for="item in courses">
                                             <li>
-                                                <a :href="item.url" class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
+                                                <a :href="item.url"
+                                                    class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
                                                     <!-- Ikon Visual Inisial -->
-                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold" :class="item.color">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold"
+                                                        :class="item.color">
                                                         <span x-text="item.initials"></span>
                                                     </div>
                                                     <div class="flex-1 min-w-0">
-                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]" x-text="item.title"></p>
-                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5" x-text="item.subtitle"></p>
+                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]"
+                                                            x-text="item.title"></p>
+                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5"
+                                                            x-text="item.subtitle"></p>
                                                     </div>
-                                                    <i class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                    <i
+                                                        class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                                 </a>
                                             </li>
                                         </template>
@@ -88,19 +96,26 @@
                             <!-- Hasil: Modul (Course Section) -->
                             <template x-if="modules.length > 0">
                                 <div>
-                                    <div class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Modul</div>
+                                    <div
+                                        class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                        Modul</div>
                                     <ul>
                                         <template x-for="item in modules">
                                             <li>
-                                                <a :href="item.url" class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
-                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold" :class="item.color">
+                                                <a :href="item.url"
+                                                    class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold"
+                                                        :class="item.color">
                                                         <span x-text="item.initials"></span>
                                                     </div>
                                                     <div class="flex-1 min-w-0">
-                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]" x-text="item.title"></p>
-                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5" x-text="item.subtitle"></p>
+                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]"
+                                                            x-text="item.title"></p>
+                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5"
+                                                            x-text="item.subtitle"></p>
                                                     </div>
-                                                    <i class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                    <i
+                                                        class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                                 </a>
                                             </li>
                                         </template>
@@ -111,19 +126,26 @@
                             <!-- Hasil: Topik (Section Content) -->
                             <template x-if="contents.length > 0">
                                 <div>
-                                    <div class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Topik</div>
+                                    <div
+                                        class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                        Topik</div>
                                     <ul>
                                         <template x-for="item in contents">
                                             <li>
-                                                <a :href="item.url" class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
-                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold" :class="item.color">
+                                                <a :href="item.url"
+                                                    class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold"
+                                                        :class="item.color">
                                                         <span x-text="item.initials"></span>
                                                     </div>
                                                     <div class="flex-1 min-w-0">
-                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]" x-text="item.title"></p>
-                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5" x-text="item.subtitle"></p>
+                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]"
+                                                            x-text="item.title"></p>
+                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5"
+                                                            x-text="item.subtitle"></p>
                                                     </div>
-                                                    <i class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                    <i
+                                                        class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                                 </a>
                                             </li>
                                         </template>
@@ -134,19 +156,26 @@
                             <!-- Hasil: Perpustakaan / Buku -->
                             <template x-if="libraries.length > 0">
                                 <div>
-                                    <div class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Buku / Perpustakaan</div>
+                                    <div
+                                        class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                        Buku / Perpustakaan</div>
                                     <ul>
                                         <template x-for="item in libraries">
                                             <li>
-                                                <a :href="item.url" class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
-                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold" :class="item.color">
+                                                <a :href="item.url"
+                                                    class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold"
+                                                        :class="item.color">
                                                         <span x-text="item.initials"></span>
                                                     </div>
                                                     <div class="flex-1 min-w-0">
-                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]" x-text="item.title"></p>
-                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5" x-text="item.subtitle"></p>
+                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]"
+                                                            x-text="item.title"></p>
+                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5"
+                                                            x-text="item.subtitle"></p>
                                                     </div>
-                                                    <i class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                    <i
+                                                        class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                                 </a>
                                             </li>
                                         </template>
@@ -183,28 +212,27 @@
                                 this.isOpen = true;
 
                                 fetch(`{{ route('user.search.suggest') }}?q=${encodeURIComponent(this.query)}`, {
-                                    headers: {
-                                        'Accept': 'application/json',
-                                        'X-Requested-With': 'XMLHttpRequest'
-                                    }
-                                })
-                                .then(res => res.json())
-                                .then(data => {
-                                    this.courses = data.courses || [];
-                                    this.modules = data.modules || [];
-                                    this.contents = data.contents || [];
-                                    this.libraries = data.libraries || [];
-                                    this.isLoading = false;
-                                })
-                                .catch(err => {
-                                    console.error('Pencarian gagal:', err);
-                                    this.isLoading = false;
-                                });
+                                        headers: {
+                                            'Accept': 'application/json',
+                                            'X-Requested-With': 'XMLHttpRequest'
+                                        }
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        this.courses = data.courses || [];
+                                        this.modules = data.modules || [];
+                                        this.contents = data.contents || [];
+                                        this.libraries = data.libraries || [];
+                                        this.isLoading = false;
+                                    })
+                                    .catch(err => {
+                                        console.error('Pencarian gagal:', err);
+                                        this.isLoading = false;
+                                    });
                             }
                         }
                     }
                 </script>
-
             @else
                 <!-- Toggle Sidebar SEMUA ROLE LAIN (Muncul di Mobile & Desktop) -->
                 <button @click="sidebarOpen = !sidebarOpen"
@@ -234,30 +262,67 @@
                     class="absolute right-0 top-full mt-3 bg-white border border-slate-200 rounded-2xl shadow-xl w-64 z-50 overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/80">
                         <p class="text-sm font-bold text-slate-800 truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mt-1">{{ auth()->user()->roles->first()->name ?? 'User' }}</p>
+                        <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mt-1">
+                            {{ auth()->user()->roles->first()->name ?? 'User' }}</p>
                     </div>
                     <ul class="p-2 text-sm text-slate-700 space-y-1">
-                        @role('super-admin')
-                            <li><a href="{{ route('super-admin.profile') }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i class="fas fa-user-circle w-4 text-center"></i> Profil</a></li>
-                            <li><a href="{{ route('super-admin.dashboard') }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i class="fas fa-laptop w-4 text-center"></i> Dashboard</a></li>
-                        @endrole
-                        @role('user')
-                            <li><a href="{{ route('user.profile') }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i class="fas fa-user-cog w-4 text-center"></i> Profil Saya</a></li>
-                        @endrole
+                        <!-- Akses Cepat Profil & Dashboard -->
+                        @if (auth()->user()->hasRole('super-admin'))
+                            <li><a href="{{ route('super-admin.profile') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
+                                        class="fas fa-user-circle w-4 text-center"></i> Profil</a></li>
+                            <li><a href="{{ route('super-admin.dashboard') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
+                                        class="fas fa-laptop w-4 text-center"></i> Dashboard</a></li>
+                        @elseif(auth()->user()->hasRole('admin-pusat'))
+                            <li><a href="{{ route('admin-pusat.profile') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
+                                        class="fas fa-user-circle w-4 text-center"></i> Profil</a></li>
+                            <li><a href="{{ route('admin-pusat.dashboard') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
+                                        class="fas fa-laptop w-4 text-center"></i> Dashboard Pusat</a></li>
+                        @elseif(auth()->user()->hasRole('admin-province'))
+                            <li><a href="{{ route('admin-province.dashboard') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
+                                        class="fas fa-laptop w-4 text-center"></i> Dashboard Provinsi</a></li>
+                        @elseif(auth()->user()->hasRole('user'))
+                            <li><a href="{{ route('user.profile') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
+                                        class="fas fa-user-cog w-4 text-center"></i> Profil Saya</a></li>
+                        @endif
 
                         <li class="my-1 border-t border-slate-100"></li>
-                        
-                        <!-- MENU BANTUAN -->
+
+                        <!-- MENU BANTUAN DINAMIS -->
                         <li>
-                            <a href="{{ route('user.help') }}" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-700 hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">
-                                <i class="fas fa-question-circle w-4 text-center text-slate-400"></i> Pusat Bantuan
-                            </a>
+                            @if (auth()->user()->hasRole(['super-admin', 'admin-pusat']))
+                                <a href="{{ route('admin-pusat.help') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl text-slate-700 hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">
+                                    <i class="fas fa-question-circle w-4 text-center text-slate-400"></i> Pusat Bantuan
+                                </a>
+                            @elseif(auth()->user()->hasRole('admin-province'))
+                                <a href="{{ route('admin-province.help') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl text-slate-700 hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">
+                                    <i class="fas fa-question-circle w-4 text-center text-slate-400"></i> Pusat Bantuan
+                                </a>
+                            @elseif(auth()->user()->hasRole('admin-kab-kota'))
+                                <a href="{{ route('admin-kab-kota.help') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl text-slate-700 hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">
+                                    <i class="fas fa-question-circle w-4 text-center text-slate-400"></i> Pusat Bantuan
+                                </a>
+                            @else
+                                <a href="{{ route('user.help') }}"
+                                    class="flex items-center gap-3 p-2.5 rounded-xl text-slate-700 hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors">
+                                    <i class="fas fa-question-circle w-4 text-center text-slate-400"></i> Pusat Bantuan
+                                </a>
+                            @endif
                         </li>
-                        
+
                         <li>
                             <form action="{{ route('logout') }}" method="POST" class="w-full">
                                 @csrf
-                                <button type="submit" class="flex w-full cursor-pointer items-center gap-3 p-2.5 rounded-xl text-red-600 hover:bg-red-50 font-bold transition-colors text-left">
+                                <button type="submit"
+                                    class="flex w-full cursor-pointer items-center gap-3 p-2.5 rounded-xl text-red-600 hover:bg-red-50 font-bold transition-colors text-left">
                                     <i class="fas fa-sign-out-alt w-4 text-center"></i> Keluar
                                 </button>
                             </form>

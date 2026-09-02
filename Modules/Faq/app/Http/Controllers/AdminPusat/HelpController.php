@@ -20,7 +20,8 @@ class HelpController extends Controller
             });
         }
         $faqs = $query->paginate(10);
-        $dashboardRoute = 'dashboard';
+       
+        $dashboardRoute = 'admin-pusat.dashboard';
 
         return view('faq::help.index', compact('faqs', 'dashboardRoute'));
     }

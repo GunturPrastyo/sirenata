@@ -1,6 +1,6 @@
 @props(['faqs', 'backRoute'])
 
-<div class="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto min-h-screen">
+<div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto min-h-screen">
     
     {{-- Breadcrumb --}}
     <div class="mb-6">
