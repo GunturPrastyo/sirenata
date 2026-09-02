@@ -613,7 +613,7 @@
                                 class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
                                 <h3 class="font-bold text-slate-800 text-base sm:text-lg pr-4"
                                     :class="{ 'text-[#13416B]': activeAccordion === 2 }">
-                                    Bagaimana cara mendaftar atau masuk ke dalam sistem?
+                                    Bagaimana cara mendaftar atau masuk ke dalam aplikasi?
                                 </h3>
                                 <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 shrink-0"
                                     :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 2 }"></i>
