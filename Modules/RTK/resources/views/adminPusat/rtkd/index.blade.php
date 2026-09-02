@@ -87,18 +87,18 @@
                 <tbody class="divide-y divide-slate-200">
                     @forelse ($rtkds as $key => $province)
                         <tr class="hover:bg-slate-50 transition">
-                            <x-table.td align="center" class="text-slate-600">
+                            <x-table.td align="center" class="text-slate-600 align-top pt-4">
                                 {{ $key + $rtkds->firstItem() }}
                             </x-table.td>
 
                             {{-- Nama Provinsi + Tooltip pending_rtk_count --}}
-                            <x-table.td>
+                            <x-table.td class="align-top pt-4">
                                 <div class="flex items-center gap-2">
                                     <p class="font-medium text-slate-700">{{ $province->name }}</p>
 
                                     @if(($province->pending_rtk_count ?? 0) > 0)
                                         <div class="relative group">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-amber-500 rounded-full cursor-pointer">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-amber-500 rounded-full cursor-pointer">
                                                 {{ $province->pending_rtk_count }}
                                             </span>
                                             {{-- Tooltip --}}
@@ -110,19 +110,21 @@
                                 </div>
                             </x-table.td>
 
-                            {{-- Nama Dokumen --}}
-                            <x-table.td>
+                            {{-- Nama Dokumen (Badge Berlaku Pindah ke Bawah) --}}
+                            <x-table.td class="align-top pt-4">
                                 @if ($province->latest_rtk)
-                                    <div class="flex items-center gap-2">
-                                        <p class="font-semibold text-slate-700">{{ $province->latest_rtk->name }}</p>
+                                    <!-- Menggunakan flex-col agar turun ke bawah -->
+                                    <div class="flex flex-col items-start gap-1.5">
+                                        <p class="font-semibold text-slate-700 leading-snug">{{ $province->latest_rtk->name }}</p>
+                                        
                                         {{-- Badge RTK Berlaku --}}
                                         @if($province->latest_rtk->is_berlaku)
-                                            <x-badge color="success">
-                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200">
+                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                 </svg>
                                                 Berlaku
-                                            </x-badge>
+                                            </span>
                                         @endif
                                     </div>
                                 @else
@@ -131,9 +133,9 @@
                             </x-table.td>
 
                             {{-- Periode --}}
-                            <x-table.td>
+                            <x-table.td class="align-top pt-4">
                                 @if ($province->latest_rtk)
-                                    <span class="text-slate-600">
+                                    <span class="text-slate-600 font-medium">
                                         {{ $province->latest_rtk->start_date }}
                                         <span class="mx-1 text-slate-400">–</span>
                                         {{ $province->latest_rtk->end_date }}
@@ -144,7 +146,7 @@
                             </x-table.td>
 
                             {{-- Status Verifikasi --}}
-                            <x-table.td align="center">
+                            <x-table.td align="center" class="align-top pt-4">
                                 @if ($province->latest_rtk)
                                     <x-badge color="{{ $province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED ? 'success' : ($province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING ? 'indigo' : 'red') }}" :text="$province->latest_rtk->status_verification_label" />
                                 @else
@@ -153,7 +155,7 @@
                             </x-table.td>
 
                             {{-- Status Dokumen --}}
-                            <x-table.td align="center">
+                            <x-table.td align="center" class="align-top pt-4">
                                 @if ($province->latest_rtk)
                                     <x-badge color="{{ $province->latest_rtk->status_document === \Modules\RTK\Enums\StatusDocument::VALID ? 'success' : ($province->latest_rtk->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED ? 'red' : 'slate') }}" :text="$province->latest_rtk->status_document_label" />
                                 @else
@@ -162,12 +164,12 @@
                             </x-table.td>
 
                             {{-- Tanggal Diverifikasi --}}
-                            <x-table.td class="text-slate-600">
+                            <x-table.td class="text-slate-600 align-top pt-4">
                                 {{ $province->latest_rtk?->approved_at?->format('d M Y') ?? '-' }}
                             </x-table.td>
 
                             {{-- Aksi --}}
-                            <x-table.td align="center">
+                            <x-table.td align="center" class="align-top pt-4">
                                 <x-table.action>
                                     <li>
                                         <a href="{{ route('admin-pusat.rtkd.kab-kota', $province->code) }}"

@@ -84,15 +84,10 @@
                 <a href="#faq" class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">FAQ</a>
             </div>
 
-            <!-- Auth Buttons -->
+            <!-- Auth Buttons (Normal Landing Page) -->
             <div class="hidden md:flex items-center gap-3">
-                @guest
-                    <a href="{{ route('login') }}" class="px-5 py-2 font-bold text-slate-700 hover:bg-slate-100 rounded-full transition-colors">Masuk</a>
-                    <a href="{{ route('login') }}" class="px-6 py-2.5 font-bold text-white rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all" style="background-color: #13416B;">Daftar Gratis</a>
-                @endguest
-                @auth
-                    <a href="{{ route('user.dashboard') }}" class="px-6 py-2.5 font-bold text-white rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all" style="background-color: #13416B;">Buka Dashboard</a>
-                @endauth
+                <a href="{{ route('login') }}" class="px-5 py-2 font-bold text-slate-700 hover:bg-slate-100 rounded-full transition-colors">Masuk</a>
+                <a href="{{ route('login') }}" class="px-6 py-2.5 font-bold text-white rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all" style="background-color: #13416B;">Daftar Gratis</a>
             </div>
 
             <!-- Mobile Toggle -->
@@ -150,7 +145,7 @@
                     </a>
                 </div>
 
-                <!-- Avatar Social Proof dengan Inisial Random (2 Huruf) -->
+                <!-- Avatar Social Proof -->
                 <div class="flex items-center gap-4">
                     <div class="flex -space-x-3">
                         <img src="https://ui-avatars.com/api/?name=JD&background=random" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="User">
@@ -163,14 +158,15 @@
             </div>
 
             <!-- Kanan: Floating Cards & Orang -->
-            <div class="relative h-[500px] hidden lg:block reveal-right" style="transition-delay: 0.2s;">
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] rounded-full border border-slate-200/60 animate-[spin_60s_linear_infinite] z-0"></div>
+            <div class="relative h-[550px] hidden lg:block reveal-right" style="transition-delay: 0.2s;">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-slate-200/60 animate-[spin_60s_linear_infinite] z-0"></div>
 
-                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 w-[340px] pointer-events-none drop-shadow-2xl">
+                <!-- PERBAIKAN: Lebar gambar orang diperbesar -->
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 w-[420px] pointer-events-none drop-shadow-2xl">
                     <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana" class="w-full h-auto object-contain">
                 </div>
 
-                <div class="absolute top-4 -right-4 w-[260px] bg-white rounded-2xl shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
+                <div class="absolute top-8 -right-4 w-[260px] bg-white rounded-2xl shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
                     <div class="h-24 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-3 left-3 bg-white/10 border border-white/20 text-white text-[9px] font-bold px-2.5 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perkiraan</span>
                         <h2 class="text-[54px] font-medium text-white/95 leading-none" style="font-family: Arial, sans-serif; letter-spacing: -2px;">PM</h2>
@@ -181,7 +177,7 @@
                     </div>
                 </div>
 
-                <div class="absolute bottom-8 -left-8 w-[250px] bg-white rounded-2xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
+                <div class="absolute bottom-12 -left-10 w-[250px] bg-white rounded-2xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
                     <div class="h-20 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perencanaan</span>
                         <h2 class="text-4xl font-medium text-white/95 leading-none" style="font-family: Arial, sans-serif; letter-spacing: -1px;">PM</h2>
@@ -192,7 +188,7 @@
                     </div>
                 </div>
 
-                <div class="absolute top-36 -left-12 w-[240px] bg-white rounded-2xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
+                <div class="absolute top-40 -left-14 w-[240px] bg-white rounded-2xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
                     <div class="h-16 bg-[#184A78] flex items-center justify-center relative">
                         <span class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase tracking-wider">Teori</span>
                         <h2 class="text-3xl font-medium text-white/95 leading-none" style="font-family: Arial, sans-serif; letter-spacing: -1px;">IK</h2>
@@ -289,8 +285,9 @@
                         @endphp
 
                         @foreach($loopFeatures as $feat)
+                            <!-- PERBAIKAN: Ikon Fitur Menjadi Biru Sirenata & Ikon Putih -->
                             <div class="bg-slate-50 rounded-3xl p-8 border border-slate-100 flex items-start gap-5 mx-2 hover:border-[#13416B]/20 hover:shadow-sm transition-all">
-                                <div class="w-14 h-14 rounded-2xl bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0">
+                                <div class="w-14 h-14 rounded-2xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-md border border-[#0f3354]">
                                     <i class="fas {{ $feat['icon'] }} text-2xl"></i>
                                 </div>
                                 <div>
@@ -373,7 +370,8 @@
                     
                     <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-left">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-[#13416B]/10 text-[#13416B] rounded-xl flex items-center justify-center shrink-0">
+                            <!-- PERBAIKAN: Ikon LMS Menjadi Biru Sirenata & Ikon Putih -->
+                            <div class="w-12 h-12 bg-[#13416B] text-white rounded-xl flex items-center justify-center shrink-0 shadow-md border border-[#0f3354]">
                                 <i class="fas fa-award text-xl"></i>
                             </div>
                             <div>
@@ -409,90 +407,106 @@
     <!-- FAQ SECTION                                -->
     <!-- ========================================== -->
     <section id="faq" class="py-24 px-4 bg-white border-t border-slate-200 overflow-hidden">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-16 reveal-left">
-                <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">Pusat Bantuan</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
-                    Pertanyaan yang Sering <span class="text-[#13416B]">Diajukan</span>
-                </h2>
-                <p class="text-slate-600 text-lg leading-relaxed">
-                    Temukan jawaban cepat untuk pertanyaan seputar penggunaan aplikasi SIRENATA.
-                </p>
-            </div>
-
-            <!-- Accordion FAQ menggunakan Alpine.js -->
-            <div x-data="{ activeAccordion: null }" class="space-y-4 reveal-up">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
-                     :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 1 }">
-                    <button @click="activeAccordion = activeAccordion === 1 ? null : 1" 
-                            class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
-                        <h3 class="font-bold text-slate-800 text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 1 }">
-                            Siapa saja yang dapat menggunakan aplikasi SIRENATA?
-                        </h3>
-                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"
-                           :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 1 }"></i>
-                    </button>
-                    <div x-show="activeAccordion === 1" x-collapse x-cloak>
-                        <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                            Aplikasi ini ditujukan khusus bagi para pemangku kepentingan ketenagakerjaan, termasuk Super Admin, Admin Pusat, Admin Instansi Provinsi, Admin Instansi Kabupaten/Kota, dan Pengguna ASN (Aparatur Sipil Negara) selaku perencana di daerah.
+                <!-- Kolom Kiri: Judul & Accordion -->
+                <div class="reveal-left">
+                    <div class="text-left mb-10">
+                        <span class="text-[#13416B] font-bold tracking-wider text-sm mb-3 block uppercase">Pusat Bantuan</span>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
+                            Pertanyaan yang Sering <span class="text-[#13416B]">Diajukan</span>
+                        </h2>
+                        <p class="text-slate-600 text-lg leading-relaxed">
+                            Temukan jawaban cepat untuk pertanyaan seputar penggunaan aplikasi SIRENATA atau kunjungi <a href="https://bantuan.kemnaker.go.id/" target="_blank" class="text-amber-500 font-bold hover:underline">Pusat Bantuan Kemnaker</a> untuk kendala teknis lainnya.
+                        </p>
+                    </div>
+
+                    <!-- Accordion FAQ menggunakan Alpine.js -->
+                    <div x-data="{ activeAccordion: null }" class="space-y-4">
+                        
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
+                             :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 1 }">
+                            <button @click="activeAccordion = activeAccordion === 1 ? null : 1" 
+                                    class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
+                                <h3 class="font-bold text-slate-800 text-base sm:text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 1 }">
+                                    Siapa saja yang dapat menggunakan aplikasi SIRENATA?
+                                </h3>
+                                <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 shrink-0"
+                                   :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 1 }"></i>
+                            </button>
+                            <div x-show="activeAccordion === 1" x-collapse x-cloak>
+                                <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4 text-sm sm:text-base">
+                                    Aplikasi ini ditujukan khusus bagi para pemangku kepentingan ketenagakerjaan, termasuk Super Admin, Admin Pusat, Admin Instansi Provinsi, Admin Instansi Kabupaten/Kota, dan Pengguna ASN (Aparatur Sipil Negara) selaku perencana di daerah.
+                                </div>
+                            </div>
                         </div>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
+                             :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 2 }">
+                            <button @click="activeAccordion = activeAccordion === 2 ? null : 2" 
+                                    class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
+                                <h3 class="font-bold text-slate-800 text-base sm:text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 2 }">
+                                    Bagaimana cara mendaftar atau masuk ke dalam sistem?
+                                </h3>
+                                <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 shrink-0"
+                                   :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 2 }"></i>
+                            </button>
+                            <div x-show="activeAccordion === 2" x-collapse x-cloak>
+                                <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4 text-sm sm:text-base">
+                                    SIRENATA terintegrasi dengan sistem <strong>Single Sign-On (SSO)</strong> Kemnaker. Anda dapat langsung masuk menggunakan akun <strong>SIAPKerja ID</strong> yang telah terdaftar. Jika Anda mewakili instansi daerah, hubungi Admin Pusat untuk penyesuaian hak akses.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
+                             :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 3 }">
+                            <button @click="activeAccordion = activeAccordion === 3 ? null : 3" 
+                                    class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
+                                <h3 class="font-bold text-slate-800 text-base sm:text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 3 }">
+                                    Apa perbedaan RTK Makro, RTK Mikro, dan IPK?
+                                </h3>
+                                <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 shrink-0"
+                                   :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 3 }"></i>
+                            </button>
+                            <div x-show="activeAccordion === 3" x-collapse x-cloak>
+                                <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4 text-sm sm:text-base">
+                                    <ul class="list-disc pl-5 space-y-2">
+                                        <li><strong>RTK Makro:</strong> Proyeksi tenaga kerja di tingkat wilayah (Nasional/Provinsi/Kabupaten/Kota) berdasarkan ekonomi makro.</li>
+                                        <li><strong>RTK Mikro:</strong> Analisis kebutuhan pegawai/tenaga kerja spesifik di dalam internal suatu instansi atau perusahaan.</li>
+                                        <li><strong>IPK:</strong> Indeks Pembangunan Ketenagakerjaan, yaitu pengukuran capaian kinerja daerah berdasarkan 7 indikator utama ketenagakerjaan.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
+                             :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 4 }">
+                            <button @click="activeAccordion = activeAccordion === 4 ? null : 4" 
+                                    class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
+                                <h3 class="font-bold text-slate-800 text-base sm:text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 4 }">
+                                    Apa fungsi fitur LMS Terintegrasi?
+                                </h3>
+                                <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 shrink-0"
+                                   :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 4 }"></i>
+                            </button>
+                            <div x-show="activeAccordion === 4" x-collapse x-cloak>
+                                <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4 text-sm sm:text-base">
+                                    Fitur LMS difungsikan sebagai sarana transfer pengetahuan dari pusat ke daerah. Pengguna dapat mengikuti kursus interaktif secara mandiri untuk meningkatkan kompetensi terkait perencanaan, serta mendapatkan <strong>sertifikat resmi</strong> setelah lulus ujian (post-test).
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
-                     :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 2 }">
-                    <button @click="activeAccordion = activeAccordion === 2 ? null : 2" 
-                            class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
-                        <h3 class="font-bold text-slate-800 text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 2 }">
-                            Bagaimana cara mendaftar atau masuk ke dalam sistem?
-                        </h3>
-                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"
-                           :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 2 }"></i>
-                    </button>
-                    <div x-show="activeAccordion === 2" x-collapse x-cloak>
-                        <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                            SIRENATA terintegrasi dengan sistem <strong>Single Sign-On (SSO)</strong> Kemnaker. Anda dapat langsung masuk menggunakan akun <strong>SIAPKerja ID</strong> yang telah terdaftar. Jika Anda mewakili instansi daerah, hubungi Admin Pusat untuk penyesuaian hak akses.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
-                     :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 3 }">
-                    <button @click="activeAccordion = activeAccordion === 3 ? null : 3" 
-                            class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
-                        <h3 class="font-bold text-slate-800 text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 3 }">
-                            Apa perbedaan RTK Makro, RTK Mikro, dan IPK?
-                        </h3>
-                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"
-                           :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 3 }"></i>
-                    </button>
-                    <div x-show="activeAccordion === 3" x-collapse x-cloak>
-                        <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                            <ul class="list-disc pl-5 space-y-2">
-                                <li><strong>RTK Makro:</strong> Proyeksi tenaga kerja di tingkat wilayah (Nasional/Provinsi/Kabupaten/Kota) berdasarkan ekonomi makro.</li>
-                                <li><strong>RTK Mikro:</strong> Analisis kebutuhan pegawai/tenaga kerja spesifik di dalam internal suatu instansi atau perusahaan.</li>
-                                <li><strong>IPK:</strong> Indeks Pembangunan Ketenagakerjaan, yaitu pengukuran capaian kinerja daerah berdasarkan 7 indikator utama ketenagakerjaan.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-[#13416B]/30 hover:shadow-sm"
-                     :class="{ 'border-[#13416B]/40 shadow-md bg-white': activeAccordion === 4 }">
-                    <button @click="activeAccordion = activeAccordion === 4 ? null : 4" 
-                            class="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none">
-                        <h3 class="font-bold text-slate-800 text-lg pr-4" :class="{ 'text-[#13416B]': activeAccordion === 4 }">
-                            Apa fungsi fitur LMS Terintegrasi?
-                        </h3>
-                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"
-                           :class="{ 'rotate-180 text-[#13416B]': activeAccordion === 4 }"></i>
-                    </button>
-                    <div x-show="activeAccordion === 4" x-collapse x-cloak>
-                        <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                            Fitur LMS difungsikan sebagai sarana transfer pengetahuan dari pusat ke daerah. Pengguna dapat mengikuti kursus interaktif secara mandiri untuk meningkatkan kompetensi terkait perencanaan, serta mendapatkan <strong>sertifikat resmi</strong> setelah lulus ujian (post-test).
-                        </div>
-                    </div>
+                <!-- Kolom Kanan: Ilustrasi Bantuan -->
+                <div class="relative hidden lg:flex justify-center items-center reveal-right h-full">
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-amber-400 rounded-full z-0"></div>
+                    <img src="{{ asset('images/faq-illustration.webp') }}" 
+                         alt="Pusat Bantuan Kemnaker" 
+                         class="relative z-10 w-full max-w-[520px] h-auto object-contain drop-shadow-2xl animate-float mt-8"
+                         style="-webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%); mask-image: linear-gradient(to bottom, black 75%, transparent 100%);">
                 </div>
 
             </div>
@@ -500,33 +514,29 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- CTA SECTION                                -->
+    <!-- CTA SECTION (Diperbesar)                   -->
     <!-- ========================================== -->
-    <section class="py-24 px-4 relative overflow-hidden" style="background-color: #13416B;">
+    <!-- PERBAIKAN: Padding diubah menjadi py-32 lg:py-40 agar lebih luas -->
+    <section class="py-32 lg:py-40 px-4 relative overflow-hidden" style="background-color: #13416B;">
         <div class="absolute inset-0 bg-blue-500/20 blur-[100px] rounded-full w-[80%] h-[80%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
         
         <div class="max-w-4xl mx-auto text-center relative z-10 reveal-left">
-            @guest
-                <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">Siap Memulai Perencanaan?</h2>
-                <p class="text-slate-300 mb-10 max-w-2xl mx-auto text-lg">
-                    Bergabunglah dengan {{ $stats['regencies'] ?? 514 }}+ daerah di seluruh Indonesia yang telah menggunakan aplikasi SIRENATA.
-                </p>
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal-up" style="transition-delay: 0.2s;">
-                    <a href="{{ route('login') }}" class="w-full sm:w-auto px-8 py-3.5 bg-white font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all" style="color: #13416B;">
-                        Daftar Gratis Sekarang
-                    </a>
-                    <a href="{{ route('login') }}" class="w-full sm:w-auto px-8 py-3.5 font-bold rounded-full border border-white/30 text-white transition-all hover:bg-white/10">
-                        Sudah Punya Akun? Masuk
-                    </a>
-                </div>
-            @endguest
-            @auth
-                <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6">Selamat Datang Kembali, {{ auth()->user()->name }}!</h2>
-                <p class="text-slate-300 mb-10 max-w-xl mx-auto text-lg">Lanjutkan aktivitas perencanaan ketenagakerjaan Anda dari dashboard.</p>
-                <a href="{{ route('user.dashboard') }}" class="px-8 py-3.5 bg-white font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 inline-block reveal-up" style="color: #13416B; transition-delay: 0.2s;">
-                    Masuk ke Ruang Kerja
+            <!-- Teks H2 Diperbesar -->
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">Siap Memulai Perencanaan?</h2>
+            
+            <!-- Deskripsi Diperbesar -->
+            <p class="text-slate-300 mb-12 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
+                Bergabunglah dengan {{ $stats['regencies'] ?? 514 }}+ daerah di seluruh Indonesia yang telah menggunakan aplikasi SIRENATA.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal-up" style="transition-delay: 0.2s;">
+                <a href="{{ route('login') }}" class="w-full sm:w-auto px-8 py-3.5 bg-white font-bold rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all text-lg" style="color: #13416B;">
+                    Daftar Gratis Sekarang
                 </a>
-            @endauth
+                <a href="{{ route('login') }}" class="w-full sm:w-auto px-8 py-3.5 font-bold rounded-full border border-white/30 text-white transition-all hover:bg-white/10 text-lg">
+                    Sudah Punya Akun? Masuk
+                </a>
+            </div>
         </div>
     </section>
 
