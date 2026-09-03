@@ -693,28 +693,28 @@
         </div>
     </section>
 
+   <!-- ========================================== -->
+    <!-- CTA SECTION                                -->
     <!-- ========================================== -->
-    <!-- CTA SECTION        -->
-    <!-- ========================================== -->
-    <section id="cta" class="py-24 md:py-36 lg:py-8 px-4 md:px-16 relative overflow-hidden" style="background-color: #13416B;" >
+    <section id="cta" class="py-24 md:py-36 lg:py-8 px-4 md:px-16 relative overflow-hidden" style="background-color: #13416B;">
         <!-- Efek Glow Latar Belakang -->
-        <div
-            class="absolute inset-0 bg-blue-400/20 blur-[120px] rounded-full w-[80%] h-[80%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
+        <div class="absolute inset-0 bg-blue-400/20 blur-[120px] rounded-full w-[80%] h-[80%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
         </div>
 
-        <!-- Ornamen SVG Raksasa (V Kebalik / Inverted V) -->
-        <div
-            class="absolute -left-[30%] sm:-left-[10%] top-1/2 -translate-y-1/2 w-[700px] h-[700px] lg:w-[1100px] lg:h-[1100px] text-white opacity-[0.05] pointer-events-none z-0 transition-transform duration-1000">
-            <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
-                <!-- Titik tumpu V berada di tengah atas -->
-                <g transform="translate(200, 80)">
-                    <!-- Kaki Kiri (Miring ke kiri bawah) -->
-                    <rect x="-45" y="-20" width="90" height="380" rx="45" transform="rotate(45)"
-                        fill="currentColor" />
-                    <!-- Kaki Kanan (Miring ke kanan bawah) -->
-                    <rect x="-45" y="-20" width="90" height="380" rx="45" transform="rotate(-45)"
-                        fill="currentColor" />
-                </g>
+        <!-- Ornamen SVG (L Chevron Raksasa Menyambung Siku + Lingkaran Kanan) -->
+        <!-- UKURAN DIPERBESAR MASIF (w-[1600px] lg:w-[2200px]) AGAR MENGISI PENUH SISI KIRI -->
+        <div class="absolute -left-[50%] sm:-left-[20%] top-1/2 -translate-y-1/2 w-[1600px] h-[1600px] lg:w-[2200px] lg:h-[2200px] text-white opacity-[0.06] pointer-events-none z-0 transition-transform duration-1000">
+            <!-- ViewBox 1600x1600 untuk menampung seluruh goresan tebal tanpa terpotong -->
+            <svg viewBox="0 0 1600 1600" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                
+              
+                <polyline points="300,200 900,800 300,1400" 
+                          stroke="currentColor" 
+                          stroke-width="260" 
+                          stroke-linecap="round" 
+                          stroke-linejoin="miter" />
+           
+
             </svg>
         </div>
 
@@ -723,8 +723,7 @@
 
                 <!-- Kolom Kiri: Teks & Tombol -->
                 <div class="text-left reveal-left lg:col-span-7 xl:col-span-8 lg:pr-10">
-                    <h2
-                        class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm">
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm">
                         Siap Memulai Perencanaan?
                     </h2>
                     <p class="text-slate-300 mb-10 max-w-2xl text-md md:text-xl leading-relaxed">
@@ -732,14 +731,15 @@
                         {{ $stats['regencies'] ?? 514 }}+ daerah lain di seluruh Indonesia menggunakan SIRENATA.
                     </p>
 
-                    <div class="flex flex-col sm:flex-row items-start gap-4 reveal-up"
-                        style="transition-delay: 0.2s;">
-                        <a href="{{ route('login') }}"
+                    <div class="flex flex-col sm:flex-row items-start gap-4 reveal-up" style="transition-delay: 0.2s;">
+                        <!-- Relative Path Register -->
+                        <a href="/auth/register"
                             class="w-full sm:w-auto px-8 py-4 bg-white font-bold rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all text-md md:text-lg text-center"
                             style="color: #13416B;">
                             Daftar Gratis Sekarang
                         </a>
-                        <a href="{{ route('login') }}"
+                        <!-- Relative Path Login -->
+                        <a href="/auth/login"
                             class="w-full sm:w-auto px-8 py-4 font-bold rounded-full border-2 border-white/30 text-white transition-all hover:bg-white/10 text-md md:text-lg text-center">
                             Sudah Punya Akun? Masuk
                         </a>
@@ -747,8 +747,7 @@
                 </div>
 
                 <!-- Kolom Kanan: Tempat Ilustrasi Orang -->
-                <div
-                    class="relative hidden lg:flex justify-end items-end reveal-right h-full lg:col-span-5 xl:col-span-4">
+                <div class="relative hidden lg:flex justify-end items-end reveal-right h-full lg:col-span-5 xl:col-span-4">
                     <div class="absolute right-10 bottom-10 w-[300px] h-[300px] bg-white/5 rounded-full blur-xl z-0">
                     </div>
                     <img src="{{ asset('images/cta-illustration.webp') }}"
@@ -760,7 +759,6 @@
             </div>
         </div>
     </section>
-
    <!-- ========================================== -->
     <!-- FOOTER                                     -->
     <!-- ========================================== -->
