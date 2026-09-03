@@ -81,13 +81,10 @@ class DashboardController extends Controller
         // ==========================================
         // 2. DATA RTK DAERAH
         // ==========================================
-        // Prioritaskan mengambil RTK yang Berlaku Penuh (APPROVED & VALID), jika tidak ada, ambil yang statusnya is_active
         $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('regency_code', $regencyCode)
             ->orderByDesc('created_at')
             ->first();
-
-       
 
         if (!$rtkActive) {
             $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
@@ -104,14 +101,20 @@ class DashboardController extends Controller
         // ==========================================
         // 3. DATA PROJECT DAERAH
         // ==========================================
-        // Ambil project KAB_KOTA yang leadernya memiliki regency_code yang sama dengan admin ini
         $projectQuery = Project::where('type', ProjectType::KAB_KOTA->value)
             ->whereHas('leader.scopeArea', function($q) use ($regencyCode) {
                 $q->where('regency_code', $regencyCode);
             });
 
         $totalProjects = $projectQuery->count();
-        $onProgressProjects = (clone $projectQuery)->where('status', 'On Progress')->count();
+        
+        // Mengambil semua project untuk dihitung progress-nya via accessor
+        $allProjects = $projectQuery->get();
+        
+        // Hanya menghitung project yang progress-nya kurang dari 100%
+        $onProgressProjects = $allProjects->filter(function($project) {
+            return $project->progress < 100;
+        })->count();
 
         return view('dashboard::pages.admin-kab-kota.index', [
             'user' => $user,

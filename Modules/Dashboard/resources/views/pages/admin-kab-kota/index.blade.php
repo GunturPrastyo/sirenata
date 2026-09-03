@@ -13,7 +13,7 @@
                         {{ $user->scopeArea?->regency?->name ?? 'Belum Ditetapkan' }}
                     </p>
                 </div>
-                <x-breadcrumb :items="[['label' => 'Dashboard']]" />
+                
             </div>
 
             @if (!$user->hasCompleteScope())
@@ -38,88 +38,12 @@
             $totalModul = count($courses);
         @endphp
 
-        <!-- ===================================== -->
-        <!-- 1. STATS GRID KAB/KOTA                -->
-        <!-- ===================================== -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-
-            <!-- RTK Status -->
-            <div
-                class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between hover:border-[#13416B]/30 hover:shadow-md transition-all">
-                <div>
-                    <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Status Dokumen RTK</p>
-                    @if ($rtkActive)
-                        {{-- Bandingkan langsung dengan Class Enum --}}
-                        @if ($rtkActive->status_document === \Modules\RTK\Enums\StatusDocument::VALID)
-                            <h3 class="text-xl font-extrabold text-emerald-600">Berlaku</h3>
-                        @elseif($rtkActive->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED)
-                            <h3 class="text-xl font-extrabold text-[#13416B]">Disetujui</h3>
-                        @elseif($rtkActive->status_verification === \Modules\RTK\Enums\RTKStatusVerification::REJECTED)
-                            <h3 class="text-xl font-extrabold text-red-500">Ditolak</h3>
-                        @else
-                            <h3 class="text-xl font-extrabold text-amber-500">Menunggu</h3>
-                        @endif
-                    @else
-                        <h3 class="text-xl font-extrabold text-slate-400">Kosong</h3>
-                    @endif
-                    <p class="text-[10px] text-slate-400 mt-1">Dokumen terbaru wilayah</p>
-                </div>
-                <div
-                    class="w-12 h-12 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <i class="fas fa-file-signature text-xl"></i>
-                </div>
-            </div>
-            <!-- Proyek Aktif -->
-            <div
-                class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between hover:border-[#13416B]/30 hover:shadow-md transition-all">
-                <div>
-                    <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Proyek Berjalan</p>
-                    <h3 class="text-2xl font-extrabold text-[#13416B]">{{ $onProgressProjects }} <span
-                            class="text-sm font-normal text-slate-400">/ {{ $totalProjects }}</span></h3>
-                    <p class="text-[10px] text-slate-400 mt-1">Status On Progress</p>
-                </div>
-                <div
-                    class="w-12 h-12 rounded-xl bg-[#13416B]/80 text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <i class="fas fa-tasks text-xl"></i>
-                </div>
-            </div>
-
-            <!-- Total SDM -->
-            <div
-                class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between hover:border-[#13416B]/30 hover:shadow-md transition-all">
-                <div>
-                    <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Total Pendaftar</p>
-                    <h3 class="text-2xl font-extrabold text-[#13416B]">{{ $totalSdmPeriode }}</h3>
-                    <p class="text-[10px] text-slate-400 mt-1">Peserta E-Learning (5 Thn)</p>
-                </div>
-                <div
-                    class="w-12 h-12 rounded-xl bg-[#184A78] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <i class="fas fa-users text-xl"></i>
-                </div>
-            </div>
-
-            <!-- Total Modul -->
-            <div
-                class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between hover:border-[#13416B]/30 hover:shadow-md transition-all">
-                <div>
-                    <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Modul Diikuti</p>
-                    <h3 class="text-2xl font-extrabold text-[#13416B]">{{ $totalModul }}</h3>
-                    <p class="text-[10px] text-slate-400 mt-1">Jenis kursus terdaftar</p>
-                </div>
-                <div
-                    class="w-12 h-12 rounded-xl bg-[#0f3354] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <i class="fas fa-book-open text-xl"></i>
-                </div>
-            </div>
-        </div>
+      
 
         <!-- ========================================================= -->
         <!-- 2. BLOK PERENCANAAN STRATEGIS (RTK & PROJECT)             -->
         <!-- ========================================================= -->
-        <div class="mb-6 flex items-center gap-3 mt-8">
-            <div class="w-2 h-8 rounded-full" style="background-color: #13416B;"></div>
-            <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Perencanaan & Proyek Daerah</h2>
-        </div>
+      
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Informasi RTK Aktif -->
@@ -156,7 +80,7 @@
                             <div class="pt-4 border-t border-slate-100 flex gap-2">
                                 <span
                                     class="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-xs font-semibold">
-                                     {{ $rtkActive->status_verification->label() ?? 'Menunggu' }}
+                                    {{ $rtkActive->status_verification->label() ?? 'Menunggu' }}
                                 </span>
                                 <span
                                     class="px-3 py-1 bg-slate-50 text-slate-700 border border-slate-200 rounded-md text-xs font-semibold">
@@ -175,11 +99,12 @@
             </div>
 
             <!-- Informasi Proyek -->
-            <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden relative">
-                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+           
+            <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden relative flex flex-col h-full">
+                <!-- Header (Dibuat shrink-0 agar tidak tertekan) -->
+                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
                     <div class="flex items-center gap-3">
-                        <div
-                            class="w-10 h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shadow-sm">
+                        <div class="w-10 h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shadow-sm">
                             <i class="fas fa-network-wired"></i>
                         </div>
                         <div>
@@ -191,36 +116,41 @@
                         class="text-xs font-bold text-[#13416B] hover:underline">Kelola Proyek <i
                             class="fas fa-arrow-right ml-1"></i></a>
                 </div>
-                <div class="p-6 flex flex-col justify-center h-full min-h-[200px]">
+                
+                <!-- Konten (flex-1 agar memenuhi ruang, items-center & justify-center agar tepat di tengah vertikal) -->
+                <div class="p-6 flex flex-col items-center justify-center flex-1">
                     @if ($totalProjects > 0)
-                        <div class="flex items-center gap-6">
-                            <div class="relative w-24 h-24 flex items-center justify-center">
-                                <svg class="w-full h-full transform -rotate-90">
-                                    <circle cx="48" cy="48" r="36" stroke="#f1f5f9" stroke-width="8"
-                                        fill="none" />
-                                    <circle cx="48" cy="48" r="36" stroke="#f59e0b" stroke-width="8"
-                                        fill="none"
-                                        stroke-dasharray="{{ ($onProgressProjects / $totalProjects) * 226 }} 226" />
+                        <!-- max-w-md dan mx-auto memastikan konten tidak melebar tanpa arah -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 w-full max-w-md mx-auto">
+                            
+                            <!-- Ukuran SVG Responsif: HP = w-24 (96px), PC = w-28 (112px) -->
+                            <div class="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center shrink-0">
+                                <!-- ViewBox dinormalkan ke 100x100 agar perhitungannya mudah -->
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="10" fill="none" />
+                                    <!-- Keliling 2 * pi * 40 = 251.2 -->
+                                    <circle cx="50" cy="50" r="40" stroke="#f59e0b" stroke-width="10"
+                                        fill="none" stroke-linecap="round"
+                                        stroke-dasharray="{{ ($onProgressProjects / $totalProjects) * 251.2 }} 251.2" />
                                 </svg>
                                 <div class="absolute text-center">
-                                    <span
-                                        class="text-lg font-bold text-slate-800">{{ round(($onProgressProjects / $totalProjects) * 100) }}%</span>
+                                    <span class="text-xl sm:text-2xl font-extrabold text-slate-800">{{ round(($onProgressProjects / $totalProjects) * 100) }}%</span>
                                 </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-700 mb-1">Sedang Berjalan</p>
-                                <p class="text-2xl font-extrabold text-amber-500 mb-2">{{ $onProgressProjects }} <span
-                                        class="text-sm font-normal text-slate-400">dari {{ $totalProjects }}
-                                        Proyek</span></p>
-                                <p class="text-xs text-slate-500">Pastikan seluruh proyek berjalan sesuai dengan rentang
-                                    waktu yang ditentukan.</p>
+                            
+                            <!-- Teks dipusatkan di HP (text-center) dan rata kiri di PC (sm:text-left) -->
+                            <div class="text-center sm:text-left">
+                                <p class="text-sm sm:text-base font-bold text-slate-700 mb-1">Sedang Berjalan</p>
+                                <p class="text-3xl font-extrabold text-amber-500 mb-2">{{ $onProgressProjects }} <span
+                                        class="text-sm font-semibold text-slate-400">dari {{ $totalProjects }} Proyek</span></p>
+                                <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">Pastikan seluruh proyek berjalan sesuai dengan rentang waktu yang ditentukan.</p>
                             </div>
                         </div>
                     @else
                         <div class="flex flex-col items-center justify-center text-center">
-                            <i class="fas fa-clipboard-list text-3xl text-slate-300 mb-2"></i>
-                            <p class="text-sm font-medium text-slate-600">Belum Ada Proyek</p>
-                            <p class="text-xs text-slate-400">Data pendelegasian proyek wilayah ini masih kosong.</p>
+                            <i class="fas fa-clipboard-list text-4xl text-slate-300 mb-3"></i>
+                            <p class="text-base font-medium text-slate-600">Belum Ada Proyek</p>
+                            <p class="text-sm text-slate-400 mt-1">Data pendelegasian proyek wilayah ini masih kosong.</p>
                         </div>
                     @endif
                 </div>
@@ -230,10 +160,7 @@
         <!-- ========================================================= -->
         <!-- 3. BLOK KAPASITAS SDM & E-LEARNING                        -->
         <!-- ========================================================= -->
-        <div class="mb-6 flex items-center gap-3 mt-10">
-            <div class="w-2 h-8 rounded-full bg-[#13416B]"></div>
-            <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Kapasitas SDM & E-Learning</h2>
-        </div>
+      
 
         <!-- GRAFIK TREN PARTISIPASI SDM -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden mb-6">
