@@ -1,5 +1,5 @@
 <x-dashboard::layouts.dashboard title="RTKN Detail">
-    <div class="p-2 sm:p-6">
+    <div class="p-2 sm:p-6 pt-6 sm:pt-8">
         <!-- Breadcrumb Navigation -->
         <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1">

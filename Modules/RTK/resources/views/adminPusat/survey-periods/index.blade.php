@@ -1,5 +1,5 @@
 <x-dashboard::layouts.dashboard title="Periode Survei RTK Daerah">
-    <div class="p-2 sm:p-6">
+    <div class="p-2 sm:p-6 pt-6 sm:pt-8">
         <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[['label' => 'Periode Survei RTK Daerah']]" />
 
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

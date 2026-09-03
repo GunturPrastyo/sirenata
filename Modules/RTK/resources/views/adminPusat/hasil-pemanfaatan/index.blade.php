@@ -1,5 +1,6 @@
 <x-dashboard::layouts.dashboard title="Hasil Kuesioner Pemanfaatan RTKD">
-    <div class="p-2 sm:p-6">
+    <div class="p-2 sm:p-6  pt-6 sm:pt-8">
+        
         <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[['label' => 'Hasil Pemanfaatan RTKD']]" />
 
         <x-flash-message class="mb-4" />

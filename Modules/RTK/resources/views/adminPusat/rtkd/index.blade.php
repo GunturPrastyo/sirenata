@@ -1,8 +1,11 @@
 <x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah">
-    <div class="p-2 sm:p-6">
+    <div class="p-2 sm:p-6  pt-6 sm:pt-8">
+
+        <div class="mb-6">
         <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
             ['label' => 'Daftar Laporan RTKD']
         ]" />
+        </div>
 
         <x-dashboard::filter-card 
             title="Daftar Laporan RTKD Provinsi" 

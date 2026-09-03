@@ -1,18 +1,19 @@
 <x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah ">
-    <div class="p-2 sm:p-6">
+    <div class="p-2 sm:p-6 pt-6 sm:pt-8">
         <!-- Breadcrumb Navigation -->
-        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
-            ['label' => 'Daftar Laporan RTKD Provinsi', 'url' => route('admin-pusat.rtkd.index')],
-            ['label' => 'Daftar Laporan RTKD Kab/Kota']
-        ]" />
+        <div class="mb-8">
+            <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
+                ['label' => 'Daftar Laporan RTKD Provinsi', 'url' => route('admin-pusat.rtkd.index')],
+                ['label' => 'Daftar Laporan RTKD Kab/Kota'],
+            ]" />
+        </div>
 
-        <x-dashboard::filter-card 
-            title="Daftar Laporan RTKD Kabupaten/Kota" 
-            :total="$rtkds->total()"
-            :resetUrl="route('admin-pusat.rtkd.kab-kota', $provinceCode)">
-            
+        <x-dashboard::filter-card title="Daftar Laporan RTKD Kabupaten/Kota" :total="$rtkds->total()" :resetUrl="route('admin-pusat.rtkd.kab-kota', $provinceCode)">
+
             <x-slot name="actions">
-                <x-button variant="success" :href="route('admin-pusat.rtkd.export-regency-by-province', $provinceCode) . '?' . http_build_query(request()->only(['search', 'status_verification', 'status_document', 'acuan']))">
+                <x-button variant="success" :href="route('admin-pusat.rtkd.export-regency-by-province', $provinceCode) .
+                    '?' .
+                    http_build_query(request()->only(['search', 'status_verification', 'status_document', 'acuan']))">
                     <i class="fas fa-download text-xs mr-2"></i>
                     Ekspor
                 </x-button>
@@ -24,7 +25,8 @@
                     <label class="block text-xs font-medium text-slate-500 mb-1">Status Verifikasi</label>
                     <div class="relative">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <select name="status_verification" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="status_verification"
+                            class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Semua</option>
                             @foreach (\Modules\RTK\Enums\RTKStatusVerification::cases() as $statusVerifikasi)
                                 <option value="{{ $statusVerifikasi->value }}" @selected(request('status_verification') === $statusVerifikasi->value)>
@@ -40,7 +42,8 @@
                     <label class="block text-xs font-medium text-slate-500 mb-1">Status Dokumen</label>
                     <div class="relative">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <select name="status_document" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="status_document"
+                            class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Semua</option>
                             @foreach (\Modules\RTK\Enums\StatusDocument::cases() as $statusDocument)
                                 <option value="{{ $statusDocument->value }}" @selected(request('status_document') === $statusDocument->value)>
@@ -54,9 +57,11 @@
                 <!-- Per Page -->
                 <div class="w-full sm:w-36 lg:w-32">
                     <label class="block text-xs font-medium text-slate-500 mb-1">Data per Halaman</label>
-                    <select name="per_page" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <select name="per_page"
+                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         @foreach ([10, 20, 50, 100] as $page)
-                            <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>{{ $page }}</option>
+                            <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
+                                {{ $page }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -66,7 +71,8 @@
                     <label class="block text-xs font-medium text-slate-500 mb-1">Pencarian</label>
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama Kab/Kota..."
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari nama Kab/Kota..."
                             class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
@@ -99,13 +105,15 @@
                                 <div class="flex items-center gap-2">
                                     <p class="font-medium text-slate-700">{{ $regency->name }}</p>
 
-                                    @if(($regency->pending_rtk_count ?? 0) > 0)
+                                    @if (($regency->pending_rtk_count ?? 0) > 0)
                                         <div class="relative group">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-amber-500 rounded-full cursor-pointer">
+                                            <span
+                                                class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-amber-500 rounded-full cursor-pointer">
                                                 {{ $regency->pending_rtk_count }}
                                             </span>
                                             {{-- Tooltip --}}
-                                            <div class="absolute left-6 top-0 z-20 hidden group-hover:block w-52 bg-gray-800 text-white text-xs rounded-md px-3 py-2 shadow-lg whitespace-normal">
+                                            <div
+                                                class="absolute left-6 top-0 z-20 hidden group-hover:block w-52 bg-gray-800 text-white text-xs rounded-md px-3 py-2 shadow-lg whitespace-normal">
                                                 Ada {{ $regency->pending_rtk_count }} RTK yang menunggu persetujuan
                                             </div>
                                         </div>
@@ -119,7 +127,7 @@
                                     <div class="flex items-center gap-2">
                                         <p class="font-semibold text-slate-700">{{ $regency->latest_rtk->name }}</p>
                                         {{-- Badge RTK Berlaku --}}
-                                        @if($regency->latest_rtk->is_berlaku)
+                                        @if ($regency->latest_rtk->is_berlaku)
                                             <x-badge color="success">
                                                 Berlaku
                                             </x-badge>

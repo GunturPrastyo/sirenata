@@ -1,10 +1,13 @@
 <x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah Provinsi Edit">
-    <div class="p-2 sm:p-6">
+    <div class="p-2 sm:p-6  pt-6 sm:pt-8">
+
+        <div class="mb-6">
         <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
             ['label' => 'Daftar Laporan RTKD Provinsi', 'url' => route('admin-pusat.rtkd.index')],
             ['label' => 'Daftar Laporan RTK ' . $province->name, 'url' => route('admin-pusat.rtkd.show-province', $provinceCode)],
             ['label' => 'Ubah Status Acuan']
         ]" />
+        </div>
         
         @if ($rtkdp->status_verification === \Modules\RTK\Enums\RTKStatusVerification::REJECTED)
             <div class="mb-6 border border-red-200 bg-red-50 rounded-lg p-4">

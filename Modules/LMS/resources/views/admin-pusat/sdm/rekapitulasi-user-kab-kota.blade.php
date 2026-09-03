@@ -1,5 +1,5 @@
 <x-dashboard::layouts.dashboard title="Rekapitulasi User Kab/Kota">
-    <div class="p-2 sm:p-6">
+    <div class="p-2 sm:p-6 pt-6 sm:pt-8">
         <!-- Breadcrumb Navigation -->
         <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
             ['label' => 'Rekapitulasi SDM', 'url' => route('admin-pusat.rekapitulasi.index')],
