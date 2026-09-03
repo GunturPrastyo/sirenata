@@ -271,20 +271,14 @@
                             <li><a href="{{ route('super-admin.profile') }}"
                                     class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
                                         class="fas fa-user-circle w-4 text-center"></i> Profil</a></li>
-                            <li><a href="{{ route('super-admin.dashboard') }}"
-                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
-                                        class="fas fa-laptop w-4 text-center"></i> Dashboard</a></li>
+                           
                         @elseif(auth()->user()->hasRole('admin-pusat'))
                             <li><a href="{{ route('admin-pusat.profile') }}"
                                     class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
                                         class="fas fa-user-circle w-4 text-center"></i> Profil</a></li>
-                            <li><a href="{{ route('admin-pusat.dashboard') }}"
-                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
-                                        class="fas fa-laptop w-4 text-center"></i> Dashboard Pusat</a></li>
+                            
                         @elseif(auth()->user()->hasRole('admin-province'))
-                            <li><a href="{{ route('admin-province.dashboard') }}"
-                                    class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i
-                                        class="fas fa-laptop w-4 text-center"></i> Dashboard Provinsi</a></li>
+                           
                         @elseif(auth()->user()->hasRole('user'))
                             <li><a href="{{ route('user.profile') }}"
                                     class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#13416B]/10 hover:text-[#13416B] font-medium transition-colors"><i

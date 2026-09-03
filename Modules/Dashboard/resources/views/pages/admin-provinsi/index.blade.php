@@ -1,1068 +1,407 @@
 <x-dashboard::layouts.dashboard title="Dashboard Admin Provinsi">
-    <div class="p-2 sm:p-6">
-        @if (!$user->hasCompleteScope())
-            <div class="mb-4 rounded-lg bg-yellow-50 border border-yellow-300 p-4">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-yellow-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 9v2m0 4h.01M4.93 19h14.14c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.2 16c-.77 1.33.19 3 1.73 3z" />
-                    </svg>
+    <!-- Wrapper Utama Senada dengan Admin Pusat -->
+    <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6 sm:space-y-8 bg-slate-50/50 min-h-screen">
+        
+        <!-- Header & Breadcrumb -->
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Halo, {{ $user->name }}</h1>
+                    <p class="text-sm text-slate-500 font-medium mt-1">
+                        Masuk sebagai <span class="text-[#13416B] font-bold">{{ $user->getRoleNames()->implode(', ') }}</span> — Wilayah {{ $user->scopeArea?->province?->name ?? 'Belum Ditetapkan' }}
+                    </p>
+                </div>
+                
+            </div>
 
+            <!-- Peringatan Wilayah Belum Ditetapkan -->
+            @if (!$user->hasCompleteScope())
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 sm:p-5 shadow-sm flex items-start gap-4 transition-all">
+                    <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                        <i class="fas fa-exclamation-triangle text-lg"></i>
+                    </div>
                     <div>
-                        <h1 class="font-semibold text-yellow-800">
-                            Wilayah Provinsi Belum Ditetapkan
-                        </h1>
-                        <p class="text-sm text-yellow-700">
+                        <h2 class="font-bold text-amber-800 mb-1">Wilayah Provinsi Belum Ditetapkan</h2>
+                        <p class="text-sm text-amber-700 leading-relaxed">
                             Akun ini belum memiliki penetapan wilayah provinsi pada sistem.
-                            Untuk melanjutkan pengelolaan data, silakan hubungi Admin Pusat
-                            agar wilayah dapat dikonfigurasi terlebih dahulu.
+                            Untuk melanjutkan pengelolaan data, silakan hubungi Admin Pusat agar wilayah dapat dikonfigurasi terlebih dahulu.
                         </p>
                     </div>
                 </div>
-            </div>
-        @endif
-
-        <div class="mb-5">
-            <h1 class="text-2xl font-bold">Halo {{ $user->name }}</h1>
-
-            <p class="text-sm text-gray-500">Login Sebagai {{ $user->getRoleNames()->implode(', ') }} -
-                {{ $user->scopeArea?->province?->name ?? 'Belum Ditetapkan' }}
-            </p>
+            @endif
         </div>
-        <!-- Breadcrumb Navigation -->
-        <x-breadcrumb :items="[['label' => 'Dashboard']]" />
 
-        <!-- Card: Informasi RTK (Paling Atas) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 sm:mb-8 overflow-hidden transition-all hover:shadow-md">
-            <div class="bg-gradient-to-r from-blue-50/50 to-transparent px-5 sm:px-8 py-4 sm:py-5 border-b border-slate-100">
-                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-3">
-                    <div class="p-2 bg-blue-100 text-blue-600 rounded-lg"><i class="fas fa-file-signature"></i></div>
-                    Informasi RTK
-                </h2>
+        <!-- ===================================== -->
+        <!-- 1. STATS GRID (Full Sirenata Theme)   -->
+        <!-- ===================================== -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            
+            <!-- RTK Disetujui -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
+                <div>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">RTK Disetujui</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('approved', 0) }}</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Dokumen terverifikasi</p>
+                </div>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    <i class="fas fa-check-double text-xl sm:text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Status Menunggu -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
+                <div>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Status Menunggu</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('pending', 0) }}</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Butuh peninjauan</p>
+                </div>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/80 text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    <i class="fas fa-hourglass-half text-xl sm:text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- RTK Ditolak -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
+                <div>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">RTK Ditolak</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('rejected', 0) }}</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Dikembalikan ke daerah</p>
+                </div>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#184A78] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    <i class="fas fa-ban text-xl sm:text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Total Wilayah -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
+                <div>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">RTK Aktif</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkMasaAktifPerKabKota->count() ?? 0 }}</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Kabupaten/Kota aktif</p>
+                </div>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#0f3354] text-white flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+                    <i class="fas fa-map-marked-alt text-xl sm:text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 2. GRAFIK KOMPARASI RTK HORIZONTAL PER KAB/KOTA           -->
+        <!-- ========================================================= -->
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
+                        <i class="fas fa-chart-bar text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-800">Komparasi Masa Berlaku RTK</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Tahun penyusunan dan masa berakhir dokumen per Kabupaten/Kota</p>
+                    </div>
+                </div>
+
+                <!-- Dropdown Filter Tahun -->
+                <div class="w-full sm:w-auto sm:max-w-xs shrink-0 flex items-center gap-2">
+                    <select id="rtkYearFilter" onchange="fetchRtkProvinsiData(this.value)" class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
+                        <option value="all" {{ $selectedRtkYear === 'all' ? 'selected' : '' }}>Semua Tahun (Default)</option>
+                        @foreach($rtkYearsOptions as $y)
+                            <option value="{{ $y }}" {{ (string)$y === (string)$selectedRtkYear ? 'selected' : '' }}>Mulai {{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             
-            <div class="p-5 sm:p-8">
-                <!-- Masa Aktif RTK (Top) -->
-                <div class="mb-8 bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-8 bg-blue-500 rounded-full"></div>
-                            <h3 class="text-lg font-bold text-slate-800">Masa Aktif RTK per Kab/Kota</h3>
-                        </div>
-                        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
-                            <label for="rtkYearFilter" class="text-sm font-semibold text-slate-600 pl-2 cursor-pointer">
-                                <i class="far fa-calendar-alt mr-1"></i> Tahun
-                            </label>
-                            <select id="rtkYearFilter" onchange="fetchRtkProvinsiData(this.value)" class="bg-white border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 rounded-md py-1.5 pl-3 pr-8 text-sm font-medium text-slate-700 cursor-pointer shadow-sm">
-                                <option value="all" {{ $selectedRtkYear === 'all' ? 'selected' : '' }}>Semua Data Aktif (Default)</option>
-                                @foreach($rtkYearsOptions as $y)
-                                    <option value="{{ $y }}" {{ (string)$y === (string)$selectedRtkYear ? 'selected' : '' }}>{{ $y }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div id="rtkChartContainer" class="relative h-72 sm:h-[400px] w-full {{ $rtkMasaAktifPerKabKota->count() > 0 ? '' : 'hidden' }}">
-                        <canvas id="rtkMasaAktifKabKotaChart"></canvas>
-                    </div>
-                    
-                    <div id="rtkEmptyState" class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200 {{ $rtkMasaAktifPerKabKota->count() > 0 ? 'hidden' : '' }}">
-                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                            <i class="fas fa-chart-bar text-2xl text-slate-300"></i>
-                        </div>
-                        <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                        <p class="text-sm mt-1">Belum ada RTK Kab/Kota yang aktif di provinsi ini dengan start date tahun terpilih</p>
+            <div class="p-5 sm:p-6">
+                <!-- CHART CONTAINER DENGAN SCROLL VERTICAL -->
+                <div class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2 {{ $rtkMasaAktifPerKabKota->count() > 0 ? '' : 'hidden' }}">
+                    <div id="rtkCombinedChartContainer" class="relative w-full" style="min-height: 400px;">
+                        <canvas id="rtkCombinedBarChart"></canvas>
                     </div>
                 </div>
-
-                <!-- Masa Berakhir RTK (Middle) -->
-                <div class="mb-8 bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-8 bg-pink-500 rounded-full"></div>
-                            <h3 class="text-lg font-bold text-slate-800">Masa Berakhir RTK per Kab/Kota</h3>
-                        </div>
-                        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
-                            <label for="rtkEndYearFilter" class="text-sm font-semibold text-slate-600 pl-2 cursor-pointer">
-                                <i class="far fa-calendar-check mr-1"></i> Tahun Akhir
-                            </label>
-                            <select id="rtkEndYearFilter" onchange="fetchRtkProvinsiEndData(this.value)" class="bg-white border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-pink-500 rounded-md py-1.5 pl-3 pr-8 text-sm font-medium text-slate-700 cursor-pointer shadow-sm">
-                                <option value="all" {{ $selectedRtkEndYear === 'all' ? 'selected' : '' }}>Semua Data (Default)</option>
-                                @foreach($rtkEndYearsOptions as $y)
-                                    <option value="{{ $y }}" {{ (string)$y === (string)$selectedRtkEndYear ? 'selected' : '' }}>{{ $y }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                
+                <!-- EMPTY STATE -->
+                <div id="rtkCombinedEmptyState" class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $rtkMasaAktifPerKabKota->count() > 0 ? 'hidden' : '' }}">
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
+                        <i class="fas fa-chart-area text-xl"></i>
                     </div>
-                    
-                    <div id="rtkEndChartContainer" class="relative h-72 sm:h-[400px] w-full {{ $rtkMasaBerakhirPerKabKota->count() > 0 ? '' : 'hidden' }}">
-                        <canvas id="rtkMasaBerakhirKabKotaChart"></canvas>
-                    </div>
-                    
-                    <div id="rtkEndEmptyState" class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200 {{ $rtkMasaBerakhirPerKabKota->count() > 0 ? 'hidden' : '' }}">
-                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                            <i class="fas fa-chart-bar text-2xl text-slate-300"></i>
-                        </div>
-                        <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                        <p class="text-sm mt-1">Belum ada RTK Kab/Kota yang aktif di provinsi ini dengan end date tahun terpilih</p>
-                    </div>
-                </div>
-
-                <!-- Periode Waktu RTK (Butterfly Chart) -->
-                <div class="mb-8 bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-2 h-8 bg-purple-500 rounded-full"></div>
-                        <h3 class="text-lg font-bold text-slate-800">Visualisasi Periode RTK (Butterfly Chart)</h3>
-                    </div>
-                    
-                    <div id="rtkButterflyChartContainer" class="relative h-[400px] sm:h-[500px] w-full {{ $rtkMasaAktifPerKabKota->count() > 0 ? '' : 'hidden' }}">
-                        <canvas id="rtkButterflyKabKotaChart"></canvas>
-                    </div>
-                    
-                    <div id="rtkButterflyEmptyState" class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200 {{ $rtkMasaAktifPerKabKota->count() > 0 ? 'hidden' : '' }}">
-                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                            <i class="fas fa-chart-line text-2xl text-slate-300"></i>
-                        </div>
-                        <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                        <p class="text-sm mt-1">Belum ada RTK aktif untuk divisualisasikan</p>
-                    </div>
-                </div>
-
-                <!-- RTK Stats (Bottom Grid) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-                    <!-- Status Masa Berlaku RTK -->
-                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                        <div class="relative z-10 flex items-center gap-3 mb-6">
-                            <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
-                            <h3 class="text-base font-bold text-slate-800">Status Masa Berlaku RTK ({{ date('Y') }})</h3>
-                        </div>
-                        
-                        @if($rtkStatusDistribution->sum() > 0)
-                            <div class="relative h-64 sm:h-80 w-full flex items-center justify-center">
-                                <canvas id="rtkStatusPieChart"></canvas>
-                            </div>
-                        @else
-                            <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                    <i class="fas fa-chart-pie text-2xl text-slate-300"></i>
-                                </div>
-                                <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                                <p class="text-sm mt-1 text-center">Belum ada data RTK di provinsi ini</p>
-                            </div>
-                        @endif
-                    </div>
-
-                    <!-- RTK Berlaku -->
-                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                        <div class="relative z-10 flex items-center gap-3 mb-6">
-                            <div class="w-1.5 h-6 bg-emerald-500 rounded-full"></div>
-                            <h3 class="text-base font-bold text-slate-800">RTK Berlaku Saat Ini</h3>
-                        </div>
-                        
-                        <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                <i class="fas fa-file-contract text-2xl text-slate-300"></i>
-                            </div>
-                            <p class="text-base font-semibold text-slate-500">Belum Tersedia</p>
-                            <p class="text-sm mt-1 text-center">Data informasi RTK aktif belum tersedia</p>
-                        </div>
-                    </div>
+                    <p class="text-sm font-semibold text-slate-700">Belum ada data RTK</p>
+                    <p class="text-xs text-slate-500 mt-1">Belum ada penyusunan dokumen RTK Kab/Kota yang tercatat.</p>
                 </div>
             </div>
         </div>
 
-        <!-- Card: Informasi E-Learning -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 sm:mb-8 overflow-hidden transition-all hover:shadow-md">
-            <div class="bg-gradient-to-r from-emerald-50/50 to-transparent px-5 sm:px-8 py-4 sm:py-5 border-b border-slate-100">
-                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-3">
-                    <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg"><i class="fas fa-laptop-code"></i></div>
-                    Informasi E-Learning
-                </h2>
+        <!-- ========================================================= -->
+        <!-- 3. DISTRIBUSI E-LEARNING (LEADERBOARD UI)                 -->
+        <!-- ========================================================= -->
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-800">Distribusi Pendaftar E-Learning</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Peringkat jumlah pengguna terdaftar berdasarkan Kabupaten/Kota</p>
+                    </div>
+                </div>
+
+                <div class="w-full sm:w-auto sm:max-w-xs shrink-0">
+                    <select id="sdmYearFilter" onchange="fetchSdmProvinsiData(this.value)" class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
+                        @foreach($sdmYears as $year)
+                            <option value="{{ $year }}" {{ $selectedSdmYear == $year ? 'selected' : '' }}>Tahun Registrasi {{ $year }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             
-            <div class="p-5 sm:p-8">
-                <!-- SDM User -->
-                <div class="mb-8 bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-8 bg-emerald-500 rounded-full"></div>
-                            <h3 class="text-lg font-bold text-slate-800">Jumlah SDM yang Mengambil Kursus per Kabupaten/Kota</h3>
-                        </div>
-                        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
-                            <label for="sdmYearFilter" class="text-sm font-semibold text-slate-600 pl-2 cursor-pointer">
-                                <i class="far fa-calendar-alt mr-1"></i> Tahun
-                            </label>
-                            <select id="sdmYearFilter" onchange="fetchSdmProvinsiData(this.value)" class="bg-white border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-emerald-500 rounded-md py-1.5 pl-3 pr-8 text-sm font-medium text-slate-700 cursor-pointer shadow-sm">
-                                @foreach($sdmYears as $year)
-                                    <option value="{{ $year }}" {{ $selectedSdmYear == $year ? 'selected' : '' }}>{{ $year }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div id="sdmChartContainer" class="relative h-72 sm:h-[400px] w-full {{ $sdmPerKabKota->count() > 0 ? '' : 'hidden' }}">
-                        <canvas id="sdmBarChart"></canvas>
-                    </div>
-                    
-                    <div id="sdmEmptyState" class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200 {{ $sdmPerKabKota->count() > 0 ? 'hidden' : '' }}">
-                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                            <i class="fas fa-chart-bar text-2xl text-slate-300"></i>
-                        </div>
-                        <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                        <p class="text-sm mt-1">Belum ada user di provinsi ini pada tahun terpilih</p>
-                    </div>
+            <div class="p-5 sm:p-6">
+                <!-- LEADERBOARD CONTAINER -->
+                <div id="sdmListContainer" class="space-y-5 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar {{ $sdmPerKabKota->count() > 0 ? '' : 'hidden' }}">
+                    <!-- Di-render via JavaScript agar dinamis -->
                 </div>
-
-                <!-- E-Learning Stats (Bottom Grid) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-                    <!-- Gender -->
-                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-pink-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                        <div class="relative z-10 flex items-center gap-3 mb-6">
-                            <div class="w-1.5 h-6 bg-pink-500 rounded-full"></div>
-                            <h3 class="text-base font-bold text-slate-800">Perbandingan Jenis Kelamin</h3>
-                        </div>
-                        
-                        @if ($genderMale == 0 && $genderFemale == 0)
-                            <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                    <i class="fas fa-venus-mars text-2xl text-slate-300"></i>
-                                </div>
-                                <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                                <p class="text-sm mt-1 text-center">Data jenis kelamin user belum diisi</p>
-                            </div>
-                        @else
-                            <div class="relative h-64 sm:h-80 w-full flex items-center justify-center">
-                                <canvas id="genderPieChart"></canvas>
-                            </div>
-                        @endif
+                
+                <div id="sdmEmptyState" class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $sdmPerKabKota->count() > 0 ? 'hidden' : '' }}">
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
+                        <i class="fas fa-users-slash text-xl"></i>
                     </div>
-
-                    <!-- Modul -->
-                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                        <div class="relative z-10 flex items-center gap-3 mb-6">
-                            <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
-                            <h3 class="text-base font-bold text-slate-800">Perbandingan Modul yang Diambil</h3>
-                        </div>
-                        
-                        <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                <i class="fas fa-book-open text-2xl text-slate-300"></i>
-                            </div>
-                            <p class="text-base font-semibold text-slate-500">Belum Tersedia</p>
-                            <p class="text-sm mt-1 text-center">Data modul belum tersedia di sistem</p>
-                        </div>
-                    </div>
+                    <p class="text-sm font-semibold text-slate-700">Belum Ada Pendaftar</p>
+                    <p class="text-xs text-slate-500 mt-1">Belum ada pengguna yang mendaftar pada tahun tersebut.</p>
                 </div>
             </div>
         </div>
+
     </div>
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
         <script>
-            // Data for SDM per Kab/Kota
-            const sdmLabels = @json($sdmPerKabKota->pluck('regency_name'));
-            const sdmData = @json($sdmPerKabKota->pluck('total'));
+            document.addEventListener('DOMContentLoaded', function () {
 
-            window.generateGradientColors = function(data) {
-                if (data.length === 0) return { bgColors: [], borderColors: [], hoverColors: [] };
-                const total = data.reduce((a, b) => a + b, 0);
-                const avg = total / data.length;
+                // Fungsi untuk memecah teks panjang menjadi array string agar turun baris (Wrap) di Canvas
+                function formatMultilineLabel(text) {
+                    if (!text) return text;
+                    const maxChars = window.innerWidth >= 640 ? 25 : 15;
+                    const words = text.split(' ');
+                    let lines = [];
+                    let currentLine = '';
 
-                const bgColors = [], borderColors = [], hoverColors = [];
-
-                data.forEach(val => {
-                    const ratio = avg === 0 ? 1 : val / avg;
-                    let r, g, b;
-
-                    if (ratio <= 0.3) {
-                        // Sangat Sedikit -> Merah Pekat
-                        r = 220; g = 38; b = 38;
-                    } else if (ratio <= 0.6) {
-                        // Sedikit -> Merah Standard
-                        r = 239; g = 68; b = 68;
-                    } else if (ratio <= 0.9) {
-                        // Agak Sedikit -> Merah Pudar
-                        r = 248; g = 113; b = 113;
-                    } else if (ratio <= 1.1) {
-                        // Mendekati/Sama Rata-rata -> Biru
-                        r = 59; g = 130; b = 246;
-                    } else if (ratio <= 1.4) {
-                        // Agak Banyak -> Hijau Muda
-                        r = 74; g = 222; b = 128;
-                    } else if (ratio <= 1.7) {
-                        // Banyak -> Hijau Standard
-                        r = 34; g = 197; b = 94;
-                    } else {
-                        // Sangat Banyak -> Hijau Pekat
-                        r = 22; g = 163; b = 74;
-                    }
-
-                    bgColors.push(`rgba(${r}, ${g}, ${b}, 0.95)`);
-                    borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`);
-                    hoverColors.push(`rgba(${r}, ${g}, ${b}, 1)`);
-                });
-
-                return { bgColors, borderColors, hoverColors };
-            }
-
-            if (document.getElementById('sdmBarChart')) {
-                const barCtx = document.getElementById('sdmBarChart').getContext('2d');
-                const initialColors = window.generateGradientColors(sdmData);
-
-                window.sdmBarChartInstance = new Chart(barCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: sdmLabels,
-                        datasets: [{
-                            label: 'Jumlah SDM',
-                            data: sdmData,
-                            backgroundColor: initialColors.bgColors,
-                            borderColor: initialColors.borderColors,
-                            borderWidth: 1,
-                            borderRadius: 6,
-                            hoverBackgroundColor: initialColors.hoverColors
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                padding: 12,
-                                cornerRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 'bold'
-                                },
-                                bodyFont: {
-                                    size: 13
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    font: {
-                                        size: 12
-                                    },
-                                    stepSize: 1
-                                },
-                                grid: {
-                                    color: 'rgba(229, 231, 235, 0.8)'
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    font: {
-                                        size: 10
-                                    },
-                                    maxRotation: 45,
-                                    minRotation: 45
-                                },
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            window.fetchSdmProvinsiData = function(year) {
-                fetch(`{{ route('admin-province.dashboard') }}?sdm_year=${year}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const sdmData = data.sdmPerKabKota;
-                    const chartContainer = document.getElementById('sdmChartContainer');
-                    const emptyState = document.getElementById('sdmEmptyState');
-                    
-                    if (!sdmData || sdmData.length === 0) {
-                        chartContainer.classList.add('hidden');
-                        emptyState.classList.remove('hidden');
-                    } else {
-                        chartContainer.classList.remove('hidden');
-                        emptyState.classList.add('hidden');
-                        
-                        const labels = sdmData.map(item => item.regency_name);
-                        const totals = sdmData.map(item => item.total);
-                        
-                        const colors = window.generateGradientColors ? window.generateGradientColors(totals) : { bgColors: Array(totals.length).fill('rgba(34, 197, 94, 0.95)'), borderColors: Array(totals.length).fill('rgba(34, 197, 94, 1)'), hoverColors: Array(totals.length).fill('rgba(34, 197, 94, 1)') };
-                        
-                        if (window.sdmBarChartInstance) {
-                            window.sdmBarChartInstance.data.labels = labels;
-                            window.sdmBarChartInstance.data.datasets[0].data = totals;
-                            window.sdmBarChartInstance.data.datasets[0].backgroundColor = colors.bgColors;
-                            window.sdmBarChartInstance.data.datasets[0].borderColor = colors.borderColors;
-                            window.sdmBarChartInstance.data.datasets[0].hoverBackgroundColor = colors.hoverColors;
-                            window.sdmBarChartInstance.update();
+                    words.forEach(word => {
+                        if ((currentLine + word).length > maxChars) {
+                            if (currentLine.trim() !== '') lines.push(currentLine.trim());
+                            currentLine = word + ' ';
                         } else {
-                            const barCtx = document.getElementById('sdmBarChart').getContext('2d');
-                            window.sdmBarChartInstance = new Chart(barCtx, {
-                                type: 'bar',
-                                data: {
-                                    labels: labels,
-                                    datasets: [{
-                                        label: 'Jumlah SDM',
-                                        data: totals,
-                                        backgroundColor: colors.bgColors,
-                                        borderColor: colors.borderColors,
-                                        borderWidth: 1,
-                                        borderRadius: 6,
-                                        hoverBackgroundColor: colors.hoverColors
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(31, 41, 55, 0.95)', padding: 12, cornerRadius: 8, titleFont: { size: 14, weight: 'bold' }, bodyFont: { size: 13 } } },
-                                    scales: { y: { beginAtZero: true, ticks: { font: { size: 12 }, stepSize: 1 }, grid: { color: 'rgba(229, 231, 235, 0.8)' } }, x: { ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 }, grid: { display: false } } }
-                                }
-                            });
+                            currentLine += word + ' ';
                         }
-                    }
-                });
-            };
-
-            // Pie Chart: Gender Distribution
-            if (document.getElementById('genderPieChart')) {
-                const genderCtx = document.getElementById('genderPieChart').getContext('2d');
-                new Chart(genderCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Laki-laki', 'Perempuan'],
-                        datasets: [{
-                            data: [{{ $genderMale }}, {{ $genderFemale }}],
-                            backgroundColor: [
-                                'rgba(59, 130, 246, 0.8)',
-                                'rgba(236, 72, 153, 0.8)'
-                            ],
-                            borderColor: [
-                                'rgba(59, 130, 246, 1)',
-                                'rgba(236, 72, 153, 1)'
-                            ],
-                            borderWidth: 2,
-                            hoverOffset: 10
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    font: {
-                                        size: 13,
-                                        weight: '500'
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                padding: 12,
-                                cornerRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 'bold'
-                                },
-                                bodyFont: {
-                                    size: 13
-                                },
-                                callbacks: {
-                                    label: function (context) {
-                                        const label = context.label || '';
-                                        const value = context.parsed || 0;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                        return `${label}: ${value} (${percentage}%)`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Bar Chart: Masa Aktif RTK per Kab/Kota
-            @if($rtkMasaAktifPerKabKota->count() > 0)
-                const currentYear = {{ date('Y') }};
-                const rtkLabels = @json($rtkMasaAktifPerKabKota->pluck('regency_name'));
-                const rtkEndDatesRaw = @json($rtkMasaAktifPerKabKota->pluck('end_date'));
-                const rtkStartDates = @json($rtkMasaAktifPerKabKota->pluck('start_date'));
-
-                let maxEndDate = Math.max(...rtkEndDatesRaw.map(v => parseInt(v)));
-                let initialMinYear = '{{ $selectedRtkYear }}' === 'all' ? currentYear - 1 : parseInt('{{ $selectedRtkYear }}');
-
-                window.getRtkColors = function(endDates, prop, curY) {
-                    return endDates.map(ed => {
-                        const sisa = parseInt(ed) - curY;
-                        const alpha = prop === 'bg' ? '0.8' : '1';
-                        if (sisa > 2) return `rgba(34, 197, 94, ${alpha})`;
-                        if (sisa >= 1) return `rgba(245, 158, 11, ${alpha})`;
-                        return `rgba(239, 68, 68, ${alpha})`;
                     });
-                };
+                    if (currentLine.trim() !== '') lines.push(currentLine.trim());
+                    return lines;
+                }
 
-                if (document.getElementById('rtkMasaAktifKabKotaChart')) {
-                    const rtkBarCtx = document.getElementById('rtkMasaAktifKabKotaChart').getContext('2d');
-                    window.rtkMasaAktifChartInstance = new Chart(rtkBarCtx, {
+                // =========================================================
+                // 1. GRAFIK KOMPARASI RTK (HORIZONTAL)
+                // =========================================================
+                @if($rtkMasaAktifPerKabKota->count() > 0)
+                    const rtkCombinedCtx = document.getElementById('rtkCombinedBarChart').getContext('2d');
+                    
+                    const rtkLabelsRaw = @json($rtkMasaAktifPerKabKota->pluck('regency_name'));
+                    const rtkLabels = rtkLabelsRaw.map(label => formatMultilineLabel(label));
+                    
+                    const rtkStartData = @json($rtkMasaAktifPerKabKota->pluck('start_date'));
+                    const rtkEndData = @json($rtkMasaAktifPerKabKota->pluck('end_date'));
+
+                    window.rtkCombinedChartInstance = new Chart(rtkCombinedCtx, {
                         type: 'bar',
                         data: {
                             labels: rtkLabels,
-                            datasets: [{
-                                label: 'Masa Berlaku s/d',
-                                data: rtkEndDatesRaw.map(v => parseInt(v)),
-                                backgroundColor: window.getRtkColors(rtkEndDatesRaw, 'bg', currentYear),
-                                borderColor: window.getRtkColors(rtkEndDatesRaw, 'border', currentYear),
-                                borderWidth: 1,
-                                borderRadius: 6
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                    padding: 12,
-                                    cornerRadius: 8,
-                                    callbacks: {
-                                        label: function(ctx) {
-                                            const i = ctx.dataIndex;
-                                            const start = window.rtkMasaAktifChartInstance.customRtkStartDates[i];
-                                            const end = window.rtkMasaAktifChartInstance.customRtkEndDates[i];
-                                            return [
-                                                `Periode: ${start} - ${end}`,
-                                                `Sisa Masa Berlaku: ${Math.max(0, parseInt(end) - currentYear)} tahun`
-                                            ];
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    min: initialMinYear,
-                                    max: maxEndDate,
-                                    title: { display: true, text: 'Tahun', font: { size: 12 } },
-                                    ticks: { stepSize: 1, font: { size: 12 }, callback: v => v },
-                                    grid: { color: 'rgba(229, 231, 235, 0.8)' }
+                            datasets: [
+                                {
+                                    label: 'Mulai Berlaku',
+                                    data: rtkStartData,
+                                    backgroundColor: '#cbd5e1', 
+                                    borderRadius: 4,
+                                    barPercentage: 0.7,
+                                    categoryPercentage: 0.8
                                 },
-                                x: {
-                                    ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 },
-                                    grid: { display: false }
+                                {
+                                    label: 'Masa Berakhir',
+                                    data: rtkEndData,
+                                    backgroundColor: '#13416B',
+                                    borderRadius: 4,
+                                    barPercentage: 0.7,
+                                    categoryPercentage: 0.8
                                 }
-                            }
-                        }
-                    });
-                    window.rtkMasaAktifChartInstance.customRtkStartDates = rtkStartDates;
-                    window.rtkMasaAktifChartInstance.customRtkEndDates = rtkEndDatesRaw;
-                }
-            @endif
-
-            @if($rtkMasaBerakhirPerKabKota->count() > 0)
-                const rtkEndLabels = @json($rtkMasaBerakhirPerKabKota->pluck('regency_name'));
-                const rtkEndChartEndDatesRaw = @json($rtkMasaBerakhirPerKabKota->pluck('end_date'));
-                const rtkEndStartDates = @json($rtkMasaBerakhirPerKabKota->pluck('start_date'));
-
-                let maxEndChartEndDate = Math.max(...rtkEndChartEndDatesRaw.map(v => parseInt(v)));
-                let initialEndMinYear = '{{ $selectedRtkEndYear }}' === 'all' ? currentYear - 1 : parseInt('{{ $selectedRtkEndYear }}') - 1;
-                let initialEndMaxYear = '{{ $selectedRtkEndYear }}' === 'all' ? maxEndChartEndDate : parseInt('{{ $selectedRtkEndYear }}') + 1;
-
-                if (document.getElementById('rtkMasaBerakhirKabKotaChart')) {
-                    const rtkEndBarCtx = document.getElementById('rtkMasaBerakhirKabKotaChart').getContext('2d');
-                    window.rtkMasaBerakhirChartInstance = new Chart(rtkEndBarCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: rtkEndLabels,
-                            datasets: [{
-                                label: 'Masa Berlaku s/d',
-                                data: rtkEndChartEndDatesRaw.map(v => parseInt(v)),
-                                backgroundColor: window.getRtkColors ? window.getRtkColors(rtkEndChartEndDatesRaw, 'bg', currentYear) : [],
-                                borderColor: window.getRtkColors ? window.getRtkColors(rtkEndChartEndDatesRaw, 'border', currentYear) : [],
-                                borderWidth: 1,
-                                borderRadius: 6
-                            }]
+                            ]
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                    padding: 12,
-                                    cornerRadius: 8,
-                                    callbacks: {
-                                        label: function(ctx) {
-                                            const i = ctx.dataIndex;
-                                            const start = window.rtkMasaBerakhirChartInstance.customRtkStartDates[i];
-                                            const end = window.rtkMasaBerakhirChartInstance.customRtkEndDates[i];
-                                            return [
-                                                `Periode: ${start} - ${end}`,
-                                                `Sisa Masa Berlaku: ${Math.max(0, parseInt(end) - currentYear)} tahun`
-                                            ];
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    min: initialEndMinYear,
-                                    max: initialEndMaxYear,
-                                    title: { display: true, text: 'Tahun', font: { size: 12 } },
-                                    ticks: { stepSize: 1, font: { size: 12 }, callback: v => v },
-                                    grid: { color: 'rgba(229, 231, 235, 0.8)' }
-                                },
-                                x: {
-                                    ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 },
-                                    grid: { display: false }
-                                }
-                            }
-                        }
-                    });
-                    window.rtkMasaBerakhirChartInstance.customRtkStartDates = rtkEndStartDates;
-                    window.rtkMasaBerakhirChartInstance.customRtkEndDates = rtkEndChartEndDatesRaw;
-                }
-
-                if (document.getElementById('rtkButterflyKabKotaChart')) {
-                    const rtkButterflyCtx = document.getElementById('rtkButterflyKabKotaChart').getContext('2d');
-                    
-                        const pastData = rtkEndChartEndDatesRaw.map((end, i) => {
-                            const start = parseInt(rtkEndStartDates[i]);
-                            const e = parseInt(end);
-                            if (start >= currentYear) return [0, 0];
-                            const endY = Math.min(currentYear, e);
-                            return [start - currentYear, endY - currentYear];
-                        });
-
-                        const futureData = rtkEndChartEndDatesRaw.map((end, i) => {
-                            const start = parseInt(rtkEndStartDates[i]);
-                            const e = parseInt(end);
-                            if (e <= currentYear) return [0, 0];
-                            const startY = Math.max(currentYear, start);
-                            return [startY - currentYear, e - currentYear];
-                        });
-
-                        const allStartsArray = rtkEndStartDates.map(s => parseInt(s));
-                        const allEndsArray = rtkEndChartEndDatesRaw.map(e => parseInt(e));
-                        const globalMinStart = Math.min(...allStartsArray);
-                        const globalMaxEnd = Math.max(...allEndsArray);
-                        const xAxisMin = (globalMinStart - 1) - currentYear;
-                        const xAxisMax = (globalMaxEnd + 1) - currentYear;
-
-                        window.rtkButterflyChartInstance = new Chart(rtkButterflyCtx, {
-                            type: 'bar',
-                            data: {
-                                labels: rtkEndLabels,
-                                datasets: [
-                                    {
-                                        label: 'Masa Berjalan',
-                                        data: pastData,
-                                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
-                                        borderColor: 'rgba(217, 119, 6, 1)',
-                                        borderWidth: 1,
-                                        borderRadius: 4,
-                                        borderSkipped: false
-                                    },
-                                    {
-                                        label: 'Masa Depan',
-                                        data: futureData,
-                                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                                        borderColor: 'rgba(5, 150, 105, 1)',
-                                        borderWidth: 1,
-                                        borderRadius: 4,
-                                        borderSkipped: false
-                                    }
-                                ]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                indexAxis: 'y',
-                                plugins: {
-                                    legend: { display: true, position: 'bottom' },
-                                    tooltip: {
-                                        backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                        callbacks: {
-                                            label: function(ctx) {
-                                                const arr = ctx.raw;
-                                                const startY = currentYear + arr[0];
-                                                const endY = currentYear + arr[1];
-                                                if (startY === endY) return null;
-                                                return `${ctx.dataset.label}: ${startY} - ${endY}`;
-                                            }
-                                        }
-                                    }
-                            },
-                            scales: {
-                                x: {
-                                    min: xAxisMin,
-                                    max: xAxisMax,
-                                    ticks: {
-                                        stepSize: 1,
-                                        font: { size: 11, weight: '500' },
-                                        callback: function(val) {
-                                            return currentYear + parseInt(val);
-                                        }
-                                    },
-                                    grid: {
-                                        color: function(context) {
-                                            if (context.tick.value === 0) return 'rgba(239, 68, 68, 0.8)';
-                                            return 'rgba(229, 231, 235, 0.8)';
-                                        },
-                                        lineWidth: function(context) {
-                                            if (context.tick.value === 0) return 2;
-                                            return 1;
-                                        }
-                                    }
-                                },
-                                y: {
-                                    stacked: true,
-                                    grid: { display: false }
-                                }
-                            }
-                        }
-                    });
-                }
-            @endif
-
-            window.fetchRtkProvinsiData = function(year) {
-                fetch(`{{ route('admin-province.dashboard') }}?rtk_year=${year}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const rtkData = data.rtkMasaAktifPerKabKota;
-                    const chartContainer = document.getElementById('rtkChartContainer');
-                    const emptyState = document.getElementById('rtkEmptyState');
-                    
-                    if (!rtkData || rtkData.length === 0) {
-                        chartContainer.classList.add('hidden');
-                        emptyState.classList.remove('hidden');
-                    } else {
-                        chartContainer.classList.remove('hidden');
-                        emptyState.classList.add('hidden');
-                        
-                        const labels = rtkData.map(item => item.regency_name);
-                        const endDatesRaw = rtkData.map(item => item.end_date);
-                        const startDates = rtkData.map(item => item.start_date);
-                        const currentYear = {{ date('Y') }};
-                        let maxEndDate = Math.max(...endDatesRaw.map(v => parseInt(v)));
-                        let newMinYear = year === 'all' ? currentYear - 1 : parseInt(year) - 1;
-                        
-                        window.getRtkColors = window.getRtkColors || function(endDates, prop, curY) {
-                            return endDates.map(ed => {
-                                const sisa = parseInt(ed) - curY;
-                                const alpha = prop === 'bg' ? '0.8' : '1';
-                                if (sisa > 2) return `rgba(34, 197, 94, ${alpha})`;
-                                if (sisa >= 1) return `rgba(245, 158, 11, ${alpha})`;
-                                return `rgba(239, 68, 68, ${alpha})`;
-                            });
-                        };
-
-                        const bgColors = window.getRtkColors(endDatesRaw, 'bg', currentYear);
-                        const borderColors = window.getRtkColors(endDatesRaw, 'border', currentYear);
-                        const dataVals = endDatesRaw.map(v => parseInt(v));
-
-                        if (window.rtkMasaAktifChartInstance) {
-                            window.rtkMasaAktifChartInstance.data.labels = labels;
-                            window.rtkMasaAktifChartInstance.data.datasets[0].data = dataVals;
-                            window.rtkMasaAktifChartInstance.data.datasets[0].backgroundColor = bgColors;
-                            window.rtkMasaAktifChartInstance.data.datasets[0].borderColor = borderColors;
-                            window.rtkMasaAktifChartInstance.options.scales.y.min = newMinYear;
-                            window.rtkMasaAktifChartInstance.options.scales.y.max = maxEndDate;
-                            window.rtkMasaAktifChartInstance.customRtkStartDates = startDates;
-                            window.rtkMasaAktifChartInstance.customRtkEndDates = endDatesRaw;
-                            window.rtkMasaAktifChartInstance.update();
-
-                            if (window.rtkButterflyChartInstance) {
-                                const newPastData = endDatesRaw.map((end, i) => {
-                                    const start = parseInt(startDates[i]);
-                                    const e = parseInt(end);
-                                    if (start >= currentYear) return [0, 0];
-                                    const endY = Math.min(currentYear, e);
-                                    return [start - currentYear, endY - currentYear];
-                                });
-
-                                const newFutureData = endDatesRaw.map((end, i) => {
-                                    const start = parseInt(startDates[i]);
-                                    const e = parseInt(end);
-                                    if (e <= currentYear) return [0, 0];
-                                    const startY = Math.max(currentYear, start);
-                                    return [startY - currentYear, e - currentYear];
-                                });
-
-                                const newMinStart = Math.min(...startDates.map(s => parseInt(s)));
-                                const newMaxEnd = Math.max(...endDatesRaw.map(e => parseInt(e)));
-                                window.rtkButterflyChartInstance.options.scales.x.min = (newMinStart - 1) - currentYear;
-                                window.rtkButterflyChartInstance.options.scales.x.max = (newMaxEnd + 1) - currentYear;
-
-                                window.rtkButterflyChartInstance.data.labels = labels;
-                                window.rtkButterflyChartInstance.data.datasets[0].data = newPastData;
-                                window.rtkButterflyChartInstance.data.datasets[1].data = newFutureData;
-                                window.rtkButterflyChartInstance.update();
-                            }
-                        } else {
-                            if (document.getElementById('rtkMasaAktifKabKotaChart')) {
-                                const rtkBarCtx = document.getElementById('rtkMasaAktifKabKotaChart').getContext('2d');
-                                window.rtkMasaAktifChartInstance = new Chart(rtkBarCtx, {
-                                    type: 'bar',
-                                    data: {
-                                        labels: labels,
-                                        datasets: [{
-                                            label: 'Masa Berlaku s/d',
-                                            data: dataVals,
-                                            backgroundColor: bgColors,
-                                            borderColor: borderColors,
-                                            borderWidth: 1,
-                                            borderRadius: 6
-                                        }]
-                                    },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        plugins: {
-                                            legend: { display: false },
-                                            tooltip: {
-                                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                                padding: 12,
-                                                cornerRadius: 8,
-                                                callbacks: {
-                                                    label: function(ctx) {
-                                                        const i = ctx.dataIndex;
-                                                        const start = window.rtkMasaAktifChartInstance.customRtkStartDates[i];
-                                                        const end = window.rtkMasaAktifChartInstance.customRtkEndDates[i];
-                                                        return [
-                                                            `Periode: ${start} - ${end}`,
-                                                            `Sisa Masa Berlaku: ${Math.max(0, parseInt(end) - currentYear)} tahun`
-                                                        ];
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        scales: {
-                                            y: {
-                                                min: newMinYear,
-                                                max: maxEndDate,
-                                                title: { display: true, text: 'Tahun', font: { size: 12 } },
-                                                ticks: { stepSize: 1, font: { size: 12 }, callback: v => v },
-                                                grid: { color: 'rgba(229, 231, 235, 0.8)' }
-                                            },
-                                            x: {
-                                                ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 },
-                                                grid: { display: false }
-                                            }
-                                        }
-                                    }
-                                });
-                                window.rtkMasaAktifChartInstance.customRtkStartDates = startDates;
-                                window.rtkMasaAktifChartInstance.customRtkEndDates = endDatesRaw;
-                            }
-                        }
-                    }
-                });
-            };
-
-            // Pie Chart: Status Distribusi RTK
-            @if($rtkStatusDistribution->sum() > 0)
-                const statusLabels = {
-                    'pending': 'Menunggu Persetujuan',
-                    'approved': 'Disetujui',
-                    'rejected': 'Ditolak',
-                    'expired': 'Kadaluarsa'
-                };
-                const statusColors = {
-                    'pending': 'rgba(245, 158, 11, 0.8)',
-                    'approved': 'rgba(34, 197, 94, 0.8)',
-                    'rejected': 'rgba(239, 68, 68, 0.8)',
-                    'expired': 'rgba(156, 163, 175, 0.8)'
-                };
-                const statusBorders = {
-                    'pending': 'rgba(245, 158, 11, 1)',
-                    'approved': 'rgba(34, 197, 94, 1)',
-                    'rejected': 'rgba(239, 68, 68, 1)',
-                    'expired': 'rgba(156, 163, 175, 1)'
-                };
-
-                const rtkStatusRaw = @json($rtkStatusDistribution);
-                const rtkStatusKeys = Object.keys(rtkStatusRaw);
-                const rtkStatusData = Object.values(rtkStatusRaw);
-                const rtkStatusLabels = rtkStatusKeys.map(k => statusLabels[k] || k);
-                const rtkStatusBgColors = rtkStatusKeys.map(k => statusColors[k] || 'rgba(156, 163, 175, 0.8)');
-                const rtkStatusBorderColors = rtkStatusKeys.map(k => statusBorders[k] || 'rgba(156, 163, 175, 1)');
-
-                if (document.getElementById('rtkStatusPieChart')) {
-                    const rtkStatusCtx = document.getElementById('rtkStatusPieChart').getContext('2d');
-                    new Chart(rtkStatusCtx, {
-                        type: 'pie',
-                        data: {
-                            labels: rtkStatusLabels,
-                            datasets: [{
-                                data: rtkStatusData,
-                                backgroundColor: rtkStatusBgColors,
-                                borderColor: rtkStatusBorderColors,
-                                borderWidth: 2,
-                                hoverOffset: 10
-                            }]
-                        },
-                        options: {
+                      options: {
+                            indexAxis: 'y', // HORIZONTAL
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
                                     position: 'bottom',
-                                    labels: { padding: 20, font: { size: 13, weight: '500' } }
+                                    labels: { 
+                                        usePointStyle: true, 
+                                        boxWidth: 12, 
+                                        boxPadding: 12,
+                                        font: { family: "'Inter', sans-serif", size: 11 }, 
+                                        padding: 20 
+                                    }
                                 },
                                 tooltip: {
-                                    backgroundColor: 'rgba(31, 41, 55, 0.95)',
+                                    mode: 'index',
+                                    intersect: false,
+                                    backgroundColor: 'rgba(19, 65, 107, 0.95)',
                                     padding: 12,
-                                    cornerRadius: 8,
+                                    cornerRadius: 6,
+                                    titleFont: { size: 13, weight: 'bold' },
                                     callbacks: {
-                                        label: function(ctx) {
-                                            const label = ctx.label || '';
-                                            const value = ctx.parsed || 0;
-                                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                            const pct = ((value / total) * 100).toFixed(1);
-                                            return `${label}: ${value} (${pct}%)`;
+                                        title: function(context) {
+                                            return Array.isArray(context[0].label) ? context[0].label.join(' ') : context[0].label;
+                                        },
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.x !== null) {
+                                                label += context.parsed.x;
+                                            }
+                                            return label;
                                         }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    min: Math.min(...rtkStartData) - 1, 
+                                    max: Math.max(...rtkEndData) + 1,
+                                    grid: { color: '#f1f5f9' },
+                                    ticks: { 
+                                        font: { size: 11 }, 
+                                        stepSize: 1,
+                                        callback: function(value) {
+                                            return value; 
+                                        }
+                                    }
+                                },
+                                y: {
+                                    grid: { display: false },
+                                    ticks: { font: { size: 11, family: "'Inter', sans-serif" }, autoSkip: false },
+                                    afterFit: function(scaleInstance) {
+                                        scaleInstance.width = window.innerWidth >= 640 ? 160 : 120;
                                     }
                                 }
                             }
                         }
                     });
-                }
-            @endif
 
-            window.fetchRtkProvinsiEndData = function(year) {
-                fetch(`{{ route('admin-province.dashboard') }}?rtk_end_year=${year}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const rtkData = data.rtkMasaBerakhirPerKabKota;
-                    const chartContainer = document.getElementById('rtkEndChartContainer');
-                    const emptyState = document.getElementById('rtkEndEmptyState');
-                    
-                    if (!rtkData || rtkData.length === 0) {
-                        chartContainer.classList.add('hidden');
-                        emptyState.classList.remove('hidden');
-                    } else {
-                        chartContainer.classList.remove('hidden');
-                        emptyState.classList.add('hidden');
-                        
-                        const labels = rtkData.map(item => item.regency_name);
-                        const endDatesRaw = rtkData.map(item => item.end_date);
-                        const startDates = rtkData.map(item => item.start_date);
-                        const currentYear = {{ date('Y') }};
-                        
-                        let maxEndDate = Math.max(...endDatesRaw.map(v => parseInt(v)));
-                        let newMinYear = year === 'all' ? currentYear - 1 : parseInt(year) - 1;
-                        let newMaxYear = year === 'all' ? maxEndDate : parseInt(year) + 1;
-                        
-                        window.getRtkColors = window.getRtkColors || function(endDates, prop, curY) {
-                            return endDates.map(ed => {
-                                const sisa = parseInt(ed) - curY;
-                                const alpha = prop === 'bg' ? '0.8' : '1';
-                                if (sisa > 2) return `rgba(34, 197, 94, ${alpha})`;
-                                if (sisa >= 1) return `rgba(245, 158, 11, ${alpha})`;
-                                return `rgba(239, 68, 68, ${alpha})`;
-                            });
-                        };
+                    // Penyesuaian tinggi canvas dinamis agar tidak gepeng
+                    const initialRtkHeight = Math.max(400, rtkLabelsRaw.length * 60);
+                    document.getElementById('rtkCombinedChartContainer').style.height = initialRtkHeight + 'px';
+                @endif
 
-                        const bgColors = window.getRtkColors(endDatesRaw, 'bg', currentYear);
-                        const borderColors = window.getRtkColors(endDatesRaw, 'border', currentYear);
-                        const dataVals = endDatesRaw.map(v => parseInt(v));
-
-                        if (window.rtkMasaBerakhirChartInstance) {
-                            window.rtkMasaBerakhirChartInstance.data.labels = labels;
-                            window.rtkMasaBerakhirChartInstance.data.datasets[0].data = dataVals;
-                            window.rtkMasaBerakhirChartInstance.data.datasets[0].backgroundColor = bgColors;
-                            window.rtkMasaBerakhirChartInstance.data.datasets[0].borderColor = borderColors;
-                            window.rtkMasaBerakhirChartInstance.options.scales.y.min = newMinYear;
-                            window.rtkMasaBerakhirChartInstance.options.scales.y.max = newMaxYear;
-                            window.rtkMasaBerakhirChartInstance.customRtkStartDates = startDates;
-                            window.rtkMasaBerakhirChartInstance.customRtkEndDates = endDatesRaw;
-                            window.rtkMasaBerakhirChartInstance.update();
+                window.fetchRtkProvinsiData = function(year) {
+                    fetch(`{{ route('admin-province.dashboard') }}?rtk_year=${year}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const rtkData = data.rtkMasaAktifPerKabKota;
+                        const containerScroll = document.querySelector('#rtkCombinedChartContainer').parentElement;
+                        const container = document.getElementById('rtkCombinedChartContainer');
+                        const emptyState = document.getElementById('rtkCombinedEmptyState');
+                        
+                        if (!rtkData || rtkData.length === 0) {
+                            containerScroll.classList.add('hidden');
+                            emptyState.classList.remove('hidden');
                         } else {
-                            if (document.getElementById('rtkMasaBerakhirKabKotaChart')) {
-                                const rtkBarCtx = document.getElementById('rtkMasaBerakhirKabKotaChart').getContext('2d');
-                                window.rtkMasaBerakhirChartInstance = new Chart(rtkBarCtx, {
-                                    type: 'bar',
-                                    data: {
-                                        labels: labels,
-                                        datasets: [{
-                                            label: 'Masa Berlaku s/d',
-                                            data: dataVals,
-                                            backgroundColor: bgColors,
-                                            borderColor: borderColors,
-                                            borderWidth: 1,
-                                            borderRadius: 6
-                                        }]
-                                    },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        plugins: {
-                                            legend: { display: false },
-                                            tooltip: {
-                                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                                padding: 12,
-                                                cornerRadius: 8,
-                                                callbacks: {
-                                                    label: function(ctx) {
-                                                        const i = ctx.dataIndex;
-                                                        const start = window.rtkMasaBerakhirChartInstance.customRtkStartDates[i];
-                                                        const end = window.rtkMasaBerakhirChartInstance.customRtkEndDates[i];
-                                                        return [
-                                                            `Periode: ${start} - ${end}`,
-                                                            `Sisa Masa Berlaku: ${Math.max(0, parseInt(end) - currentYear)} tahun`
-                                                        ];
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        scales: {
-                                            y: {
-                                                min: newMinYear,
-                                                max: newMaxYear,
-                                                title: { display: true, text: 'Tahun', font: { size: 12 } },
-                                                ticks: { stepSize: 1, font: { size: 12 }, callback: v => v },
-                                                grid: { color: 'rgba(229, 231, 235, 0.8)' }
-                                            },
-                                            x: {
-                                                ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 },
-                                                grid: { display: false }
-                                            }
-                                        }
-                                    }
-                                });
-                                window.rtkMasaBerakhirChartInstance.customRtkStartDates = startDates;
-                                window.rtkMasaBerakhirChartInstance.customRtkEndDates = endDatesRaw;
+                            containerScroll.classList.remove('hidden');
+                            emptyState.classList.add('hidden');
+                            
+                            const rawLabels = rtkData.map(item => item.regency_name);
+                            const labels = rawLabels.map(label => formatMultilineLabel(label));
+                            const start = rtkData.map(item => item.start_date);
+                            const end = rtkData.map(item => item.end_date);
+                            
+                            if (window.rtkCombinedChartInstance) {
+                                container.style.height = Math.max(400, rawLabels.length * 60) + 'px';
+
+                                window.rtkCombinedChartInstance.data.labels = labels;
+                                window.rtkCombinedChartInstance.data.datasets[0].data = start;
+                                window.rtkCombinedChartInstance.data.datasets[1].data = end;
+                                
+                                const minYear = Math.min(...start) - 1;
+                                const maxYear = Math.max(...end) + 1;
+                                window.rtkCombinedChartInstance.options.scales.x.min = isFinite(minYear) ? minYear : 2020;
+                                window.rtkCombinedChartInstance.options.scales.x.max = isFinite(maxYear) ? maxYear : 2030;
+
+                                window.rtkCombinedChartInstance.update();
                             }
                         }
+                    });
+                };
+
+                // =========================================================
+                // 2. FUNGSI RENDER LEADERBOARD E-LEARNING
+                // =========================================================
+                function renderSdmLeaderboard(data) {
+                    const container = document.getElementById('sdmListContainer');
+                    const emptyState = document.getElementById('sdmEmptyState');
+
+                    if (!data || data.length === 0) {
+                        container.classList.add('hidden');
+                        emptyState.classList.remove('hidden');
+                        return;
                     }
-                });
-            };
+
+                    container.classList.remove('hidden');
+                    emptyState.classList.add('hidden');
+
+                    // Cari nilai tertinggi untuk persentase bar
+                    let maxTotal = Math.max(...data.map(item => item.total));
+                    if (maxTotal === 0) maxTotal = 1;
+
+                    // Mengurutkan dari yang terbanyak
+                    const sortedData = [...data].sort((a, b) => b.total - a.total);
+
+                    let htmlContent = '';
+                    sortedData.forEach((item, index) => {
+                        const percentage = (item.total / maxTotal) * 100;
+                        htmlContent += `
+                            <div class="flex items-center gap-3.5 group">
+                                <div class="w-6 text-sm font-bold text-slate-400 text-right shrink-0 group-hover:text-[#13416B] transition-colors">${index + 1}.</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <span class="text-sm font-semibold text-slate-700 truncate pr-2 group-hover:text-[#13416B] transition-colors">${item.regency_name}</span>
+                                        <span class="text-sm font-extrabold text-[#13416B] shrink-0">${item.total} <span class="text-[10px] font-medium text-slate-500">Peserta</span></span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-[#13416B] h-full rounded-full transition-all duration-700 ease-out" style="width: ${percentage}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    container.innerHTML = htmlContent;
+                }
+
+                // Render pertama kali saat halaman dimuat
+                const initialSdmData = @json($sdmPerKabKota);
+                renderSdmLeaderboard(initialSdmData);
+
+                // Fungsi AJAX saat filter SDM diganti
+                window.fetchSdmProvinsiData = function(year) {
+                    fetch(`{{ route('admin-province.dashboard') }}?sdm_year=${year}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        renderSdmLeaderboard(data.sdmPerKabKota);
+                    });
+                };
+            });
         </script>
     @endpush
 </x-dashboard::layouts.dashboard>
