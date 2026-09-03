@@ -81,16 +81,18 @@ class DashboardController extends Controller
         // ==========================================
         // 2. DATA RTK DAERAH
         // ==========================================
-        $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+       
+      $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('regency_code', $regencyCode)
-            ->orderByDesc('created_at')
+            ->where('is_active', true)
+            ->orderByDesc('updated_at')
             ->first();
 
+        // Prioritas 2: Jika tidak ada yang aktif, ambil dokumen RTK terbaru
         if (!$rtkActive) {
             $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
                 ->where('regency_code', $regencyCode)
-                ->where('is_active', true)
-                ->orderByDesc('updated_at')
+                ->orderByDesc('created_at')
                 ->first();
         }
 

@@ -1,7 +1,6 @@
 <x-dashboard::layouts.dashboard title="Dashboard Pembelajaran">
     @push('styles')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        <!-- Script Chart.js -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @endpush
 
@@ -17,8 +16,8 @@
                     <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Total Kursus
                     </p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['total'] }}</h3>
+                    <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Seluruh modul pada sistem</p>
                 </div>
-                <!-- PERBAIKAN: Ikon Stats 1 (Warna Gelap, Teks Putih, Ukuran Tetap agar tidak gepeng) -->
                 <div
                     class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
                     <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,8 +33,8 @@
                     <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Rata-rata
                         Progress</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['avg_progress'] }}%</h3>
+                    <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Tingkat penyelesaian materi</p>
                 </div>
-                <!-- PERBAIKAN: Ikon Stats 2 -->
                 <div
                     class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
                     <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,8 +50,8 @@
                     <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Kursus
                         Selesai</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['selesai'] }}</h3>
+                    <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Modul yang telah dituntaskan</p>
                 </div>
-                <!-- PERBAIKAN: Ikon Stats 3 -->
                 <div
                     class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
                     <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +69,6 @@
             <div
                 class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <!-- PERBAIKAN: Ikon Header Evaluasi -->
                     <div
                         class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
                         <i class="fas fa-chart-bar text-lg"></i>
@@ -82,7 +80,6 @@
                     </div>
                 </div>
 
-                <!-- Dropdown Filter Kursus -->
                 @if (isset($chartDataByCourse) && count($chartDataByCourse) > 0)
                     <div class="w-full sm:w-auto sm:max-w-xs shrink-0">
                         <select id="courseChartFilter"
@@ -120,27 +117,26 @@
             <!-- KOLOM KIRI: Lanjutkan Belajar -->
             <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 shrink-0">
-                    <!-- PERBAIKAN: Ikon Header Lanjutkan Belajar -->
                     <div
                         class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
                         <i class="fas fa-play-circle text-base"></i>
                     </div>
-                    <h2 class="text-base font-bold text-slate-800">
-                        Lanjutkan Belajar
-                    </h2>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-800">Lanjutkan Belajar</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Aktivitas pembelajaran terakhir Anda</p>
+                    </div>
                 </div>
 
                 @if ($lastCourse)
                     <div
                         class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm flex flex-col flex-1 transition-shadow hover:shadow-md">
 
-                        <!-- Header / Thumbnail (Tanpa Bintik Dekoratif) -->
+                        <!-- PERBAIKAN: Background diubah menjadi #cbd5e1 -->
                         <div
-                            class="h-36 sm:h-40 bg-[#184A78] relative flex items-center justify-center overflow-hidden shrink-0">
-
+                            class="h-36 sm:h-40 bg-[#cbd5e1] relative flex items-center justify-center overflow-hidden shrink-0">
                             @if (isset($lastCourse->category_name))
                                 <span
-                                    class="absolute top-4 left-4 px-3 py-1 text-[10px] font-bold rounded-full bg-white/20 border border-white/30 text-white uppercase tracking-wider backdrop-blur-sm z-10">
+                                    class="absolute top-4 left-4 px-3 py-1.5 text-[10px] font-extrabold rounded-full bg-[#13416B] text-[#cbd5e1] border border-[#0f3354] uppercase tracking-wider shadow-md z-10">
                                     {{ $lastCourse->category_name }}
                                 </span>
                             @endif
@@ -155,7 +151,8 @@
                                     $initials = substr(strtoupper($lastCourse->name), 0, 2);
                                 }
                             @endphp
-                            <h2 class="text-[64px] font-normal text-white leading-none tracking-tight relative z-10"
+                            <!-- PERBAIKAN: Warna teks inisial diubah menjadi #13416B -->
+                            <h2 class="text-[64px] font-bold text-[#13416B] leading-none tracking-tight relative z-10"
                                 style="font-family: Arial, sans-serif;">
                                 {{ $initials }}
                             </h2>
@@ -163,7 +160,7 @@
 
                         <!-- Body & Deskripsi -->
                         <div class="p-5 sm:p-6 flex flex-col flex-1">
-                            <p class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">Aktivitas Terakhir
+                            <p class="text-xs font-bold text-[#13416B] uppercase tracking-wider mb-2">Aktivitas Terakhir
                             </p>
                             <h3 class="text-lg sm:text-xl font-bold text-slate-800 mb-2 leading-snug line-clamp-2">
                                 {{ $lastCourse->name }}
@@ -184,7 +181,7 @@
                                 </div>
 
                                 <a href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}"
-                                    class="flex items-center justify-center gap-2 w-full bg-[#13416B] hover:bg-[#0f3354] text-white px-5 py-3 rounded-lg font-bold transition-all text-sm shadow-sm">
+                                    class="flex items-center justify-center gap-2 w-full bg-transparent border-2 border-[#13416B] text-[#13416B] hover:bg-[#13416B]/5 hover:shadow px-5 py-3 rounded-lg font-bold transition-all text-sm">
                                     <i class="fas fa-play"></i>
                                     <span>Lanjutkan Materi</span>
                                 </a>
@@ -208,16 +205,18 @@
                 @endif
             </div>
 
-            <!-- KOLOM KANAN: Kursus Saya (Recent Courses - Maks 4) -->
+            <!-- KOLOM KANAN: Kursus Saya -->
             <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center gap-3">
-                        <!-- PERBAIKAN: Ikon Header Kursus Saya -->
                         <div
                             class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
                             <i class="fas fa-graduation-cap text-base"></i>
                         </div>
-                        <h2 class="text-base font-bold text-slate-800">Kursus Saya</h2>
+                        <div>
+                            <h2 class="text-base font-bold text-slate-800">Kursus Saya</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500">Daftar kursus yang Anda ikuti</p>
+                        </div>
                     </div>
                     <a href="{{ route('user.course.my-course') }}"
                         class="text-xs font-bold text-[#13416B] hover:underline flex items-center gap-1">
@@ -230,9 +229,9 @@
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
                             class="block bg-white border border-slate-200 rounded-lg p-3.5 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group">
                             <div class="flex items-start gap-3.5">
-                                <!-- Thumbnail List (Tanpa Bintik Dekoratif) -->
+                                <!-- PERBAIKAN: Background diubah menjadi #cbd5e1 -->
                                 <div
-                                    class="w-14 h-14 bg-[#184A78] rounded-lg flex items-center justify-center shrink-0 mt-1 shadow-inner relative overflow-hidden">
+                                    class="w-14 h-14 bg-[#cbd5e1] rounded-lg flex items-center justify-center shrink-0 mt-1 shadow-inner relative overflow-hidden">
                                     @php
                                         $words = explode(' ', $course->name);
                                         $initials = '';
@@ -243,7 +242,8 @@
                                             $initials = substr(strtoupper($course->name), 0, 2);
                                         }
                                     @endphp
-                                    <span class="text-xl font-normal tracking-tight text-white relative z-10"
+                                    <!-- PERBAIKAN: Warna teks inisial diubah menjadi #13416B -->
+                                    <span class="text-xl font-bold tracking-tight text-[#13416B] relative z-10"
                                         style="font-family: Arial, sans-serif;">{{ $initials }}</span>
                                 </div>
                                 <div class="flex-1 min-w-0">
@@ -293,13 +293,11 @@
     </div>
 
     @if (!$profile || empty($profile->instansi))
-        <!-- Modal Card Instansi -->
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
             style="background-color: rgba(15, 23, 42, 0.6)">
             <div
                 class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200">
                 <div class="p-6 sm:p-8">
-                    <!-- Header -->
                     <div class="text-center mb-6">
                         <div
                             class="bg-[#13416B]/10 text-[#13416B] w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 border border-[#13416B]/20 shadow-sm">
@@ -310,7 +308,6 @@
                             pembelajaran</p>
                     </div>
 
-                    <!-- Form Instansi -->
                     <form id="instansiForm" method="POST" action="{{ route('user.update-instansi') }}"
                         class="space-y-5">
                         @csrf
@@ -412,15 +409,12 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
-           // --- SCRIPT UNTUK GRAFIK BAR CHART (HORIZONTAL) POST-TEST ---
-           // --- SCRIPT UNTUK GRAFIK BAR CHART (HORIZONTAL) POST-TEST ---
             document.addEventListener('DOMContentLoaded', function() {
                 const ctx = document.getElementById('postTestChart');
 
-                // FUNGSI: Memecah teks panjang menjadi beberapa baris (Array of Strings)
                 function formatMultilineLabel(text) {
                     if (!text) return text;
-                    const maxChars = window.innerWidth >= 640 ? 35 : 20; // Batas huruf per baris
+                    const maxChars = window.innerWidth >= 640 ? 35 : 20;
                     const words = text.split(' ');
                     let lines = [];
                     let currentLine = '';
@@ -476,8 +470,8 @@
                                     labels: {
                                         usePointStyle: true,
                                         boxWidth: 8,
-                                        boxPadding: 12, 
-                                        padding: 20, 
+                                        boxPadding: 12,
+                                        padding: 20,
                                         font: {
                                             size: 11,
                                             family: "'Inter', sans-serif"
@@ -488,8 +482,12 @@
                                     mode: 'index',
                                     intersect: false,
                                     backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                                    titleFont: { size: 13 },
-                                    bodyFont: { size: 12 },
+                                    titleFont: {
+                                        size: 13
+                                    },
+                                    bodyFont: {
+                                        size: 12
+                                    },
                                     padding: 10,
                                     cornerRadius: 8,
                                     callbacks: {
@@ -503,14 +501,20 @@
                                 x: {
                                     beginAtZero: true,
                                     max: 100,
-                                    grid: { color: '#f1f5f9' },
+                                    grid: {
+                                        color: '#f1f5f9'
+                                    },
                                     ticks: {
-                                        font: { size: 10 },
+                                        font: {
+                                            size: 10
+                                        },
                                         stepSize: 20
                                     }
                                 },
                                 y: {
-                                    grid: { display: false },
+                                    grid: {
+                                        display: false
+                                    },
                                     ticks: {
                                         font: {
                                             size: 11,
@@ -521,7 +525,6 @@
                                         padding: 8
                                     },
                                     afterFit: function(scaleInstance) {
-                                        // PERBAIKAN 1: Lebar paksa dikurangi jadi 180 agar teks mempet dengan garis grafik
                                         if (window.innerWidth >= 640) {
                                             if (scaleInstance.width < 180) {
                                                 scaleInstance.width = 180;
@@ -542,7 +545,6 @@
                         }
                     });
 
-                    // PERBAIKAN 2: Mengurangi tinggi minimum canvas (dari 320 jadi 180) agar baris tidak berjauhan
                     const filterSelect = document.getElementById('courseChartFilter');
                     if (filterSelect) {
                         filterSelect.addEventListener('change', function() {
@@ -553,7 +555,8 @@
                                 const newHeight = Math.max(180, newData.labels.length * 80);
                                 ctx.parentElement.style.height = newHeight + 'px';
 
-                                postTestChart.data.labels = newData.labels.map(label => formatMultilineLabel(label));
+                                postTestChart.data.labels = newData.labels.map(label => formatMultilineLabel(
+                                    label));
                                 postTestChart.data.datasets[0].data = newData.user_scores;
                                 postTestChart.data.datasets[1].data = newData.avg_scores;
                                 postTestChart.update();
@@ -565,7 +568,7 @@
                     }
                 }
             });
-            // --- Instansi Form Logic ---
+
             @if (!$profile || empty($profile->instansi))
                 $(document).ready(function() {
                     $.ajax({

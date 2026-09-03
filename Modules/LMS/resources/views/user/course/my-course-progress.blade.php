@@ -33,12 +33,12 @@
                 </span>
                 
                 <!-- Judul Diperlebar -->
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
+                <h1 class="text-xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
                     Pelatihan & Pengembangan Kompetensi
                 </h1>
                 
                 <!-- Deskripsi Diperpanjang -->
-                <p class="text-sm sm:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
+                <p class="text-sm md:text-sm lg:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
                     Selesaikan modul pelatihan Anda, ikuti evaluasi dengan baik, dan raih sertifikat kelulusan untuk mendukung perjalanan karier serta profesionalisme Anda.
                 </p>
 
