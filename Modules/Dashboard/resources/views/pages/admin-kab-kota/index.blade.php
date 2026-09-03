@@ -1,372 +1,353 @@
 <x-dashboard::layouts.dashboard title="Dashboard Admin Kab/Kota">
-    <div class="p-2 sm:p-6">
-        @if (!$user->hasCompleteScope())
-            <div class="mb-4 rounded-lg bg-yellow-50 border border-yellow-300 p-4">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-yellow-600 mr-2 mt-0.5" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 9v2m0 4h.01M4.93 19h14.14c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.2 16c-.77 1.33.19 3 1.73 3z" />
-                    </svg>
+    <!-- Wrapper Utama Senada dengan Admin Pusat & Provinsi -->
+    <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6 sm:space-y-8 bg-slate-50/50 min-h-screen">
+        
+        <!-- Header & Breadcrumb -->
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Halo, {{ $user->name }}</h1>
+                    <p class="text-sm text-slate-500 font-medium mt-1">
+                        Masuk sebagai <span class="text-[#13416B] font-bold">{{ $user->getRoleNames()->implode(', ') }}</span> — Wilayah {{ $user->scopeArea?->regency?->name ?? 'Belum Ditetapkan' }}
+                    </p>
+                </div>
+                <x-breadcrumb :items="[['label' => 'Dashboard']]" />
+            </div>
 
+            <!-- Peringatan Wilayah Belum Ditetapkan -->
+            @if (!$user->hasCompleteScope())
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 sm:p-5 shadow-sm flex items-start gap-4 transition-all">
+                    <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                        <i class="fas fa-exclamation-triangle text-lg"></i>
+                    </div>
                     <div>
-                        <h1 class="font-semibold text-yellow-800">
-                            Data Tidak Dapat Ditampilkan
-                        </h1>
-                        <p class="text-sm text-yellow-700">
-                            Wilayah Kabupaten/Kota untuk akun ini belum ditetapkan,
-                            sehingga data tidak dapat dimuat. Silakan hubungi Admin Pusat
-                            untuk pengaturan wilayah.
+                        <h2 class="font-bold text-amber-800 mb-1">Wilayah Kab/Kota Belum Ditetapkan</h2>
+                        <p class="text-sm text-amber-700 leading-relaxed">
+                            Akun ini belum memiliki penetapan wilayah Kabupaten/Kota pada sistem.
+                            Untuk melanjutkan pengelolaan data, silakan hubungi Admin Pusat agar wilayah dapat dikonfigurasi terlebih dahulu.
                         </p>
                     </div>
                 </div>
-            </div>
-        @endif
-        <div class="mb-5">
-            <h1 class="text-2xl font-bold">Halo {{ $user->name }}</h1>
-
-            <p class="text-sm text-gray-500">Login Sebagai {{ $user->getRoleNames()->implode(', ') }} -
-                {{ $user->scopeArea?->regency?->name }}
-            </p>
+            @endif
         </div>
 
-        <!-- Breadcrumb Navigation -->
-        <x-breadcrumb :items="[['label' => 'Dashboard']]" />
+        @php
+            // Hitung total partisipasi dari array 5 tahun terakhir
+            $totalSdmPeriode = array_sum($sdmPerTahun);
+            $totalModul = count($courses);
+        @endphp
 
-        <!-- Card: Informasi E-Learning -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 sm:mb-8 overflow-hidden transition-all hover:shadow-md">
-            <div class="bg-gradient-to-r from-emerald-50/50 to-transparent px-5 sm:px-8 py-4 sm:py-5 border-b border-slate-100">
-                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-3">
-                    <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg"><i class="fas fa-laptop-code"></i></div>
-                    Informasi E-Learning
-                </h2>
+        <!-- ===================================== -->
+        <!-- 1. STATS GRID (Full Sirenata Theme)   -->
+        <!-- ===================================== -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            
+            <!-- Total Partisipasi SDM -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
+                <div>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Peserta Terdaftar</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $totalSdmPeriode }}</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Periode 5 tahun terpilih</p>
+                </div>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    <i class="fas fa-users text-xl sm:text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Total Laki-laki -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
+                <div>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Peserta Pria</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $genderMale }}</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Total keseluruhan sistem</p>
+                </div>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/80 text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    <i class="fas fa-male text-xl sm:text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Total Perempuan -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
+                <div>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Peserta Wanita</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $genderFemale }}</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Total keseluruhan sistem</p>
+                </div>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#184A78] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    <i class="fas fa-female text-xl sm:text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Modul Aktif -->
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
+                <div>
+                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Modul Diikuti</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $totalModul }}</h3>
+                    <p class="text-[10px] text-slate-400 mt-1">Jenis kursus terdaftar</p>
+                </div>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#0f3354] text-white flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+                    <i class="fas fa-book-open text-xl sm:text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 2. GRAFIK TREN PARTISIPASI SDM (BAR CHART)                -->
+        <!-- ========================================================= -->
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
+                        <i class="fas fa-chart-line text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-800">Tren Pendaftaran E-Learning</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Statistik pertumbuhan peserta dalam 5 tahun terakhir berdasarkan batas tahun</p>
+                    </div>
+                </div>
+
+                <!-- Dropdown Filter Tahun -->
+                <div class="w-full sm:w-auto sm:max-w-xs shrink-0 flex items-center gap-2">
+                    <select id="yearFilter" onchange="filterDataYear(this.value)" class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
+                        @foreach($years as $y)
+                            <option value="{{ $y }}" {{ (string)$y === (string)$selectedYear ? 'selected' : '' }}>Tahun Berakhir {{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             
-            <div class="p-5 sm:p-8">
-                <!-- Line Chart: SDM per Waktu -->
-                <div class="mb-8 bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-8 bg-emerald-500 rounded-full"></div>
-                            <h3 class="text-lg font-bold text-slate-800">Jumlah SDM yang Mengambil Kursus per Tahun</h3>
-                        </div>
-                        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
-                            <label for="periodFilter" class="text-sm font-semibold text-slate-600 pl-2 cursor-pointer">
-                                <i class="far fa-calendar-alt mr-1"></i> Tahun
-                            </label>
-                            <select id="periodFilter" onchange="window.location.href='{{ route('admin-kab-kota.dashboard') }}?year=' + this.value" class="bg-white border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-emerald-500 rounded-md py-1.5 pl-3 pr-8 text-sm font-medium text-slate-700 cursor-pointer shadow-sm">
-                                @foreach($years as $year)
-                                    <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+            <div class="p-5 sm:p-6">
+                <!-- CHART CONTAINER -->
+                <div id="sdmTrendChartContainer" class="relative h-72 sm:h-[400px] w-full {{ $totalSdmPeriode > 0 ? '' : 'hidden' }}">
+                    <canvas id="sdmTrendBarChart"></canvas>
+                </div>
+                
+                <!-- EMPTY STATE -->
+                <div id="sdmTrendEmptyState" class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $totalSdmPeriode > 0 ? 'hidden' : '' }}">
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
+                        <i class="fas fa-chart-area text-xl"></i>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-700">Belum ada data pendaftar</p>
+                    <p class="text-xs text-slate-500 mt-1">Tidak ada catatan SDM yang mengikuti e-learning pada periode 5 tahun ini.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 3. DISTRIBUSI MODUL & GENDER                              -->
+        <!-- ========================================================= -->
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
+                    <i class="fas fa-medal text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-bold text-slate-800">Modul Terpopuler & Demografi</h2>
+                    <p class="text-[11px] sm:text-xs text-slate-500">Peringkat kursus yang paling banyak diikuti dan sebaran gender</p>
+                </div>
+            </div>
+            
+            <div class="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                
+                <!-- Leaderboard Modul (2 Kolom Kiri) -->
+                <div class="lg:col-span-2 border-b lg:border-b-0 lg:border-r border-slate-100 pb-6 lg:pb-0 lg:pr-8">
+                    <h4 class="text-sm font-bold text-slate-700 mb-5 uppercase tracking-wider"><i class="fas fa-list-ol text-slate-400 mr-2"></i> Peringkat Modul Pelatihan</h4>
+                    
+                    <!-- LEADERBOARD CONTAINER -->
+                    <div id="courseListContainer" class="space-y-5 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar {{ count($courses) > 0 ? '' : 'hidden' }}">
+                        <!-- Dirender via Javascript -->
                     </div>
                     
-                    @if(empty($sdmPerTahun) || array_sum($sdmPerTahun) === 0)
-                        <div class="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                <i class="fas fa-chart-line text-2xl text-slate-300"></i>
-                            </div>
-                            <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                            <p class="text-sm mt-1">Belum ada registrasi user pada rentang tahun ini</p>
+                    <div id="courseEmptyState" class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ count($courses) > 0 ? 'hidden' : '' }}">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
+                            <i class="fas fa-book-open text-xl"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700">Belum Ada Modul Diambil</p>
+                        <p class="text-xs text-slate-500 mt-1">Belum ada pengguna yang mendaftar pada modul apapun.</p>
+                    </div>
+                </div>
+
+                <!-- Pie Chart Gender (1 Kolom Kanan) -->
+                <div class="lg:col-span-1 flex flex-col justify-center">
+                    <h4 class="text-sm font-bold text-center text-slate-700 mb-4 uppercase tracking-wider">Distribusi Gender</h4>
+                    @if ($genderMale == 0 && $genderFemale == 0)
+                        <div class="h-48 flex items-center justify-center text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                            <span class="text-xs font-medium">Data gender kosong</span>
                         </div>
                     @else
-                        <div class="relative h-72 sm:h-[400px] w-full">
-                            <canvas id="rtkLineChart"></canvas>
+                        <div class="relative h-56 w-full flex items-center justify-center">
+                            <canvas id="genderPieChart"></canvas>
                         </div>
                     @endif
                 </div>
 
-                <!-- E-Learning Stats (Bottom Grid) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-                    <!-- Gender -->
-                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-pink-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                        <div class="relative z-10 flex items-center gap-3 mb-6">
-                            <div class="w-1.5 h-6 bg-pink-500 rounded-full"></div>
-                            <h3 class="text-base font-bold text-slate-800">Perbandingan Jenis Kelamin</h3>
-                        </div>
-                        
-                        @if ($genderMale == 0 && $genderFemale == 0)
-                            <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                    <i class="fas fa-venus-mars text-2xl text-slate-300"></i>
-                                </div>
-                                <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                                <p class="text-sm mt-1 text-center">Data jenis kelamin user belum diisi</p>
-                            </div>
-                        @else
-                            <div class="relative h-64 sm:h-80 w-full flex items-center justify-center">
-                                <canvas id="genderPieChart"></canvas>
-                            </div>
-                        @endif
-                    </div>
-
-                    <!-- Modul -->
-                    <div class="bg-white border border-slate-100 rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-                        <div class="relative z-10 flex items-center gap-3 mb-6">
-                            <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div>
-                            <h3 class="text-base font-bold text-slate-800">Perbandingan Modul yang Diambil</h3>
-                        </div>
-                        
-                        @if ($courses->isEmpty())
-                            <div class="h-64 flex flex-col justify-center items-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                    <i class="fas fa-book-open text-2xl text-slate-300"></i>
-                                </div>
-                                <p class="text-base font-semibold text-slate-500">Belum Ada Data</p>
-                                <p class="text-sm mt-1 text-center">Belum ada user yang mengambil modul/course</p>
-                            </div>
-                        @else
-                            <div class="relative h-64 sm:h-80 w-full flex items-center justify-center">
-                                <canvas id="courseDoughnutChart"></canvas>
-                            </div>
-                        @endif
-                    </div>
-                </div>
             </div>
         </div>
+
     </div>
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
         <script>
-            // Data for SDM per Waktu
-            const sdmTahunDataRaw = @json($sdmPerTahun);
-            const lineLabels = Object.keys(sdmTahunDataRaw);
-            const lineData = Object.values(sdmTahunDataRaw);
+            document.addEventListener('DOMContentLoaded', function () {
 
-            if (document.getElementById('rtkLineChart')) {
-                const lineCtx = document.getElementById('rtkLineChart').getContext('2d');
-                new Chart(lineCtx, {
-                    type: 'line',
-                    data: {
-                        labels: lineLabels,
-                        datasets: [{
-                            label: 'Jumlah SDM',
-                            data: lineData,
-                            borderColor: 'rgba(99, 102, 241, 1)',
-                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 5,
-                            pointBackgroundColor: 'rgba(99, 102, 241, 1)',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointHoverRadius: 7,
-                            pointHoverBackgroundColor: 'rgba(99, 102, 241, 1)',
-                            pointHoverBorderColor: '#fff',
-                            pointHoverBorderWidth: 3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
+                // Reload halaman dengan parameter year (AJAX fallback karena Controller saat ini merender view utuh)
+                window.filterDataYear = function(year) {
+                    window.location.href = `{{ route('admin-kab-kota.dashboard') }}?year=${year}`;
+                };
+
+                // =========================================================
+                // 1. GRAFIK TREN SDM (BAR CHART)
+                // =========================================================
+                @if($totalSdmPeriode > 0)
+                    const sdmTrendCtx = document.getElementById('sdmTrendBarChart').getContext('2d');
+                    
+                    const sdmTrendRaw = @json($sdmPerTahun);
+                    const sdmLabels = Object.keys(sdmTrendRaw);
+                    const sdmData = Object.values(sdmTrendRaw);
+
+                    window.sdmTrendChartInstance = new Chart(sdmTrendCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: sdmLabels,
+                            datasets: [{
+                                label: 'Jumlah Pendaftar',
+                                data: sdmData,
+                                backgroundColor: 'rgba(19, 65, 107, 0.85)', // Biru Sirenata
+                                borderColor: 'rgba(19, 65, 107, 1)',
+                                borderWidth: 1,
+                                borderRadius: 6,
+                                barPercentage: 0.5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(19, 65, 107, 0.95)',
+                                    padding: 12,
+                                    cornerRadius: 6,
+                                    titleFont: { size: 13, weight: 'bold' }
+                                }
                             },
-                            tooltip: {
-                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                padding: 12,
-                                cornerRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 'bold'
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: '#f1f5f9' },
+                                    ticks: { font: { size: 11 }, stepSize: 1 }
                                 },
-                                bodyFont: {
-                                    size: 13
-                                },
-                                callbacks: {
-                                    label: function (context) {
-                                        return `Jumlah SDM: ${context.parsed.y.toLocaleString()}`;
-                                    }
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { font: { size: 12, weight: 'bold' } }
                                 }
                             }
+                        }
+                    });
+                @endif
+
+                // =========================================================
+                // 2. FUNGSI RENDER LEADERBOARD MODUL TERPOPULER
+                // =========================================================
+                const coursesRaw = @json($courses);
+                
+                function renderCourseLeaderboard(dataObj) {
+                    const container = document.getElementById('courseListContainer');
+                    const emptyState = document.getElementById('courseEmptyState');
+
+                    const keys = Object.keys(dataObj);
+                    if (keys.length === 0) {
+                        container.classList.add('hidden');
+                        emptyState.classList.remove('hidden');
+                        return;
+                    }
+
+                    container.classList.remove('hidden');
+                    emptyState.classList.add('hidden');
+
+                    // Convert to array of objects
+                    const coursesArray = keys.map(k => ({
+                        name: k,
+                        total: dataObj[k]
+                    }));
+
+                    // Urutkan dari terbanyak ke sedikit
+                    coursesArray.sort((a, b) => b.total - a.total);
+
+                    // Cari max value untuk persentase bar
+                    let maxTotal = coursesArray[0].total;
+                    if (maxTotal === 0) maxTotal = 1;
+
+                    let htmlContent = '';
+                    coursesArray.forEach((item, index) => {
+                        const percentage = (item.total / maxTotal) * 100;
+                        htmlContent += `
+                            <div class="flex items-center gap-3.5 group">
+                                <div class="w-6 text-sm font-bold text-slate-400 text-right shrink-0 group-hover:text-[#13416B] transition-colors">${index + 1}.</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <span class="text-sm font-semibold text-slate-700 truncate pr-2 group-hover:text-[#13416B] transition-colors">${item.name}</span>
+                                        <span class="text-sm font-extrabold text-[#13416B] shrink-0">${item.total} <span class="text-[10px] font-medium text-slate-500">Peserta</span></span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-[#13416B] h-full rounded-full transition-all duration-700 ease-out" style="width: ${percentage}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    container.innerHTML = htmlContent;
+                }
+
+                // Render saat load
+                renderCourseLeaderboard(coursesRaw);
+
+                // =========================================================
+                // 3. PIE CHART GENDER
+                // =========================================================
+                if (document.getElementById('genderPieChart')) {
+                    const genderCtx = document.getElementById('genderPieChart').getContext('2d');
+                    new Chart(genderCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Laki-laki', 'Perempuan'],
+                            datasets: [{
+                                data: [{{ $genderMale }}, {{ $genderFemale }}],
+                                backgroundColor: ['rgba(19, 65, 107, 0.85)', 'rgba(236, 72, 153, 0.85)'], // Biru Sirenata & Pink
+                                borderColor: ['#ffffff', '#ffffff'],
+                                borderWidth: 2,
+                                hoverOffset: 4
+                            }]
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    font: {
-                                        size: 12
-                                    },
-                                    callback: function (value) {
-                                        if (Number.isInteger(value)) {
-                                            return value.toLocaleString();
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '65%',
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { boxWidth: 10, font: { size: 11 }, padding: 15 }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(19, 65, 107, 0.95)',
+                                    padding: 10,
+                                    cornerRadius: 6,
+                                    callbacks: {
+                                        label: function (context) {
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                                            return ` ${context.label}: ${context.parsed} (${percentage}%)`;
                                         }
-                                        return null;
-                                    },
-                                    stepSize: 1
-                                },
-                                grid: {
-                                    color: 'rgba(229, 231, 235, 0.8)'
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    font: {
-                                        size: 12
-                                    }
-                                },
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Pie Chart: Gender Distribution
-            if (document.getElementById('genderPieChart')) {
-                const genderCtx = document.getElementById('genderPieChart').getContext('2d');
-                new Chart(genderCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Laki-laki', 'Perempuan'],
-                        datasets: [{
-                            data: [{{ $genderMale }}, {{ $genderFemale }}],
-                            backgroundColor: [
-                                'rgba(59, 130, 246, 0.8)',
-                                'rgba(236, 72, 153, 0.8)'
-                            ],
-                            borderColor: [
-                                'rgba(59, 130, 246, 1)',
-                                'rgba(236, 72, 153, 1)'
-                            ],
-                            borderWidth: 2,
-                            hoverOffset: 10
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    font: {
-                                        size: 13,
-                                        weight: '500'
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                padding: 12,
-                                cornerRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 'bold'
-                                },
-                                bodyFont: {
-                                    size: 13
-                                },
-                                callbacks: {
-                                    label: function (context) {
-                                        const label = context.label || '';
-                                        const value = context.parsed || 0;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                        return `${label}: ${value} (${percentage}%)`;
                                     }
                                 }
                             }
                         }
-                    }
-                });
-            }
-
-            // Doughnut Chart: Course Distribution
-            if (document.getElementById('courseDoughnutChart')) {
-                const courseCtx = document.getElementById('courseDoughnutChart').getContext('2d');
-                const courseDataRaw = @json($courses);
-                const courseLabels = Object.keys(courseDataRaw);
-                const courseData = Object.values(courseDataRaw);
-                
-                const backgroundColors = [
-                    'rgba(245, 158, 11, 0.8)',  // Amber
-                    'rgba(99, 102, 241, 0.8)',  // Indigo
-                    'rgba(16, 185, 129, 0.8)',  // Emerald
-                    'rgba(244, 63, 94, 0.8)',   // Rose
-                    'rgba(59, 130, 246, 0.8)',   // Blue
-                    'rgba(139, 92, 246, 0.8)',  // Purple
-                    'rgba(249, 115, 22, 0.8)',  // Orange
-                    'rgba(6, 182, 212, 0.8)',   // Cyan
-                    'rgba(236, 72, 153, 0.8)',  // Pink
-                    'rgba(14, 165, 233, 0.8)'   // Sky
-                ];
-                
-                const borderColors = [
-                    'rgba(245, 158, 11, 1)',
-                    'rgba(99, 102, 241, 1)',
-                    'rgba(16, 185, 129, 1)',
-                    'rgba(244, 63, 94, 1)',
-                    'rgba(59, 130, 246, 1)',
-                    'rgba(139, 92, 246, 1)',
-                    'rgba(249, 115, 22, 1)',
-                    'rgba(6, 182, 212, 1)',
-                    'rgba(236, 72, 153, 1)',
-                    'rgba(14, 165, 233, 1)'
-                ];
-
-                new Chart(courseCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: courseLabels,
-                        datasets: [{
-                            data: courseData,
-                            backgroundColor: backgroundColors.slice(0, courseLabels.length),
-                            borderColor: borderColors.slice(0, courseLabels.length),
-                            borderWidth: 2,
-                            hoverOffset: 10
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    font: {
-                                        size: 11,
-                                        weight: '500'
-                                    },
-                                    boxWidth: 12
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                                padding: 12,
-                                cornerRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 'bold'
-                                },
-                                bodyFont: {
-                                    size: 13
-                                },
-                                callbacks: {
-                                    label: function (context) {
-                                        const label = context.label || '';
-                                        const value = context.parsed || 0;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                        return `${label}: ${value} user (${percentage}%)`;
-                                    }
-                                }
-                            }
-                        },
-                        cutout: '60%'
-                    }
-                });
-            }
+                    });
+                }
+            });
         </script>
     @endpush
 </x-dashboard::layouts.dashboard>
