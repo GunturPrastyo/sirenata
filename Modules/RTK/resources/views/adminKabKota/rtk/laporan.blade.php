@@ -13,7 +13,7 @@
                         RTK Telah Melewati Masa Berlaku
                     </h2>
                     <p class="text-xs sm:text-sm text-amber-800 mt-1">
-                        Periode aktif dokumen RTK ini berakhir pada tahun <strong>{{ $rtkKabKotaActive->end_date }}</strong>. Silakan lakukan penyusunan atau pembaruan dokumen RTK terbaru.
+                        Periode aktif dokumen RTK ini berakhir pada akhir tahun <strong>{{ $rtkKabKotaActive->end_date }}</strong>. Silakan lakukan penyusunan atau pembaruan dokumen RTK terbaru.
                     </p>
                 </div>
             </div>
@@ -46,19 +46,18 @@
             </div>
         @endif
 
-        {{-- GRID UTAMA (Dibuat seimbang tingginya menggunakan h-full) --}}
+        {{-- GRID UTAMA (Seimbang tingginya) --}}
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
             {{-- KOLOM KIRI (7 Kolom): Informasi & Masa Berlaku RTK --}}
             <div class="lg:col-span-7 flex flex-col gap-6">
                 
-                {{-- Card 1: Header & Status Dokumen --}}
+                {{-- Card 1: Header & Status Dokumen Custom --}}
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 relative overflow-hidden flex flex-col justify-between flex-1">
-                    
                     
                     <div class="relative z-10 mb-6">
                       
-                        <h1 class="text-xl sm:text-2xl font-bold text-slate-700 leading-snug mb-2">
+                        <h1 class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug mb-2">
                             {{ $rtkKabKotaActive?->name ?? 'RTK Belum Tersedia' }}
                         </h1>
 
@@ -70,11 +69,34 @@
                         @endif
                     </div>
 
+                    {{-- Status Card yang sudah disesuaikan tanggal berakhirnya (31 Des [Tahun End Date]) --}}
                     <div class="relative z-10 pt-4 border-t border-slate-100">
-                        <x-rtk::status-card
-                            :rtk="$rtkKabKotaActive"
-                            edit-route="admin-kab-kota.rtkd.edit"
-                            create-route="admin-kab-kota.rtkd.create" />
+                        @if ($rtkKabKotaActive)
+                            @php
+                                $isExpired = $rtkKabKotaActive->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED;
+                            @endphp
+                            <div class="p-4 rounded-xl border {{ $isExpired ? 'bg-amber-50 border-amber-200 text-amber-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800' }} flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg {{ $isExpired ? 'bg-amber-500 text-white' : 'bg-emerald-600 text-white' }} flex items-center justify-center shrink-0 shadow-sm">
+                                        <i class="fas {{ $isExpired ? 'fa-exclamation-circle' : 'fa-check-circle' }} text-base"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold uppercase tracking-wider {{ $isExpired ? 'text-amber-900' : 'text-emerald-900' }}">
+                                            {{ $isExpired ? 'RTK KADALUARSA' : 'RTK BERLAKU' }}
+                                        </p>
+                                        <p class="text-xs font-medium {{ $isExpired ? 'text-amber-700' : 'text-emerald-700' }}">
+                                            Berlaku hingga <strong>31 Des {{ $rtkKabKotaActive->end_date }}</strong>
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                               
+                            </div>
+                        @else
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-center text-sm">
+                                Belum ada data status dokumen RTK.
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -88,7 +110,6 @@
                     </h3>
 
                     @php
-                        // Logika selisih tahun otomatis berdasarkan data start_date & end_date
                         $startYear = $rtkKabKotaActive?->start_date;
                         $endYear = $rtkKabKotaActive?->end_date;
                         $spanTahun = ($startYear && $endYear) ? (intval($endYear) - intval($startYear) + 1) : '-';
@@ -103,7 +124,7 @@
                             <div>
                                 <p class="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Tahun Mulai</p>
                                 <p class="text-base font-extrabold text-slate-800">
-                                    {{ $startYear ?? '-' }}
+                                    1 Jan {{ $startYear ?? '-' }}
                                 </p>
                             </div>
                         </div>
@@ -116,7 +137,7 @@
                             <div>
                                 <p class="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Tahun Berakhir</p>
                                 <p class="text-base font-extrabold text-slate-800">
-                                    {{ $endYear ?? '-' }}
+                                    31 Des {{ $endYear ?? '-' }}
                                 </p>
                             </div>
                         </div>
@@ -143,7 +164,7 @@
 
             </div>
 
-            {{-- KOLOM KANAN (5 Kolom): PDF Viewer Dokumen --}}
+         {{-- KOLOM KANAN (5 Kolom): PDF Viewer Dokumen --}}
             <div class="lg:col-span-5 flex flex-col">
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col h-full">
                     
@@ -168,18 +189,18 @@
                         @endif
                     </div>
                     
-                    {{-- Area Konten Viewer (flex-1 agar tingginya pas dengan kolom kiri) --}}
-                    <div class="flex-1 flex flex-col justify-between">
+                    {{-- Area Konten Viewer (Tinggi dipatok pasti misal 480px agar tidak memicu double scroll flex container) --}}
+                    <div class="flex flex-col flex-1 justify-between">
                         @if ($rtkKabKotaActive && $rtkKabKotaActive->document_path && Storage::disk('public')->exists($rtkKabKotaActive->document_path))
-                            <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 w-full h-[380px] lg:h-full min-h-[320px]">
+                            <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-100 w-full h-[480px] relative">
                                 <iframe
-                                    src="{{ Storage::url($rtkKabKotaActive->document_path) }}"
-                                    class="w-full h-full"
+                                    src="{{ Storage::url($rtkKabKotaActive->document_path) }}#toolbar=0&view=FitH"
+                                    class="w-full h-full border-0 block"
                                     frameborder="0">
                                 </iframe>
                             </div>
                         @else
-                            <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-200 border-dashed rounded-xl text-slate-400 gap-3 w-full h-[380px] lg:h-full min-h-[320px]">
+                            <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-200 border-dashed rounded-xl text-slate-400 gap-3 w-full h-[480px]">
                                 <div class="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-sm text-slate-300">
                                     <i class="fas fa-file-excel text-2xl"></i>
                                 </div>
