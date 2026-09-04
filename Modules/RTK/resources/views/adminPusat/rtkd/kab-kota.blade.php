@@ -1,15 +1,18 @@
-<x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah ">
-    <div class="p-2 sm:p-6 pt-6 sm:pt-8">
-        <!-- Breadcrumb Navigation -->
-        <div class="mb-8">
-            <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
-                ['label' => 'Daftar Laporan RTKD Provinsi', 'url' => route('admin-pusat.rtkd.index')],
-                ['label' => 'Daftar Laporan RTKD Kab/Kota'],
-            ]" />
+<x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah">
+    <div class="p-2 sm:p-6  pt-6 sm:pt-8">
+
+        <div class="mb-6">
+        <x-breadcrumb :home="route('admin-pusat.dashboard')" :items="[
+            ['label' => 'Daftar Laporan RTKD Provinsi', 'url' => route('admin-pusat.rtkd.index')],
+            ['label' => 'Daftar Laporan RTKD Kab/Kota']
+        ]" />
         </div>
 
-        <x-dashboard::filter-card title="Daftar Laporan RTKD Kabupaten/Kota" :total="$rtkds->total()" :resetUrl="route('admin-pusat.rtkd.kab-kota', $provinceCode)">
-
+        <x-dashboard::filter-card 
+            title="Daftar Laporan RTKD Kabupaten/Kota" 
+            :total="$rtkds->total()"
+            :resetUrl="route('admin-pusat.rtkd.kab-kota', $provinceCode)">
+            
             <x-slot name="actions">
                 <x-button variant="success" :href="route('admin-pusat.rtkd.export-regency-by-province', $provinceCode) .
                     '?' .
@@ -25,8 +28,7 @@
                     <label class="block text-xs font-medium text-slate-500 mb-1">Status Verifikasi</label>
                     <div class="relative">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <select name="status_verification"
-                            class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="status_verification" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Semua</option>
                             @foreach (\Modules\RTK\Enums\RTKStatusVerification::cases() as $statusVerifikasi)
                                 <option value="{{ $statusVerifikasi->value }}" @selected(request('status_verification') === $statusVerifikasi->value)>
@@ -42,8 +44,7 @@
                     <label class="block text-xs font-medium text-slate-500 mb-1">Status Dokumen</label>
                     <div class="relative">
                         <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <select name="status_document"
-                            class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="status_document" class="pl-9 pr-3 py-2.5 w-full rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Semua</option>
                             @foreach (\Modules\RTK\Enums\StatusDocument::cases() as $statusDocument)
                                 <option value="{{ $statusDocument->value }}" @selected(request('status_document') === $statusDocument->value)>
@@ -57,11 +58,9 @@
                 <!-- Per Page -->
                 <div class="w-full sm:w-36 lg:w-32">
                     <label class="block text-xs font-medium text-slate-500 mb-1">Data per Halaman</label>
-                    <select name="per_page"
-                        class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <select name="per_page" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         @foreach ([10, 20, 50, 100] as $page)
-                            <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>
-                                {{ $page }}</option>
+                            <option value="{{ $page }}" {{ request('per_page') == $page ? 'selected' : '' }}>{{ $page }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -71,8 +70,7 @@
                     <label class="block text-xs font-medium text-slate-500 mb-1">Pencarian</label>
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari nama Kab/Kota..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama Kab/Kota..."
                             class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
@@ -83,10 +81,11 @@
                     <tr class="text-slate-500 uppercase text-xs">
                         <x-table.th class="text-center w-16">No</x-table.th>
                         <x-table.th class="w-48">Instansi (Provinsi)</x-table.th>
-                        <x-table.th>Nama Dokumen</x-table.th>
+                        {{-- Lebar kolom Nama Dokumen diperbesar --}}
+                        <x-table.th class="min-w-[280px]">Nama Dokumen</x-table.th>
                         <x-table.th class="w-40">Periode Berlaku</x-table.th>
-                        <x-table.th class="w-36">Status Verifikasi</x-table.th>
-                        <x-table.th class="w-48">Status Berlaku Dokumen</x-table.th>
+                        <x-table.th class="w-36 text-center">Status Verifikasi</x-table.th>
+                        <x-table.th class="w-48 text-center">Status Berlaku Dokumen</x-table.th>
                         <x-table.th class="w-48">Disetujui Oleh</x-table.th>
                         <x-table.th class="w-40">Tanggal Diverifikasi</x-table.th>
                         <x-table.th class="text-center w-24">Aksi</x-table.th>
@@ -95,20 +94,45 @@
 
                 <tbody class="divide-y divide-slate-200">
                     @forelse ($rtkds as $key => $regency)
+                        @php
+                            $verifColor = 'slate';
+                            $docColor = 'slate';
+
+                            if ($regency->latest_rtk) {
+                                // Ekstrak raw value dari object Enum jika ada, diubah ke uppercase agar cocok dengan data asli
+                                $valVerif = strtoupper((string)($regency->latest_rtk->status_verification->value ?? $regency->latest_rtk->status_verification));
+                                $valDoc = strtoupper((string)($regency->latest_rtk->status_document->value ?? $regency->latest_rtk->status_document));
+
+                                // Logika penentuan warna menggunakan properti "color"
+                                $verifColor = match($valVerif) {
+                                    'APPROVED' => 'success', // Disetujui -> Hijau
+                                    'PENDING' => 'warning',  // Menunggu Persetujuan -> Kuning
+                                    'REJECTED' => 'danger',  // Ditolak -> Merah
+                                    default => 'slate',
+                                };
+
+                                $docColor = match($valDoc) {
+                                    'VALID' => 'success',    // Berlaku -> Hijau
+                                    'EXPIRED' => 'danger',   // Kadaluarsa -> Merah
+                                    default => 'slate',
+                                };
+                            }
+                        @endphp
+
                         <tr class="hover:bg-slate-50 transition">
-                            <x-table.td class="text-center text-slate-600">
+                            <x-table.td class="text-center text-slate-600 align-top pt-4">
                                 {{ $key + $rtkds->firstItem() }}
                             </x-table.td>
 
                             {{-- Nama Provinsi + Tooltip pending_rtk_count --}}
-                            <x-table.td>
+                            <x-table.td class="align-top pt-4">
                                 <div class="flex items-center gap-2">
                                     <p class="font-medium text-slate-700">{{ $regency->name }}</p>
 
                                     @if (($regency->pending_rtk_count ?? 0) > 0)
                                         <div class="relative group">
                                             <span
-                                                class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-amber-500 rounded-full cursor-pointer">
+                                                class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-amber-500 rounded-full cursor-pointer">
                                                 {{ $regency->pending_rtk_count }}
                                             </span>
                                             {{-- Tooltip --}}
@@ -121,27 +145,19 @@
                                 </div>
                             </x-table.td>
 
-                            {{-- Nama Dokumen --}}
-                            <x-table.td>
+                            {{-- Nama Dokumen (Tanpa label di bawahnya, hanya teks nama dokumen) --}}
+                            <x-table.td class="align-top pt-4">
                                 @if ($regency->latest_rtk)
-                                    <div class="flex items-center gap-2">
-                                        <p class="font-semibold text-slate-700">{{ $regency->latest_rtk->name }}</p>
-                                        {{-- Badge RTK Berlaku --}}
-                                        @if ($regency->latest_rtk->is_berlaku)
-                                            <x-badge color="success">
-                                                Berlaku
-                                            </x-badge>
-                                        @endif
-                                    </div>
+                                    <p class="font-semibold text-slate-700">{{ $regency->latest_rtk->name }}</p>
                                 @else
                                     <span class="text-slate-400 italic">Belum ada dokumen</span>
                                 @endif
                             </x-table.td>
 
                             {{-- Periode --}}
-                            <x-table.td>
+                            <x-table.td class="align-top pt-4">
                                 @if ($regency->latest_rtk)
-                                    <span class="text-slate-600">
+                                    <span class="text-slate-600 font-medium">
                                         {{ $regency->latest_rtk->start_date }}
                                         <span class="mx-1 text-slate-400">–</span>
                                         {{ $regency->latest_rtk->end_date }}
@@ -151,11 +167,11 @@
                                 @endif
                             </x-table.td>
 
-                            {{-- Status Verifikasi --}}
-                            <x-table.td class="text-center">
+                            {{-- Status Verifikasi (Dikembalikan ke kolom masing-masing) --}}
+                            <x-table.td class="text-center align-top pt-4">
                                 @if ($regency->latest_rtk)
-                                    <x-badge :color="$regency->latest_rtk->status_verification->value === 'APPROVED' ? 'success' : ($regency->latest_rtk->status_verification->value === 'PENDING' ? 'indigo' : 'red')">
-                                        {{ $regency->latest_rtk->status_verification_label }}
+                                    <x-badge :color="$verifColor">
+                                        {{ $regency->latest_rtk->status_verification_label ?? $regency->latest_rtk->status_verification->label() }}
                                     </x-badge>
                                 @else
                                     <x-badge color="slate">
@@ -164,12 +180,16 @@
                                 @endif
                             </x-table.td>
 
-                            {{-- Status Dokumen --}}
-                            <x-table.td class="text-center">
+                            {{-- Status Berlaku Dokumen (Dikembalikan ke kolom masing-masing) --}}
+                            <x-table.td class="text-center align-top pt-4">
                                 @if ($regency->latest_rtk)
-                                    <x-badge :color="$regency->latest_rtk->status_document->value === 'VALID' ? 'success' : ($regency->latest_rtk->status_document->value === 'EXPIRED' ? 'red' : 'slate')">
-                                        {{ $regency->latest_rtk->status_document_label }}
-                                    </x-badge>
+                                    @if(strtoupper((string)($regency->latest_rtk->status_document->value ?? $regency->latest_rtk->status_document)) !== 'NA')
+                                        <x-badge :color="$docColor">
+                                            {{ $regency->latest_rtk->status_document_label ?? $regency->latest_rtk->status_document->label() }}
+                                        </x-badge>
+                                    @else
+                                        <x-badge color="slate">N/A</x-badge>
+                                    @endif
                                 @else
                                     <x-badge color="slate">
                                         Belum ada status dokumen
@@ -177,17 +197,17 @@
                                 @endif
                             </x-table.td>
 
-                            <x-table.td class="text-slate-600">
+                            <x-table.td class="text-slate-600 align-top pt-4">
                                 {{ $regency->latest_rtk?->display_name_approver ?? '-' }}
                             </x-table.td>
 
                             {{-- Tanggal Diverifikasi --}}
-                            <x-table.td class="text-slate-600">
+                            <x-table.td class="text-slate-600 align-top pt-4">
                                 {{ $regency->latest_rtk?->approved_at?->format('d M Y') ?? '-' }}
                             </x-table.td>
 
                             {{-- Aksi --}}
-                            <x-table.td class="text-center">
+                            <x-table.td class="text-center align-top pt-4">
                                 <x-table.action>
                                     <li>
                                         <a href="{{ route('admin-pusat.rtkd.show-regency', $regency->code) }}"
@@ -210,7 +230,7 @@
 
                                             <x-modal name="open-document-kab-kota-{{ $regency->code }}"
                                                 title="Pratinjau Dokumen Saat Ini" maxWidth="sm:max-w-2xl">
-                                                <h1 class="">{{ $regency->latest_rtk->name }}</h1>
+                                                <h1 class="font-semibold text-base mb-3">{{ $regency->latest_rtk->name }}</h1>
                                                 <div class="border border-gray-300 rounded-md overflow-hidden">
                                                     @if ($regency->latest_rtk->document_path && Storage::disk('public')->exists($regency->latest_rtk->document_path))
                                                         <iframe
@@ -229,13 +249,6 @@
                                                         class="inline-flex items-center justify-center px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100">Close</button>
                                                 </x-slot:footer>
                                             </x-modal>
-                                        </li>
-                                    @else
-                                        <li>
-                                            <span
-                                                class="inline-flex items-center w-full p-2 text-slate-400 italic text-xs cursor-default">
-                                                Belum ada dokumen
-                                            </span>
                                         </li>
                                     @endif
                                 </x-table.action>
