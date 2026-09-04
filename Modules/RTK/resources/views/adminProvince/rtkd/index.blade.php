@@ -92,7 +92,7 @@
                     </label>
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama provinsi..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama instansi..."
                             class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
@@ -103,10 +103,12 @@
                     <tr>
                         <x-table.th align="center" class="w-16">No</x-table.th>
                         <x-table.th align="left" class="w-48">Instansi (Kab/Kota)</x-table.th>
-                        {{-- Header disatukan --}}
-                        <x-table.th align="left">Dokumen RTK & Status</x-table.th>
+                        {{-- Lebar kolom Nama Dokumen diperbesar --}}
+                        <x-table.th align="left" class="min-w-[280px]">Nama Dokumen</x-table.th>
                         <x-table.th align="left" class="w-40">Periode Berlaku</x-table.th>
-                        <x-table.th align="left" class="w-48">Disetujui Oleh</x-table.th>
+                        <x-table.th align="center" class="w-36">Status Verifikasi</x-table.th>
+                        <x-table.th align="center" class="w-48">Status Berlaku Dokumen</x-table.th>
+                        <x-table.th align="left" class="w-40">Disetujui Oleh</x-table.th>
                         <x-table.th align="left" class="w-40">Tanggal Diverifikasi</x-table.th>
                         <x-table.th align="center" class="w-24">Aksi</x-table.th>
                     </tr>
@@ -119,22 +121,27 @@
                             $docColor = 'slate';
                             $verifLabel = '';
                             $docLabel = '';
+                            $valDoc = '';
 
                             if ($regency->latest_rtk) {
-                                // Memanggil label enum dengan benar
+                                // Ekstraksi label asli dari Enum
                                 $verifLabel = $regency->latest_rtk->status_verification->label() ?? '';
                                 $docLabel = $regency->latest_rtk->status_document->label() ?? '';
 
-                                // Logika penentuan warna
-                                $verifColor = match($regency->latest_rtk->status_verification->value) {
-                                    'approved' => 'success',
-                                    'pending' => 'warning',
+                                // Ambil value raw untuk logic penentuan warna
+                                $valVerif = strtolower($regency->latest_rtk->status_verification->value ?? '');
+                                $valDoc = strtolower($regency->latest_rtk->status_document->value ?? '');
+
+                                // Evaluasi penentuan warna Badge
+                                $verifColor = match($valVerif) {
+                                    'approved' => 'success', // Disetujui -> Hijau
+                                    'pending' => 'warning',  // Menunggu Persetujuan -> Kuning
                                     'rejected' => 'danger',
                                     default => 'slate',
                                 };
 
-                                $docColor = match($regency->latest_rtk->status_document->value) {
-                                    'valid' => 'success',
+                                $docColor = match($valDoc) {
+                                    'valid' => 'success',    // Berlaku -> Hijau
                                     'expired' => 'danger',
                                     default => 'slate',
                                 };
@@ -165,31 +172,22 @@
                                 </div>
                             </x-table.td>
 
-                            {{-- Nama Dokumen & Status (Flex Col) --}}
+                            {{-- Nama Dokumen dengan Label RTK Acuan diturunkan ke bawah teks --}}
                             <x-table.td align="left">
                                 @if ($regency->latest_rtk)
-                                    <div class="flex flex-col gap-1.5 py-1">
-                                        <p class="font-bold text-slate-800 text-sm">{{ $regency->latest_rtk->name }}</p>
+                                    <div class="flex flex-col items-start gap-1.5 py-1">
+                                        <p class="font-semibold text-slate-800 leading-snug">{{ $regency->latest_rtk->name }}</p>
                                         
-                                        <div class="flex flex-wrap items-center gap-2 mt-0.5">
-                                            {{-- Badge Verifikasi --}}
-                                            <x-badge :color="$verifColor" :text="$verifLabel" />
-
-                                            {{-- Badge Status Dokumen --}}
-                                            @if($regency->latest_rtk->status_document->value !== 'na')
-                                                <x-badge :color="$docColor" :text="$docLabel" />
-                                            @endif
-
-                                            {{-- Badge RTK Acuan/Berlaku --}}
-                                            @if($regency->latest_rtk->is_active)
+                                        @if($regency->latest_rtk->is_berlaku || $regency->latest_rtk->is_active)
+                                            <div class="mt-0.5">
                                                 <x-badge color="indigo" class="gap-1">
                                                     <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                     </svg>
                                                     RTK Acuan
                                                 </x-badge>
-                                            @endif
-                                        </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 @else
                                     <span class="text-slate-400 italic text-sm">Belum ada dokumen</span>
@@ -206,6 +204,28 @@
                                     </span>
                                 @else
                                     <span class="text-slate-400 italic">-</span>
+                                @endif
+                            </x-table.td>
+
+                            {{-- Status Verifikasi --}}
+                            <x-table.td align="center">
+                                @if ($regency->latest_rtk)
+                                    <x-badge :color="$verifColor" :text="$verifLabel" />
+                                @else
+                                    <x-badge color="slate" text="Belum ada verifikasi" />
+                                @endif
+                            </x-table.td>
+
+                            {{-- Status Berlaku Dokumen --}}
+                            <x-table.td align="center">
+                                @if ($regency->latest_rtk)
+                                    @if($valDoc !== 'na')
+                                        <x-badge :color="$docColor" :text="$docLabel" />
+                                    @else
+                                        <x-badge color="slate" text="N/A" />
+                                    @endif
+                                @else
+                                    <x-badge color="slate" text="Belum ada status dokumen" />
                                 @endif
                             </x-table.td>
 
@@ -271,7 +291,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <x-table.td colspan="7" align="center" class="py-12">
+                            <x-table.td colspan="9" align="center" class="py-12">
                                 <p class="text-sm text-slate-500">Tidak ada data provinsi</p>
                             </x-table.td>
                         </tr>
