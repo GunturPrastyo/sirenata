@@ -112,7 +112,8 @@
                                 <span class="text-slate-600">{{ $rtkn->start_date }} - {{ $rtkn->end_date }}</span>
                             </x-table.td>
                             <x-table.td>
-                                <x-badge color="{{ $rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED ? 'success' : ($rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING ? 'indigo' : 'red') }}" :text="$rtkn->status_verification->label()" />
+                                {{-- PERBAIKAN: Mengganti 'indigo' menjadi 'warning' --}}
+                                <x-badge color="{{ $rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED ? 'success' : ($rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING ? 'warning' : 'red') }}" :text="$rtkn->status_verification->label()" />
                             </x-table.td>
                             <x-table.td>
                                 <x-badge color="{{ $rtkn->status_document === \Modules\RTK\Enums\StatusDocument::VALID ? 'success' : ($rtkn->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED ? 'red' : 'slate') }}" :text="$rtkn->status_document->label()" />
