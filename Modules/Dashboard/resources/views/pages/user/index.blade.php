@@ -131,36 +131,15 @@
                     <div
                         class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm flex flex-col flex-1 transition-shadow hover:shadow-md">
 
-                        <!-- PERBAIKAN: Background diubah menjadi #cbd5e1 -->
-                        <div
-                            class="h-36 sm:h-40 bg-[#cbd5e1] relative flex items-center justify-center overflow-hidden shrink-0">
-                            @if (isset($lastCourse->category_name))
-                                <span
-                                    class="absolute top-4 left-4 px-3 py-1.5 text-[10px] font-extrabold rounded-full bg-[#13416B] text-[#cbd5e1] border border-[#0f3354] uppercase tracking-wider shadow-md z-10">
-                                    {{ $lastCourse->category_name }}
-                                </span>
-                            @endif
-
-                            @php
-                                $words = explode(' ', $lastCourse->name);
-                                $initials = '';
-                                foreach (array_slice($words, 0, 2) as $w) {
-                                    $initials .= strtoupper(substr($w, 0, 1));
-                                }
-                                if (strlen($initials) < 2) {
-                                    $initials = substr(strtoupper($lastCourse->name), 0, 2);
-                                }
-                            @endphp
-                            <!-- PERBAIKAN: Warna teks inisial diubah menjadi #13416B -->
-                            <h2 class="text-[64px] font-bold text-[#13416B] leading-none tracking-tight relative z-10"
-                                style="font-family: Arial, sans-serif;">
-                                {{ $initials }}
-                            </h2>
-                        </div>
-
-                        <!-- Body & Deskripsi -->
+                        <!-- Body & Deskripsi (Thumbnail Dihilangkan) -->
                         <div class="p-5 sm:p-6 flex flex-col flex-1">
-                            <p class="text-xs font-bold text-[#13416B] uppercase tracking-wider mb-2">Aktivitas Terakhir
+                            <p class="text-xs font-bold text-[#13416B] uppercase tracking-wider mb-2 flex justify-between items-center">
+                                <span>Aktivitas Terakhir</span>
+                                @if (isset($lastCourse->category_name))
+                                    <span class="px-2 py-0.5 text-[10px] font-extrabold rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+                                        {{ $lastCourse->category_name }}
+                                    </span>
+                                @endif
                             </p>
                             <h3 class="text-lg sm:text-xl font-bold text-slate-800 mb-2 leading-snug line-clamp-2">
                                 {{ $lastCourse->name }}
@@ -229,7 +208,6 @@
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
                             class="block bg-white border border-slate-200 rounded-lg p-3.5 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group">
                             <div class="flex items-start gap-3.5">
-                                <!-- PERBAIKAN: Background diubah menjadi #cbd5e1 -->
                                 <div
                                     class="w-14 h-14 bg-[#cbd5e1] rounded-lg flex items-center justify-center shrink-0 mt-1 shadow-inner relative overflow-hidden">
                                     @php
@@ -242,7 +220,6 @@
                                             $initials = substr(strtoupper($course->name), 0, 2);
                                         }
                                     @endphp
-                                    <!-- PERBAIKAN: Warna teks inisial diubah menjadi #13416B -->
                                     <span class="text-xl font-bold tracking-tight text-[#13416B] relative z-10"
                                         style="font-family: Arial, sans-serif;">{{ $initials }}</span>
                                 </div>
