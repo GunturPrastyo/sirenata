@@ -200,10 +200,7 @@
 
             <!-- Kiri: Teks & CTA -->
             <div class="reveal-left">
-                <span
-                    class="inline-block py-1.5 px-4 rounded-full bg-[#13416B]/10 text-[#13416B] font-bold text-xs tracking-wider uppercase mb-5 border border-[#13416B]/20">
-                    Platform Perencanaan Terpadu
-                </span>
+              
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.15] mb-6">
                     Masa Depan <span class="text-[#13416B]">Ketenagakerjaan</span> Dimulai di Sini.
                 </h1>

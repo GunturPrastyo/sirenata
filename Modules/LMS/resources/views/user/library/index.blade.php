@@ -28,9 +28,7 @@
             
             <!-- Sisi Kiri: Teks Utama -->
             <div class="relative z-20 w-full sm:w-[55%] lg:w-[60%] order-1 text-left">
-                <span class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-md text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-blue-100 border border-white/10 mb-5 shadow-sm">
-                    Pusat Sumber Belajar
-                </span>
+             
                 <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
                     Koleksi Pustaka & Referensi
                 </h1>
