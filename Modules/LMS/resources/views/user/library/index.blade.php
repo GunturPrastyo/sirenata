@@ -53,7 +53,7 @@
                 <!-- Gambar Ilustrasi Orang -->
                 <img src="{{ asset('images/ilustrasi1.webp') }}" 
                      alt="Ilustrasi Menunjuk" 
-                     class="w-52 sm:w-64 lg:w-72 -mb-8 sm:-mb-10 lg:-mb-11.5 relative z-20 drop-shadow-[0_15px_25px_rgba(0,0,0,0.4)] pointer-events-none object-contain transition-transform duration-500 hover:scale-105"
+                     class="w-52 sm:w-64 lg:w-72 -mb-8 sm:-mb-10 lg:-mb-12 lg:mr-2 relative z-20 drop-shadow-[0_15px_25px_rgba(0,0,0,0.4)] pointer-events-none object-contain transition-transform duration-500 hover:scale-105"
                      onerror="this.style.display='none'"> 
                      
                 <!-- Papan "Card" Total Koleksi -->

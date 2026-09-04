@@ -127,7 +127,7 @@
                                 </div>
 
                                 <div class="w-full py-2.5 text-xs font-bold text-center rounded-xl transition-colors bg-slate-50 text-slate-700 border border-slate-200 group-hover:bg-[#13416B] group-hover:text-white group-hover:border-[#13416B]">
-                                    Lanjutkan Modul <i class="fas fa-arrow-right ml-1"></i>
+                                    Lanjutkan Modul 
                                 </div>
                             </div>
                         </div>

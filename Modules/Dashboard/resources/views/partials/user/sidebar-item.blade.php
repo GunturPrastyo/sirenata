@@ -62,17 +62,18 @@
     </li>
 
     <!-- Kalkulator RTK -->
-    @php $isKalkulator = request()->routeIs('user.kalkulator.sandbox'); @endphp
+  @php $isKalkulator = request()->routeIs('user.kalkulator.sandbox'); @endphp
     <li class="flex-1 lg:flex-none">
         <a href="{{ route('user.kalkulator.sandbox') }}" target="_blank"
             class="relative flex flex-col lg:flex-row items-center justify-center lg:justify-start px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-xl transition-all duration-300 group {{ $isKalkulator ? 'text-[#13416B] font-bold lg:bg-[#13416B]/5' : 'text-slate-400 lg:text-slate-500 hover:text-[#13416B] lg:hover:bg-slate-50' }}">
             
             <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 shrink-0 transition duration-200 {{ $isKalkulator ? 'text-[#13416B]' : 'group-hover:text-[#13416B]' }}" 
                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                fill="{{ $isKalkulator ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $isKalkulator ? '1' : '2' }}">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4m8-4h.01M12 16h.01M16 12h.01M8 12h.01" />
+                fill="{{ $isKalkulator ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $isKalkulator ? '0.5' : '1.5' }}">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h8M16 14v4M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01" />
             </svg>
-            <span class="text-[9px] sm:text-[11px] lg:text-sm mt-1 sm:mt-1.5 lg:mt-0 lg:ms-3 text-center lg:text-left line-clamp-1 flex justify-center lg:justify-start items-center gap-1">Kalkulator</span>
+            <span class="text-[9px] sm:text-[11px] lg:text-sm mt-1 sm:mt-1.5 lg:mt-0 lg:ms-3 text-center lg:text-left line-clamp-1 flex justify-center lg:justify-start items-center gap-1">Penghitungan RTK</span>
         </a>
     </li>
 
