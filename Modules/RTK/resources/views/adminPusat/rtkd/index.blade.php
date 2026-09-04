@@ -148,10 +148,10 @@
                                 @endif
                             </x-table.td>
 
-                            {{-- Status Verifikasi --}}
+                            {{-- Status Verifikasi (Warna diganti dari indigo ke warning) --}}
                             <x-table.td align="center" class="align-top pt-4">
                                 @if ($province->latest_rtk)
-                                    <x-badge color="{{ $province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED ? 'success' : ($province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING ? 'indigo' : 'red') }}" :text="$province->latest_rtk->status_verification_label" />
+                                    <x-badge color="{{ $province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED ? 'success' : ($province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING ? 'warning' : 'red') }}" :text="$province->latest_rtk->status_verification_label" />
                                 @else
                                     <x-badge color="slate" text="Belum ada verifikasi" />
                                 @endif
