@@ -1,5 +1,6 @@
 <x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah ">
     @php
+        // Helper warna jika ingin dipakai global
         $getBadgeColor = function($colorClass) {
             if (str_contains($colorClass, 'yellow') || str_contains($colorClass, 'amber') || str_contains($colorClass, 'warning')) return 'warning';
             if (str_contains($colorClass, 'green') || str_contains($colorClass, 'emerald') || str_contains($colorClass, 'success')) return 'success';
@@ -102,10 +103,9 @@
                     <tr>
                         <x-table.th align="center" class="w-16">No</x-table.th>
                         <x-table.th align="left" class="w-48">Instansi (Kab/Kota)</x-table.th>
-                        <x-table.th align="left">Nama Dokumen</x-table.th>
+                        {{-- Header disatukan --}}
+                        <x-table.th align="left">Dokumen RTK & Status</x-table.th>
                         <x-table.th align="left" class="w-40">Periode Berlaku</x-table.th>
-                        <x-table.th align="center" class="w-36">Status Verifikasi</x-table.th>
-                        <x-table.th align="center" class="w-48">Status Berlaku Dokumen</x-table.th>
                         <x-table.th align="left" class="w-48">Disetujui Oleh</x-table.th>
                         <x-table.th align="left" class="w-40">Tanggal Diverifikasi</x-table.th>
                         <x-table.th align="center" class="w-24">Aksi</x-table.th>
@@ -114,6 +114,33 @@
 
                 <tbody class="divide-y divide-slate-200">
                     @forelse ($rtkds as $key => $regency)
+                        @php
+                            $verifColor = 'slate';
+                            $docColor = 'slate';
+                            $verifLabel = '';
+                            $docLabel = '';
+
+                            if ($regency->latest_rtk) {
+                                // Memanggil label enum dengan benar
+                                $verifLabel = $regency->latest_rtk->status_verification->label() ?? '';
+                                $docLabel = $regency->latest_rtk->status_document->label() ?? '';
+
+                                // Logika penentuan warna
+                                $verifColor = match($regency->latest_rtk->status_verification->value) {
+                                    'approved' => 'success',
+                                    'pending' => 'warning',
+                                    'rejected' => 'danger',
+                                    default => 'slate',
+                                };
+
+                                $docColor = match($regency->latest_rtk->status_document->value) {
+                                    'valid' => 'success',
+                                    'expired' => 'danger',
+                                    default => 'slate',
+                                };
+                            }
+                        @endphp
+
                         <tr>
                             <x-table.td align="center">
                                 {{ $key + $rtkds->firstItem() }}
@@ -138,62 +165,47 @@
                                 </div>
                             </x-table.td>
 
-                            {{-- Nama Dokumen --}}
+                            {{-- Nama Dokumen & Status (Flex Col) --}}
                             <x-table.td align="left">
                                 @if ($regency->latest_rtk)
-                                    <div class="flex items-center gap-2">
-                                        <p class="font-semibold text-slate-700">{{ $regency->latest_rtk->name }}</p>
-                                        {{-- Badge RTK Berlaku --}}
-                                        @if($regency->latest_rtk->is_berlaku)
-                                            <x-badge variant="success" class="gap-1">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                </svg>
-                                                Berlaku
-                                            </x-badge>
-                                        @endif
+                                    <div class="flex flex-col gap-1.5 py-1">
+                                        <p class="font-bold text-slate-800 text-sm">{{ $regency->latest_rtk->name }}</p>
+                                        
+                                        <div class="flex flex-wrap items-center gap-2 mt-0.5">
+                                            {{-- Badge Verifikasi --}}
+                                            <x-badge :color="$verifColor" :text="$verifLabel" />
+
+                                            {{-- Badge Status Dokumen --}}
+                                            @if($regency->latest_rtk->status_document->value !== 'na')
+                                                <x-badge :color="$docColor" :text="$docLabel" />
+                                            @endif
+
+                                            {{-- Badge RTK Acuan/Berlaku --}}
+                                            @if($regency->latest_rtk->is_active)
+                                                <x-badge color="indigo" class="gap-1">
+                                                    <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    RTK Acuan
+                                                </x-badge>
+                                            @endif
+                                        </div>
                                     </div>
                                 @else
-                                    <span class="text-slate-400 italic">Belum ada dokumen</span>
+                                    <span class="text-slate-400 italic text-sm">Belum ada dokumen</span>
                                 @endif
                             </x-table.td>
 
                             {{-- Periode --}}
                             <x-table.td align="left">
                                 @if ($regency->latest_rtk)
-                                    <span class="text-slate-600">
+                                    <span class="text-slate-600 font-medium">
                                         {{ $regency->latest_rtk->start_date }}
                                         <span class="mx-1 text-slate-400">–</span>
                                         {{ $regency->latest_rtk->end_date }}
                                     </span>
                                 @else
                                     <span class="text-slate-400 italic">-</span>
-                                @endif
-                            </x-table.td>
-
-                            {{-- Status Verifikasi --}}
-                            <x-table.td align="center">
-                                @if ($regency->latest_rtk)
-                                    <x-badge variant="{{ $getBadgeColor($regency->latest_rtk->status_verification_color) }}">
-                                        {{ $regency->latest_rtk->status_verification_label }}
-                                    </x-badge>
-                                @else
-                                    <x-badge variant="slate">
-                                        Belum ada verifikasi
-                                    </x-badge>
-                                @endif
-                            </x-table.td>
-
-                            {{-- Status Dokumen --}}
-                            <x-table.td align="center">
-                                @if ($regency->latest_rtk)
-                                    <x-badge variant="{{ $getBadgeColor($regency->latest_rtk->status_document_color) }}">
-                                        {{ $regency->latest_rtk->status_document_label }}
-                                    </x-badge>
-                                @else
-                                    <x-badge variant="slate">
-                                        Belum ada status dokumen
-                                    </x-badge>
                                 @endif
                             </x-table.td>
 
@@ -244,21 +256,14 @@
                                                     @endif
                                                 </div>
                                                 <x-slot:footer>
-                                                    <x-button
+                                                    <button
                                                         @click="$dispatch('close-modal', 'open-document-kab-kota-{{ $regency->code }}')"
-                                                        variant="white"
+                                                        class="inline-flex items-center justify-center px-4 cursor-pointer py-2 text-sm font-medium tracking-wide transition-colors duration-100 rounded-md text-neutral-500 bg-neutral-50 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-100 hover:text-neutral-600 hover:bg-neutral-100"
                                                     >
                                                         Close
-                                                    </x-button>
+                                                    </button>
                                                 </x-slot:footer>
                                             </x-modal>
-                                        </li>
-                                    @else
-                                        <li>
-                                            <span
-                                                class="inline-flex items-center w-full p-2 text-slate-400 italic text-xs cursor-default">
-                                                Belum ada dokumen
-                                            </span>
                                         </li>
                                     @endif
                                 </x-table.action>
@@ -266,7 +271,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <x-table.td colspan="9" align="center" class="py-12">
+                            <x-table.td colspan="7" align="center" class="py-12">
                                 <p class="text-sm text-slate-500">Tidak ada data provinsi</p>
                             </x-table.td>
                         </tr>
