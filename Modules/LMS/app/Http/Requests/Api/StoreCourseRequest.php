@@ -9,12 +9,13 @@ class StoreCourseRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      */
-    public function rules(): array
+  public function rules(): array
     {
         return [
             'category_id' => ['required', 'exists:categories,id'],
             'name'        => ['required', 'string', 'max:255'],
-            'thumbnail'   => ['required', 'image',  'mimes:png,jpg', 'max:2048'],
+       
+            'thumbnail'   => ['nullable', 'image',  'mimes:png,jpg', 'max:2048'], 
             'description' => ['required', 'string'],
         ];
     }
