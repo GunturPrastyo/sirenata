@@ -349,15 +349,15 @@
                                             <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 rounded-xl border border-slate-200 bg-white hover:border-[#13416B]/40 hover:shadow-sm transition-all duration-200 gap-3 sm:gap-4">
                                                 <div class="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
                                                     @if (!empty($videoUrlRaw))
-                                                        <span class="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 shrink-0 border border-blue-100 mt-0.5 sm:mt-0">
+                                                        <span class="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-blue-50 text-blue-600 shrink-0 border border-blue-100  mt-0.5 sm:mt-0">
                                                             <i class="fas fa-play text-sm"></i>
                                                         </span>
                                                     @elseif(!empty($documentUrlRaw))
-                                                        <span class="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 shrink-0 border border-blue-100 mt-0.5 sm:mt-0">
+                                                        <span class="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-blue-50 text-blue-600 shrink-0  border border-blue-100 mt-0.5 sm:mt-0">
                                                             <i class="fas fa-file-pdf text-lg"></i>
                                                         </span>
                                                     @else
-                                                        <span class="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 shrink-0 border border-blue-100 mt-0.5 sm:mt-0">
+                                                        <span class="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-blue-50 text-blue-600 shrink-0 border border-blue-100 mt-0.5 sm:mt-0">
                                                             <i class="fas fa-file-alt text-lg"></i>
                                                         </span>
                                                     @endif
@@ -368,11 +368,11 @@
                                                         </p>
                                                         <div class="mt-2 flex items-center gap-1.5">
                                                             @if ($isContentItemCompleted)
-                                                                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                                                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
                                                                     <i class="fas fa-check"></i> Selesai
                                                                 </span>
                                                             @else
-                                                                <span class="inline-flex items-center text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                                                <span class="inline-flex items-center text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
                                                                     Belum Selesai
                                                                 </span>
                                                             @endif
