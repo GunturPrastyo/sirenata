@@ -8,9 +8,10 @@ use Modules\LMS\Services\SectionContentService;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Support\Facades\Log;
 
-// Import Model yang dibutuhkan untuk halaman Create
+// Import Model yang dibutuhkan
 use Modules\LMS\Models\Course;
 use Modules\LMS\Models\CourseSection;
+use Modules\LMS\Models\SectionContent;
 
 class SectionContentController extends Controller
 {
@@ -29,15 +30,12 @@ class SectionContentController extends Controller
      */
     public function create(Request $request)
     {
-        // 1. Tangkap parameter dari URL (query string)
         $courseSlug = $request->query('course_slug');
         $sectionId = $request->query('section_id');
 
-        // 2. Ambil data Course dan Section dari database
         $course = Course::where('slug', $courseSlug)->firstOrFail();
         $section = CourseSection::findOrFail($sectionId);
 
-        // 3. Arahkan ke view yang benar dan kirim datanya
         return view('lms::admin-pusat.section-content.create', compact('course', 'section'));
     }
 
@@ -47,7 +45,6 @@ class SectionContentController extends Controller
     public function store(Request $request)
     {
         try {
-            // Tambahkan validasi content_text
             $validated = $request->validate([
                 'course_slug'       => 'required|string',
                 'course_section_id' => 'required|string',
@@ -57,9 +54,6 @@ class SectionContentController extends Controller
                 'content_text'      => 'nullable|string',
             ]);
 
-            $token = (string) session('api_token', '');
-
-            // Tambahkan content_text ke payload API
             $payload = [
                 'course_section_id' => $validated['course_section_id'],
                 'name'              => $validated['name'],
@@ -69,8 +63,8 @@ class SectionContentController extends Controller
 
             $documentFile = $request->file('document');
 
-            // 3. Panggil service
-            $result = $this->sectionContentService->storeSectionContent($token, $payload, file: $documentFile);
+            // Panggil service tanpa token API
+            $result = $this->sectionContentService->storeSectionContent($payload, $documentFile);
 
             if (!$result['success']) {
                 ToastMagic::error($result['message']);
@@ -88,45 +82,41 @@ class SectionContentController extends Controller
     /**
      * Show the specified resource.
      */
-    public function show(Request $request, $id)
+    public function show(Request $request, string $id)
     {
-        // 1. Ambil course_slug dari parameter URL (dikirim via href)
         $courseSlug = $request->query('course_slug');
         if (!$courseSlug) {
             abort(404, 'Course Slug tidak ditemukan.');
         }
 
-        // 2. Ambil data Course
-        $course = \Modules\LMS\Models\Course::where('slug', $courseSlug)->firstOrFail();
+        $course = Course::where('slug', $courseSlug)->firstOrFail();
+        $content = SectionContent::with('section')->findOrFail($id);
 
-        // 3. Ambil data Content (Materi) beserta relasi Section-nya
-        $content = \Modules\LMS\Models\SectionContent::with('section')->findOrFail($id);
-
-        // 4. Kirim ke view
         return view('lms::admin-pusat.section-content.show', compact('course', 'content'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, $id)
+    public function edit(Request $request, string $id)
     {
         $courseSlug = $request->query('course_slug');
         if (!$courseSlug) {
             abort(404, 'Course Slug tidak ditemukan.');
         }
 
-        // Ambil data Course dan Content
-        $course = \Modules\LMS\Models\Course::where('slug', $courseSlug)->firstOrFail();
-        $content = \Modules\LMS\Models\SectionContent::with('section')->findOrFail($id);
+        $course = Course::where('slug', $courseSlug)->firstOrFail();
+        $content = SectionContent::with('section')->findOrFail($id);
 
         return view('lms::admin-pusat.section-content.edit', compact('course', 'content'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
     {
         try {
-            // Tambahkan validasi content_text untuk update
             $validated = $request->validate([
                 'course_slug'  => 'required|string',
                 'name'         => 'required|string|max:255',
@@ -135,19 +125,19 @@ class SectionContentController extends Controller
                 'content_text' => 'nullable|string',
             ]);
 
-            $token = (string) session('api_token', '');
-
             $payload = [
                 'name'         => $validated['name'],
                 'video'        => $validated['video'] ?? null,
                 'content_text' => $validated['content_text'] ?? null,
             ];
 
-            // Ambil file jika ada
             $documentFile = $request->file('document');
 
-            $result = $this->sectionContentService->updateContent(token: $token, contentId: $id, data: $payload, file: $documentFile);
+            // Panggil service tanpa token API dan argumen parameter yang bersih
+            $result = $this->sectionContentService->updateContent($id, $payload, $documentFile);
+            
             Log::info('SectionContentController::update result', ['result' => $result]);
+            
             if (!$result['success']) {
                 ToastMagic::error($result['message']);
                 return redirect()->back()->withInput();
@@ -161,20 +151,18 @@ class SectionContentController extends Controller
         }
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             $request->validate([
                 'course_slug' => 'required|string'
             ]);
 
-            $token = (string) session('api_token', '');
-
-            $result = $this->sectionContentService->deleteContent($token, $id);
+            // Panggil service tanpa token API
+            $result = $this->sectionContentService->deleteContent($id);
 
             if (!$result['success']) {
                 ToastMagic::error($result['message']);
@@ -183,7 +171,6 @@ class SectionContentController extends Controller
 
             ToastMagic::success($result['message']);
 
-            // Redirect kembali ke halaman show course menggunakan slug
             return redirect()->route('admin-pusat.management-course.courses.show', $request->course_slug);
         } catch (\Exception $e) {
             ToastMagic::error('Terjadi kesalahan saat menghapus materi: ' . $e->getMessage());

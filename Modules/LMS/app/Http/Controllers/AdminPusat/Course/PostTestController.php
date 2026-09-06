@@ -37,10 +37,11 @@ class PostTestController extends Controller
             'questions'                   => 'required|array|min:1',
             'questions.*.question'        => 'required|string',
             'questions.*.choices'         => 'required|array|min:2',
-            'questions.*.choices.*'       => 'required|string', // PERBAIKAN: Pastikan setiap opsi pilihan bukan null
-            'questions.*.correct_choice'  => 'required|integer', // PERBAIKAN: Pastikan format index benar
+            'questions.*.choices.*'       => 'required|string',
+            'questions.*.correct_choice'  => 'required|integer',
         ]);
 
+        // Langsung panggil service internal tanpa token API
         $result = $this->postTestService->storePostTestWithQuestions($validated);
 
         if (!$result['success']) {
@@ -91,13 +92,13 @@ class PostTestController extends Controller
             'questions'                   => 'required|array|min:1',
             'questions.*.question'        => 'required|string',
             'questions.*.choices'         => 'required|array|min:2',
-            'questions.*.choices.*'       => 'required|string', // PERBAIKAN
-            'questions.*.correct_choice'  => 'required|integer', // PERBAIKAN
+            'questions.*.choices.*'       => 'required|string',
+            'questions.*.correct_choice'  => 'required|integer',
         ]);
 
         $postTest = \Modules\LMS\Models\PostTest::findOrFail($id);
 
-        // Panggil service untuk mengupdate post test beserta soalnya
+        // Panggil service internal untuk update
         $result = $this->postTestService->updatePostTestWithQuestions($postTest, $validated);
 
         if (!$result['success']) {
@@ -111,16 +112,12 @@ class PostTestController extends Controller
 
     public function uploadImage(Request $request)
     {
-        // Validasi gambar
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Maksimal 2MB
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
-            // Gambar akan disimpan di folder storage/app/public/post-test-images
             $path = $request->file('image')->store('post-test-images', 'public');
-            
-            // Kembalikan URL asli agar disisipkan oleh Quill.js
             return response()->json([
                 'success' => true,
                 'url' => asset('storage/' . $path) 

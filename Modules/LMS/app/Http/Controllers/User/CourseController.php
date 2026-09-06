@@ -28,17 +28,16 @@ class CourseController extends Controller
 
     public function allMyCourse(Request $request)
     {
-        $token = (string) session('api_token', '');
-
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        $result = $this->courseService->myCourses(token: $token, page: $page, perPage: $perPage);
+        
+        // Panggil service tanpa token
+        $result = $this->courseService->myCourses(page: $page, perPage: $perPage);
 
         $courses = collect($result['data'])->map(function ($item) {
             $courseObj = (object) $item;
             $slug = $courseObj->slug ?? null;
 
-            // Inisialisasi default
             $courseObj->total_modul = 0;
             $courseObj->total_materi = 0;
 
@@ -49,7 +48,6 @@ class CourseController extends Controller
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
                     $courseObj->thumbnail_url = $dbCourse->thumbnail_url ?? $courseObj->thumbnail_url;
                     
-                    // Hitung Modul & Materi dari Database Lokal
                     $sectionIds = $dbCourse->sections()->pluck('id');
                     $courseObj->total_modul = $sectionIds->count();
                     $courseObj->total_materi = \Modules\LMS\Models\SectionContent::whereIn('course_section_id', $sectionIds)->count();
@@ -69,11 +67,11 @@ class CourseController extends Controller
 
     public function myCourseProgress(Request $request)
     {
-        $token = (string) session('api_token', '');
-
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        $result = $this->courseService->myCourses(token: $token, page: $page, perPage: $perPage, status: self::IN_PROGRESS);
+        
+        // Panggil service tanpa token
+        $result = $this->courseService->myCourses(page: $page, perPage: $perPage, status: self::IN_PROGRESS);
 
         $courses = collect($result['data'])->map(function ($item) {
             $courseObj = (object) $item;
@@ -108,11 +106,11 @@ class CourseController extends Controller
 
     public function myCourseFinish(Request $request)
     {
-        $token = (string) session('api_token', '');
-
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        $result = $this->courseService->myCourses(token: $token, page: $page, perPage: $perPage, status: self::COMPLETED);
+        
+        // Panggil service tanpa token
+        $result = $this->courseService->myCourses(page: $page, perPage: $perPage, status: self::COMPLETED);
 
         $courses = collect($result['data'])->map(function ($item) {
             $courseObj = (object) $item;
@@ -147,20 +145,17 @@ class CourseController extends Controller
 
     public function myCourseDetail(string $slug)
     {
-        $token = (string) session('api_token', '');
+        // Panggil service tanpa token dan tangkap objek model secara utuh agar relasi sections/contents tidak terputus
+        $result = $this->courseService->getCourseDetailSlug($slug);
+        $course = $result['data'] ?? null;
 
-        $result = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
-        $apiCourseData = $result['data'] ?? [];
-        $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
-
-        if ($dbCourse) {
-            $apiCourseData['description']   = $dbCourse->description;
-            $apiCourseData['category']      = $dbCourse->category ? $dbCourse->category->toArray() : null;
-            $apiCourseData['thumbnail_url'] = $dbCourse->thumbnail_url;
-            $apiCourseData['course_name']   = $dbCourse->name;
+        if (!$course) {
+            abort(404, 'Course tidak ditemukan');
         }
 
-        $course = json_decode(json_encode($apiCourseData));
+        // Perkaya properti tanpa mengubah struktur relasi objek
+        $course->course_name = $course->name;
+        $course->thumbnail_url = $course->thumbnail ? Storage::url($course->thumbnail) : null;
 
         return view('lms::user.course.my-course-detail', [
             'course'  => $course,
@@ -278,16 +273,13 @@ class CourseController extends Controller
 
     public function showContent(string $slug, string $contentId)
     {
-        $token = (string) session('api_token', '');
+        $result = $this->courseService->getCourseDetailSlug($slug);
+        $course = $result['data'] ?? null;
 
-        $result = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
-        $apiCourseData = $result['data'] ?? [];
-
-        $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
-        if ($dbCourse) {
-            $apiCourseData['course_name'] = $dbCourse->name;
+        if ($course) {
+            $course->course_name = $course->name;
+            $course->thumbnail_url = $course->thumbnail ? Storage::url($course->thumbnail) : null;
         }
-        $course = json_decode(json_encode($apiCourseData));
 
         $content = \Modules\LMS\Models\SectionContent::findOrFail($contentId);
 
@@ -374,15 +366,13 @@ class CourseController extends Controller
 
     public function showTest(\Illuminate\Http\Request $request, string $slug, string $postTestId)
     {
-        $token = (string) session('api_token', '');
+        $resultData = $this->courseService->getCourseDetailSlug($slug);
+        $course = $resultData['data'] ?? null;
 
-        $resultData = $this->courseService->getCourseDetailSlug(token: $token, slug: $slug);
-        $apiCourseData = $resultData['data'] ?? [];
-        $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
-        if ($dbCourse) {
-            $apiCourseData['course_name'] = $dbCourse->name;
+        if ($course) {
+            $course->course_name = $course->name;
+            $course->thumbnail_url = $course->thumbnail ? Storage::url($course->thumbnail) : null;
         }
-        $course = json_decode(json_encode($apiCourseData));
 
         $postTest = \Modules\LMS\Models\PostTest::with('questions.choices')->findOrFail($postTestId);
 

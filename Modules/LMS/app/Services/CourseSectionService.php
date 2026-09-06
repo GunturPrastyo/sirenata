@@ -3,52 +3,42 @@
 namespace Modules\LMS\Services;
 
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
+use Modules\LMS\Models\Course;
+use Modules\LMS\Models\CourseSection;
 
 class CourseSectionService
 {
-    private string $baseUrl;
-
-    public function __construct()
-    {
-        $this->baseUrl = (string) config('lms.api_url', 'https://e-learning.test/api/v1');
-    }
-
     /**
-     * Store/Post Data Course Section Api Admin Pusat
+     * Menyimpan data Course Section langsung ke database Monolith
      */
-    public function storeCourseSection(string $token, array $data): array
+    public function storeCourseSection(array $data): array
     {
         try {
-            $client = Http::withToken($token)
-                ->acceptJson()
-                ->timeout(15);
+            // 1. Cari course berdasarkan slug
+            $course = Course::where('slug', $data['slug'])->first();
 
-            // POST request ke endpoint {slug}/sections
-            $response = $client->post("{$this->baseUrl}/courses/{$data['slug']}/sections", $data);
-
-            if ($response->failed()) {
-                $errorData = $response->json();
-
-                Log::error('Failed to store course section', [
-                    'status' => $response->status(),
-                    'body'   => $errorData ?? $response->body(),
-                ]);
-
-                $errorMessage = $errorData['message'] ?? 'Terjadi kesalahan di server API';
-
+            if (!$course) {
                 return [
                     'success' => false,
-                    'message' => 'Gagal: ' . $errorMessage,
-                    'data'    => [],
+                    'message' => 'Course tidak ditemukan di database.',
                 ];
             }
 
-            $responseData = $response->json();
+            // 2. Tentukan posisi/urutan bagian (opsional tapi disarankan agar rapi)
+            $maxPosition = CourseSection::where('course_id', $course->id)->max('position') ?? 0;
+
+            // 3. Simpan langsung ke database melalui model
+            $section = CourseSection::create([
+                'course_id'   => $course->id,
+                'name'        => $data['name'],
+                'description' => $data['description'] ?? null,
+                'position'    => $maxPosition + 1, // Agar bagian baru selalu ada di urutan bawah
+            ]);
+
             return [
                 'success' => true,
-                'message' => $responseData['message'] ?? 'Course section berhasil ditambahkan',
-                'data'    => $responseData['result'] ?? [],
+                'message' => 'Bagian materi berhasil ditambahkan',
+                'data'    => $section,
             ];
         } catch (\Exception $e) {
             Log::error('CourseSectionService::storeCourseSection error', [
@@ -57,7 +47,7 @@ class CourseSectionService
 
             return [
                 'success' => false,
-                'message' => 'Terjadi kesalahan sistem saat menyimpan data',
+                'message' => 'Terjadi kesalahan sistem saat menyimpan data: ' . $e->getMessage(),
                 'data'    => [],
             ];
         }

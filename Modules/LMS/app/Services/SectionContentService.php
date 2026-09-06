@@ -10,10 +10,8 @@ class SectionContentService
 {
     /**
      * Store Data Section Content langsung ke Database menggunakan Eloquent
-     * Parameter $token tetap dibiarkan agar tidak membuat error pada Controller yang sudah ada, 
-     * meski tidak lagi digunakan.
      */
-    public function storeSectionContent(string $token, array $data, $file = null): array
+    public function storeSectionContent(array $data, $file = null): array
     {
         try {
             $documentPath = null;
@@ -58,7 +56,7 @@ class SectionContentService
     /**
      * Update Data Content langsung ke Database
      */
-    public function updateContent(string $token, string $contentId, array $data, $file = null): array
+    public function updateContent(string $contentId, array $data, $file = null): array
     {
         try {
             // Cari data materi berdasarkan ID
@@ -103,7 +101,7 @@ class SectionContentService
     /**
      * Delete Data Content langsung dari Database
      */
-    public function deleteContent(string $token, string $contentId): array
+    public function deleteContent(string $contentId): array
     {
         try {
             $content = SectionContent::findOrFail($contentId);

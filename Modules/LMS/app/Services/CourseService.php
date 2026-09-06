@@ -6,24 +6,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Modules\LMS\Models\Course;
 use Modules\User\Enums\InstitutionType;
-use Illuminate\Support\Facades\Http;
 
 class CourseService
 {
     private const DEFAULT_SORT = 'desc';
     private const DEFAULT_LIMIT = 10;
-
-    /**
-     * Base URL API — nanti tinggal ganti ke URL KCLC di .env
-     */
-    private string $baseUrl;
-    public function __construct()
-    {
-        $defaultUrl = request()->getSchemeAndHttpHost() . '/api/v1';
-        $this->baseUrl = (string) config('Lms.api_url', config('lms.api_url', env('LMS_API_URL', $defaultUrl)));
-    }
 
     public function getCoursesForFilter()
     {
@@ -32,6 +22,7 @@ class CourseService
             ->orderBy('name')
             ->get();
     }
+
     public function queryUsersWithEnrollmentsByProvince(
         string $provinceCode,
         string $search = '',
@@ -40,7 +31,7 @@ class CourseService
         return User::query()
             ->inProvince($provinceCode)
             ->provinceInstitution()
-            ->whereHas('enrolledCourses') // wajib punya course
+            ->whereHas('enrolledCourses')
             ->when($courseId, function ($q) use ($courseId) {
                 $q->whereHas('enrolledCourses', function ($sub) use ($courseId) {
                     $sub->where('courses.id', $courseId);
@@ -60,11 +51,7 @@ class CourseService
 
     public function paginateUsersWithEnrollmentsByProvince(string $provinceCode, string $search = '', int $limit = self::DEFAULT_LIMIT, ?string $courseId = null)
     {
-        return $this->queryUsersWithEnrollmentsByProvince(
-            provinceCode: $provinceCode,
-            search: $search,
-            courseId: $courseId,
-        )->paginate($limit)->withQueryString();
+        return $this->queryUsersWithEnrollmentsByProvince($provinceCode, $search, $courseId)->paginate($limit)->withQueryString();
     }
 
     private function baseEnrollmentsByProvinceQuery(
@@ -99,29 +86,14 @@ class CourseService
             ]);
     }
 
-    public function paginateCourseEnrollmentsByProvince(
-        string $provinceCode,
-        ?string $courseId = null,
-        ?string $search = null,
-        int $limit = 10
-    ) {
-        return $this->baseEnrollmentsByProvinceQuery(
-            provinceCode: $provinceCode,
-            courseId: $courseId,
-            search: $search,
-        )->paginate($limit)->withQueryString();
+    public function paginateCourseEnrollmentsByProvince(string $provinceCode, ?string $courseId = null, ?string $search = null, int $limit = 10)
+    {
+        return $this->baseEnrollmentsByProvinceQuery($provinceCode, $courseId, $search)->paginate($limit)->withQueryString();
     }
 
-    public function exportCourseEnrollmentsByProvince(
-        string $provinceCode,
-        ?string $courseId = null,
-        ?string $search = null,
-    ) {
-        return $this->baseEnrollmentsByProvinceQuery(
-            provinceCode: $provinceCode,
-            courseId: $courseId,
-            search: $search,
-        )->orderBy('users.name');
+    public function exportCourseEnrollmentsByProvince(string $provinceCode, ?string $courseId = null, ?string $search = null)
+    {
+        return $this->baseEnrollmentsByProvinceQuery($provinceCode, $courseId, $search)->orderBy('users.name');
     }
 
     public function queryCourseByRegency(string $regencyCode, string $search = '', int $limit = self::DEFAULT_LIMIT, string $sort = self::DEFAULT_SORT)
@@ -144,18 +116,11 @@ class CourseService
 
     public function paginatedCourseByRegency(string $regencyCode, string $search = '', int $limit = self::DEFAULT_LIMIT, string $sort = self::DEFAULT_SORT)
     {
-        return $this->queryCourseByRegency(
-            regencyCode: $regencyCode,
-            search: $search,
-            sort: $sort,
-        )->paginate($limit)->withQueryString();
+        return $this->queryCourseByRegency($regencyCode, $search, $limit, $sort)->paginate($limit)->withQueryString();
     }
 
-    private function baseEnrollmentsByRegencyQuery(
-        string $regencyCode,
-        ?string $courseId = null,
-        ?string $search = null,
-    ) {
+    private function baseEnrollmentsByRegencyQuery(string $regencyCode, ?string $courseId = null, ?string $search = null)
+    {
         return DB::table('course_student')
             ->join('users', 'users.id', '=', 'course_student.user_id')
             ->join('courses', 'courses.id', '=', 'course_student.course_id')
@@ -181,34 +146,19 @@ class CourseService
             ]);
     }
 
-    public function paginateCourseEnrollmentsByRegency(
-        string $regencyCode,
-        ?string $courseId = null,
-        ?string $search = null,
-        int $limit = 10
-    ) {
-        return $this->baseEnrollmentsByRegencyQuery(
-            regencyCode: $regencyCode,
-            courseId: $courseId,
-            search: $search,
-        )->paginate($limit)->withQueryString();
+    public function paginateCourseEnrollmentsByRegency(string $regencyCode, ?string $courseId = null, ?string $search = null, int $limit = 10)
+    {
+        return $this->baseEnrollmentsByRegencyQuery($regencyCode, $courseId, $search)->paginate($limit)->withQueryString();
     }
 
-    public function exportCourseEnrollmentsByRegency(
-        string $regencyCode,
-        ?string $courseId = null,
-        ?string $search = null,
-    ) {
-        return $this->baseEnrollmentsByRegencyQuery(
-            regencyCode: $regencyCode,
-            courseId: $courseId,
-            search: $search,
-        )->orderBy('users.name');
+    public function exportCourseEnrollmentsByRegency(string $regencyCode, ?string $courseId = null, ?string $search = null)
+    {
+        return $this->baseEnrollmentsByRegencyQuery($regencyCode, $courseId, $search)->orderBy('users.name');
     }
 
     public function myCourseStats(): array
     {
-       /** @var User $user */
+        /** @var User $user */
         $user    = Auth::user();
         $courses = $user->enrolledCourses()->get();
         $startedCourses = $courses->where('pivot.progress', '>', 0);
@@ -219,23 +169,13 @@ class CourseService
             'terdaftar'    => $courses->where('pivot.status', 'enrolled')->count(),
             'selesai'      => $courses->where('pivot.status', 'completed')->count(),
             'sertifikat'   => $courses->whereNotNull('pivot.certificate_code')->count(),
-            // 'avg_progress' => $$startedCourses->count() > 0
-            //     ? (int) round($courses->where('pivot.progress', '>', 0)->avg('pivot.progress'))
-            //     : 0,
-            'avg_progress' => $startedCourses->count() > 0
-                ? (int) round($startedCourses->avg('pivot.progress'))
-                : 0,
+            'avg_progress' => $startedCourses->count() > 0 ? (int) round($startedCourses->avg('pivot.progress')) : 0,
         ];
     }
 
-    /**
-     * Ambil course terakhir yang diakses user
-     * berdasarkan updated_at di pivot course_student
-     */
     public function getLastAccessedCourse(): ?object
     {
-
-       /** @var User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         $course = $user->enrolledCourses()
@@ -253,13 +193,8 @@ class CourseService
         ];
     }
 
-
-    /**
-     * Ambil 3 course terbaru yang sedang diikuti user
-     */
     public function getRecentCourses(int $limit = 3): \Illuminate\Support\Collection
     {
-
         /** @var User $user */
         $user = Auth::user();
 
@@ -271,50 +206,52 @@ class CourseService
     }
 
     /**
-     * Ambil course yang diikuti user yang sedang login
-     * Saat ini fetch dari API sendiri, nanti diganti API KCLC
+     * Ambil course yang diikuti user (Pengganti myCourses API)
      */
-    public function myCourses(string $token, int $page = 1, int $perPage = 12, ?string $status = null): array
+    public function myCourses(int $page = 1, int $perPage = 12, ?string $status = null): array
     {
         try {
-            $response = Http::withoutVerifying()
-                ->withToken($token)
-                ->timeout(10)
-                ->get("{$this->baseUrl}/my-courses", [
-                    'status'        => $status,
-                    'page'          => $page,
-                    'row_per_page'  => $perPage,
-                ]);
+            /** @var User $user */
+            $user = Auth::user();
 
-            if ($response->failed()) {
-                Log::error('Failed to fetch my courses', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
-                ]);
+            $query = $user->enrolledCourses()->with('category');
 
-                return [
-                    'success' => false,
-                    'message' => 'Gagal mengambil data course',
-                    'data'    => [],
-                    'meta'    => [],
-                    'links'   => [],
+            if ($status) {
+                $query->wherePivot('status', $status);
+            }
+
+            $courses = $query->paginate($perPage, ['*'], 'page', $page);
+
+            $resultData = [];
+            foreach ($courses as $course) {
+                $resultData[] = [
+                    'slug'          => $course->slug,
+                    'name'          => $course->name,
+                    'category'      => ['name' => $course->category ? $course->category->name : '-'],
+                    'thumbnail_url' => $course->thumbnail ? Storage::url($course->thumbnail) : null,
+                    'description'   => $course->description,
+                    'progress'      => $course->pivot->progress ?? 0,
+                    'status'        => $course->pivot->status ?? 'enrolled',
                 ];
             }
 
-            $data = $response->json();
-
             return [
                 'success' => true,
-                'message' => $data['message'] ?? 'Success',
-                'data'    => $data['result']['data'] ?? [],
-                'meta'    => $data['result']['meta'] ?? [],
-                'links'   => $data['result']['links'] ?? [],
-                'auth'    => $data['auth'] ?? [],
+                'message' => 'Success',
+                'data'    => $resultData,
+                'meta'    => [
+                    'current_page' => $courses->currentPage(),
+                    'last_page'    => $courses->lastPage(),
+                    'total'        => $courses->total(),
+                ],
+                'links'   => [
+                    'prev' => $courses->previousPageUrl(),
+                    'next' => $courses->nextPageUrl(),
+                ],
+                'auth'    => [],
             ];
         } catch (\Exception $e) {
-            Log::error('CourseService::myCourses error', [
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('CourseService::myCourses error', ['error' => $e->getMessage()]);
 
             return [
                 'success' => false,
@@ -326,215 +263,168 @@ class CourseService
         }
     }
 
-    public function getCourseDetailSlug(string $token, string $slug): array
+    /**
+     * Ambil detail course siswa beserta relasi sections dan contents lokal
+     */
+    public function getCourseDetailSlug(string $slug): array
     {
         try {
-            $response = Http::withoutVerifying()
-                ->withToken($token)
-                ->timeout(10)
-                ->get("{$this->baseUrl}/courses/{$slug}/progress");
+            $user = Auth::user();
+            $course = Course::with(['category', 'sections.contents'])->where('slug', $slug)->first();
 
-            if ($response->failed()) {
-                Log::error('Failed to fetch course detail', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
-                ]);
-
+            if (!$course) {
                 return [
                     'success' => false,
-                    'message' => 'Gagal mengambil data course',
-                    'data'    => [],
-                    'meta'    => [],
+                    'message' => 'Course tidak ditemukan',
+                    'data'    => null,
                 ];
             }
 
-            $data = $response->json();
+            // Ambil ID konten yang sudah diselesaikan oleh user ini
+            $completedIds = \Modules\LMS\Models\StudentContentProgress::where('user_id', $user?->id)
+                ->whereHas('content.section', function ($q) use ($course) {
+                    $q->where('course_id', $course->id);
+                })
+                ->pluck('section_content_id')
+                ->toArray();
+
+            $totalCompletedCount = count($completedIds);
+
+            // Sematkan alias properti pendukung untuk Blade siswa
+            $course->course_name = $course->name;
+            $course->course_sections = $course->sections;
+            $course->completed_count = $totalCompletedCount;
+
+            // Sediakan alias 'section_contents' di setiap section beserta status is_completed untuk setiap materinya
+            $mappedSections = [];
+            foreach ($course->sections as $section) {
+                $sectionArray = $section->toArray();
+                $sectionContents = [];
+                $sectionCompletedCount = 0;
+
+                if ($section->contents) {
+                    foreach ($section->contents as $content) {
+                        $isCompleted = in_array($content->id, $completedIds);
+                        if ($isCompleted) {
+                            $sectionCompletedCount++;
+                        }
+
+                        $sectionContents[] = [
+                            'id'           => $content->id,
+                            'name'         => $content->name,
+                            'video_url'    => $content->video,
+                            'document_url' => $content->document_url,
+                            'is_completed' => $isCompleted,
+                        ];
+                    }
+                }
+
+                $sectionArray['section_contents'] = $sectionContents;
+                $sectionArray['contents'] = $sectionContents;
+                $sectionArray['completed_count'] = $sectionCompletedCount;
+                $mappedSections[] = (object) $sectionArray;
+            }
+
+            $course->sections = collect($mappedSections);
+            $course->course_sections = collect($mappedSections);
 
             return [
                 'success' => true,
-                'message' => $data['message'] ?? 'Success',
-                'data'    => $data['result']['data'] ?? [],
+                'message' => 'Success',
+                'data'    => $course,
             ];
         } catch (\Exception $e) {
-            Log::error('CourseService::getCourseDetailSlug error', [
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('CourseService::getCourseDetailSlug error', ['error' => $e->getMessage()]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan',
+                'data'    => null,
+            ];
+        }
+    }
+    /**
+     * Ambil semua course untuk Admin Pusat (Database Lokal)
+     */
+    public function allCourses(int $page = 1, int $perPage = 12, ?string $search = null, ?string $categoryId = null): array
+    {
+        try {
+            $query = Course::with('category')->orderBy('created_at', self::DEFAULT_SORT);
+
+            if ($categoryId) {
+                $query->where('category_id', $categoryId);
+            }
+
+            if ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            }
+
+            $courses = $query->paginate($perPage, ['*'], 'page', $page);
+
+            $resultData = [];
+            foreach ($courses as $course) {
+                $resultData[] = [
+                    'slug'           => $course->slug,
+                    'name'           => $course->name,
+                    'category'       => ['name' => $course->category ? $course->category->name : '-'],
+                    'thumbnail_url'  => $course->thumbnail ? Storage::url($course->thumbnail) : null,
+                    'description'    => $course->description,
+                    'students_count' => method_exists($course, 'students') ? $course->students()->count() : 0,
+                ];
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Success',
+                'data'    => $resultData,
+                'meta'    => [
+                    'current_page' => $courses->currentPage(),
+                    'last_page'    => $courses->lastPage(),
+                    'total'        => $courses->total(),
+                ],
+                'links'   => [
+                    'prev' => $courses->previousPageUrl(),
+                    'next' => $courses->nextPageUrl(),
+                ],
+            ];
+        } catch (\Exception $e) {
+            Log::error('CourseService::allCourses error', ['error' => $e->getMessage()]);
 
             return [
                 'success' => false,
                 'message' => 'Terjadi kesalahan',
                 'data'    => [],
                 'meta'    => [],
-            ];
-        }
-    }
-
-
-    /**
-     * Get Data All Course Api Admin Pusat
-     */
-    public function allCourses(string $token, int $page = 1, int $perPage = 12, ?string $search = null, ?string $categoryId = null): array
-    {
-        try {
-            $response = Http::withToken($token)
-                ->timeout(10)
-                ->get("{$this->baseUrl}/courses", [
-                    'category_id'   => $categoryId,
-                    'search'        => $search,
-                    'page'          => $page,
-                    'row_per_page'  => $perPage,
-                ]);
-
-            if ($response->failed()) {
-                Log::error('Failed to fetch all courses', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
-                ]);
-
-                return [
-                    'success' => false,
-                    'message' => 'Gagal mengambil data course',
-                    'data'    => [],
-                    'meta'    => [],
-                ];
-            }
-
-            $data = $response->json();
-
-            return [
-                'success' => true,
-                'message' => $data['message'] ?? 'Success',
-                'data'    => $data['result']['data'] ?? [],
-                'meta'    => $data['result']['meta'] ?? [],
-                'links'   => $data['result']['links'] ?? [],
-            ];
-        } catch (\Exception $e) {
-            Log::error('CourseService::allCourses error', [
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Terjadi kesalahan',
-                'data'    => [],
-                'meta'    => [],
+                'links'   => [],
             ];
         }
     }
 
     /**
-     * Store/Post Data Course Api Admin Pusat
+     * Simpan course baru (Database Lokal)
      */
-    public function storeCourse(string $token, array $data, $thumbnailFile = null): array
+    public function storeCourse(array $data, $thumbnailFile = null): array
     {
         try {
-            // 1. Tambahkan acceptJson() di sini
-            $client = Http::withToken($token)
-                ->acceptJson()
-                ->timeout(15);
-
+            $thumbnailPath = null;
             if ($thumbnailFile) {
-                $client->attach(
-                    'thumbnail',
-                    file_get_contents($thumbnailFile->getRealPath()),
-                    $thumbnailFile->getClientOriginalName()
-                );
+                $thumbnailPath = $thumbnailFile->store('courses/thumbnails', 'public');
             }
 
-            $response = $client->post("{$this->baseUrl}/courses", $data);
-
-            // 2. Jika gagal (termasuk 422 Validation Error dari API)
-            if ($response->failed()) {
-                $errorData = $response->json(); // Ambil detail error JSON-nya
-
-                Log::error('Failed to store course', [
-                    'status' => $response->status(),
-                    'body'   => $errorData ?? $response->body(),
-                ]);
-
-                // Ambil pesan error spesifik jika ada
-                $errorMessage = $errorData['message'] ?? 'Terjadi kesalahan di server API';
-
-                return [
-                    'success' => false,
-                    'message' => 'Gagal: ' . $errorMessage,
-                    'data'    => [],
-                ];
-            }
-
-            // 3. Jika berhasil
-            $responseData = $response->json();
-
-            // Perbaikan Log: gunakan array format, bukan digabung dengan string (.)
-            Log::info('Response Data:', $responseData ?? []);
-
-            return [
-                'success' => true,
-                'message' => $responseData['message'] ?? 'Course berhasil diperbarui',
-                'data'    => $responseData['result'] ?? [],
-            ];
-        } catch (\Exception $e) {
-            Log::error('CourseService::updateCourse error', [
-                'error' => $e->getMessage(),
+            $course = Course::create([
+                'category_id' => $data['category_id'],
+                'name'        => $data['name'],
+                'description' => $data['description'],
+                'thumbnail'   => $thumbnailPath,
             ]);
 
             return [
-                'success' => false,
-                'message' => 'Terjadi kesalahan sistem saat menyimpan data',
-                'data'    => [],
-            ];
-        }
-    }
-    /**
-     * Update/PUT Data Course Api Admin Pusat
-     */
-    public function updateCourse(string $token, array $data, $thumbnailFile = null): array
-    {
-        try {
-            $client = Http::withToken($token)
-                ->acceptJson()
-                ->timeout(15);
-
-            if ($thumbnailFile) {
-                $client->attach(
-                    'thumbnail',
-                    file_get_contents($thumbnailFile->getRealPath()),
-                    $thumbnailFile->getClientOriginalName()
-                );
-            }
-
-            $data['_method'] = 'PUT';
-            $response = $client->post("{$this->baseUrl}/courses/{$data['slug']}", $data);
-
-            if ($response->failed()) {
-                $errorData = $response->json();
-
-                Log::error('Failed to update course', [
-                    'status' => $response->status(),
-                    'body'   => $errorData ?? $response->body(),
-                ]);
-
-                $errorMessage = $errorData['message'] ?? 'Terjadi kesalahan di server API';
-
-                return [
-                    'success' => false,
-                    'message' => 'Gagal: ' . $errorMessage,
-                    'data'    => [],
-                ];
-            }
-
-            $responseData = $response->json();
-            Log::info('Response Data:', $responseData ?? []);
-
-            return [
                 'success' => true,
-                'message' => $responseData['message'] ?? 'Course berhasil diperbarui',
-                'data'    => $responseData['result'] ?? [],
+                'message' => 'Course berhasil ditambahkan',
+                'data'    => $course,
             ];
         } catch (\Exception $e) {
-            Log::error('CourseService::updateCourse error', [
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('CourseService::storeCourse error', ['error' => $e->getMessage()]);
 
             return [
                 'success' => false,
@@ -545,41 +435,80 @@ class CourseService
     }
 
     /**
-     * Delete Data Course Api Admin Pusat
+     * Update course (Database Lokal)
      */
-    public function deleteCourse(string $token, string $slug): array
+    public function updateCourse(array $data, $thumbnailFile = null): array
     {
         try {
-            $client = Http::withToken($token)
-                ->acceptJson()
-                ->timeout(15);
+            $course = Course::where('slug', $data['slug'])->first();
 
-            $response = $client->delete("{$this->baseUrl}/courses/{$slug}");
-
-            if ($response->failed()) {
-                $errorData = $response->json();
-
-                Log::error('Failed to delete course', [
-                    'status' => $response->status(),
-                    'body'   => $errorData ?? $response->body(),
-                ]);
-
+            if (!$course) {
                 return [
                     'success' => false,
-                    'message' => 'Gagal menghapus: ' . ($errorData['message'] ?? 'Terjadi kesalahan di server API'),
+                    'message' => 'Course tidak ditemukan',
+                    'data'    => [],
                 ];
             }
 
-            $responseData = $response->json();
+            $thumbnailPath = $course->thumbnail;
+
+            if ($thumbnailFile) {
+                if ($thumbnailPath && Storage::disk('public')->exists($thumbnailPath)) {
+                    Storage::disk('public')->delete($thumbnailPath);
+                }
+                $thumbnailPath = $thumbnailFile->store('courses/thumbnails', 'public');
+            }
+
+            $course->update([
+                'category_id' => $data['category_id'],
+                'name'        => $data['name'],
+                'description' => $data['description'],
+                'thumbnail'   => $thumbnailPath,
+            ]);
 
             return [
                 'success' => true,
-                'message' => $responseData['message'] ?? 'Course berhasil dihapus',
+                'message' => 'Course berhasil diperbarui',
+                'data'    => $course,
             ];
         } catch (\Exception $e) {
-            Log::error('CourseService::deleteCourse error', [
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('CourseService::updateCourse error', ['error' => $e->getMessage()]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem saat menyimpan data',
+                'data'    => [],
+            ];
+        }
+    }
+
+    /**
+     * Hapus course (Database Lokal)
+     */
+    public function deleteCourse(string $slug): array
+    {
+        try {
+            $course = Course::where('slug', $slug)->first();
+
+            if (!$course) {
+                return [
+                    'success' => false,
+                    'message' => 'Course tidak ditemukan',
+                ];
+            }
+
+            if ($course->thumbnail && Storage::disk('public')->exists($course->thumbnail)) {
+                Storage::disk('public')->delete($course->thumbnail);
+            }
+
+            $course->delete();
+
+            return [
+                'success' => true,
+                'message' => 'Course berhasil dihapus',
+            ];
+        } catch (\Exception $e) {
+            Log::error('CourseService::deleteCourse error', ['error' => $e->getMessage()]);
 
             return [
                 'success' => false,
@@ -588,19 +517,15 @@ class CourseService
         }
     }
 
-
     /**
-     * Get Detail Course Api Admin Pusat
+     * Ambil detail course berdasarkan slug (Database Lokal)
      */
-    public function getCourseBySlug(string $token, string $slug): array
+    public function getCourseBySlug(string $slug): array
     {
         try {
-            $response = Http::withToken($token)
-                ->acceptJson()
-                ->timeout(15)
-                ->get("{$this->baseUrl}/courses/{$slug}");
+            $course = Course::with(['category', 'sections.contents'])->where('slug', $slug)->first();
 
-            if ($response->failed()) {
+            if (!$course) {
                 return [
                     'success' => false,
                     'message' => 'Course tidak ditemukan',
@@ -608,14 +533,18 @@ class CourseService
                 ];
             }
 
-            $data = $response->json();
+            $courseData = $course->toArray();
+            $courseData['thumbnail_url'] = $course->thumbnail ? Storage::url($course->thumbnail) : null;
+            $courseData['course_sections'] = $courseData['sections'] ?? [];
 
             return [
                 'success' => true,
                 'message' => 'Success',
-                'data'    => $data['result'] ?? null,
+                'data'    => $courseData,
             ];
         } catch (\Exception $e) {
+            Log::error('CourseService::getCourseBySlug error', ['error' => $e->getMessage()]);
+
             return [
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
@@ -625,41 +554,29 @@ class CourseService
     }
 
     /**
-     * Submit Hasil Post Test/Evaluasi ke API agar progress terupdate
+     * Submit Post Test secara lokal (Database Lokal)
      */
-    public function submitPostTestResult(string $token, string $slug, string $postTestId, int $score, bool $isPassed): array
+    public function submitPostTestResult(string $slug, string $postTestId, int $score, bool $isPassed): array
     {
         try {
-            $response = Http::withoutVerifying()
-                ->withToken($token)
-                ->acceptJson()
-                ->timeout(15)
-                ->post("{$this->baseUrl}/courses/{$slug}/post-test/submit", [
+            DB::table('post_test_results')->updateOrInsert(
+                [
+                    'user_id'      => Auth::id(),
                     'post_test_id' => $postTestId,
-                    'score'        => $score,
-                    'is_passed'    => $isPassed,
-                ]);
-
-            if ($response->failed()) {
-                Log::error('Failed to submit post test result', [
-                    'status' => $response->status(),
-                    'body'   => $response->json() ?? $response->body(),
-                ]);
-
-                return [
-                    'success' => false,
-                    'message' => 'Gagal menyinkronkan hasil evaluasi ke server.',
-                ];
-            }
+                ],
+                [
+                    'score'      => $score,
+                    'is_passed'  => $isPassed,
+                    'updated_at' => now(),
+                ]
+            );
 
             return [
                 'success' => true,
                 'message' => 'Hasil evaluasi berhasil disimpan.',
             ];
         } catch (\Exception $e) {
-            Log::error('CourseService::submitPostTestResult error', [
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('CourseService::submitPostTestResult error', ['error' => $e->getMessage()]);
 
             return [
                 'success' => false,

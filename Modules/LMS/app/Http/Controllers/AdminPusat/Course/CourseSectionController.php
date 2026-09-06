@@ -39,17 +39,15 @@ class CourseSectionController extends Controller
                 'description' => 'nullable|string',
             ]);
 
-            $token = (string) session('api_token', '');
-
-
             $payload = [
                 'slug'        => $validated['course_slug'],
                 'name'        => $validated['name'],
                 'description' => $validated['description'],
             ];
 
-            // 3. Panggil service
-            $result = $this->courseSectionService->storeCourseSection($token, $payload);
+            // Panggil service tanpa menggunakan token API sama sekali
+            $result = $this->courseSectionService->storeCourseSection($payload);
+            
             if (!$result['success']) {
                 ToastMagic::error($result['message']);
                 return redirect()->back()->withInput();
@@ -57,9 +55,10 @@ class CourseSectionController extends Controller
 
             ToastMagic::success($result['message']);
             return redirect()->route('admin-pusat.management-course.courses.show', $validated['course_slug']);
+            
         } catch (\Exception $e) {
             ToastMagic::error('Terjadi kesalahan saat membuat bagian kursus: ' . $e->getMessage());
-            throw $e;
+            return redirect()->back()->withInput();
         }
     }
 

@@ -127,7 +127,7 @@
                 {{-- Progress Bar --}}
                 <div class="mt-auto pt-5 border-t border-slate-100 max-w-md w-full">
                     <div class="flex justify-between items-center mb-2.5">
-                        <span class="text-xs font-semibold text-slate-500">Progress Pembelajaran (Semua Tahapan)</span>
+                        <span class="text-xs font-semibold text-slate-500">Progress Pembelajaran</span>
                         <span class="text-sm font-bold {{ $currentProgress >= 100 ? 'text-[#13416B]' : 'text-amber-600' }}">
                             {{ $currentProgress }}%
                         </span>
@@ -319,7 +319,7 @@
                                                 @if ($isLocked)
                                                     <span class="text-[11px] sm:text-xs font-semibold text-slate-400 whitespace-nowrap">Terkunci</span>
                                                 @else
-                                                    <span class="text-[11px] sm:text-xs font-bold {{ $isSectionCompleted ? 'text-[#13416B]' : 'text-amber-600' }} whitespace-nowrap">
+                                                    <span class="text-[11px] sm:text-xs font-semibold {{ $isSectionCompleted ? 'text-[#13416B]' : 'text-gray-500' }} whitespace-nowrap">
                                                         {{ $completedCount }}/{{ $totalCount }} Selesai
                                                     </span>
                                                 @endif
