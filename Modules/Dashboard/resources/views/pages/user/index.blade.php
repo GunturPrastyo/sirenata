@@ -207,50 +207,34 @@
                     @forelse ($recentCourses as $course)
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
                             class="block bg-white border border-slate-200 rounded-lg p-3.5 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group">
-                            <div class="flex items-start gap-3.5">
-                                <div
-                                    class="w-14 h-14 bg-[#cbd5e1] rounded-lg flex items-center justify-center shrink-0 mt-1 shadow-inner relative overflow-hidden">
-                                    @php
-                                        $words = explode(' ', $course->name);
-                                        $initials = '';
-                                        foreach (array_slice($words, 0, 2) as $w) {
-                                            $initials .= strtoupper(substr($w, 0, 1));
-                                        }
-                                        if (strlen($initials) < 2) {
-                                            $initials = substr(strtoupper($course->name), 0, 2);
-                                        }
-                                    @endphp
-                                    <span class="text-xl font-bold tracking-tight text-[#13416B] relative z-10"
-                                        style="font-family: Arial, sans-serif;">{{ $initials }}</span>
+                          
+                            <div class="min-w-0">
+                                <div class="flex items-start justify-between gap-2 mb-1">
+                                    <h3
+                                        class="font-bold text-slate-800 text-sm truncate group-hover:text-[#13416B] transition-colors">
+                                        {{ $course->name }}</h3>
+                                    @if ($course->pivot->status === 'completed')
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-[#13416B] bg-[#13416B]/10 border border-[#13416B]/20 shrink-0">Selesai</span>
+                                    @elseif ($course->pivot->status === 'in_progress')
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-slate-700 bg-slate-100 border border-slate-200 shrink-0">Berjalan</span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border border-slate-200 shrink-0">Terdaftar</span>
+                                    @endif
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-start justify-between gap-2 mb-1">
-                                        <h3
-                                            class="font-bold text-slate-800 text-sm truncate group-hover:text-[#13416B] transition-colors">
-                                            {{ $course->name }}</h3>
-                                        @if ($course->pivot->status === 'completed')
-                                            <span
-                                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-[#13416B] bg-[#13416B]/10 border border-[#13416B]/20 shrink-0">Selesai</span>
-                                        @elseif ($course->pivot->status === 'in_progress')
-                                            <span
-                                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-slate-700 bg-slate-100 border border-slate-200 shrink-0">Berjalan</span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border border-slate-200 shrink-0">Terdaftar</span>
-                                        @endif
-                                    </div>
-                                    <p class="text-xs text-slate-500 line-clamp-2 mb-2 leading-relaxed">
-                                        {{ $course->description ?? 'Deskripsi kursus tidak tersedia.' }}
-                                    </p>
-                                    <div
-                                        class="flex items-center justify-between text-[11px] text-slate-500 mb-1.5 font-medium">
-                                        <span>Progress Belajar</span>
-                                        <span class="font-bold text-slate-700">{{ $course->pivot->progress }}%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                                        <div class="bg-[#13416B] h-full rounded-full transition-all duration-300"
-                                            style="width: {{ $course->pivot->progress }}%"></div>
-                                    </div>
+                                <p class="text-xs text-slate-500 line-clamp-2 mb-2 leading-relaxed">
+                                    {{ $course->description ?? 'Deskripsi kursus tidak tersedia.' }}
+                                </p>
+                                <div
+                                    class="flex items-center justify-between text-[11px] text-slate-500 mb-1.5 font-medium">
+                                    <span>Progress Belajar</span>
+                                    <span class="font-bold text-slate-700">{{ $course->pivot->progress }}%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                    <div class="bg-[#13416B] h-full rounded-full transition-all duration-300"
+                                        style="width: {{ $course->pivot->progress }}%"></div>
                                 </div>
                             </div>
                         </a>
