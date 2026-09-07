@@ -30,7 +30,7 @@ class CourseController extends Controller
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        
+
         // Panggil service tanpa token
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage);
 
@@ -47,7 +47,7 @@ class CourseController extends Controller
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
                     $courseObj->thumbnail_url = $dbCourse->thumbnail_url ?? $courseObj->thumbnail_url;
-                    
+
                     $sectionIds = $dbCourse->sections()->pluck('id');
                     $courseObj->total_modul = $sectionIds->count();
                     $courseObj->total_materi = \Modules\LMS\Models\SectionContent::whereIn('course_section_id', $sectionIds)->count();
@@ -69,7 +69,7 @@ class CourseController extends Controller
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        
+
         // Panggil service tanpa token
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage, status: self::IN_PROGRESS);
 
@@ -108,7 +108,7 @@ class CourseController extends Controller
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        
+
         // Panggil service tanpa token
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage, status: self::COMPLETED);
 
@@ -145,7 +145,7 @@ class CourseController extends Controller
 
     public function myCourseDetail(string $slug)
     {
-        // Panggil service tanpa token dan tangkap objek model secara utuh agar relasi sections/contents tidak terputus
+        // Panggil service tanpa token dan tangkap objek model secara utuh
         $result = $this->courseService->getCourseDetailSlug($slug);
         $course = $result['data'] ?? null;
 
@@ -153,9 +153,21 @@ class CourseController extends Controller
             abort(404, 'Course tidak ditemukan');
         }
 
-        // Perkaya properti tanpa mengubah struktur relasi objek
+        // 1. Ambil data enrollment (tabel pivot) untuk user yang sedang login
+        $enrollment = $course->students()->wherePivot('user_id', Auth::id())->first();
+
+        // 2. Perkaya properti tanpa mengubah struktur relasi objek
         $course->course_name = $course->name;
         $course->thumbnail_url = $course->thumbnail ? Storage::url($course->thumbnail) : null;
+
+        // 3. Inject properti sertifikat dari pivot agar terbaca oleh file Blade
+        if ($enrollment) {
+            $course->certificate_code = $enrollment->pivot->certificate_code;
+            $course->certificate_issued_at = $enrollment->pivot->certificate_issued_at;
+            $course->certificate_file = $enrollment->pivot->certificate_file
+                ? Storage::url($enrollment->pivot->certificate_file)
+                : null;
+        }
 
         return view('lms::user.course.my-course-detail', [
             'course'  => $course,
@@ -163,7 +175,6 @@ class CourseController extends Controller
             'message' => $result['message'],
         ]);
     }
-
     public function generateCertificate(string $slug)
     {
         $user = Auth::user();
@@ -293,7 +304,7 @@ class CourseController extends Controller
     public function submitTest(Request $request, string $slug, string $postTestId)
     {
         $postTest = \Modules\LMS\Models\PostTest::with('questions.choices')->findOrFail($postTestId);
-        $userAnswers = $request->input('answers', []); 
+        $userAnswers = $request->input('answers', []);
 
         $totalQuestions = $postTest->questions->count();
         if ($totalQuestions === 0) {
