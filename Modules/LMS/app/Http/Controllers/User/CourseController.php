@@ -26,12 +26,62 @@ class CourseController extends Controller
         private CourseService $courseService
     ) {}
 
+    /**
+     * Helper untuk kalkulasi progress dinamis secara real-time
+     * (Logika perhitungan sama persis dengan halaman Detail)
+     */
+    private function calculateDynamicProgress($dbCourse)
+    {
+        $userId = Auth::id();
+        $totalContents = 0;
+        $completedContents = 0;
+        $totalTests = 0;
+        $passedTests = 0;
+
+        foreach ($dbCourse->sections as $section) {
+            $totalContents += $section->contents->count();
+            
+            // Hitung materi yang sudah selesai
+            $completedContents += \Modules\LMS\Models\StudentContentProgress::where('user_id', $userId)
+                ->whereIn('section_content_id', $section->contents->pluck('id'))
+                ->count();
+
+            // Hitung evaluasi bab
+            $postTestBab = \Modules\LMS\Models\PostTest::where('course_section_id', $section->id)->first();
+            if ($postTestBab) {
+                $totalTests++;
+                $isPassed = DB::table('post_test_results')
+                    ->where('user_id', $userId)
+                    ->where('post_test_id', $postTestBab->id)
+                    ->where('is_passed', 1)
+                    ->exists();
+                if ($isPassed) $passedTests++;
+            }
+        }
+
+        // Hitung evaluasi akhir
+        $evaluasiAkhir = \Modules\LMS\Models\PostTest::where('course_id', $dbCourse->id)->whereNull('course_section_id')->first();
+        if ($evaluasiAkhir) {
+            $totalTests++;
+            $isEvaluasiAkhirCompleted = DB::table('post_test_results')
+                ->where('user_id', $userId)
+                ->where('post_test_id', $evaluasiAkhir->id)
+                ->where('is_passed', 1)
+                ->exists();
+            if ($isEvaluasiAkhirCompleted) $passedTests++;
+        }
+
+        $totalItems = $totalContents + $totalTests;
+        $completedItems = $completedContents + $passedTests;
+        
+        return $totalItems > 0 ? (int) round(($completedItems / $totalItems) * 100) : 0;
+    }
+
     public function allMyCourse(Request $request)
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-
-        // Panggil service tanpa token
+        
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage);
 
         $courses = collect($result['data'])->map(function ($item) {
@@ -42,15 +92,18 @@ class CourseController extends Controller
             $courseObj->total_materi = 0;
 
             if ($slug) {
-                $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
+                $dbCourse = Course::with(['category', 'sections.contents'])->where('slug', $slug)->first();
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail_url = $dbCourse->thumbnail_url ?? $courseObj->thumbnail_url;
+                    $courseObj->thumbnail_url = $dbCourse->thumbnail ?? $courseObj->thumbnail_url;
+                    
+                    $courseObj->total_modul = $dbCourse->sections->count();
+                    $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
 
-                    $sectionIds = $dbCourse->sections()->pluck('id');
-                    $courseObj->total_modul = $sectionIds->count();
-                    $courseObj->total_materi = \Modules\LMS\Models\SectionContent::whereIn('course_section_id', $sectionIds)->count();
+                    // Override nilai progress dari DB dengan hasil perhitungan dinamis
+                    $courseObj->progress = $this->calculateDynamicProgress($dbCourse);
+                    $courseObj->status = $courseObj->progress >= 100 ? self::COMPLETED : self::IN_PROGRESS;
                 }
             }
             return $courseObj;
@@ -69,8 +122,7 @@ class CourseController extends Controller
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-
-        // Panggil service tanpa token
+        
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage, status: self::IN_PROGRESS);
 
         $courses = collect($result['data'])->map(function ($item) {
@@ -81,15 +133,18 @@ class CourseController extends Controller
             $courseObj->total_materi = 0;
 
             if ($slug) {
-                $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
+                $dbCourse = Course::with(['category', 'sections.contents'])->where('slug', $slug)->first();
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail_url = $dbCourse->thumbnail_url ?? $courseObj->thumbnail_url;
+                    $courseObj->thumbnail_url = $dbCourse->thumbnail ?? $courseObj->thumbnail_url;
 
-                    $sectionIds = $dbCourse->sections()->pluck('id');
-                    $courseObj->total_modul = $sectionIds->count();
-                    $courseObj->total_materi = \Modules\LMS\Models\SectionContent::whereIn('course_section_id', $sectionIds)->count();
+                    $courseObj->total_modul = $dbCourse->sections->count();
+                    $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
+
+                    // Override nilai progress dari DB dengan hasil perhitungan dinamis
+                    $courseObj->progress = $this->calculateDynamicProgress($dbCourse);
+                    $courseObj->status = $courseObj->progress >= 100 ? self::COMPLETED : self::IN_PROGRESS;
                 }
             }
             return $courseObj;
@@ -108,8 +163,7 @@ class CourseController extends Controller
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-
-        // Panggil service tanpa token
+        
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage, status: self::COMPLETED);
 
         $courses = collect($result['data'])->map(function ($item) {
@@ -120,15 +174,18 @@ class CourseController extends Controller
             $courseObj->total_materi = 0;
 
             if ($slug) {
-                $dbCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $slug)->first();
+                $dbCourse = Course::with(['category', 'sections.contents'])->where('slug', $slug)->first();
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail_url = $dbCourse->thumbnail_url ?? $courseObj->thumbnail_url;
+                    $courseObj->thumbnail_url = $dbCourse->thumbnail ?? $courseObj->thumbnail_url;
 
-                    $sectionIds = $dbCourse->sections()->pluck('id');
-                    $courseObj->total_modul = $sectionIds->count();
-                    $courseObj->total_materi = \Modules\LMS\Models\SectionContent::whereIn('course_section_id', $sectionIds)->count();
+                    $courseObj->total_modul = $dbCourse->sections->count();
+                    $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
+
+                    // Override nilai progress dari DB dengan hasil perhitungan dinamis
+                    $courseObj->progress = $this->calculateDynamicProgress($dbCourse);
+                    $courseObj->status = $courseObj->progress >= 100 ? self::COMPLETED : self::IN_PROGRESS;
                 }
             }
             return $courseObj;
@@ -145,7 +202,6 @@ class CourseController extends Controller
 
     public function myCourseDetail(string $slug)
     {
-        // Panggil service tanpa token dan tangkap objek model secara utuh
         $result = $this->courseService->getCourseDetailSlug($slug);
         $course = $result['data'] ?? null;
 
@@ -153,19 +209,16 @@ class CourseController extends Controller
             abort(404, 'Course tidak ditemukan');
         }
 
-        // 1. Ambil data enrollment (tabel pivot) untuk user yang sedang login
         $enrollment = $course->students()->wherePivot('user_id', Auth::id())->first();
 
-        // 2. Perkaya properti tanpa mengubah struktur relasi objek
         $course->course_name = $course->name;
         $course->thumbnail_url = $course->thumbnail ? Storage::url($course->thumbnail) : null;
-
-        // 3. Inject properti sertifikat dari pivot agar terbaca oleh file Blade
+        
         if ($enrollment) {
             $course->certificate_code = $enrollment->pivot->certificate_code;
             $course->certificate_issued_at = $enrollment->pivot->certificate_issued_at;
-            $course->certificate_file = $enrollment->pivot->certificate_file
-                ? Storage::url($enrollment->pivot->certificate_file)
+            $course->certificate_file = $enrollment->pivot->certificate_file 
+                ? Storage::url($enrollment->pivot->certificate_file) 
                 : null;
         }
 
@@ -175,6 +228,7 @@ class CourseController extends Controller
             'message' => $result['message'],
         ]);
     }
+
     public function generateCertificate(string $slug)
     {
         $user = Auth::user();
@@ -292,7 +346,7 @@ class CourseController extends Controller
             $course->thumbnail_url = $course->thumbnail ? Storage::url($course->thumbnail) : null;
         }
 
-        $content = \Modules\LMS\Models\SectionContent::findOrFail($contentId);
+        $content = SectionContent::findOrFail($contentId);
 
         return view('lms::user.course.content-show', [
             'course'  => $course,
@@ -304,7 +358,7 @@ class CourseController extends Controller
     public function submitTest(Request $request, string $slug, string $postTestId)
     {
         $postTest = \Modules\LMS\Models\PostTest::with('questions.choices')->findOrFail($postTestId);
-        $userAnswers = $request->input('answers', []);
+        $userAnswers = $request->input('answers', []); 
 
         $totalQuestions = $postTest->questions->count();
         if ($totalQuestions === 0) {
@@ -327,15 +381,15 @@ class CourseController extends Controller
         $score = round(($correctCount / $totalQuestions) * 100);
         $isPassed = $score >= $postTest->passing_score;
 
-        $userId = \Illuminate\Support\Facades\Auth::id();
+        $userId = Auth::id();
 
-        $existingRecord = \Illuminate\Support\Facades\DB::table('post_test_results')
+        $existingRecord = DB::table('post_test_results')
             ->where('user_id', $userId)
             ->where('post_test_id', $postTest->id)
             ->first();
 
         if ($existingRecord) {
-            \Illuminate\Support\Facades\DB::table('post_test_results')
+            DB::table('post_test_results')
                 ->where('id', $existingRecord->id)
                 ->update([
                     'score'        => $score,
@@ -344,8 +398,8 @@ class CourseController extends Controller
                     'updated_at'   => now(),
                 ]);
         } else {
-            \Illuminate\Support\Facades\DB::table('post_test_results')->insert([
-                'id'           => \Illuminate\Support\Str::uuid()->toString(),
+            DB::table('post_test_results')->insert([
+                'id'           => Str::uuid()->toString(),
                 'user_id'      => $userId,
                 'post_test_id' => $postTest->id,
                 'score'        => $score,
@@ -357,7 +411,7 @@ class CourseController extends Controller
         }
 
         if (is_null($postTest->course_section_id) && $isPassed) {
-            $course = \Modules\LMS\Models\Course::where('slug', $slug)->first();
+            $course = Course::where('slug', $slug)->first();
             if ($course) {
                 $course->students()->updateExistingPivot($userId, [
                     'status' => 'completed',
@@ -387,8 +441,8 @@ class CourseController extends Controller
 
         $postTest = \Modules\LMS\Models\PostTest::with('questions.choices')->findOrFail($postTestId);
 
-        $result = \Illuminate\Support\Facades\DB::table('post_test_results')
-            ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+        $result = DB::table('post_test_results')
+            ->where('user_id', Auth::id())
             ->where('post_test_id', $postTestId)
             ->first();
 
