@@ -52,4 +52,38 @@ class CourseSectionService
             ];
         }
     }
+
+    /**
+     * Menghapus data Course Section dari database Monolith
+     */
+    public function deleteCourseSection(string|int $id): array
+    {
+        try {
+            $section = CourseSection::find($id);
+
+            if (!$section) {
+                return [
+                    'success' => false,
+                    'message' => 'Bagian (Section) tidak ditemukan.',
+                ];
+            }
+
+            // Hapus section (Relasi ke contents dan post_tests sebaiknya diatur cascade di level database/model)
+            $section->delete();
+
+            return [
+                'success' => true,
+                'message' => 'Bagian materi berhasil dihapus',
+            ];
+        } catch (\Exception $e) {
+            Log::error('CourseSectionService::deleteCourseSection error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem saat menghapus data: ' . $e->getMessage(),
+            ];
+        }
+    }
 }

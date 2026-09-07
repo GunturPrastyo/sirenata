@@ -86,5 +86,33 @@ class CourseSectionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) {}
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Request $request, $id) 
+    {
+        try {
+            $courseSlug = $request->input('course_slug');
+            
+            $result = $this->courseSectionService->deleteCourseSection($id);
+            
+            if (!$result['success']) {
+                ToastMagic::error($result['message']);
+                return redirect()->back();
+            }
+
+            ToastMagic::success($result['message']);
+            
+            // Redirect kembali ke halaman detail course jika slug tersedia
+            if ($courseSlug) {
+                return redirect()->route('admin-pusat.management-course.courses.show', $courseSlug);
+            }
+            
+            return redirect()->back();
+            
+        } catch (\Exception $e) {
+            ToastMagic::error('Terjadi kesalahan saat menghapus bagian kursus: ' . $e->getMessage());
+            return redirect()->back();
+        }
+    }
 }
