@@ -13,7 +13,10 @@
     - $signer_title    : Jabatan penandatangan
 --}}
 
-<!-- Import Google Fonts untuk Tampilan Premium -->
+{{-- 
+    Template Sertifikat E-Learning (DOMPDF Optimized)
+    Ukuran: A4 Landscape (1122px x 793px @ 96dpi)
+--}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Alex+Brush&display=swap" rel="stylesheet">
@@ -35,18 +38,16 @@
         font-family: 'Montserrat', sans-serif;
         background-color: #ffffff;
         margin: 0 auto;
-        padding: 0;
-        box-sizing: border-box;
+        text-align: center; /* Kunci menengahkan di DOMPDF */
     }
     .certificate-content {
         position: absolute;
-        top: 0;
+        /* Hapus padding kiri-kanan, gunakan top untuk mendorong teks turun */
+        top: 130px; 
         left: 0;
+        right: 0;
         width: 1122px;
-        height: 793px;
         z-index: 1;
-        padding: 130px 80px 50px 80px;
-        box-sizing: border-box;
         text-align: center;
     }
 </style>
@@ -58,21 +59,19 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+            width: 1122px;
+            height: 793px;
+            z-index: -1;
         ">
     @else
-        {{-- Default Background Premium jika belum diunggah --}}
+        {{-- Default Background --}}
         <div style="
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: radial-gradient(circle, #ffffff 60%, #f4f6f9 100%);
             border: 15px double #b89c49;
-            box-sizing: border-box;
-            z-index: 0;
+            z-index: -1;
         ">
-            {{-- Watermark Decorative Corner --}}
             <div style="position: absolute; top: 20px; left: 20px; width: 60px; height: 60px; border-top: 3px solid #b89c49; border-left: 3px solid #b89c49;"></div>
             <div style="position: absolute; top: 20px; right: 20px; width: 60px; height: 60px; border-top: 3px solid #b89c49; border-right: 3px solid #b89c49;"></div>
             <div style="position: absolute; bottom: 20px; left: 20px; width: 60px; height: 60px; border-bottom: 3px solid #b89c49; border-left: 3px solid #b89c49;"></div>
@@ -82,7 +81,6 @@
 
     {{-- Content Overlay --}}
     <div class="certificate-content">
-        {{-- Header / Jenis Sertifikat --}}
         <p style="
             font-family: 'Cinzel', serif;
             font-size: 26px;
@@ -110,7 +108,6 @@
             letter-spacing: 1px;
         ">Diberikan secara hormat kepada:</p>
 
-        {{-- Nama Peserta (Elegant Serif style) --}}
         <p style="
             font-family: 'Playfair Display', serif;
             font-size: 42px;
@@ -121,14 +118,14 @@
             line-height: 1.1;
         ">{{ $nama_peserta ?? 'Nama Peserta' }}</p>
 
+        {{-- PERBAIKAN GARIS: Menggunakan inline-block agar mau berada di tengah di DOMPDF --}}
         <div style="
+            display: inline-block;
             width: 380px;
-            height: 1px;
-            background: #b89c49;
-            margin: 10px auto 20px;
+            border-bottom: 1.5px solid #b89c49;
+            margin: 10px 0 20px 0;
         "></div>
 
-        {{-- Pernyataan Kelulusan --}}
         <p style="
             font-size: 14px;
             color: #55606d;
@@ -139,7 +136,6 @@
             Telah dinyatakan <span style="font-weight: 700; color: #1e3a5f; letter-spacing: 1px;">LULUS</span> dengan hasil evaluasi memuaskan dan sukses menyelesaikan program pembelajaran:
         </p>
 
-        {{-- Nama Kursus --}}
         <p style="
             font-family: 'Cinzel', serif;
             font-size: 20px;
@@ -150,7 +146,6 @@
             letter-spacing: 1px;
         ">{{ $nama_kursus ?? 'Nama Kursus' }}</p>
 
-        {{-- Tanggal Penyelesaian --}}
         <p style="
             font-size: 12px;
             color: #718096;
@@ -159,12 +154,12 @@
         ">pada tanggal {{ $tanggal_selesai ?? '__ ________ ____' }}</p>
     </div>
 
-    {{-- Nomor Sertifikat (kiri bawah) --}}
+    {{-- Nomor Sertifikat --}}
     <div style="
         position: absolute;
         bottom: 50px;
         left: 80px;
-        z-index: 1;
+        z-index: 2;
         text-align: left;
     ">
         <p style="
@@ -184,29 +179,30 @@
         ">{{ $nomor_sertifikat ?? 'CERT-XXXX-XXX-000' }}</p>
     </div>
 
-    {{-- Tanda Tangan (kanan bawah) --}}
+    {{-- Tanda Tangan --}}
     <div style="
         position: absolute;
         bottom: 45px;
         right: 80px;
-        z-index: 1;
+        z-index: 2;
         width: 220px;
         text-align: center;
     ">
         @if($signature_url)
             <img src="{{ $signature_url }}" alt="Tanda Tangan" style="
                 height: 70px;
-                margin: 0 auto 5px;
                 display: block;
+                margin: 0 auto 5px auto;
             ">
         @else
             <div style="height: 75px;"></div>
         @endif
 
         <div style="
+            display: inline-block;
             width: 200px;
             border-bottom: 1.5px solid #b89c49;
-            margin: 0 auto 8px;
+            margin: 0 0 8px 0;
         "></div>
         
         <p style="
