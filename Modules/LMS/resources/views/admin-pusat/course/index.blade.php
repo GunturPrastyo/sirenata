@@ -68,9 +68,11 @@
                             class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-all duration-200">
 
                             <!-- Thumbnail Section -->
+                         
                             <div class="relative h-48 w-full bg-slate-100 group">
-                                @if (!empty($course->thumbnail_url))
-                                    <img src="{{ $course->thumbnail_url }}" alt="{{ $course->name }}"
+                                {{-- PERBAIKAN: Ubah thumbnail_url menjadi thumbnail --}}
+                                @if (!empty($course->thumbnail))
+                                    <img src="{{ $course->thumbnail }}" alt="{{ $course->name }}"
                                         class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center">

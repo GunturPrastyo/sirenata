@@ -26,8 +26,8 @@
             <div class="lg:col-span-2 space-y-6">
                 <!-- Card Info Utama -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    @if (! empty($course->thumbnail_url))
-                        <img src="{{ $course->thumbnail_url }}" alt="{{ $course->name }}" class="w-full h-72 object-cover" />
+                    @if (! empty($course->thumbnail))
+                        <img src="{{ $course->thumbnail }}" alt="{{ $course->name }}" class="w-full h-72 object-cover" />
                     @else
                         <div class="w-full h-64 bg-slate-200 flex items-center justify-center">
                             <i class="fas fa-image text-slate-400 text-4xl"></i>
@@ -112,7 +112,7 @@
                                             @forelse ($section->contents as $content)
                                                 <li class="px-4 py-3 hover:bg-slate-50 flex items-start gap-3 transition-colors group">
                                                     <div class=" text-indigo-500">
-                                                        @if ($content->video_url)
+                                                        @if ($content->video)
                                                             <i class="fas fa-play-circle"></i>
                                                         @else
                                                             <i class="fas fa-file-alt"></i>
@@ -311,16 +311,7 @@
                     </div>
                 </div>
 
-                <!-- Card Catatan / Pengaturan Lanjutan -->
-                <div class="bg-indigo-50 rounded-xl border border-indigo-100 p-5 flex items-start gap-3">
-                    <i class="fas fa-info-circle text-indigo-500 mt-0.5"></i>
-                    <div>
-                        <h4 class="text-sm font-semibold text-indigo-800 mb-1">Pengaturan Lanjutan</h4>
-                        <p class="text-xs text-indigo-600 leading-relaxed">
-                            Kelola Mentor, Benefits, dan Testimoni secara terpisah melalui panel navigasi utama.
-                        </p>
-                    </div>
-                </div>
+              
             </div>
         </div>
     </div>

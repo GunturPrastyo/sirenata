@@ -225,13 +225,13 @@ class CourseService
             $resultData = [];
             foreach ($courses as $course) {
                 $resultData[] = [
-                    'slug'          => $course->slug,
-                    'name'          => $course->name,
-                    'category'      => ['name' => $course->category ? $course->category->name : '-'],
-                    'thumbnail_url' => $course->thumbnail ? Storage::url($course->thumbnail) : null,
-                    'description'   => $course->description,
-                    'progress'      => $course->pivot->progress ?? 0,
-                    'status'        => $course->pivot->status ?? 'enrolled',
+                    'slug'           => $course->slug,
+                    'name'           => $course->name,
+                    'category'       => ['name' => $course->category ? $course->category->name : '-'],
+
+                    'thumbnail'      => $course->thumbnail,
+                    'description'    => $course->description,
+                    'students_count' => method_exists($course, 'students') ? $course->students()->count() : 0,
                 ];
             }
 
@@ -367,7 +367,8 @@ class CourseService
                     'slug'           => $course->slug,
                     'name'           => $course->name,
                     'category'       => ['name' => $course->category ? $course->category->name : '-'],
-                    'thumbnail_url'  => $course->thumbnail ? Storage::url($course->thumbnail) : null,
+
+                    'thumbnail'      => $course->thumbnail,
                     'description'    => $course->description,
                     'students_count' => method_exists($course, 'students') ? $course->students()->count() : 0,
                 ];
@@ -406,9 +407,27 @@ class CourseService
     public function storeCourse(array $data, $thumbnailFile = null): array
     {
         try {
-            $thumbnailPath = null;
+            // Cek apakah ada file yang diunggah
             if ($thumbnailFile) {
                 $thumbnailPath = $thumbnailFile->store('courses/thumbnails', 'public');
+            } else {
+                // 1. Siapkan daftar warna latar belakang yang elegan (Hex tanpa tanda #)
+                $colors = [
+                    '13416B', // Utama: Biru Gelap SIRENATA (Wajib ada)
+                    '0F5A9A', // Senada: Biru Terang Korporat
+                    '0891B2', // Senada: Cyan / Ocean Blue
+                    '0F766E', // Senada: Teal / Biru Kehijauan Gelap
+                    'D97706', // Kontras: Amber / Kuning Keemasan (Sangat cocok dengan Biru)
+                    'C2410C', // Kontras: Burnt Orange / Oranye Bata
+                    '475569', // Netral: Slate Gray (Abu-abu kebiruan yang elegan)
+                ];
+
+                // 2. Pilih satu warna secara acak
+                $randomColor = $colors[array_rand($colors)];
+
+                // 3. Generate gambar dummy avatar dengan warna acak tersebut
+                $encodedName = urlencode($data['name'] ?? 'Course');
+                $thumbnailPath = "https://ui-avatars.com/api/?name={$encodedName}&background={$randomColor}&color=fff&size=512&bold=true";
             }
 
             $course = Course::create([
