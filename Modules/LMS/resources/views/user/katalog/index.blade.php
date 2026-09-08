@@ -1,9 +1,16 @@
 <x-dashboard::layouts.dashboard title="Katalog Kursus | SIRENATA">
+    
+    {{-- Impor Font Kalam dan Oswald dari Google Fonts --}}
+    @push('styles')
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+    @endpush
+
     <div class="p-4 sm:p-6 lg:p-8 bg-slate-50 min-h-screen">
         
         {{-- ========================================== --}}
         {{-- HEADER KATALOG DENGAN ILUSTRASI GRUP       --}}
-        {{-- (TIDAK DIUBAH) --}}
         {{-- ========================================== --}}
         <div class="relative bg-[#13416B] rounded-xl p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 flex items-center justify-between border border-blue-900/20 shadow-lg overflow-hidden min-h-[280px] sm:min-h-[280px] lg:min-h-[320px]">
             
@@ -20,19 +27,21 @@
 
             <!-- Sisi Kiri: Teks Utama -->
             <div class="relative z-20 w-full sm:w-[60%] lg:w-[60%]  text-left ">
-                <span class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-md text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-blue-100 border border-white/10 mb-4 shadow-sm">
+                
+                {{-- BADGE: MENGGUNAKAN FONT KALAM --}}
+                <span class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-md text-sm sm:text-base tracking-wider text-white border border-white/10 mb-4 shadow-sm" style="font-family: 'Kalam', cursive;">
                      Eksplorasi Kompetensi
                 </span>
                 
-                <h1 class="text-xl md:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+                {{-- JUDUL: MENGGUNAKAN FONT OSWALD --}}
+                <h1 class="text-3xl md:text-4xl lg:text-5xl text-white mb-4" style="font-family: 'Oswald', sans-serif;">
                     Katalog Pembelajaran
                 </h1>
                 
-                <p class="text-sm md:text-sm sm:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
+                <p class="text-sm md:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
                     Temukan dan pelajari berbagai kursus pengembangan kompetensi yang dirancang khusus untuk meningkatkan keterampilan dan profesionalitas Anda.
                 </p>
 
-           
             </div>
 
             <!-- Sisi Kanan: Ilustrasi Pegawai Kemnaker -->
@@ -44,6 +53,7 @@
             </div>
         </div>
 
+       
         <div>
          {{-- HEADER DAFTAR KURSUS & FILTER --}}
             <div class="mb-6 border-b border-slate-200 pb-4">
@@ -53,7 +63,7 @@
                     
                     {{-- Kiri: Teks (Diperkecil di mobile) --}}
                     <div class="flex flex-col gap-0.5 sm:gap-1">
-                        <h2 class="text-base sm:text-xl font-bold text-slate-800 leading-tight">
+                        <h2 class="text-base sm:text-xl font-extrabold text-slate-800 leading-tight">
                             Jelajahi Kursus Baru
                         </h2>
                         <p class="text-[11px] sm:text-sm font-medium text-slate-500">
