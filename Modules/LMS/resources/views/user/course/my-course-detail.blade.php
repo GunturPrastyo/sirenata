@@ -155,7 +155,7 @@
                     <i class="fas fa-chart-pie text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-base font-bold text-slate-800">Statistik Belajar</h3>
+                    <h3 class="text-base md:text-lg font-extrabold text-slate-800">Statistik Belajar</h3>
                     <p class="text-[11px] text-slate-500 mt-0.5">Pantau ringkasan progres dan pencapaian Anda</p>
                 </div>
             </div>
@@ -228,7 +228,7 @@
                             <div class="p-2.5 bg-slate-50 text-slate-600 rounded-xl shrink-0 mt-0">
                                 <i class="fas fa-list-ul text-lg"></i>
                             </div>
-                            <h2 class="text-md sm:text-lg font-bold text-slate-800 leading-tight">Daftar Modul
+                            <h2 class="text-md sm:text-lg font-extrabold text-slate-800 leading-tight">Daftar Modul
                                 Pembelajaran</h2>
                         </div>
                         <span
@@ -585,7 +585,7 @@
                              <i class="fas fa-award mr-1"></i> 
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-slate-800">Sertifikat Kelulusan</h3>
+                            <h3 class="text-base md:text-lg font-extrabold text-slate-800">Sertifikat Kelulusan</h3>
                             <p class="text-[11px] text-slate-500 mt-0.5">Dokumen resmi bukti penyelesaian kursus</p>
                         </div>
                     </div>

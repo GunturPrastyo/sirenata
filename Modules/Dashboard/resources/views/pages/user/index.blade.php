@@ -13,7 +13,7 @@
             <div
                 class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Total Kursus
+                    <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase  mb-1">Total Kursus
                     </p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['total'] }}</h3>
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Seluruh modul pada sistem</p>
@@ -30,7 +30,7 @@
             <div
                 class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Rata-rata
+                    <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase mb-1">Rata-rata
                         Progress</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['avg_progress'] }}%</h3>
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Tingkat penyelesaian materi</p>
@@ -47,7 +47,7 @@
             <div
                 class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Kursus
+                    <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase  mb-1">Kursus
                         Selesai</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['selesai'] }}</h3>
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Modul yang telah dituntaskan</p>
@@ -74,7 +74,7 @@
                         <i class="fas fa-chart-bar text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-bold text-slate-800">Evaluasi Anda per Kursus</h2>
+                        <h2 class="text-base font-extrabold text-slate-800">Evaluasi Anda per Kursus</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Perbandingan skor post-test Anda dengan
                             rata-rata peserta lain</p>
                     </div>
@@ -122,7 +122,7 @@
                         <i class="fas fa-play-circle text-base"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-bold text-slate-800">Lanjutkan Belajar</h2>
+                        <h2 class="text-base font-extrabold text-slate-800">Lanjutkan Belajar</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Aktivitas pembelajaran terakhir Anda</p>
                     </div>
                 </div>
@@ -193,7 +193,7 @@
                             <i class="fas fa-graduation-cap text-base"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-bold text-slate-800">Kursus Saya</h2>
+                            <h2 class="text-base font-extrabold text-slate-800">Kursus Saya</h2>
                             <p class="text-[11px] sm:text-xs text-slate-500">Daftar kursus yang Anda ikuti</p>
                         </div>
                     </div>

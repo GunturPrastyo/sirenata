@@ -1,5 +1,5 @@
 <ul
-    class="flex flex-row lg:flex-col gap-1 sm:gap-2 lg:gap-1.5 lg:space-y-1 px-2 sm:px-4 lg:px-4 font-medium w-full h-full lg:h-auto items-center lg:items-stretch justify-around lg:justify-start">
+    class="flex flex-row lg:flex-col gap-1 sm:gap-2 lg:gap-1.5 lg:space-y-1 px-2 sm:px-4 lg:px-4 font-bold w-full h-full lg:h-auto items-center lg:items-stretch justify-around lg:justify-start">
 
     <!-- Dashboard -->
     @php $isDashboard = request()->routeIs('user.dashboard'); @endphp
