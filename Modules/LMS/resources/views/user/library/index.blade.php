@@ -4,7 +4,7 @@
         {{-- ========================================== --}}
         {{-- HEADER PERPUSTAKAAN DENGAN ILUSTRASI PAPAN --}}
         {{-- ========================================== --}}
-        <div class="relative bg-[#13416B] rounded-2xl p-6 sm:p-8 lg:p-10 mb-8 sm:mb-10 flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-4 border border-blue-900/20 shadow-lg mt-2 sm:mt-0 overflow-hidden">
+        <div class="relative bg-[#13416B] rounded-lg p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 flex items-center justify-between border border-blue-900/20 shadow-lg overflow-hidden min-h-[280px] sm:min-h-[280px] lg:min-h-[320px]">
             
             <!-- Efek Dekoratif Bubbles Geometris Profesional -->
             <div class="absolute inset-0 pointer-events-none z-0">
@@ -38,10 +38,7 @@
                     Jelajahi berbagai modul pembelajaran, bahan bacaan, dokumen peraturan, hingga video yang dirancang khusus untuk meningkatkan kompetensi Anda.
                 </p>
 
-                <!-- Info Statistik Mobile (Kalem & Diperbagus) -->
-                <div class="sm:hidden mt-5 inline-flex items-center gap-2.5 px-4 py-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-sm">
-                    <span class="text-white text-xs font-bold tracking-wide">{{ $libraries->total() ?? 0 }} Koleksi Tersedia</span>
-                </div>
+               
             </div>
 
             <!-- Sisi Kanan: Ilustrasi Orang & Papan Pendaftar (Tampil di Desktop & Tablet) -->

@@ -12,6 +12,7 @@ class LMSDatabaseSeeder extends Seeder
             CategorySeeder::class,
             CourseSeeder::class,
             CourseSectionSeeder::class,
+            PostTestSeeder::class,
         ]);
     }
 }

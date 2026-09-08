@@ -421,9 +421,9 @@ class CourseController extends Controller
         }
 
         if ($isPassed) {
-            ToastMagic::success("Selamat! Anda lulus ujian dengan nilai {$score} (KKM: {$postTest->passing_score}). Modul selanjutnya telah terbuka! 🎉");
+            ToastMagic::success("Selamat! Anda lulus ujian dengan nilai {$score} (KKM: {$postTest->passing_score})");
         } else {
-            ToastMagic::error("Nilai Anda {$score}. Belum mencapai KKM ({$postTest->passing_score}). Silakan coba pelajari materi kembali dan ulangi tes.");
+            ToastMagic::error("Nilai Anda {$score} belum mencapai KKM ({$postTest->passing_score}). Silakan pelajari materi kembali dan ulangi tes.");
         }
 
         return redirect()->route('user.course.my-course.detail', $slug);

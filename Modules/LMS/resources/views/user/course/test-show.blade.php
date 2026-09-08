@@ -196,7 +196,7 @@
                                     <i class="fas fa-question-circle text-3xl"></i>
                                     <h3 class="text-lg font-bold text-slate-800">Kirim Jawaban?</h3>
                                 </div>
-                                <p class="text-sm text-slate-600 mb-6">Anda telah menjawab semua soal. Apakah Anda yakin ingin mengirim jawaban sekarang? Anda tidak bisa mengulangi setelah tombol ini ditekan.</p>
+                                <p class="text-sm text-slate-600 mb-6">Semua soal telah terjawab. Yakin ingin mengirim sekarang? Jawaban tidak dapat diubah kembali.</p>
                                 <div class="flex flex-col-reverse sm:flex-row gap-3 justify-end">
                                     <button type="button" x-on:click="$dispatch('close-modal', 'modal-confirm-submit')" class="w-full sm:w-auto px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl font-bold text-sm transition-colors">
                                         Periksa Kembali

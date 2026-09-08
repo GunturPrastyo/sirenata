@@ -14,72 +14,59 @@ class CourseSectionSeeder extends Seeder
         $courses = Course::all();
 
         if ($courses->isEmpty()) {
-            $this->command->warn('Courses not found. Jalankan CourseFactory dulu.');
+            $this->command->warn('Courses kosong.');
             return;
         }
 
-        $sectionNames = [
-            'Pengenalan & Persiapan',
-            'Materi Dasar',
-            'Materi Inti',
-            'Studi Kasus & Praktik',
-            'Evaluasi & Penutup',
-        ];
-
-        $contentNames = [
-            'Pengenalan & Persiapan' => [
-                'Apa itu course ini?',
-                'Persiapan lingkungan belajar',
-                'Overview materi',
+        $curriculum = [
+            'Modul 1: Landasan & Konsep Dasar' => [
+                'Pengantar dan Regulasi Acuan',
+                'Prinsip Utama dan Ruang Lingkup',
             ],
-            'Materi Dasar' => [
-                'Konsep dasar',
-                'Terminologi penting',
-                'Latihan dasar',
+            'Modul 2: Metodologi & Instrumen Analisis' => [
+                'Teknik Pengumpulan Data Lapangan',
+                'Formula Perhitungan dan Proyeksi',
             ],
-            'Materi Inti' => [
-                'Pembahasan mendalam bagian 1',
-                'Pembahasan mendalam bagian 2',
-                'Pembahasan mendalam bagian 3',
-                'Latihan inti',
-            ],
-            'Studi Kasus & Praktik' => [
-                'Studi kasus 1',
-                'Studi kasus 2',
-                'Praktik mandiri',
-            ],
-            'Evaluasi & Penutup' => [
-                'Kuis evaluasi',
-                'Rangkuman materi',
-                'Penutup & langkah selanjutnya',
+            'Modul 3: Implementasi & Studi Kasus' => [
+                'Simulasi Penghitungan Data Nyata',
+                'Penyusunan Laporan dan Rekomendasi',
             ],
         ];
 
         foreach ($courses as $course) {
-            foreach ($sectionNames as $position => $sectionName) {
+            $posSection = 1;
+            foreach ($curriculum as $sectionTitle => $contentTitles) {
+                $section = CourseSection::updateOrCreate(
+                    [
+                        'course_id' => $course->id,
+                        'name'      => $sectionTitle,
+                    ],
+                    [
+                        'description' => 'Pembahasan modul mengenai ' . strtolower($sectionTitle),
+                        'position'    => $posSection++,
+                    ]
+                );
 
-                $section = CourseSection::create([
-                    'course_id'   => $course->id,
-                    'name'        => $sectionName,
-                    'description' => null,
-                    'position'    => $position + 1,
-                ]);
-
-                // Buat konten untuk tiap section
-                $contents = $contentNames[$sectionName] ?? [];
-                foreach ($contents as $contentPosition => $contentName) {
-                    SectionContent::create([
-                        'course_section_id' => $section->id,
-                        'name'              => $contentName,
-                        'position'          => $contentPosition + 1,
-                    ]);
+                $posContent = 1;
+                foreach ($contentTitles as $title) {
+                    SectionContent::updateOrCreate(
+                        [
+                            'course_section_id' => $section->id,
+                            'name'              => $title,
+                        ],
+                        [
+                            'content_text' => "<h3>Materi: {$title}</h3>"
+                                . "<p>Modul ini membahas mengenai kaidah teknis dari <strong>{$course->name}</strong>.</p>"
+                                . "<p>Tujuan pembelajaran adalah memastikan setiap peserta memahami indikator utama, kerangka perumusan kebijakan, dan teknik validasi data yang presisi.</p>"
+                                . "<ul><li>Identifikasi variabel input primer</li><li>Kalkulasi berbasis acuan regulasi</li><li>Analisis disparitas dan proyeksi kebutuhan</li></ul>"
+                                . "<p>Silakan pelajari materi ini dengan saksama sebelum melanjutkan ke evaluasi bab terkait.</p>",
+                            'position'     => $posContent++,
+                        ]
+                    );
                 }
             }
         }
 
-        $totalSections = CourseSection::count();
-        $totalContents = SectionContent::count();
-
-        $this->command->info("Seeded {$totalSections} sections dan {$totalContents} contents 🚀");
+        $this->command->info("CourseSectionSeeder materi & isi dummy berhasil dibuat 🚀");
     }
 }
