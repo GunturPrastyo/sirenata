@@ -34,7 +34,7 @@
                 </span>
                 
                 {{-- JUDUL: MENGGUNAKAN FONT OSWALD --}}
-                <h1 class="text-3xl md:text-4xl lg:text-5xl text-white mb-4" style="font-family: 'Oswald', sans-serif;">
+                <h1 class="text-2xl md:text-4xl lg:text-5xl text-white mb-4" style="font-family: 'Oswald', sans-serif;">
                     Katalog Pembelajaran
                 </h1>
                 
