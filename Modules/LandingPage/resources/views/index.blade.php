@@ -1,10 +1,10 @@
 <x-landingpage::layouts.master title="SIRENATA - Sistem Informasi Perencanaan Ketenagakerjaan">
 
-    {{-- CSS Kustom untuk Animasi, Custom Scrollbar & Font Kalam --}}
+    {{-- CSS Kustom untuk Animasi, Custom Scrollbar & Font Kalam + Oswald --}}
     @push('styles')
         <style>
-            /* Import Font Kalam dari Google Fonts */
-            @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
+            /* Import Font Kalam & Oswald dari Google Fonts */
+            @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Oswald:wght@400;600;700&display=swap');
 
             .font-kalam {
                 font-family: 'Kalam', cursive;
@@ -130,8 +130,6 @@
 
             <!-- Menu Desktop -->
             <div class="hidden md:flex items-center gap-2">
-                <!-- Beranda ditambahkan kembali agar urutan natural -->
-               
                 <a href="#features"
                     class="text-slate-600 font-medium px-4 py-2 rounded-full hover:text-[#13416B] hover:bg-[#13416B]/10 transition-colors">Fitur</a>
                 <a href="#courses"
@@ -201,7 +199,8 @@
             <!-- Kiri: Teks & CTA -->
             <div class="reveal-left">
               
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.15] mb-6">
+                <!-- Title dengan Oswald -->
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.15] mb-6" style="font-family: 'Oswald', sans-serif;">
                     Masa Depan <span class="text-[#13416B]">Ketenagakerjaan</span> Dimulai di Sini.
                 </h1>
                 <p class="text-base sm:text-lg text-slate-600 mb-8 leading-relaxed max-w-lg">
@@ -324,22 +323,22 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x-0 md:divide-x divide-slate-700">
                 <div class="text-center p-4">
                     <h4 class="text-4xl font-extrabold text-white mb-2 stat-counter" data-target="{{ $sProv['num'] }}"
-                        data-suffix="{{ $sProv['suf'] }}">0</h4>
+                        data-suffix="{{ $sProv['suf'] }}" style="font-family: 'Oswald', sans-serif;">0</h4>
                     <p class="text-sm font-medium text-slate-400">Provinsi Terlibat</p>
                 </div>
                 <div class="text-center p-4">
                     <h4 class="text-4xl font-extrabold text-white mb-2 stat-counter"
-                        data-target="{{ $sReg['num'] }}" data-suffix="{{ $sReg['suf'] }}">0</h4>
+                        data-target="{{ $sReg['num'] }}" data-suffix="{{ $sReg['suf'] }}" style="font-family: 'Oswald', sans-serif;">0</h4>
                     <p class="text-sm font-medium text-slate-400">Kabupaten/Kota</p>
                 </div>
                 <div class="text-center p-4">
                     <h4 class="text-4xl font-extrabold text-white mb-2 stat-counter"
-                        data-target="{{ $sRtk['num'] }}" data-suffix="{{ $sRtk['suf'] }}">0</h4>
+                        data-target="{{ $sRtk['num'] }}" data-suffix="{{ $sRtk['suf'] }}" style="font-family: 'Oswald', sans-serif;">0</h4>
                     <p class="text-sm font-medium text-slate-400">Dokumen RTK</p>
                 </div>
                 <div class="text-center p-4">
                     <h4 class="text-4xl font-extrabold text-white mb-2 stat-counter"
-                        data-target="{{ $sCourse['num'] }}" data-suffix="{{ $sCourse['suf'] }}">0</h4>
+                        data-target="{{ $sCourse['num'] }}" data-suffix="{{ $sCourse['suf'] }}" style="font-family: 'Oswald', sans-serif;">0</h4>
                     <p class="text-sm font-medium text-slate-400">Pelatihan Aktif</p>
                 </div>
             </div>
@@ -354,11 +353,12 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
 
                 <div class="lg:sticky lg:top-32 reveal-left">
-                    <!-- FONT KALAM DIAPLIKASIKAN DISINI -->
-                    <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block tracking-wide">
+                    <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
+                    <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
                         Fitur Utama
                     </span>
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
+                    <!-- FONT OSWALD UNTUK TITLE -->
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
                         Solusi Terpadu <span class="text-[#13416B]">Perencanaan Ketenagakerjaan</span>
                     </h2>
                     <p class="text-slate-600 text-lg leading-relaxed mb-8">
@@ -504,11 +504,12 @@
 
                     <!-- Kanan: Judul & Deskripsi Section Sticky -->
                     <div class="lg:sticky lg:top-16 order-1 lg:order-2 w-full text-left reveal-right">
-                        <!-- FONT KALAM DIAPLIKASIKAN DISINI -->
-                        <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block tracking-wide">
+                        <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
+                        <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
                             LMS Terintegrasi
                         </span>
-                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
+                        <!-- FONT OSWALD UNTUK TITLE -->
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
                             Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
                         </h2>
                         <p class="text-slate-600 text-lg leading-relaxed mb-8">
@@ -566,11 +567,12 @@
                 <!-- Kolom Kiri: Judul & Accordion -->
                 <div class="reveal-left">
                     <div class="text-left mb-10">
-                        <!-- FONT KALAM DIAPLIKASIKAN DISINI -->
-                        <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block tracking-wide">
+                        <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
+                        <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
                             Pusat Bantuan
                         </span>
-                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
+                        <!-- FONT OSWALD UNTUK TITLE -->
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
                             Pertanyaan yang Sering <span class="text-[#13416B]">Diajukan</span>
                         </h2>
                         <p class="text-slate-600 text-lg leading-relaxed">
@@ -699,19 +701,9 @@
         </div>
 
         <!-- Ornamen SVG (L Chevron Raksasa Menyambung Siku + Lingkaran Kanan) -->
-        <!-- UKURAN DIPERBESAR MASIF (w-[1600px] lg:w-[2200px]) AGAR MENGISI PENUH SISI KIRI -->
         <div class="absolute -left-[50%] sm:-left-[20%] top-1/2 -translate-y-1/2 w-[1600px] h-[1600px] lg:w-[2200px] lg:h-[2200px] text-white opacity-[0.06] pointer-events-none z-0 transition-transform duration-1000">
-            <!-- ViewBox 1600x1600 untuk menampung seluruh goresan tebal tanpa terpotong -->
             <svg viewBox="0 0 1600 1600" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
-                
-              
-                <polyline points="300,200 900,800 300,1400" 
-                          stroke="currentColor" 
-                          stroke-width="260" 
-                          stroke-linecap="round" 
-                          stroke-linejoin="miter" />
-           
-
+                <polyline points="300,200 900,800 300,1400" stroke="currentColor" stroke-width="260" stroke-linecap="round" stroke-linejoin="miter" />
             </svg>
         </div>
 
@@ -720,7 +712,8 @@
 
                 <!-- Kolom Kiri: Teks & Tombol -->
                 <div class="text-left reveal-left lg:col-span-7 xl:col-span-8 lg:pr-10">
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm">
+                    <!-- FONT OSWALD UNTUK TITLE -->
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm" style="font-family: 'Oswald', sans-serif;">
                         Siap Memulai Perencanaan?
                     </h2>
                     <p class="text-slate-300 mb-10 max-w-2xl text-md md:text-xl leading-relaxed">
@@ -729,13 +722,11 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-start gap-4 reveal-up" style="transition-delay: 0.2s;">
-                        <!-- Relative Path Register -->
                         <a href="/auth/register"
                             class="w-full sm:w-auto px-8 py-4 bg-white font-bold rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all text-md md:text-lg text-center"
                             style="color: #13416B;">
                             Daftar Gratis Sekarang
                         </a>
-                        <!-- Relative Path Login -->
                         <a href="/auth/login"
                             class="w-full sm:w-auto px-8 py-4 font-bold rounded-full border-2 border-white/30 text-white transition-all hover:bg-white/10 text-md md:text-lg text-center">
                             Sudah Punya Akun? Masuk
