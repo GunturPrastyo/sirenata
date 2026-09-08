@@ -603,4 +603,60 @@ class CourseService
             ];
         }
     }
+    
+    /**
+     * Ambil semua kursus untuk halaman Katalog (Mengecualikan yang sudah diikuti user)
+     */
+    public function getCatalogCourses(int $perPage = 12, ?string $search = null, ?array $categoryIds = null)
+    {
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $enrolledCourseIds = $user ? $user->enrolledCourses()->pluck('courses.id')->toArray() : [];
+
+        return Course::with('category')
+            ->when($search, fn($query) => $query->where('name', 'like', "%{$search}%"))
+            ->when(!empty($categoryIds), fn($query) => $query->whereIn('category_id', $categoryIds))
+            ->whereNotIn('id', $enrolledCourseIds)
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
+    }
+
+    /**
+     * Mendaftarkan (Enroll) user ke dalam kursus
+     */
+    public function enrollUser(string $slug): array
+    {
+        try {
+            $course = Course::where('slug', $slug)->first();
+
+            if (!$course) {
+                return ['success' => false, 'message' => 'Kursus tidak ditemukan.'];
+            }
+
+            // PERBAIKAN 1: Tambahkan PHPDoc agar Intelephense mengenali relasi enrolledCourses
+            // PERBAIKAN 2: Sederhanakan pemanggilan namespace menjadi Auth::user()
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            // Cek apakah user sudah terdaftar
+            if ($user->enrolledCourses()->where('course_id', $course->id)->exists()) {
+                return ['success' => false, 'message' => 'Anda sudah terdaftar di kursus ini.'];
+            }
+
+            // Daftarkan ke tabel pivot
+            $user->enrolledCourses()->attach($course->id, [
+                'status'     => 'enrolled',
+                'progress'   => 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return ['success' => true, 'message' => 'Berhasil mendaftar kursus! Selamat belajar.'];
+        } catch (\Exception $e) {
+            // PERBAIKAN 3: Sederhanakan pemanggilan namespace menjadi Log::error
+            Log::error('Enrollment error: ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Terjadi kesalahan sistem saat mendaftar.'];
+        }
+    }
 }

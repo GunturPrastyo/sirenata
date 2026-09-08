@@ -37,7 +37,7 @@
                 </h1>
                 
                 <!-- Deskripsi Diperpanjang -->
-                <p class="text-sm md:text-sm lg:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
+                <p class="text-xs md:text-sm lg:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
                     Selesaikan modul pelatihan Anda, ikuti evaluasi dengan baik, dan raih sertifikat kelulusan untuk mendukung perjalanan karier serta profesionalisme Anda.
                 </p>
 

@@ -148,7 +148,7 @@
 
                                 @if (($course->status ?? '') === 'completed' || ($course->progress ?? 0) >= 100)
                                     <div class="w-full py-2.5 text-xs font-bold text-center rounded-xl transition-colors bg-emerald-50 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white border border-emerald-200 group-hover:border-emerald-600">
-                                        <i class="fas fa-certificate mr-1"></i> Buka Sertifikat
+                                         <i class="fas fa-award mr-1"></i> Lihat Sertifikat
                                     </div>
                                 @else
                                     <div class="w-full py-2.5 text-xs font-bold text-center rounded-xl transition-colors bg-slate-50 text-slate-700 border border-slate-200 group-hover:bg-[#13416B] group-hover:text-white group-hover:border-[#13416B]">

@@ -30,12 +30,12 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('ad
         Route::resource('courses', CourseController::class);
         Route::resource('course-sections', CourseSectionController::class);
         Route::resource('course-sections-contents', SectionContentController::class);
-       Route::prefix('post-test')->name('post-tests.')->group(function () {
+        Route::prefix('post-test')->name('post-tests.')->group(function () {
             Route::get('/create', [PostTestController::class, 'create'])->name('create');
             Route::post('/store', [PostTestController::class, 'store'])->name('store');
             Route::get('/{id}/edit', [PostTestController::class, 'edit'])->name('edit');
             Route::put('/{id}', [PostTestController::class, 'update'])->name('update');
-            
+
             Route::post('/upload-image', [PostTestController::class, 'uploadImage'])->name('upload-image');
         });
     });
@@ -81,5 +81,10 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(f
         Route::get('/my-course/{slug}/content/{content}', 'showContent')->name('content.show');
         Route::get('/my-course/{slug}/test/{postTestId}', 'showTest')->name('test.show');
         Route::post('/my-course/{slug}/test/{postTestId}/submit', 'submitTest')->name('test.submit');
+    });
+
+    Route::prefix('katalog')->name('catalog.')->controller(\Modules\LMS\Http\Controllers\User\CatalogController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/{slug}/enroll', 'enroll')->name('enroll');
     });
 });
