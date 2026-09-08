@@ -29,7 +29,7 @@
                 </h1>
                 
                 <p class="text-sm md:text-sm sm:text-base text-blue-100/90 leading-relaxed max-w-xl lg:max-w-2xl font-medium">
-                    Temukan dan pelajari berbagai modul pengembangan kompetensi yang dirancang khusus untuk meningkatkan keterampilan dan profesionalitas Anda.
+                    Temukan dan pelajari berbagai kursus pengembangan kompetensi yang dirancang khusus untuk meningkatkan keterampilan dan profesionalitas Anda.
                 </p>
 
            
@@ -54,10 +54,10 @@
                     {{-- Kiri: Teks (Diperkecil di mobile) --}}
                     <div class="flex flex-col gap-0.5 sm:gap-1">
                         <h2 class="text-base sm:text-xl font-bold text-slate-800 leading-tight">
-                            Jelajahi Modul Baru
+                            Jelajahi Kursus Baru
                         </h2>
                         <p class="text-[11px] sm:text-sm font-medium text-slate-500">
-                            Ada <span class="text-[#13416B] font-bold">{{ $courses->total() }}</span> modul yang siap dipelajari.
+                            Ada <span class="text-[#13416B] font-bold">{{ $courses->total() }}</span> kursus yang siap dipelajari.
                         </p>
                     </div>
 
