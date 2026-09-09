@@ -352,13 +352,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
 
-                <div class="lg:sticky lg:top-32 reveal-left">
+                <div class="lg:sticky lg:top-24 reveal-left">
                     <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
                     <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
                         Fitur Utama
                     </span>
                     <!-- FONT OSWALD UNTUK TITLE -->
-                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
+                    <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
                         Solusi Terpadu <span class="text-[#13416B]">Perencanaan Ketenagakerjaan</span>
                     </h2>
                     <p class="text-slate-600 text-lg leading-relaxed mb-8">
@@ -503,13 +503,13 @@
                     </div>
 
                     <!-- Kanan: Judul & Deskripsi Section Sticky -->
-                    <div class="lg:sticky lg:top-16 order-1 lg:order-2 w-full text-left reveal-right">
+                    <div class="lg:sticky lg:top-12 order-1 lg:order-2 w-full text-left reveal-right">
                         <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
                         <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
                             LMS Terintegrasi
                         </span>
                         <!-- FONT OSWALD UNTUK TITLE -->
-                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
+                        <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
                             Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
                         </h2>
                         <p class="text-slate-600 text-lg leading-relaxed mb-8">
@@ -560,7 +560,7 @@
     <!-- ========================================== -->
     <!-- FAQ SECTION                                -->
     <!-- ========================================== -->
-    <section id="faq" class="py-24 md:py-24 lg:py-12 px-4 bg-white border-t border-slate-200 overflow-hidden">
+    <section id="faq" class="py-24 md:py-24 lg:py-16 px-4 bg-white border-t border-slate-200 overflow-hidden">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
@@ -568,11 +568,11 @@
                 <div class="reveal-left">
                     <div class="text-left mb-10">
                         <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
-                        <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
+                        {{-- <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
                             Pusat Bantuan
-                        </span>
+                        </span> --}}
                         <!-- FONT OSWALD UNTUK TITLE -->
-                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
+                        <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight" style="font-family: 'Oswald', sans-serif;">
                             Pertanyaan yang Sering <span class="text-[#13416B]">Diajukan</span>
                         </h2>
                         <p class="text-slate-600 text-lg leading-relaxed">
@@ -713,7 +713,7 @@
                 <!-- Kolom Kiri: Teks & Tombol -->
                 <div class="text-left reveal-left lg:col-span-7 xl:col-span-8 lg:pr-10">
                     <!-- FONT OSWALD UNTUK TITLE -->
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm" style="font-family: 'Oswald', sans-serif;">
+                    <h2 class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm" style="font-family: 'Oswald', sans-serif;">
                         Siap Memulai Perencanaan?
                     </h2>
                     <p class="text-slate-300 mb-10 max-w-2xl text-md md:text-xl leading-relaxed">
@@ -762,7 +762,7 @@
                     <div>
                         <div class="flex items-center gap-4 mb-6">
                             <img src="{{ asset('images/logo.png') }}" alt="SIRENATA" class="h-12 w-auto brightness-0 invert">
-                            <span class="text-3xl font-extrabold text-white tracking-tight">SIRENATA</span>
+                            <span class="text-2xl font-bold text-white tracking-tight">SIRENATA</span>
                         </div>
                         <p class="text-slate-400 leading-relaxed text-base mb-10 max-w-md">
                             Aplikasi digital terpadu untuk kebutuhan penyusunan RTK Makro, RTK Mikro, dan pengukuran Indeks Pembangunan Ketenagakerjaan.
