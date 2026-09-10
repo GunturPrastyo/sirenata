@@ -42,7 +42,7 @@
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('rejected', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Dikembalikan ke daerah</p>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#184A78] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <i class="fas fa-ban text-xl sm:text-2xl"></i>
                 </div>
             </div>
@@ -50,11 +50,11 @@
             <!-- RTK Berlaku -->
             <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1 font-oswald">RTK Berlaku</p>
+                    <p class="text-slate-500 text-sm font-semibold uppercase  mb-1 font-oswald">RTK Berlaku</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkMasaAktifPerProvinsi->sum('total') ?? 0 }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Dokumen acuan aktif</p>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#0f3354] text-white flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <i class="fas fa-file-contract text-xl sm:text-2xl"></i>
                 </div>
             </div>
