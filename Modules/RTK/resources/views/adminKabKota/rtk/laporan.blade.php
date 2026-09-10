@@ -71,102 +71,87 @@
                             {{ $rtkKabKotaActive?->name ?? 'RTK Belum Tersedia' }}
                         </h1>
                     </div>
-                    {{-- Body Card: Rincian Data --}}
+                   {{-- Body Card: Rincian Data --}}
                     <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
                         @if ($rtkKabKotaActive)
                             @php
-                                $isValid =
-                                    $rtkKabKotaActive->status_document === \Modules\RTK\Enums\StatusDocument::VALID;
-                                $isExpired =
-                                    $rtkKabKotaActive->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED;
-
+                                $isValid = $rtkKabKotaActive->status_document === \Modules\RTK\Enums\StatusDocument::VALID;
+                                $isExpired = $rtkKabKotaActive->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED;
+                                
                                 $startYear = $rtkKabKotaActive->start_date;
                                 $endYear = $rtkKabKotaActive->end_date;
-                                $spanTahun = $startYear && $endYear ? intval($endYear) - intval($startYear) + 1 : '-';
+                                $spanTahun = ($startYear && $endYear) ? (intval($endYear) - intval($startYear) + 1) : '-';
                             @endphp
 
                             <div class="space-y-5">
-                                {{-- Status Bar: Valid (Hijau), Kadaluarsa (Merah), Belum Berlaku (Amber) --}}
+                                {{-- Status Bar (Proporsional: tidak terlalu tipis & tidak mencolok) --}}
                                 @if ($isValid)
-                                    <div
-                                        class="flex items-center justify-between p-4 rounded-xl border bg-emerald-50/50 border-emerald-100">
+                                    <div class="flex items-center justify-between p-4 rounded-xl border bg-emerald-50/70 border-emerald-200">
                                         <div class="flex items-center gap-3.5">
-                                            <div
-                                                class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center shrink-0">
+                                            <div class="w-9 h-9 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
                                                 <i class="fas fa-check text-sm"></i>
                                             </div>
                                             <div>
-                                                <p class="text-xs font-medium text-emerald-600/80">Status Dokumen</p>
+                                                <p class="text-xs font-semibold text-emerald-800">Status Dokumen</p>
                                                 <p class="text-sm font-semibold text-emerald-700">Berlaku Aktif</p>
                                             </div>
                                         </div>
                                     </div>
                                 @elseif ($isExpired)
-                                    <div
-                                        class="flex items-center justify-between p-4 rounded-xl border bg-red-50/50 border-red-100">
+                                    <div class="flex items-center justify-between p-4 rounded-xl border bg-red-50/70 border-red-200">
                                         <div class="flex items-center gap-3.5">
-                                            <div
-                                                class="w-9 h-9 rounded-full bg-red-100 text-red-500 flex items-center justify-center shrink-0">
+                                            <div class="w-9 h-9 rounded-lg bg-red-500 text-white flex items-center justify-center shrink-0 shadow-sm">
                                                 <i class="fas fa-times text-sm"></i>
                                             </div>
                                             <div>
-                                                <p class="text-xs font-medium text-red-400">Status Dokumen</p>
+                                                <p class="text-xs font-semibold text-red-800">Status Dokumen</p>
                                                 <p class="text-sm font-semibold text-red-700">Telah Kadaluarsa</p>
                                             </div>
                                         </div>
                                     </div>
                                 @else
-                                    <div
-                                        class="flex items-center justify-between p-4 rounded-xl border bg-amber-50/60 border-amber-200">
+                                    <div class="flex items-center justify-between p-4 rounded-xl border bg-amber-50/80 border-amber-200">
                                         <div class="flex items-center gap-3.5">
-                                            <div
-                                                class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                            <div class="w-9 h-9 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm">
                                                 <i class="fas fa-clock text-sm"></i>
                                             </div>
                                             <div>
-                                                <p class="text-xs font-medium text-amber-600/80">Status Dokumen</p>
+                                                <p class="text-xs font-semibold text-amber-900">Status Dokumen</p>
                                                 <p class="text-sm font-semibold text-amber-800">Belum Berlaku</p>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
 
-                                {{-- Grid Periode (Lebih Bersih) --}}
+                                {{-- Grid Periode --}}
                                 <div class="grid grid-cols-2 gap-4">
-                                    <div
-                                        class="border border-slate-200 bg-white rounded-xl p-4 flex flex-col gap-1.5 hover:border-blue-200 transition-colors">
+                                    <div class="border border-slate-200 bg-white rounded-xl p-4 flex flex-col gap-1.5 hover:border-blue-200 transition-colors">
                                         <div class="flex items-center gap-2 mb-1">
                                             <i class="far fa-calendar-plus text-slate-400"></i>
                                             <p class="text-xs font-medium text-slate-500">Berlaku Mulai</p>
                                         </div>
-                                        <p class="text-base font-semibold text-slate-800">1 Jan {{ $startYear ?? '-' }}
-                                        </p>
+                                        <p class="text-base font-semibold text-slate-800">1 Jan {{ $startYear ?? '-' }}</p>
                                     </div>
 
-                                    <div
-                                        class="border border-slate-200 bg-white rounded-xl p-4 flex flex-col gap-1.5 hover:border-blue-200 transition-colors">
+                                    <div class="border border-slate-200 bg-white rounded-xl p-4 flex flex-col gap-1.5 hover:border-blue-200 transition-colors">
                                         <div class="flex items-center gap-2 mb-1">
                                             <i class="far fa-calendar-check text-slate-400"></i>
                                             <p class="text-xs font-medium text-slate-500">Berakhir Pada</p>
                                         </div>
-                                        <p class="text-base font-semibold text-slate-800">31 Des {{ $endYear ?? '-' }}
-                                        </p>
+                                        <p class="text-base font-semibold text-slate-800">31 Des {{ $endYear ?? '-' }}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {{-- Footer Rentang Waktu --}}
-                            <div
-                                class="mt-6 p-4 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-between">
+                            <div class="mt-6 p-4 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-400 flex items-center justify-center shrink-0">
+                                    <div class="w-10 h-10 rounded-lg bg-white border border-slate-200 text-slate-500 flex items-center justify-center shrink-0 shadow-sm">
                                         <i class="fas fa-hourglass-half text-sm"></i>
                                     </div>
                                     <div>
                                         <p class="text-xs font-medium text-slate-500">Rentang Periode RTK</p>
-                                        <p class="text-sm font-semibold text-slate-700">{{ $startYear ?? '-' }} s.d.
-                                            {{ $endYear ?? '-' }}</p>
+                                        <p class="text-sm font-semibold text-slate-700">{{ $startYear ?? '-' }} s.d. {{ $endYear ?? '-' }}</p>
                                     </div>
                                 </div>
                                 <div class="text-right flex items-baseline gap-1">
@@ -174,16 +159,15 @@
                                     <span class="text-xs font-medium text-slate-500">Tahun</span>
                                 </div>
                             </div>
+
                         @else
                             {{-- Tampilan Kosong Jika Belum Ada RTK Acuan --}}
                             <div class="flex-1 flex flex-col items-center justify-center text-slate-400 py-12">
-                                <div
-                                    class="w-14 h-14 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center mb-3">
-                                    <i class="far fa-folder-open text-xl text-slate-300"></i>
+                                <div class="w-14 h-14 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-3 shadow-sm">
+                                    <i class="far fa-folder-open text-xl text-slate-400"></i>
                                 </div>
-                                <p class="text-sm font-medium text-slate-500">Detail Tidak Tersedia</p>
-                                <p class="text-xs text-slate-400 mt-1">Belum ada RTK Acuan yang aktif untuk wilayah ini
-                                </p>
+                                <p class="text-sm font-semibold text-slate-600">Detail Tidak Tersedia</p>
+                                <p class="text-xs text-slate-500 mt-1">Belum ada RTK Acuan yang aktif untuk wilayah ini</p>
                             </div>
                         @endif
                     </div>
