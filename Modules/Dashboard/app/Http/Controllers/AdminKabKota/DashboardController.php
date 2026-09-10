@@ -82,7 +82,7 @@ class DashboardController extends Controller
         // 2. DATA RTK DAERAH
         // ==========================================
        
-      $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+        $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('regency_code', $regencyCode)
             ->where('is_active', true)
             ->orderByDesc('updated_at')
@@ -99,6 +99,47 @@ class DashboardController extends Controller
         $totalRtkDaerah = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('regency_code', $regencyCode)
             ->count();
+
+        // ==========================================
+        // LOGIKA PRESENTASI RTK AKTIF
+        // ==========================================
+        $rtkActiveInfo = [
+            'isApproved' => false,
+            'isPending' => false,
+            'isValid' => false,
+            'sisaWaktuTeks' => '-',
+            'sisaWaktuColor' => 'text-slate-400',
+            'docStatusText' => 'Belum Berlaku',
+        ];
+
+        if ($rtkActive) {
+            $verifStatus = $rtkActive->status_verification;
+            $docStatus = $rtkActive->status_document;
+
+            $rtkActiveInfo['isApproved'] = $verifStatus === \Modules\RTK\Enums\RTKStatusVerification::APPROVED;
+            $rtkActiveInfo['isPending'] = !$rtkActiveInfo['isApproved'] && $verifStatus !== \Modules\RTK\Enums\RTKStatusVerification::REJECTED;
+            $rtkActiveInfo['isValid'] = $docStatus === \Modules\RTK\Enums\StatusDocument::VALID;
+
+            $sisaTahun = (int) $rtkActive->end_date - (int) date('Y');
+
+            if ($rtkActiveInfo['isApproved'] && $rtkActiveInfo['isValid']) {
+                if ($sisaTahun > 0) {
+                    $rtkActiveInfo['sisaWaktuTeks'] = $sisaTahun . ' Tahun';
+                    $rtkActiveInfo['sisaWaktuColor'] = 'text-slate-700';
+                } elseif ($sisaTahun === 0) {
+                    $rtkActiveInfo['sisaWaktuTeks'] = 'Berakhir Tahun Ini';
+                    $rtkActiveInfo['sisaWaktuColor'] = 'text-amber-600';
+                } else {
+                    $rtkActiveInfo['sisaWaktuTeks'] = '0 Tahun (Kadaluarsa)';
+                    $rtkActiveInfo['sisaWaktuColor'] = 'text-red-600';
+                }
+            }
+
+            $rtkActiveInfo['docStatusText'] = $docStatus->label() ?? 'Belum Berlaku';
+            if ($docStatus === \Modules\RTK\Enums\StatusDocument::NA) {
+                $rtkActiveInfo['docStatusText'] = 'Belum Berlaku';
+            }
+        }
 
         // ==========================================
         // 3. DATA PROJECT DAERAH
@@ -127,6 +168,7 @@ class DashboardController extends Controller
             'years' => $years,
             'selectedYear' => $selectedYear,
             'rtkActive' => $rtkActive,
+            'rtkActiveInfo' => $rtkActiveInfo,
             'totalRtkDaerah' => $totalRtkDaerah,
             'totalProjects' => $totalProjects,
             'onProgressProjects' => $onProgressProjects,
