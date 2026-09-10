@@ -29,7 +29,7 @@
                         <input type="text" x-model="query" @input.debounce.500ms="fetchResults"
                             @focus="if(query.length > 1) isOpen = true"
                             class="bg-slate-50 border border-slate-200 text-slate-900 text-xs sm:text-sm rounded-xl focus:ring-[#13416B] focus:border-[#13416B] block w-full ps-9 sm:ps-11 pe-8 sm:pe-10 py-2.5 sm:py-3 transition-colors shadow-sm"
-                            placeholder="Cari kursus, modul, topik, buku..." autocomplete="off">
+                            placeholder="Cari kursus, katalog atau perpustakaan..." autocomplete="off">
 
                         <!-- Ikon Loading -->
                         <div x-show="isLoading" x-cloak
@@ -51,7 +51,7 @@
 
                             <!-- State Kosong / Tidak Ditemukan -->
                             <template
-                                x-if="!isLoading && courses.length === 0 && modules.length === 0 && contents.length === 0 && libraries.length === 0 && query.length > 1">
+                                x-if="!isLoading && enrolledCourses.length === 0 && availableCatalogs.length === 0 && libraries.length === 0 && query.length > 1">
                                 <div class="p-6 text-center">
                                     <div
                                         class="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3 border border-slate-100">
@@ -62,14 +62,14 @@
                                 </div>
                             </template>
 
-                            <!-- Hasil: Kursus -->
-                            <template x-if="courses.length > 0">
+                            <!-- Hasil: Kursus Terdaftar -->
+                            <template x-if="enrolledCourses.length > 0">
                                 <div>
                                     <div
                                         class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                        Katalog Kursus</div>
+                                        Kursus Terdaftar</div>
                                     <ul>
-                                        <template x-for="item in courses">
+                                        <template x-for="item in enrolledCourses">
                                             <li>
                                                 <a :href="item.url"
                                                     class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
@@ -93,44 +93,14 @@
                                 </div>
                             </template>
 
-                            <!-- Hasil: Modul (Course Section) -->
-                            <template x-if="modules.length > 0">
+                            <!-- Hasil: Katalog Kursus (Belum Terdaftar) -->
+                            <template x-if="availableCatalogs.length > 0">
                                 <div>
                                     <div
                                         class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                        Modul</div>
+                                        Katalog (Belum Terdaftar)</div>
                                     <ul>
-                                        <template x-for="item in modules">
-                                            <li>
-                                                <a :href="item.url"
-                                                    class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
-                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform text-white font-bold"
-                                                        :class="item.color">
-                                                        <span x-text="item.initials"></span>
-                                                    </div>
-                                                    <div class="flex-1 min-w-0">
-                                                        <p class="text-sm font-bold text-slate-800 truncate group-hover:text-[#13416B]"
-                                                            x-text="item.title"></p>
-                                                        <p class="text-[10px] text-slate-500 truncate mt-0.5"
-                                                            x-text="item.subtitle"></p>
-                                                    </div>
-                                                    <i
-                                                        class="fas fa-chevron-right text-slate-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                                </a>
-                                            </li>
-                                        </template>
-                                    </ul>
-                                </div>
-                            </template>
-
-                            <!-- Hasil: Topik (Section Content) -->
-                            <template x-if="contents.length > 0">
-                                <div>
-                                    <div
-                                        class="px-5 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                        Topik</div>
-                                    <ul>
-                                        <template x-for="item in contents">
+                                        <template x-for="item in availableCatalogs">
                                             <li>
                                                 <a :href="item.url"
                                                     class="flex items-center gap-3.5 px-5 py-3 hover:bg-slate-50 transition-colors border-l-2 border-transparent hover:border-[#13416B] group">
@@ -194,16 +164,14 @@
                             query: '',
                             isOpen: false,
                             isLoading: false,
-                            courses: [],
-                            modules: [],
-                            contents: [],
+                            enrolledCourses: [],
+                            availableCatalogs: [],
                             libraries: [],
                             fetchResults() {
                                 if (this.query.trim().length < 2) {
                                     this.isOpen = false;
-                                    this.courses = [];
-                                    this.modules = [];
-                                    this.contents = [];
+                                    this.enrolledCourses = [];
+                                    this.availableCatalogs = [];
                                     this.libraries = [];
                                     return;
                                 }
@@ -219,9 +187,8 @@
                                     })
                                     .then(res => res.json())
                                     .then(data => {
-                                        this.courses = data.courses || [];
-                                        this.modules = data.modules || [];
-                                        this.contents = data.contents || [];
+                                        this.enrolledCourses = data.enrolled_courses || [];
+                                        this.availableCatalogs = data.available_catalogs || [];
                                         this.libraries = data.libraries || [];
                                         this.isLoading = false;
                                     })

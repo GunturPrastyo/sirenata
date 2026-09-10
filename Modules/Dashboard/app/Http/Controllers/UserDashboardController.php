@@ -86,7 +86,7 @@ class UserDashboardController extends Controller
                 $aScores = [];
 
                 foreach ($courseTests as $test) {
-                   
+
                     $labels[] = $test->title;
 
                     $uScores[] = $userResults[$test->id] ?? 0;
@@ -186,10 +186,9 @@ class UserDashboardController extends Controller
         $keyword = $request->input('q');
 
         if (empty($keyword)) {
-            return response()->json(['courses' => [], 'modules' => [], 'contents' => [], 'libraries' => []]);
+            return response()->json(['enrolled_courses' => [], 'available_catalogs' => [], 'libraries' => []]);
         }
 
-        // Helper: Pembuat Initial (Maks 2 huruf)
         $getInitials = function ($name) {
             $words = explode(' ', trim($name));
             $initials = '';
@@ -199,9 +198,17 @@ class UserDashboardController extends Controller
             return strlen($initials) < 1 ? 'S' : (strlen($initials) > 2 ? substr($initials, 0, 2) : $initials);
         };
 
-        // 1. Pencarian Kursus (Warna: Biru SIRENATA)
-        $courses = \Modules\LMS\Models\Course::where('name', 'like', "%{$keyword}%")
-            ->orWhere('description', 'like', "%{$keyword}%")
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $enrolledCourseIds = $user->enrolledCourses()->pluck('course_id')->toArray();
+
+        // 1. Pencarian Kursus yang Sudah Didaftar (Warna: Biru SIRENATA)
+        $enrolledCourses = \Modules\LMS\Models\Course::whereIn('id', $enrolledCourseIds)
+            ->where(function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            })
             ->with('category')
             ->limit(4)
             ->get()
@@ -215,46 +222,27 @@ class UserDashboardController extends Controller
                 ];
             });
 
-        // 2. Pencarian Modul (Course Section) (Warna: Hijau Emerald)
-        $modules = \Modules\LMS\Models\CourseSection::where('name', 'like', "%{$keyword}%")
-            ->orWhere('description', 'like', "%{$keyword}%")
-            ->with('course')
-            ->limit(3)
+        // 2. Pencarian Katalog (Kursus Belum Didaftar) (Warna: Hijau Emerald)
+        $availableCatalogs = \Modules\LMS\Models\Course::whereNotIn('id', $enrolledCourseIds)
+            ->where(function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            })
+            ->with('category')
+            ->limit(4)
             ->get()
             ->map(function ($item) use ($getInitials) {
-                $slug = $item->course->slug ?? '#';
                 return [
                     'title' => $item->name,
-                    'subtitle' => 'Kursus: ' . ($item->course->name ?? 'Tidak diketahui'),
-
-                    'url' => route('user.course.my-course.detail', $slug) . '?target=' . $item->id,
+                    'subtitle' => 'Katalog: ' . ($item->category->name ?? 'Kategori Umum'),
+                    'url' => route('user.course.index', $item->slug), // Route to catalog
                     'initials' => $getInitials($item->name),
                     'color' => 'bg-emerald-600'
                 ];
             });
 
-        // 3. Pencarian Topik (Section Content) (Warna: Ungu Indigo) 
-        $contents = \Modules\LMS\Models\SectionContent::where('name', 'like', "%{$keyword}%")
-            ->orWhere('content_text', 'like', "%{$keyword}%")
-            ->with('section.course')
-            ->limit(4)
-            ->get()
-            ->map(function ($item) use ($getInitials) {
-                $courseName = $item->section->course->name ?? 'Kursus';
-                $sectionName = $item->section->name ?? 'Modul';
-                $slug = $item->section->course->slug ?? '#';
 
-                return [
-                    'title' => $item->name,
-                    // Format: Nama Kursus • Modul: Nama Modul
-                    'subtitle' => $courseName . ' • Modul: ' . $sectionName,
-                    'url' => route('user.course.content.show', ['slug' => $slug, 'content' => $item->id]),
-                    'initials' => $getInitials($item->name),
-                    'color' => 'bg-indigo-600'
-                ];
-            });
-
-        // 4. Pencarian Perpustakaan / Buku (Warna: Oranye Amber)
+        // 3. Pencarian Perpustakaan / Buku (Warna: Oranye Amber)
         $libraries = \Modules\LMS\Models\Library::where('title', 'like', "%{$keyword}%")
             ->orWhere('description', 'like', "%{$keyword}%")
             ->with('libraryCategory')
@@ -271,9 +259,8 @@ class UserDashboardController extends Controller
             });
 
         return response()->json([
-            'courses' => $courses,
-            'modules' => $modules,
-            'contents' => $contents,
+            'enrolled_courses' => $enrolledCourses,
+            'available_catalogs' => $availableCatalogs,
             'libraries' => $libraries,
         ]);
     }
