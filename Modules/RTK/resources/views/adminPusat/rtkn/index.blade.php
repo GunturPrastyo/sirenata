@@ -111,20 +111,54 @@
                             <x-table.td>
                                 <span class="text-slate-600">{{ $rtkn->start_date }} - {{ $rtkn->end_date }}</span>
                             </x-table.td>
+                            
+                            <!-- Kolom Status Verifikasi -->
                             <x-table.td>
-                                {{-- PERBAIKAN: Mengganti 'indigo' menjadi 'warning' --}}
-                                <x-badge color="{{ $rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED ? 'success' : ($rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING ? 'warning' : 'red') }}" :text="$rtkn->status_verification->label()" />
-                            </x-table.td>
-                            <x-table.td>
-                                <x-badge color="{{ $rtkn->status_document === \Modules\RTK\Enums\StatusDocument::VALID ? 'success' : ($rtkn->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED ? 'red' : 'slate') }}" :text="$rtkn->status_document->label()" />
-                            </x-table.td>
-                            <x-table.td>
-                                @if ($rtkn->is_active)
-                                    <x-badge color="success" text="Ya" />
+                                @if ($rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                        {{ $rtkn->status_verification->label() }}
+                                    </span>
+                                @elseif ($rtkn->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-white bg-amber-400 shadow-sm">
+                                        {{ $rtkn->status_verification->label() }}
+                                    </span>
                                 @else
-                                    <x-badge color="slate" text="Tidak" />
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                        {{ $rtkn->status_verification->label() }}
+                                    </span>
                                 @endif
                             </x-table.td>
+                            
+                            <!-- Kolom Status Dokumen -->
+                            <x-table.td>
+                                @if ($rtkn->status_document === \Modules\RTK\Enums\StatusDocument::VALID)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                        {{ $rtkn->status_document->label() }}
+                                    </span>
+                                @elseif ($rtkn->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                        {{ $rtkn->status_document->label() }}
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200">
+                                        {{ $rtkn->status_document->label() }}
+                                    </span>
+                                @endif
+                            </x-table.td>
+                            
+                            <!-- Kolom RTK Acuan -->
+                            <x-table.td>
+                                @if ($rtkn->is_active)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                        Ya
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                        Tidak
+                                    </span>
+                                @endif
+                            </x-table.td>
+                            
                             <x-table.td align="center">
                                     <x-table.action>
                                         {{-- Step 1: Approve verifikasi — muncul kalau PENDING + is_active --}}
@@ -320,9 +354,8 @@
                                         {{-- Badge RTK Berlaku --}}
                                         @if($rtkn->is_berlaku)
                                             <li>
-                                                <span
-                                                    class="inline-flex items-center gap-1 w-full justify-center px-3 py-2 text-sm font-medium text-emerald-700 bg-emerald-100 rounded">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <span class="inline-flex items-center justify-center gap-1 w-full px-3 py-2 text-sm font-medium text-white bg-green-500 rounded shadow-sm">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>

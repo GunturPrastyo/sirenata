@@ -1,14 +1,4 @@
 <x-dashboard::layouts.dashboard title="Validasi RTK Kab/Kota">
-    @php
-        $getBadgeColor = function($colorClass) {
-            if (str_contains($colorClass, 'yellow') || str_contains($colorClass, 'amber') || str_contains($colorClass, 'warning')) return 'warning';
-            if (str_contains($colorClass, 'green') || str_contains($colorClass, 'emerald') || str_contains($colorClass, 'success')) return 'success';
-            if (str_contains($colorClass, 'red') || str_contains($colorClass, 'rose') || str_contains($colorClass, 'danger')) return 'danger';
-            if (str_contains($colorClass, 'blue') || str_contains($colorClass, 'indigo') || str_contains($colorClass, 'primary')) return 'indigo';
-            return 'slate';
-        };
-    @endphp
-
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <x-breadcrumb :items="[['label' => 'Daftar Laporan RTK Kab/Kota', 'url' => route('admin-province.laporan.index')], ['label' => 'Daftar Laporan RTK ' . $regency->name]]" />
@@ -128,45 +118,76 @@
 
                 <tbody id="admin-table-body" class="divide-y divide-slate-200">
                     @forelse ($rtks as $key => $rtk)
+                        @php
+                            $valVerif = strtolower($rtk->status_verification->value ?? '');
+                            $valDoc = strtolower($rtk->status_document->value ?? '');
+                        @endphp
                         <tr class="hover:bg-slate-50 transition">
                             <x-table.td align="left">
                                 {{ $key + $rtks->firstItem() }}
                             </x-table.td>
                             <x-table.td align="left">
-                                {{ $rtk->name }}
+                                <div class="flex flex-col items-start gap-1.5 py-1">
+                                    <p class="font-semibold text-slate-800 leading-snug">{{ $rtk->name }}</p>
+                                </div>
                             </x-table.td>
                             <x-table.td align="left">
                                 {{ $rtk->start_date }} - {{ $rtk->end_date }}
                             </x-table.td>
+                            
+                            <!-- Kolom Status Verifikasi -->
                             <x-table.td align="center">
-                                <x-badge :color="$getBadgeColor($rtk->status_verification->color())">
-                                    {{ $rtk->status_verification->label() }}
-                                </x-badge>
+                                @if ($valVerif === 'approved')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                        {{ $rtk->status_verification->label() }}
+                                    </span>
+                                @elseif ($valVerif === 'pending')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-white bg-amber-400 shadow-sm">
+                                        {{ $rtk->status_verification->label() }}
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                        {{ $rtk->status_verification->label() }}
+                                    </span>
+                                @endif
                             </x-table.td>
+
+                            <!-- Kolom Status Dokumen -->
                             <x-table.td align="center">
-                                <x-badge :color="$getBadgeColor($rtk->status_document->color())">
-                                    {{ $rtk->status_document->label() }}
-                                </x-badge>
+                                @if ($valDoc === 'valid')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                        {{ $rtk->status_document->label() }}
+                                    </span>
+                                @elseif ($valDoc === 'expired')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                        {{ $rtk->status_document->label() }}
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200">
+                                        {{ $rtk->status_document->label() }}
+                                    </span>
+                                @endif
                             </x-table.td>
+
+                            <!-- Kolom RTK Acuan -->
                             <x-table.td align="center">
                                 @if ($rtk->is_active)
-                                    <x-badge color="success" class="gap-1.5">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                            viewBox="0 0 24 24">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                         </svg>
                                         Ya
-                                    </x-badge>
+                                    </span>
                                 @else
-                                    <x-badge color="slate" class="gap-1.5">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                            viewBox="0 0 24 24">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 6L18 18M6 18L18 6" />
                                         </svg>
                                         Tidak
-                                    </x-badge>
+                                    </span>
                                 @endif
                             </x-table.td>
+
                             <x-table.td align="center">
                                 <x-table.action>
                                     {{-- Step 1: Approve verifikasi — muncul kalau PENDING + is_active --}}
@@ -352,13 +373,13 @@
                                     {{-- Badge RTK Berlaku --}}
                                     @if($rtk->is_berlaku)
                                         <li>
-                                            <x-badge color="success" class="w-full justify-center py-2">
+                                            <span class="inline-flex items-center justify-center gap-1 w-full px-3 py-2 text-sm font-medium text-white bg-green-500 rounded shadow-sm">
                                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
                                                 RTK Berlaku
-                                            </x-badge>
+                                            </span>
                                         </li>
                                     @endif
 
