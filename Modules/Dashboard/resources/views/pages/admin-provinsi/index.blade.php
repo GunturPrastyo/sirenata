@@ -4,7 +4,7 @@
         
         <!-- Header & Breadcrumb -->
         <div class="flex flex-col gap-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            {{-- <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Halo, {{ $user->name }}</h1>
                     <p class="text-sm text-slate-500 font-medium mt-1">
@@ -12,7 +12,7 @@
                     </p>
                 </div>
                 
-            </div>
+            </div> --}}
 
             <!-- Peringatan Wilayah Belum Ditetapkan -->
             @if (!$user->hasCompleteScope())
@@ -43,7 +43,7 @@
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('approved', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Dokumen terverifikasi</p>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <i class="fas fa-check-double text-xl sm:text-2xl"></i>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('pending', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Butuh peninjauan</p>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/80 text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#184A78] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <i class="fas fa-hourglass-half text-xl sm:text-2xl"></i>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('rejected', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Dikembalikan ke daerah</p>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#184A78] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#184A78] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <i class="fas fa-ban text-xl sm:text-2xl"></i>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkMasaAktifPerKabKota->count() ?? 0 }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Kabupaten/Kota aktif</p>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#0f3354] text-white flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#184A78] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <i class="fas fa-map-marked-alt text-xl sm:text-2xl"></i>
                 </div>
             </div>

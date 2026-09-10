@@ -156,30 +156,57 @@
                                 <x-table.td align="left">
                                     <p class="text-slate-600">{{ $rtkdp->start_date }} - {{ $rtkdp->end_date }}</p>
                                 </x-table.td>
+                                
+                                <!-- Kolom Status Verifikasi -->
                                 <x-table.td align="left">
-                                    <x-badge :color="$getBadgeColor($rtkdp->status_verification->color())" :text="$rtkdp->status_verification->label()" />
-                                </x-table.td>
-                                <x-table.td align="left">
-                                    <x-badge :color="$getBadgeColor($rtkdp->status_document->color())" :text="$rtkdp->status_document->label()" />
-                                </x-table.td>
-                                <x-table.td align="left">
-                                    @if ($rtkdp->is_active)
-                                        <x-badge color="success" text="Ya" />
+                                    @if ($rtkdp->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                            {{ $rtkdp->status_verification->label() }}
+                                        </span>
+                                    @elseif ($rtkdp->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING)
+                                        <!-- Menggunakan warna amber-400 dengan teks putih -->
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-white bg-amber-400 shadow-sm">
+                                            {{ $rtkdp->status_verification->label() }}
+                                        </span>
                                     @else
-                                        <x-badge color="slate" text="Tidak" />
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                            {{ $rtkdp->status_verification->label() }}
+                                        </span>
                                     @endif
                                 </x-table.td>
+
+                                <!-- Kolom Status Dokumen -->
+                                <x-table.td align="left">
+                                    @if ($rtkdp->status_document === \Modules\RTK\Enums\StatusDocument::VALID)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                            {{ $rtkdp->status_document->label() }}
+                                        </span>
+                                    @elseif ($rtkdp->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                            {{ $rtkdp->status_document->label() }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200">
+                                            {{ $rtkdp->status_document->label() }}
+                                        </span>
+                                    @endif
+                                </x-table.td>
+
+                                <!-- Kolom RTK Acuan -->
+                                <x-table.td align="left">
+                                    @if ($rtkdp->is_active)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                            Ya
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                            Tidak
+                                        </span>
+                                    @endif
+                                </x-table.td>
+
                                 <x-table.td align="center">
                                     <x-table.action>
-                                        {{-- @if ($rtkdp->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING && $rtkdp->status_document === \Modules\RTK\Enums\StatusDocument::NA)
-                                            <li>
-                                                <a href="{{ route('admin-province.rtkdp.edit', $rtkdp->id) }}"
-                                                    class="inline-flex items-center w-full p-2 hover:bg-slate-100 rounded">
-                                                    Edit
-                                                </a>
-                                            </li>
-                                        @endif --}}
-
                                         {{-- Edit RTK — bisa edit kalau status_verification APPROVED + status_document NA --}}
                                         @if(
                                             (

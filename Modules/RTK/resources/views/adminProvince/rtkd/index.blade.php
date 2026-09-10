@@ -1,14 +1,4 @@
 <x-dashboard::layouts.dashboard title="Rencana Tenaga Kerja Daerah ">
-    @php
-        // Helper warna jika ingin dipakai global
-        $getBadgeColor = function($colorClass) {
-            if (str_contains($colorClass, 'yellow') || str_contains($colorClass, 'amber') || str_contains($colorClass, 'warning')) return 'warning';
-            if (str_contains($colorClass, 'green') || str_contains($colorClass, 'emerald') || str_contains($colorClass, 'success')) return 'success';
-            if (str_contains($colorClass, 'red') || str_contains($colorClass, 'rose') || str_contains($colorClass, 'danger')) return 'danger';
-            if (str_contains($colorClass, 'blue') || str_contains($colorClass, 'indigo') || str_contains($colorClass, 'primary')) return 'indigo';
-            return 'slate';
-        };
-    @endphp
     <div class="p-2 sm:p-6">
         <!-- Breadcrumb Navigation -->
         <x-breadcrumb :items="[['label' => 'RTK Daerah Kabupaten/Kota']]" />
@@ -117,10 +107,9 @@
                 <tbody class="divide-y divide-slate-200">
                     @forelse ($rtkds as $key => $regency)
                         @php
-                            $verifColor = 'slate';
-                            $docColor = 'slate';
                             $verifLabel = '';
                             $docLabel = '';
+                            $valVerif = '';
                             $valDoc = '';
 
                             if ($regency->latest_rtk) {
@@ -128,27 +117,13 @@
                                 $verifLabel = $regency->latest_rtk->status_verification->label() ?? '';
                                 $docLabel = $regency->latest_rtk->status_document->label() ?? '';
 
-                                // Ambil value raw untuk logic penentuan warna
+                                // Ambil value raw untuk logic penentuan warna manual
                                 $valVerif = strtolower($regency->latest_rtk->status_verification->value ?? '');
                                 $valDoc = strtolower($regency->latest_rtk->status_document->value ?? '');
-
-                                // Evaluasi penentuan warna Badge
-                                $verifColor = match($valVerif) {
-                                    'approved' => 'success', // Disetujui -> Hijau
-                                    'pending' => 'warning',  // Menunggu Persetujuan -> Kuning
-                                    'rejected' => 'danger',
-                                    default => 'slate',
-                                };
-
-                                $docColor = match($valDoc) {
-                                    'valid' => 'success',    // Berlaku -> Hijau
-                                    'expired' => 'danger',
-                                    default => 'slate',
-                                };
                             }
                         @endphp
 
-                        <tr>
+                        <tr class="hover:bg-slate-50 transition">
                             <x-table.td align="center">
                                 {{ $key + $rtkds->firstItem() }}
                             </x-table.td>
@@ -160,7 +135,7 @@
 
                                     @if(($regency->pending_rtk_count ?? 0) > 0)
                                         <div class="relative group">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-amber-500 rounded-full cursor-pointer">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-amber-500 rounded-full cursor-pointer shadow-sm">
                                                 {{ $regency->pending_rtk_count }}
                                             </span>
                                             {{-- Tooltip --}}
@@ -172,7 +147,7 @@
                                 </div>
                             </x-table.td>
 
-                            {{-- Nama Dokumen dengan Label RTK Acuan diturunkan ke bawah teks --}}
+                            {{-- Nama Dokumen dengan Label RTK Acuan --}}
                             <x-table.td align="left">
                                 @if ($regency->latest_rtk)
                                     <div class="flex flex-col items-start gap-1.5 py-1">
@@ -180,12 +155,13 @@
                                         
                                         @if($regency->latest_rtk->is_berlaku || $regency->latest_rtk->is_active)
                                             <div class="mt-0.5">
-                                                <x-badge color="indigo" class="gap-1">
+                                                <!-- Menggunakan bg-indigo-500 dan text-white -->
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold text-white bg-indigo-500 shadow-sm">
                                                     <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                     </svg>
                                                     RTK Acuan
-                                                </x-badge>
+                                                </span>
                                             </div>
                                         @endif
                                     </div>
@@ -210,31 +186,60 @@
                             {{-- Status Verifikasi --}}
                             <x-table.td align="center">
                                 @if ($regency->latest_rtk)
-                                    <x-badge :color="$verifColor" :text="$verifLabel" />
+                                    @if ($valVerif === 'approved')
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                            {{ $verifLabel }}
+                                        </span>
+                                    @elseif ($valVerif === 'pending')
+                                        <!-- Menggunakan warna amber-400 dengan teks putih -->
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-white bg-amber-400 shadow-sm">
+                                            {{ $verifLabel }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                            {{ $verifLabel }}
+                                        </span>
+                                    @endif
                                 @else
-                                    <x-badge color="slate" text="Belum ada verifikasi" />
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                        Belum ada verifikasi
+                                    </span>
                                 @endif
                             </x-table.td>
 
                             {{-- Status Berlaku Dokumen --}}
                             <x-table.td align="center">
                                 @if ($regency->latest_rtk)
-                                    @if($valDoc !== 'na')
-                                        <x-badge :color="$docColor" :text="$docLabel" />
+                                    @if ($valDoc === 'valid')
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                            {{ $docLabel }}
+                                        </span>
+                                    @elseif ($valDoc === 'expired')
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                            {{ $docLabel }}
+                                        </span>
+                                    @elseif ($valDoc === 'na')
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                            N/A
+                                        </span>
                                     @else
-                                        <x-badge color="slate" text="N/A" />
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200">
+                                            {{ $docLabel }}
+                                        </span>
                                     @endif
                                 @else
-                                    <x-badge color="slate" text="Belum ada status dokumen" />
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                        Belum ada status dokumen
+                                    </span>
                                 @endif
                             </x-table.td>
 
-                            <x-table.td align="left">
+                            <x-table.td align="left" class="text-slate-600">
                                 {{ $regency->latest_rtk?->display_name_approver ?? '-' }}
                             </x-table.td>
 
                             {{-- Tanggal Diverifikasi --}}
-                            <x-table.td align="left">
+                            <x-table.td align="left" class="text-slate-600">
                                 {{ $regency->latest_rtk?->approved_at?->format('d M Y') ?? '-' }}
                             </x-table.td>
 

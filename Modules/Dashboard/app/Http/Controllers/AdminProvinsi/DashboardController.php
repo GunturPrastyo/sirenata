@@ -18,7 +18,7 @@ class DashboardController extends Controller
     public function __construct(
         private DashboardService $dashbordService
     ) {}
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -87,15 +87,15 @@ class DashboardController extends Controller
             ->toArray();
 
         $selectedRtkYear = $request->input('rtk_year', 'all');
-        
+
         $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
             ->berlaku();
-            
+
         if ($selectedRtkYear !== 'all') {
             $queryRtk->where('end_date', '>=', (int) $selectedRtkYear);
         }
-        
+
         $rtkKabKota = $queryRtk->get();
 
         $rtkRegencyCodes = $rtkKabKota->pluck('regency_code')->toArray();
@@ -122,15 +122,15 @@ class DashboardController extends Controller
             ->toArray();
 
         $selectedRtkEndYear = $request->input('rtk_end_year', 'all');
-        
+
         $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('province_code', $provinceCode)
             ->berlaku();
-            
+
         if ($selectedRtkEndYear !== 'all') {
             $queryRtkEnd->where('end_date', (int) $selectedRtkEndYear);
         }
-        
+
         $rtkKabKotaEnd = $queryRtkEnd->get();
         $rtkEndRegencyCodes = $rtkKabKotaEnd->pluck('regency_code')->toArray();
         $rtkEndRegencyNames = \Creasi\Nusa\Models\Regency::whereIn('code', $rtkEndRegencyCodes)->pluck('name', 'code');
@@ -149,13 +149,22 @@ class DashboardController extends Controller
         $rtkStatusDistribution = \Illuminate\Support\Facades\DB::table('rencana_tenaga_kerjas')
             ->where('province_code', $provinceCode)
             ->where('type', TypeRtk::KAB_KOTA->value)
+            ->where(function ($query) {
+                // Tetap hitung semua untuk status yang BUKAN pending
+                $query->where('status_verification', '!=', 'pending')
+                    ->orWhere(function ($q) {
+                        // Khusus status pending, HANYA hitung jika RTK tersebut adalah Acuan (is_active = 1)
+                        $q->where('status_verification', 'pending')
+                            ->where('is_active', 1);
+                    });
+            })
             ->select('status_verification as status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy('status_verification')
             ->pluck('total', 'status');
 
         $maxOptionYear = !empty($availableRtkEndYears) ? max($availableRtkEndYears) : $currentYear;
         $minOptionYear = $currentYear;
-        
+
         $rtkYearsOptions = [];
         for ($y = $maxOptionYear; $y >= $minOptionYear; $y--) {
             $rtkYearsOptions[] = $y;
@@ -216,7 +225,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function storeOrUpdateProfile(UpdateProfileRequest $request) :RedirectResponse
+    public function storeOrUpdateProfile(UpdateProfileRequest $request): RedirectResponse
     {
         $user = Auth::user();
         $this->dashbordService->updateProfile($user, $request->validated());
