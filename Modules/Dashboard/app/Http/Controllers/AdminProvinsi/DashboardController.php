@@ -50,21 +50,33 @@ class DashboardController extends Controller
 
         // SDM per Kab/Kota
         $userCountsByRegency = (clone $baseUserQuery)
+            ->join('user_profiles', 'users.id', '=', 'user_profiles.user_id')
             ->whereYear('users.created_at', $selectedSdmYear)
             ->whereNotNull('user_scopes.regency_code')
-            ->select('user_scopes.regency_code', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
-            ->groupBy('user_scopes.regency_code')
+            ->select(
+                'user_scopes.regency_code',
+                'user_profiles.gender',
+                \Illuminate\Support\Facades\DB::raw('count(*) as total')
+            )
+            ->groupBy('user_scopes.regency_code', 'user_profiles.gender')
             ->get();
 
-        $regencyCodes = $userCountsByRegency->pluck('regency_code')->toArray();
+        $regencyCodes = $userCountsByRegency->pluck('regency_code')->unique()->toArray();
         $regencies = \Creasi\Nusa\Models\Regency::whereIn('code', $regencyCodes)->pluck('name', 'code');
 
-        $sdmPerKabKota = $userCountsByRegency->map(function ($item) use ($regencies) {
+        $sdmPerKabKota = collect($regencyCodes)->map(function ($code) use ($userCountsByRegency, $regencies) {
+            $regencyData = $userCountsByRegency->where('regency_code', $code);
+            $maleCount = $regencyData->where('gender', 'male')->first()->total ?? 0;
+            $femaleCount = $regencyData->where('gender', 'female')->first()->total ?? 0;
+
             return (object) [
-                'regency_name' => collect(explode(' ', $regencies[$item->regency_code] ?? 'Unknown (' . $item->regency_code . ')'))->map(fn($w) => ucfirst(strtolower($w)))->join(' '),
-                'total' => $item->total,
+                'regency_code' => $code,
+                'regency_name' => collect(explode(' ', $regencies[$code] ?? 'Unknown (' . $code . ')'))->map(fn($w) => ucfirst(strtolower($w)))->join(' '),
+                'male' => $maleCount,
+                'female' => $femaleCount,
+                'total' => $maleCount + $femaleCount
             ];
-        });
+        })->sortByDesc('total')->values();
 
         // Gender stats
         $genders = (clone $baseUserQuery)

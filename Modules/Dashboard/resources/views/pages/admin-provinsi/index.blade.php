@@ -1,4 +1,9 @@
 <x-dashboard::layouts.dashboard title="Dashboard Admin Provinsi">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap');
+        .font-oswald { font-family: 'Oswald', sans-serif; }
+    </style>
+
     <!-- Wrapper Utama Senada dengan Admin Pusat -->
     <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6 sm:space-y-8 bg-slate-50/50 min-h-screen">
         
@@ -11,7 +16,6 @@
                         Masuk sebagai <span class="text-[#13416B] font-bold">{{ $user->getRoleNames()->implode(', ') }}</span> — Wilayah {{ $user->scopeArea?->province?->name ?? 'Belum Ditetapkan' }}
                     </p>
                 </div>
-                
             </div>
 
             <!-- Peringatan Wilayah Belum Ditetapkan -->
@@ -39,7 +43,7 @@
             <!-- RTK Disetujui -->
             <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">RTK Disetujui</p>
+                    <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1 font-oswald">RTK Disetujui</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('approved', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Dokumen terverifikasi</p>
                 </div>
@@ -51,7 +55,7 @@
             <!-- Status Menunggu -->
             <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">Status Menunggu</p>
+                    <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1 font-oswald">Status Menunggu</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('pending', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Butuh peninjauan</p>
                 </div>
@@ -63,7 +67,7 @@
             <!-- RTK Ditolak -->
             <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">RTK Ditolak</p>
+                    <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1 font-oswald">RTK Ditolak</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('rejected', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Dikembalikan ke daerah</p>
                 </div>
@@ -75,7 +79,7 @@
             <!-- Total Wilayah -->
             <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
                 <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-1">RTK Aktif</p>
+                    <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1 font-oswald">RTK Aktif</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkMasaAktifPerKabKota->count() ?? 0 }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Kabupaten/Kota aktif</p>
                 </div>
@@ -95,7 +99,7 @@
                         <i class="fas fa-chart-bar text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-bold text-slate-800">Komparasi Masa Berlaku RTK</h2>
+                        <h2 class="text-lg font-semibold text-slate-800 font-oswald">Komparasi Masa Berlaku RTK</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Tahun penyusunan dan masa berakhir dokumen per Kabupaten/Kota</p>
                     </div>
                 </div>
@@ -131,7 +135,7 @@
         </div>
 
         <!-- ========================================================= -->
-        <!-- 3. DISTRIBUSI E-LEARNING (LEADERBOARD UI)                 -->
+        <!-- 3. DISTRIBUSI E-LEARNING (SPLIT HTML LEADERBOARD)         -->
         <!-- ========================================================= -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -140,7 +144,7 @@
                         <i class="fas fa-users text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-bold text-slate-800">Distribusi Pendaftar E-Learning</h2>
+                        <h2 class="text-lg font-semibold text-slate-800 font-oswald">Distribusi Pendaftar E-Learning</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Peringkat jumlah pengguna terdaftar berdasarkan Kabupaten/Kota</p>
                     </div>
                 </div>
@@ -156,7 +160,7 @@
             
             <div class="p-5 sm:p-6">
                 <!-- LEADERBOARD CONTAINER -->
-                <div id="sdmListContainer" class="space-y-5 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar {{ $sdmPerKabKota->count() > 0 ? '' : 'hidden' }}">
+                <div id="sdmListContainer" class="space-y-6 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar {{ $sdmPerKabKota->count() > 0 ? '' : 'hidden' }}">
                     <!-- Di-render via JavaScript agar dinamis -->
                 </div>
                 
@@ -210,7 +214,6 @@
                     const rtkStartData = @json($rtkMasaAktifPerKabKota->pluck('start_date'));
                     const rtkEndData = @json($rtkMasaAktifPerKabKota->pluck('end_date'));
 
-                    // Format data menjadi array [start, end] untuk menampilkan floating bar
                     const floatingData = rtkStartData.map((start, index) => [start, rtkEndData[index]]);
 
                     window.rtkCombinedChartInstance = new Chart(rtkCombinedCtx, {
@@ -221,21 +224,21 @@
                                 {
                                     label: 'Periode Aktif',
                                     data: floatingData,
-                                    backgroundColor: '#13416B', // Warna biru Sirenata
+                                    backgroundColor: '#13416B', 
                                     borderRadius: 6,
-                                    borderSkipped: false, // Memastikan sisi kiri dan kanan bar membulat
+                                    borderSkipped: false,
                                     barPercentage: 0.6,
                                     categoryPercentage: 0.8
                                 }
                             ]
                         },
                       options: {
-                            indexAxis: 'y', // Orientasi HORIZONTAL
+                            indexAxis: 'y', // HORIZONTAL
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    display: false // Disembunyikan karena informasinya sudah jelas dengan 1 bar
+                                    display: false 
                                 },
                                 tooltip: {
                                     backgroundColor: 'rgba(19, 65, 107, 0.95)',
@@ -247,7 +250,6 @@
                                             return Array.isArray(context[0].label) ? context[0].label.join(' ') : context[0].label;
                                         },
                                         label: function(context) {
-                                            // Membaca rentang [start, end] dari data mentah tooltip
                                             const startYear = context.raw[0];
                                             const endYear = context.raw[1];
                                             return ` Masa Berlaku: ${startYear} s.d. ${endYear}`;
@@ -279,7 +281,6 @@
                         }
                     });
 
-                    // Penyesuaian tinggi canvas dinamis agar tidak gepeng
                     const initialRtkHeight = Math.max(400, rtkLabelsRaw.length * 50);
                     document.getElementById('rtkCombinedChartContainer').style.height = initialRtkHeight + 'px';
                 @endif
@@ -307,7 +308,6 @@
                             const start = rtkData.map(item => item.start_date);
                             const end = rtkData.map(item => item.end_date);
                             
-                            // Map ke format floating bar saat AJAX dirender ulang
                             const newFloatingData = start.map((s, index) => [s, end[index]]);
                             
                             if (window.rtkCombinedChartInstance) {
@@ -328,7 +328,7 @@
                 };
 
                 // =========================================================
-                // 2. FUNGSI RENDER LEADERBOARD E-LEARNING
+                // 2. GRAFIK DISTRIBUSI E-LEARNING (SPLIT HTML LEADERBOARD)
                 // =========================================================
                 function renderSdmLeaderboard(data) {
                     const container = document.getElementById('sdmListContainer');
@@ -343,26 +343,41 @@
                     container.classList.remove('hidden');
                     emptyState.classList.add('hidden');
 
-                    // Cari nilai tertinggi untuk persentase bar
                     let maxTotal = Math.max(...data.map(item => item.total));
                     if (maxTotal === 0) maxTotal = 1;
 
-                    // Mengurutkan dari yang terbanyak
                     const sortedData = [...data].sort((a, b) => b.total - a.total);
 
                     let htmlContent = '';
                     sortedData.forEach((item, index) => {
-                        const percentage = (item.total / maxTotal) * 100;
+                        const maleWidth = (item.male / maxTotal) * 100;
+                        const femaleWidth = (item.female / maxTotal) * 100;
+
+                        // Perhatikan: Menampilkan data kabupaten/kota
+                        const wilayahName = item.regency_name; 
+
                         htmlContent += `
-                            <div class="flex items-center gap-3.5 group">
+                            <div class="flex items-center gap-4 group">
                                 <div class="w-6 text-sm font-bold text-slate-400 text-right shrink-0 group-hover:text-[#13416B] transition-colors">${index + 1}.</div>
                                 <div class="flex-1 min-w-0">
-                                    <div class="flex justify-between items-center mb-1.5">
-                                        <span class="text-sm font-semibold text-slate-700 truncate pr-2 group-hover:text-[#13416B] transition-colors">${item.regency_name}</span>
-                                        <span class="text-sm font-extrabold text-[#13416B] shrink-0">${item.total} <span class="text-[10px] font-medium text-slate-500">Peserta</span></span>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-sm font-semibold text-slate-700 truncate pr-2 group-hover:text-[#13416B] transition-colors">${wilayahName}</span>
+                                        <div class="text-right shrink-0">
+                                            <span class="text-sm font-extrabold text-[#13416B]">${item.total}</span>
+                                            <span class="text-[10px] font-medium text-slate-500 ml-1">Peserta</span>
+                                        </div>
                                     </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                        <div class="bg-[#13416B] h-full rounded-full transition-all duration-700 ease-out" style="width: ${percentage}%"></div>
+                                    
+                                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden flex shadow-inner">
+                                        <div class="bg-[#13416B] h-full transition-all duration-700 ease-out border-r border-white/20" style="width: ${maleWidth}%" title="Laki-laki: ${item.male}"></div>
+                                        <div class="bg-[#cbd5e1] h-full transition-all duration-700 ease-out" style="width: ${femaleWidth}%" title="Perempuan: ${item.female}"></div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between items-center mt-1.5 px-0.5">
+                                        <div class="flex gap-3">
+                                            <span class="text-[10px] font-medium text-slate-500"><i class="fas fa-male text-[#13416B] mr-1 text-xs"></i>${item.male}</span>
+                                            <span class="text-[10px] font-medium text-slate-500"><i class="fas fa-female text-slate-400 mr-1 text-xs"></i>${item.female}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -373,7 +388,7 @@
                 }
 
                 // Render pertama kali saat halaman dimuat
-                const initialSdmData = @json($sdmPerKabKota);
+                const initialSdmData = @json($sdmPerKabKota); 
                 renderSdmLeaderboard(initialSdmData);
 
                 // Fungsi AJAX saat filter SDM diganti
@@ -383,7 +398,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        renderSdmLeaderboard(data.sdmPerKabKota);
+                        renderSdmLeaderboard(data.sdmPerKabKota); 
                     });
                 };
             });

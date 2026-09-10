@@ -70,7 +70,7 @@
                         <i class="fas fa-chart-bar text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-slate-800 font-oswald ">Komparasi Masa Berlaku RTK</h2>
+                        <h2 class="text-lg font-semibold text-slate-800 font-oswald">Komparasi Masa Berlaku RTK</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Tahun penyusunan dan masa berakhir dokumen per Provinsi</p>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
         </div>
 
         <!-- ========================================================= -->
-        <!-- 3. DISTRIBUSI E-LEARNING (HORIZONTAL BAR CHART)           -->
+        <!-- 3. DISTRIBUSI E-LEARNING (SPLIT HTML LEADERBOARD)         -->
         <!-- ========================================================= -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
             <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -115,7 +115,7 @@
                         <i class="fas fa-users text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-slate-800 font-oswald">Distribusi Pendaftar E-Learning</h2>
+                        <h2 class="text-lg font-semibold text-slate-800 font-oswald">Distribusi Pendaftar E-Learning</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Jumlah pengguna terdaftar berdasarkan Provinsi</p>
                     </div>
                 </div>
@@ -130,11 +130,9 @@
             </div>
             
             <div class="p-5 sm:p-6">
-                <!-- CHART CONTAINER DENGAN SCROLL VERTICAL -->
-                <div class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2 {{ $sdmPerProvinsi->count() > 0 ? '' : 'hidden' }}">
-                    <div id="sdmChartWrapper" class="relative w-full" style="min-height: 400px;">
-                        <canvas id="sdmHorizontalBarChart"></canvas>
-                    </div>
+                <!-- LEADERBOARD CONTAINER -->
+                <div id="sdmListContainer" class="space-y-6 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar {{ $sdmPerProvinsi->count() > 0 ? '' : 'hidden' }}">
+                    <!-- Di-render via JavaScript agar dinamis -->
                 </div>
                 
                 <!-- EMPTY STATE -->
@@ -305,124 +303,82 @@
                 };
 
                 // =========================================================
-                // 2. GRAFIK DISTRIBUSI E-LEARNING (HORIZONTAL BAR) GENDER
+                // 2. GRAFIK DISTRIBUSI E-LEARNING (SPLIT HTML LEADERBOARD)
                 // =========================================================
-                let sdmChartInstance = null;
-
-                function renderSdmChart(data) {
-                    const wrapperScroll = document.querySelector('#sdmChartWrapper').parentElement;
-                    const wrapper = document.getElementById('sdmChartWrapper');
+                function renderSdmLeaderboard(data) {
+                    const container = document.getElementById('sdmListContainer');
                     const emptyState = document.getElementById('sdmEmptyState');
 
                     if (!data || data.length === 0) {
-                        wrapperScroll.classList.add('hidden');
+                        container.classList.add('hidden');
                         emptyState.classList.remove('hidden');
                         return;
                     }
 
-                    wrapperScroll.classList.remove('hidden');
+                    container.classList.remove('hidden');
                     emptyState.classList.add('hidden');
 
-                    // Mengurutkan dari pendaftar total terbanyak
+                    // Cari nilai total tertinggi untuk menentukan lebar maksimum bar (100%)
+                    let maxTotal = Math.max(...data.map(item => item.total));
+                    if (maxTotal === 0) maxTotal = 1;
+
+                    // Mengurutkan dari pendaftar terbanyak ke tersedikit
                     const sortedData = [...data].sort((a, b) => b.total - a.total);
-                    const rawLabels = sortedData.map(item => item.province_name);
-                    const labels = rawLabels.map(label => formatMultilineLabel(label));
-                    
-                    // Pisahkan data laki-laki dan perempuan
-                    const dataMale = sortedData.map(item => item.male);
-                    const dataFemale = sortedData.map(item => item.female);
 
-                    // Set tinggi dinamis berdasarkan jumlah provinsi yang muncul
-                    const calcHeight = Math.max(400, labels.length * 60);
-                    wrapper.style.height = calcHeight + 'px';
+                    let htmlContent = '';
+                    sortedData.forEach((item, index) => {
+                        // Menghitung persentase lebar bar berdasarkan data tertinggi
+                        const maleWidth = (item.male / maxTotal) * 100;
+                        const femaleWidth = (item.female / maxTotal) * 100;
 
-                    if (sdmChartInstance) {
-                        sdmChartInstance.data.labels = labels;
-                        sdmChartInstance.data.datasets[0].data = dataMale;
-                        sdmChartInstance.data.datasets[1].data = dataFemale;
-                        sdmChartInstance.update();
-                    } else {
-                        const ctx = document.getElementById('sdmHorizontalBarChart').getContext('2d');
-                        sdmChartInstance = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [
-                                    {
-                                        label: 'Laki-Laki',
-                                        data: dataMale,
-                                        backgroundColor: '#13416B', // Biru Sirenata
-                                        borderRadius: 4,
-                                        barPercentage: 0.8,
-                                        categoryPercentage: 0.7
-                                    },
-                                    {
-                                        label: 'Perempuan',
-                                        data: dataFemale,
-                                        backgroundColor: '#cbd5e1', // Abu-abu Slate-300 yang sebelumnya dipakai di RTK
-                                        borderRadius: 4,
-                                        barPercentage: 0.8,
-                                        categoryPercentage: 0.7
-                                    }
-                                ]
-                            },
-                            options: {
-                                indexAxis: 'y', // Menjadikan bar chart horizontal
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: { 
-                                        display: true,
-                                        position: 'bottom',
-                                        labels: { 
-                                            usePointStyle: true,
-                                            boxWidth: 10,
-                                            font: { size: 11, family: "'Inter', sans-serif" }
-                                        }
-                                    },
-                                    tooltip: {
-                                        backgroundColor: 'rgba(19, 65, 107, 0.95)',
-                                        padding: 12,
-                                        cornerRadius: 6,
-                                        titleFont: { size: 13, weight: 'bold' },
-                                        callbacks: {
-                                            title: function(context) {
-                                                return Array.isArray(context[0].label) ? context[0].label.join(' ') : context[0].label;
-                                            }
-                                        }
-                                    }
-                                },
-                                scales: {
-                                    x: {
-                                        beginAtZero: true,
-                                        grid: { color: '#f1f5f9' },
-                                        ticks: { font: { size: 11 }, precision: 0 } 
-                                    },
-                                    y: {
-                                        grid: { display: false },
-                                        ticks: { font: { size: 11, family: "'Inter', sans-serif" } },
-                                        afterFit: function(scaleInstance) {
-                                            scaleInstance.width = window.innerWidth >= 640 ? 160 : 120;
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
+                        // Perhatikan: Menampilkan data provinsi
+                        const wilayahName = item.province_name; 
+
+                        htmlContent += `
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-6 text-sm font-bold text-slate-400 text-right shrink-0 group-hover:text-[#13416B] transition-colors">${index + 1}.</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-sm font-semibold text-slate-700 truncate pr-2 group-hover:text-[#13416B] transition-colors">${wilayahName}</span>
+                                        <div class="text-right shrink-0">
+                                            <span class="text-sm font-extrabold text-[#13416B]">${item.total}</span>
+                                            <span class="text-[10px] font-medium text-slate-500 ml-1">Peserta</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Split Progress Bar -->
+                                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden flex shadow-inner">
+                                        <div class="bg-[#13416B] h-full transition-all duration-700 ease-out border-r border-white/20" style="width: ${maleWidth}%" title="Laki-laki: ${item.male}"></div>
+                                        <div class="bg-[#cbd5e1] h-full transition-all duration-700 ease-out" style="width: ${femaleWidth}%" title="Perempuan: ${item.female}"></div>
+                                    </div>
+                                    
+                                    <!-- Rincian Gender di bawah bar -->
+                                    <div class="flex justify-between items-center mt-1.5 px-0.5">
+                                        <div class="flex gap-3">
+                                            <span class="text-[10px] font-medium text-slate-500"><i class="fas fa-male text-[#13416B] mr-1 text-xs"></i>${item.male}</span>
+                                            <span class="text-[10px] font-medium text-slate-500"><i class="fas fa-female text-slate-400 mr-1 text-xs"></i>${item.female}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    container.innerHTML = htmlContent;
                 }
 
-                // Render pertama kali
-                const initialSdmData = @json($sdmPerProvinsi);
-                renderSdmChart(initialSdmData);
+                // Render pertama kali saat halaman dimuat
+                const initialSdmData = @json($sdmPerProvinsi); 
+                renderSdmLeaderboard(initialSdmData);
 
-                // Fungsi AJAX
+                // Fungsi AJAX saat filter SDM diganti
                 window.fetchSdmPusatData = function(year) {
                     fetch(`{{ route('admin-pusat.dashboard') }}?sdm_year=${year}`, {
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
                     })
                     .then(response => response.json())
                     .then(data => {
-                        renderSdmChart(data.sdmPerProvinsi);
+                        renderSdmLeaderboard(data.sdmPerProvinsi); 
                     });
                 };
             });
