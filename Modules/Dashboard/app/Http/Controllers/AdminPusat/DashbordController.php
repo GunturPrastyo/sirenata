@@ -55,9 +55,10 @@ class DashbordController extends Controller
             $sdmYears[] = $y;
         }
 
-        // SDM per Provinsi
+        // SDM per Provinsi dengan Grouping Gender
         $userCountsByProvince = DB::table('user_scopes')
             ->join('users', 'user_scopes.user_id', '=', 'users.id')
+            ->join('user_profiles', 'users.id', '=', 'user_profiles.user_id')
             ->join('model_has_roles', function ($join) {
                 $join->on('users.id', '=', 'model_has_roles.model_uuid')
                     ->where('model_has_roles.model_type', '=', 'App\\Models\\User');
@@ -66,19 +67,31 @@ class DashbordController extends Controller
             ->where('roles.name', 'user')
             ->whereYear('users.created_at', $selectedSdmYear)
             ->whereNotNull('user_scopes.province_code')
-            ->select('user_scopes.province_code', DB::raw('count(*) as total'))
-            ->groupBy('user_scopes.province_code')
+            ->select(
+                'user_scopes.province_code',
+                'user_profiles.gender',
+                DB::raw('count(*) as total')
+            )
+            ->groupBy('user_scopes.province_code', 'user_profiles.gender')
             ->get();
 
-        $provinceCodes = $userCountsByProvince->pluck('province_code')->toArray();
+        $provinceCodes = $userCountsByProvince->pluck('province_code')->unique()->toArray();
         $provinces = Province::whereIn('code', $provinceCodes)->pluck('name', 'code');
 
-        $sdmPerProvinsi = $userCountsByProvince->map(function ($item) use ($provinces) {
+        // Mengelompokkan ulang hasil query agar bentuknya per provinsi berisi total male dan female
+        $sdmPerProvinsi = collect($provinceCodes)->map(function ($code) use ($userCountsByProvince, $provinces) {
+            $provinceData = $userCountsByProvince->where('province_code', $code);
+            $maleCount = $provinceData->where('gender', 'male')->first()->total ?? 0;
+            $femaleCount = $provinceData->where('gender', 'female')->first()->total ?? 0;
+
             return (object) [
-                'province_name' => $provinces[$item->province_code] ?? 'Unknown (' . $item->province_code . ')',
-                'total' => $item->total,
+                'province_code' => $code,
+                'province_name' => collect(explode(' ', $provinces[$code] ?? 'Unknown (' . $code . ')'))->map(fn($w) => ucfirst(strtolower($w)))->join(' '),
+                'male' => $maleCount,
+                'female' => $femaleCount,
+                'total' => $maleCount + $femaleCount // Total masih dibutuhkan untuk sortir
             ];
-        })->sortBy('province_name')->values();
+        })->sortByDesc('total')->values(); // Urutkan dari yang terbanyak
 
         // ====================================================================
         // PERBAIKAN 1: Masa Aktif RTK per Provinsi (Group By Province)
