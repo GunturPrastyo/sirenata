@@ -101,7 +101,8 @@
 
                                     @if(($province->pending_rtk_count ?? 0) > 0)
                                         <div class="relative group">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-amber-500 rounded-full cursor-pointer">
+                                            <!-- Menggunakan warna amber-500 dengan teks putih sesuai referensi -->
+                                            <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-amber-500 rounded-full cursor-pointer shadow-sm">
                                                 {{ $province->pending_rtk_count }}
                                             </span>
                                             {{-- Tooltip --}}
@@ -113,7 +114,7 @@
                                 </div>
                             </x-table.td>
 
-                            {{-- Nama Dokumen (Badge Berlaku Pindah ke Bawah) --}}
+                            {{-- Nama Dokumen (Badge Berlaku) --}}
                             <x-table.td class="align-top pt-4">
                                 @if ($province->latest_rtk)
                                     <!-- Menggunakan flex-col agar turun ke bawah -->
@@ -122,7 +123,7 @@
                                         
                                         {{-- Badge RTK Berlaku --}}
                                         @if($province->latest_rtk->is_berlaku)
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold text-white bg-green-500 shadow-sm">
                                                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                 </svg>
@@ -148,21 +149,50 @@
                                 @endif
                             </x-table.td>
 
-                            {{-- Status Verifikasi (Warna diganti dari indigo ke warning) --}}
+                            {{-- Status Verifikasi --}}
                             <x-table.td align="center" class="align-top pt-4">
                                 @if ($province->latest_rtk)
-                                    <x-badge color="{{ $province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED ? 'success' : ($province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING ? 'warning' : 'red') }}" :text="$province->latest_rtk->status_verification_label" />
+                                    @if ($province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                            {{ $province->latest_rtk->status_verification_label }}
+                                        </span>
+                                    @elseif ($province->latest_rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING)
+                                        <!-- Menggunakan warna amber-500 dengan teks putih sesuai referensi -->
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-white bg-amber-400 shadow-sm">
+                                            {{ $province->latest_rtk->status_verification_label }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                            {{ $province->latest_rtk->status_verification_label }}
+                                        </span>
+                                    @endif
                                 @else
-                                    <x-badge color="slate" text="Belum ada verifikasi" />
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                        Belum ada verifikasi
+                                    </span>
                                 @endif
                             </x-table.td>
 
                             {{-- Status Dokumen --}}
                             <x-table.td align="center" class="align-top pt-4">
                                 @if ($province->latest_rtk)
-                                    <x-badge color="{{ $province->latest_rtk->status_document === \Modules\RTK\Enums\StatusDocument::VALID ? 'success' : ($province->latest_rtk->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED ? 'red' : 'slate') }}" :text="$province->latest_rtk->status_document_label" />
+                                    @if ($province->latest_rtk->status_document === \Modules\RTK\Enums\StatusDocument::VALID)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500 shadow-sm">
+                                            {{ $province->latest_rtk->status_document_label }}
+                                        </span>
+                                    @elseif ($province->latest_rtk->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                            {{ $province->latest_rtk->status_document_label }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200">
+                                            {{ $province->latest_rtk->status_document_label }}
+                                        </span>
+                                    @endif
                                 @else
-                                    <x-badge color="slate" text="Belum ada status dokumen" />
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                        Belum ada status dokumen
+                                    </span>
                                 @endif
                             </x-table.td>
 

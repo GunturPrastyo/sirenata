@@ -131,45 +131,68 @@
                                 <p class="text-slate-600">{{ $key + $rtks->firstItem() }}</p>
                             </x-table.td>
                             <x-table.td>
-                                <p class="text-slate-600">{{ $rtk->name }}</p>
+                                <p class="text-slate-600 font-medium">{{ $rtk->name }}</p>
                             </x-table.td>
                             <x-table.td>
                                 <p class="text-slate-600">{{ $rtk->start_date }} - {{ $rtk->end_date }}</p>
                             </x-table.td>
+
                             <!-- Kolom Status Verifikasi -->
                             <x-table.td>
-                                <x-badge :color="$rtk->status_verification ===
-                                \Modules\RTK\Enums\RTKStatusVerification::APPROVED
-                                    ? 'green'
-                                    : ($rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING
-                                        ? 'indigo'
-                                        : 'red')">
-                                    {{ $rtk->status_verification->label() }}
-                                </x-badge>
+                                @if ($rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::APPROVED)
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500">
+                                        {{ $rtk->status_verification->label() }}
+                                    </span>
+                                @elseif ($rtk->status_verification === \Modules\RTK\Enums\RTKStatusVerification::PENDING)
+                                    <!-- Menggunakan bg-orange-500 dan text-white sesuai referensi gambar -->
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-white bg-amber-400 shadow-sm">
+                                        {{ $rtk->status_verification->label() }}
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                        {{ $rtk->status_verification->label() }}
+                                    </span>
+                                @endif
                             </x-table.td>
 
                             <!-- Kolom Status Dokumen -->
                             <x-table.td>
-                                <x-badge :color="$rtk->status_document === \Modules\RTK\Enums\StatusDocument::VALID
-                                    ? 'green'
-                                    : ($rtk->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED
-                                        ? 'red'
-                                        : 'slate')">
-                                    {{ $rtk->status_document->label() }}
-                                </x-badge>
-                            </x-table.td>
-
-                            <x-table.td>
-                                @if ($rtk->is_active)
-                                    <x-badge color="green">
-                                        Ya
-                                    </x-badge>
+                                @if ($rtk->status_document === \Modules\RTK\Enums\StatusDocument::VALID)
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500">
+                                        {{ $rtk->status_document->label() }}
+                                    </span>
+                                @elseif ($rtk->status_document === \Modules\RTK\Enums\StatusDocument::EXPIRED)
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-red-700 bg-red-100 border border-red-200">
+                                        {{ $rtk->status_document->label() }}
+                                    </span>
                                 @else
-                                    <x-badge color="slate">
-                                        Tidak
-                                    </x-badge>
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200">
+                                        {{ $rtk->status_document->label() }}
+                                    </span>
                                 @endif
                             </x-table.td>
+
+                            <!-- Kolom RTK Acuan -->
+                            <x-table.td>
+                                @if ($rtk->is_active)
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-green-500">
+                                        Ya
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200">
+                                        Tidak
+                                    </span>
+                                @endif
+                            </x-table.td>
+
                             <x-table.td class="text-center">
                                 <x-table.action>
                                     {{-- Step 1: Approve verifikasi — muncul kalau PENDING + is_active --}}
