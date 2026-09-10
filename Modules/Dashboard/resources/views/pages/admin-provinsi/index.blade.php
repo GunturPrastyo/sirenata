@@ -4,7 +4,7 @@
         
         <!-- Header & Breadcrumb -->
         <div class="flex flex-col gap-4">
-            {{-- <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Halo, {{ $user->name }}</h1>
                     <p class="text-sm text-slate-500 font-medium mt-1">
@@ -12,7 +12,7 @@
                     </p>
                 </div>
                 
-            </div> --}}
+            </div>
 
             <!-- Peringatan Wilayah Belum Ditetapkan -->
             @if (!$user->hasCompleteScope())

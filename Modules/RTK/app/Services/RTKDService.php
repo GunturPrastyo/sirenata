@@ -750,23 +750,14 @@ class RTKDService
         });
     }
 
-    /**
-     * Get active RTK Kab/Kota for current user
+  /**
+     * Get active RTK Kab/Kota for current user (Murni RTK Acuan)
      */
     public function rtkKabKotaActive(): ?RencanaTenagaKerja
     {
         $user = Auth::user();
 
-        // Prioritaskan RTK berlaku penuh dulu
-        $rtkBerlaku = RencanaTenagaKerja::query()
-            ->where('type', TypeRtk::KAB_KOTA->value)
-            ->where('regency_code', $user->scopeArea?->regency_code)
-            ->berlaku()
-            ->first();
-
-        if ($rtkBerlaku) return $rtkBerlaku;
-
-        // Kalau tidak ada berlaku, ambil yang is_active = true
+        // Mengambil langsung dokumen yang ditandai sebagai RTK Acuan (is_active = true)
         return RencanaTenagaKerja::query()
             ->where('type', TypeRtk::KAB_KOTA->value)
             ->where('regency_code', $user->scopeArea?->regency_code)
