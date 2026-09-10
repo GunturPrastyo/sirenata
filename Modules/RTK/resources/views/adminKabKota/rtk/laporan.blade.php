@@ -53,17 +53,15 @@
         {{-- GRID UTAMA --}}
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
 
-            {{-- KOLOM KIRI (7 Kolom): Desain Baru Identitas Dokumen (Lebih Kalem) --}}
+            {{-- KOLOM KIRI (7 Kolom): Identitas Dokumen --}}
             <div class="lg:col-span-7 flex flex-col">
-                <div
-                    class="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col h-full shadow-sm">
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col h-full shadow-sm">
 
-                    {{-- Header Card (Putih Bersih) --}}
+                    {{-- Header Card --}}
                     <div class="p-6 sm:p-8 border-b border-slate-100 shrink-0">
                         <div class="flex items-center gap-2 mb-3">
-                            <span
-                                class="px-3 py-1.5 bg-blue-50/50 text-[#13416B] rounded-md text-xs font-medium border border-blue-100/50 flex items-center gap-1.5 inline-flex">
-                                <i class="fas fa-map-marker-alt text-blue-400"></i>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-medium border border-slate-200 flex items-center gap-1.5 inline-flex">
+                                <i class="fas fa-map-marker-alt text-[#13416B]"></i> 
                                 {{ $rtkKabKotaActive?->regency?->name ?? 'Wilayah Tidak Diketahui' }}
                             </span>
                         </div>
@@ -71,6 +69,7 @@
                             {{ $rtkKabKotaActive?->name ?? 'RTK Belum Tersedia' }}
                         </h1>
                     </div>
+                    
                    {{-- Body Card: Rincian Data --}}
                     <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
                         @if ($rtkKabKotaActive)
@@ -84,7 +83,7 @@
                             @endphp
 
                             <div class="space-y-5">
-                                {{-- Status Bar (Proporsional: tidak terlalu tipis & tidak mencolok) --}}
+                                {{-- Status Bar --}}
                                 @if ($isValid)
                                     <div class="flex items-center justify-between p-4 rounded-xl border bg-emerald-50/70 border-emerald-200">
                                         <div class="flex items-center gap-3.5">
