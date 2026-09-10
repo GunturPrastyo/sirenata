@@ -582,7 +582,7 @@
                     <div class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
                         <div
                             class="w-10 h-10 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] border border-[#13416B]/20 rounded-xl shrink-0">
-                             <i class="fas fa-award mr-1"></i> 
+                             <i class="fas fa-award"></i> 
                         </div>
                         <div>
                             <h3 class="text-base md:text-lg font-extrabold text-slate-800">Sertifikat Kelulusan</h3>
