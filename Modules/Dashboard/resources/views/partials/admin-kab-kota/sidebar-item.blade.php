@@ -83,17 +83,5 @@
         </a>
     </li>
 
-    <!-- Bantuan -->
-    <li>
-        <a href="{{ route('admin-kab-kota.help') }}" 
-            class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
-            {{ request()->routeIs('admin-kab-kota.help')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
-            <svg class="w-[22px] h-[22px] shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            <span class="ms-3.5">Bantuan</span>
-        </a>
-    </li>
+ 
 </ul>
