@@ -92,13 +92,13 @@ class DashbordController extends Controller
             ->toArray();
 
         $selectedRtkYear = $request->input('rtk_year', 'all');
-        
+
         $queryRtk = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)->berlaku();
-            
+
         if ($selectedRtkYear !== 'all') {
             $queryRtk->where('end_date', '>=', (int) $selectedRtkYear);
         }
-        
+
         $rtkProvinsi = $queryRtk->get();
 
         $rtkProvinceCodes = $rtkProvinsi->pluck('province_code')->toArray();
@@ -127,13 +127,13 @@ class DashbordController extends Controller
             ->toArray();
 
         $selectedRtkEndYear = $request->input('rtk_end_year', 'all');
-        
+
         $queryRtkEnd = RencanaTenagaKerja::where('type', TypeRtk::PROVINSI->value)->berlaku();
-            
+
         if ($selectedRtkEndYear !== 'all') {
             $queryRtkEnd->where('end_date', (int) $selectedRtkEndYear);
         }
-        
+
         $rtkProvinsiEnd = $queryRtkEnd->get();
         $rtkEndProvinceCodes = $rtkProvinsiEnd->pluck('province_code')->toArray();
         $rtkEndProvinceNames = Province::whereIn('code', $rtkEndProvinceCodes)->pluck('name', 'code');
@@ -152,12 +152,21 @@ class DashbordController extends Controller
         // Status Distribusi RTK
         $rtkStatusDistribution = DB::table('rencana_tenaga_kerjas')
             ->select('status_verification as status', DB::raw('count(*) as total'))
+            ->where(function ($query) {
+
+                $query->where('status_verification', '!=', 'pending')
+                    ->orWhere(function ($q) {
+                        // Untuk status pending, hitung HANYA yang merupakan RTK Acuan (PROVINSI)
+                        $q->where('status_verification', 'pending')
+                            ->where('type', TypeRtk::PROVINSI->value);
+                    });
+            })
             ->groupBy('status_verification')
             ->pluck('total', 'status');
 
         $maxOptionYear = !empty($availableRtkEndYears) ? max($availableRtkEndYears) : $currentYear;
         $minOptionYear = $currentYear;
-        
+
         $rtkYearsOptions = [];
         for ($y = $maxOptionYear; $y >= $minOptionYear; $y--) {
             $rtkYearsOptions[] = $y;
@@ -221,7 +230,7 @@ class DashbordController extends Controller
         ]);
     }
 
-    public function storeOrUpdateProfile(UpdateProfileRequest $request) :RedirectResponse
+    public function storeOrUpdateProfile(UpdateProfileRequest $request): RedirectResponse
     {
         $user = Auth::user();
 

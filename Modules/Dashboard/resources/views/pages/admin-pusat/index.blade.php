@@ -13,7 +13,7 @@
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('approved', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Dokumen terverifikasi</p>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <i class="fas fa-check-double text-xl sm:text-2xl"></i>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('pending', 0) }}</h3>
                     <p class="text-[10px] text-slate-400 mt-1">Butuh peninjauan</p>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/80 text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <i class="fas fa-hourglass-half text-xl sm:text-2xl"></i>
                 </div>
             </div>
