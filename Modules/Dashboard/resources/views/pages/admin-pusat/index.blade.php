@@ -169,7 +169,7 @@
                 }
 
                 // =========================================================
-                // 1. GRAFIK KOMPARASI RTK (HORIZONTAL)
+                // 1. GRAFIK KOMPARASI RTK (HORIZONTAL FLOATING BAR)
                 // =========================================================
                 @if($rtkMasaAktifPerProvinsi->count() > 0)
                     const rtkCombinedCtx = document.getElementById('rtkCombinedBarChart').getContext('2d');
@@ -180,25 +180,21 @@
                     const rtkStartData = @json($rtkMasaAktifPerProvinsi->pluck('start_date'));
                     const rtkEndData = @json($rtkMasaAktifPerProvinsi->pluck('end_date'));
 
+                    // Format data menjadi array [start, end] untuk menampilkan floating bar
+                    const floatingData = rtkStartData.map((start, index) => [start, rtkEndData[index]]);
+
                     window.rtkCombinedChartInstance = new Chart(rtkCombinedCtx, {
                         type: 'bar',
                         data: {
                             labels: rtkLabels,
                             datasets: [
                                 {
-                                    label: 'Mulai Berlaku',
-                                    data: rtkStartData,
-                                    backgroundColor: '#cbd5e1', 
-                                    borderRadius: 4,
-                                    barPercentage: 0.7,
-                                    categoryPercentage: 0.8
-                                },
-                                {
-                                    label: 'Masa Berakhir',
-                                    data: rtkEndData,
-                                    backgroundColor: '#13416B',
-                                    borderRadius: 4,
-                                    barPercentage: 0.7,
+                                    label: 'Periode Aktif',
+                                    data: floatingData,
+                                    backgroundColor: '#13416B', // Biru Sirenata
+                                    borderRadius: 6,
+                                    borderSkipped: false, // Membulatkan sisi kiri dan kanan bar
+                                    barPercentage: 0.6,
                                     categoryPercentage: 0.8
                                 }
                             ]
@@ -209,18 +205,9 @@
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    position: 'bottom',
-                                    labels: { 
-                                        usePointStyle: true, 
-                                        boxWidth: 12, 
-                                        boxPadding: 12, // <-- TAMBAHKAN INI UNTUK JARAK IKON & TEKS
-                                        font: { family: "'Inter', sans-serif", size: 11 }, 
-                                        padding: 20 
-                                    }
+                                    display: false // Sembunyikan legenda karena 1 bar sudah cukup jelas
                                 },
                                 tooltip: {
-                                    mode: 'index',
-                                    intersect: false,
                                     backgroundColor: 'rgba(19, 65, 107, 0.95)',
                                     padding: 12,
                                     cornerRadius: 6,
@@ -230,15 +217,9 @@
                                             return Array.isArray(context[0].label) ? context[0].label.join(' ') : context[0].label;
                                         },
                                         label: function(context) {
-                                            // Menghilangkan koma ribuan (contoh: 2,025 jadi 2025) pada tooltip hover
-                                            let label = context.dataset.label || '';
-                                            if (label) {
-                                                label += ': ';
-                                            }
-                                            if (context.parsed.x !== null) {
-                                                label += context.parsed.x;
-                                            }
-                                            return label;
+                                            const startYear = context.raw[0];
+                                            const endYear = context.raw[1];
+                                            return ` Masa Berlaku: ${startYear} s.d. ${endYear}`;
                                         }
                                     }
                                 }
@@ -251,7 +232,6 @@
                                     ticks: { 
                                         font: { size: 11 }, 
                                         stepSize: 1,
-                                        // MENGHILANGKAN KOMA PADA LABEL SUMBU X
                                         callback: function(value) {
                                             return value; 
                                         }
@@ -269,7 +249,7 @@
                     });
 
                     // Penyesuaian tinggi canvas dinamis agar tidak gepeng ketika provinsinya banyak
-                    const initialRtkHeight = Math.max(400, rtkLabelsRaw.length * 60);
+                    const initialRtkHeight = Math.max(400, rtkLabelsRaw.length * 50);
                     document.getElementById('rtkCombinedChartContainer').style.height = initialRtkHeight + 'px';
                 @endif
 
@@ -296,12 +276,14 @@
                             const start = rtkData.map(item => item.start_date);
                             const end = rtkData.map(item => item.end_date);
                             
+                            // Map ke format floating bar saat AJAX dirender ulang
+                            const newFloatingData = start.map((s, index) => [s, end[index]]);
+                            
                             if (window.rtkCombinedChartInstance) {
-                                container.style.height = Math.max(400, rawLabels.length * 60) + 'px';
+                                container.style.height = Math.max(400, rawLabels.length * 50) + 'px';
 
                                 window.rtkCombinedChartInstance.data.labels = labels;
-                                window.rtkCombinedChartInstance.data.datasets[0].data = start;
-                                window.rtkCombinedChartInstance.data.datasets[1].data = end;
+                                window.rtkCombinedChartInstance.data.datasets[0].data = newFloatingData;
                                 
                                 const minYear = Math.min(...start) - 1;
                                 const maxYear = Math.max(...end) + 1;
