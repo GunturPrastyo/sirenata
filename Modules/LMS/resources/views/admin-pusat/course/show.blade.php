@@ -1,271 +1,269 @@
 <x-dashboard::layouts.dashboard title="Detail Course: {{ $course->name }}">
-    <div class="p-2 sm:p-6">
-        <!-- Breadcrumb -->
-        <nav class="flex mb-4 sm:mb-6" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 sm:space-x-3">
-
+    <div class="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-full mx-auto space-y-6">
+        
+        <!-- Custom Breadcrumb -->
+        <nav class="hidden md:flex mb-2 py-4" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center flex-wrap gap-y-1.5 gap-x-2">
                 <li>
-                    <div class="flex items-center">
-
-                        <a href="{{ route('admin-pusat.management-course.courses.index') }}"
-                            class="ml-1 text-sm font-medium text-slate-700 hover:text-indigo-600 md:ml-2">
-                            <i class="fas fa-home mr-2"></i> Daftar Course
-                        </a>
-                    </div>
+                    <a href="{{ route('admin-pusat.management-course.courses.index') }}"
+                        class="text-sm font-medium text-slate-500 hover:text-[#13416B] transition-colors whitespace-nowrap flex items-center gap-1.5">
+                        <i class="fas fa-home text-xs"></i> Daftar Course
+                    </a>
                 </li>
                 <li>
-                    <div class="flex items-center">
-                        <i class="fas fa-chevron-right text-slate-400 text-xs mx-1"></i>
-                        <span class="ml-1 text-sm font-medium text-slate-500 md:ml-2">{{ $course->name }}</span>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-chevron-right text-slate-400 text-[10px]"></i>
+                        <span class="text-sm font-bold text-slate-800 leading-snug">
+                            {{ $course->name }}
+                        </span>
                     </div>
                 </li>
             </ol>
         </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- KOLOM KIRI (Utama: Info & Kurikulum) -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Card Info Utama -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    @if (!empty($course->thumbnail))
-                        <img src="{{ $course->thumbnail }}" alt="{{ $course->name }}"
-                            class="w-full h-72 object-cover" />
-                    @else
-                        <div class="w-full h-64 bg-slate-200 flex items-center justify-center">
-                            <i class="fas fa-image text-slate-400 text-4xl"></i>
-                        </div>
-                    @endif
-
-                    <div class="p-6">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="px-3 py-1 text-xs font-semibold text-indigo-700 bg-indigo-50 rounded-full">
-                                {{ $course->category->name ?? 'Tanpa Kategori' }}
-                            </span>
-                        </div>
-                        <h1 class="text-2xl font-bold text-slate-800 mb-4">{{ $course->name }}</h1>
-
-                        <div class="prose prose-sm sm:prose max-w-none text-slate-600">
-
-                            <p>{{ $course->description }}</p>
-                        </div>
+        <!-- Header Card Utama (Adaptasi UI User) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 lg:p-8 flex flex-col md:flex-row gap-6 lg:gap-8 items-start transition-all">
+            <!-- Bagian Kiri: Thumbnail -->
+            <div class="w-full md:w-1/3 lg:w-1/4 shrink-0 rounded-xl overflow-hidden bg-slate-100 aspect-video md:aspect-[4/3] relative border border-slate-200 flex items-center justify-center">
+                @if (!empty($course->thumbnail))
+                    <img src="{{ $course->thumbnail }}" alt="{{ $course->name }}" class="w-full h-full object-cover" />
+                @else
+                    <div class="flex flex-col items-center justify-center text-slate-400 gap-2">
+                        <i class="fas fa-image text-4xl"></i>
+                        <span class="text-xs font-medium">Tanpa Thumbnail</span>
                     </div>
+                @endif
+            </div>
+
+            <!-- Bagian Kanan: Informasi Kursus -->
+            <div class="flex-1 flex flex-col w-full h-full">
+                <!-- Badges -->
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#13416B] bg-[#13416B]/10 border border-[#13416B]/20 rounded-md">
+                        {{ $course->category->name ?? 'Tanpa Kategori' }}
+                    </span>
                 </div>
 
-                <!-- Card Kurikulum / Sections -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <!-- Judul -->
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3 tracking-tight leading-tight">
+                    {{ $course->name }}
+                </h1>
+
+                <!-- Deskripsi -->
+                <div class="prose prose-sm text-slate-600 mb-4 max-w-none">
+                    <p class="leading-relaxed">
+                        {{ $course->description }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Layout Bawah -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            
+            <!-- KOLOM KIRI (Kurikulum) -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <!-- Header Kurikulum -->
-                    <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                        <h2 class="text-lg font-semibold text-slate-800">Kurikulum / Modul Belajar</h2>
-                        <button type="button" x-data
-                            @click="$dispatch('open-modal', 'course_sections-{{ $course->slug }}')"
-                            class="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors shadow-sm">
-                            <i class="fas fa-plus mr-1"></i> Tambah Bagian
+                    <div class="px-5 sm:px-6 py-4 sm:py-5 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2.5 bg-white text-[#13416B] rounded-xl shrink-0 border border-slate-200 shadow-sm">
+                                <i class="fas fa-layer-group text-lg"></i>
+                            </div>
+                            <h2 class="text-lg font-bold text-slate-800 tracking-wide">Kurikulum / Modul Belajar</h2>
+                        </div>
+                        <button type="button" x-data @click="$dispatch('open-modal', 'course_sections-{{ $course->slug }}')"
+                            class="px-4 py-2 text-sm font-bold text-white bg-[#13416B] rounded-xl hover:bg-[#0f3354] transition-colors shadow-sm flex items-center justify-center gap-2">
+                            <i class="fas fa-plus"></i> Tambah Bagian
                         </button>
                     </div>
 
                     <!-- Modal Tambah Bagian (Section) -->
-                    <x-modal name="course_sections-{{ $course->slug }}" title="Tambah Bagian Baru"
-                        maxWidth="sm:max-w-xl">
+                    <x-modal name="course_sections-{{ $course->slug }}" title="Tambah Bagian Baru" maxWidth="sm:max-w-xl">
                         <x-validation-errors class="mb-4" />
-                        <form action="{{ route('admin-pusat.management-course.course-sections.store') }}"
-                            method="POST">
+                        <form action="{{ route('admin-pusat.management-course.course-sections.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="course_slug" value="{{ $course->slug }}" />
                             <div class="mb-5">
-                                <h3 class="text-lg font-semibold text-slate-800">Tambah Bagian Baru</h3>
-                                <p class="text-sm text-slate-500">Buat struktur bagian (section) untuk materi course
-                                    Anda.</p>
+                                <h3 class="text-lg font-bold text-slate-800">Tambah Bagian Baru</h3>
+                                <p class="text-sm text-slate-500 mt-1">Buat struktur bagian (section) untuk materi course Anda.</p>
                             </div>
 
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">
                                         Nama Bagian <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="text" name="name" required
-                                        placeholder="Contoh: Bab 1: Pengenalan Dasar"
-                                        class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+                                    <input type="text" name="name" required placeholder="Contoh: Bab 1: Pengenalan Dasar"
+                                        class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-[#13416B] focus:ring-1 focus:ring-[#13416B] shadow-sm" />
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">
                                         Deskripsi <span class="text-slate-400 font-normal">(Opsional)</span>
                                     </label>
                                     <textarea name="description" rows="3" placeholder="Tuliskan gambaran singkat mengenai bagian ini..."
-                                        class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
+                                        class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-[#13416B] focus:ring-1 focus:ring-[#13416B] shadow-sm"></textarea>
                                 </div>
                             </div>
                             <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
-                                <button type="button" x-data
-                                    @click="$dispatch('close-modal', 'course_sections-{{ $course->slug }}')"
-                                    class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">Batal</button>
+                                <button type="button" x-data @click="$dispatch('close-modal', 'course_sections-{{ $course->slug }}')"
+                                    class="px-5 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors shadow-sm">Batal</button>
                                 <button type="submit"
-                                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 transition-colors">Simpan
-                                    Bagian</button>
+                                    class="px-5 py-2.5 text-sm font-bold text-white bg-[#13416B] rounded-xl hover:bg-[#0f3354] transition-colors shadow-sm">Simpan Bagian</button>
                             </div>
                         </form>
                     </x-modal>
 
-                    <div class="p-6">
+                    <div class="p-5 sm:p-6">
                         @if (count($course->course_sections) > 0)
-                            <div class="space-y-6">
+                            <div class="space-y-4 sm:space-y-5">
                                 <!-- Looping Bagian Materi -->
-                                @foreach ($course->course_sections as $section)
-                                    <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                @foreach ($course->course_sections as $index => $section)
+                                    <div x-data="{ expanded: true }" class="border border-slate-200 rounded-xl overflow-hidden shadow-sm transition-all duration-300" :class="{ 'ring-1 ring-[#13416B]/20': expanded }">
                                         <!-- Header Section -->
-                                        <div
-                                            class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center">
-                                            <h3 class="font-medium text-slate-800">
-                                                Bagian {{ $section->position }}: {{ $section->name }}
-                                            </h3>
-                                            <div class="flex items-center gap-3">
-                                                <span
-                                                    class="text-xs font-medium text-slate-500 bg-slate-200 px-2 py-1 rounded-md">
-                                                    {{ count($section->contents) }} Materi
+                                        <div class="bg-slate-50/80 px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row justify-between sm:items-center gap-3 transition-colors cursor-pointer" @click="expanded = !expanded">
+                                            <div class="flex items-center gap-3.5">
+                                                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-white text-[#13416B] text-xs font-bold shrink-0 border border-slate-200 shadow-sm">
+                                                    {{ $section->position ?? ($index + 1) }}
                                                 </span>
+                                                <div>
+                                                    <h3 class="font-bold text-slate-800 text-sm sm:text-base leading-snug">
+                                                        {{ $section->name }}
+                                                    </h3>
+                                                    <span class="text-[11px] font-medium text-slate-500 mt-0.5 block">
+                                                        {{ count($section->contents) }} Topik Materi
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-center gap-2 self-end sm:self-auto" @click.stop>
                                                 <!-- Tombol Hapus Section -->
-                                                <button type="button" x-data
-                                                    @click="$dispatch('open-modal', 'delete-section-{{ $section->id }}')"
-                                                    class="text-slate-400 hover:text-red-600 transition-colors p-1"
-                                                    title="Hapus Bagian">
+                                                <button type="button" x-data @click="$dispatch('open-modal', 'delete-section-{{ $section->id }}')"
+                                                    class="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors border border-transparent hover:border-red-100" title="Hapus Bagian">
                                                     <i class="fas fa-trash-alt text-sm"></i>
+                                                </button>
+                                                
+                                                <button type="button" class="w-8 h-8 flex items-center justify-center text-slate-400 transition-transform duration-200 pointer-events-none" :class="{ 'rotate-180': expanded }">
+                                                    <i class="fas fa-chevron-down text-sm"></i>
                                                 </button>
                                             </div>
                                         </div>
 
                                         <!-- Modal Hapus Section -->
-                                        <x-modal name="delete-section-{{ $section->id }}" title="Konfirmasi Hapus"
-                                            maxWidth="sm:max-w-xl">
-                                            <form
-                                                action="{{ route('admin-pusat.management-course.course-sections.destroy', $section->id) }}"
-                                                method="POST" class="p-6">
+                                        <x-modal name="delete-section-{{ $section->id }}" title="Konfirmasi Hapus" maxWidth="sm:max-w-xl">
+                                            <form action="{{ route('admin-pusat.management-course.course-sections.destroy', $section->id) }}" method="POST" class="p-6">
                                                 @csrf
                                                 @method('DELETE')
                                                 <input type="hidden" name="course_slug" value="{{ $course->slug }}" />
                                                 <div class="text-center">
-                                                    <h3 class="text-lg font-semibold text-slate-800">Hapus Bagian</h3>
-                                                    <p class="text-sm text-slate-500 mt-2">Yakin ingin menghapus bagian
-                                                        <strong>"{{ $section->name }}"</strong>? <br><span
-                                                            class="text-red-500 font-medium">Peringatan: Semua materi di
-                                                            dalamnya mungkin akan ikut terhapus!</span></p>
+                                                    <div class="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-4 border border-red-100">
+                                                        <i class="fas fa-exclamation-triangle text-2xl"></i>
+                                                    </div>
+                                                    <h3 class="text-lg font-bold text-slate-800">Hapus Bagian</h3>
+                                                    <p class="text-sm text-slate-500 mt-2">Yakin ingin menghapus bagian <strong>"{{ $section->name }}"</strong>?</p>
+                                                    <p class="text-xs text-red-500 font-semibold bg-red-50 py-2 px-3 rounded-lg mt-3 inline-block">
+                                                        Peringatan: Semua materi di dalamnya akan ikut terhapus!
+                                                    </p>
                                                 </div>
                                                 <div class="flex justify-center gap-3 mt-6">
-                                                    <button type="button" x-data
-                                                        @click="$dispatch('close-modal', 'delete-section-{{ $section->id }}')"
-                                                        class="px-4 py-2 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Batal</button>
+                                                    <button type="button" x-data @click="$dispatch('close-modal', 'delete-section-{{ $section->id }}')"
+                                                        class="px-5 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 shadow-sm">Batal</button>
                                                     <button type="submit"
-                                                        class="px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700">Ya,
-                                                        Hapus</button>
+                                                        class="px-5 py-2.5 text-sm font-bold text-white bg-red-600 border border-transparent rounded-xl hover:bg-red-700 shadow-sm">Ya, Hapus</button>
                                                 </div>
                                             </form>
                                         </x-modal>
 
-                                        <!-- List Content -->
-                                        <ul class="divide-y divide-slate-100">
-                                            @forelse ($section->contents as $content)
-                                                <li
-                                                    class="px-4 py-3 hover:bg-slate-50 flex items-start gap-3 transition-colors group">
-                                                    <div class=" text-indigo-500">
-                                                        @if ($content->video)
-                                                            <i class="fas fa-play-circle"></i>
-                                                        @else
-                                                            <i class="fas fa-file-alt"></i>
-                                                        @endif
-                                                    </div>
-
-                                                    <div class="flex-1">
-                                                        <p class="text-sm text-slate-700 font-medium">
-                                                            {{ $content->name }}
-                                                        </p>
-                                                    </div>
-
-                                                    <div class="flex items-center gap-2">
-                                                        <!-- Lihat (Akses Halaman Show) -->
-                                                        <a href="{{ route('admin-pusat.management-course.course-sections-contents.show', $content->id) }}?course_slug={{ $course->slug }}"
-                                                            class="text-slate-400 hover:text-blue-600 transition-colors p-1"
-                                                            title="Lihat Materi">
-                                                            <i class="fas fa-eye text-sm"></i>
-                                                        </a>
-
-                                                        <!-- Edit (Akses Halaman Edit) -->
-                                                        <a href="{{ route('admin-pusat.management-course.course-sections-contents.edit', $content->id) }}?course_slug={{ $course->slug }}"
-                                                            class="text-slate-400 hover:text-amber-600 transition-colors p-1"
-                                                            title="Edit Materi">
-                                                            <i class="fas fa-edit text-sm"></i>
-                                                        </a>
-
-                                                        <!-- Delete (Tetap pakai Modal) -->
-                                                        <button type="button" x-data
-                                                            @click="$dispatch('open-modal', 'delete-content-{{ $content->id }}')"
-                                                            class="text-slate-400 hover:text-red-600 transition-colors p-1"
-                                                            title="Hapus Materi">
-                                                            <i class="fas fa-trash-alt text-sm"></i>
-                                                        </button>
-                                                    </div>
-
-                                                    <!-- Modal Hapus Content Materi -->
-                                                    <x-modal name="delete-content-{{ $content->id }}"
-                                                        title="Konfirmasi Hapus" maxWidth="sm:max-w-xl">
-                                                        <form
-                                                            action="{{ route('admin-pusat.management-course.course-sections-contents.destroy', $content->id) }}"
-                                                            method="POST" class="p-6">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <input type="hidden" name="course_slug"
-                                                                value="{{ $course->slug }}" />
-                                                            <div class="text-center">
-                                                                <h3 class="text-lg font-semibold text-slate-800">Hapus
-                                                                    Materi</h3>
-                                                                <p class="text-sm text-slate-500 mt-2">Yakin hapus
-                                                                    materi <strong>"{{ $content->name }}"</strong>?</p>
+                                        <!-- Expandable Content -->
+                                        <div x-show="expanded" x-collapse x-cloak>
+                                            <div class="p-3 sm:p-5 border-t border-slate-100 bg-slate-50/30 space-y-3">
+                                                <!-- List Content -->
+                                                @forelse ($section->contents as $content)
+                                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-white hover:border-[#13416B]/40 hover:shadow-sm transition-all duration-200 gap-3">
+                                                        
+                                                        <div class="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
+                                                            <span class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-50 text-[#13416B] shrink-0 border border-blue-100 mt-0.5 sm:mt-0">
+                                                                @if ($content->video)
+                                                                    <i class="fas fa-play text-sm"></i>
+                                                                @else
+                                                                    <i class="fas fa-file-alt text-sm"></i>
+                                                                @endif
+                                                            </span>
+                                                            <div class="flex-1 min-w-0">
+                                                                <p class="font-bold text-slate-800 text-sm leading-tight break-words">
+                                                                    {{ $content->name }}
+                                                                </p>
                                                             </div>
-                                                            <div class="flex justify-center gap-3 mt-6">
-                                                                <button type="button" x-data
-                                                                    @click="$dispatch('close-modal', 'delete-content-{{ $content->id }}')"
-                                                                    class="px-4 py-2 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg">Batal</button>
-                                                                <button type="submit"
-                                                                    class="px-4 py-2 text-sm text-white bg-red-600 rounded-lg">Ya,
-                                                                    Hapus</button>
-                                                            </div>
-                                                        </form>
-                                                    </x-modal>
-                                                </li>
-                                            @empty
-                                                <li
-                                                    class="px-4 py-4 text-sm text-slate-500 text-center bg-slate-50/50">
-                                                    Belum ada materi di bagian ini.</li>
-                                            @endforelse
-                                        </ul>
+                                                        </div>
 
-                                        <!-- Footer: Tombol Tambah Materi & Post Test Section (Dinamis: Tambah / Edit) -->
-                                        @php
-                                            $existingPostTest = \Modules\LMS\Models\PostTest::where(
-                                                'course_section_id',
-                                                $section->id,
-                                            )->first();
-                                        @endphp
-                                        <div
-                                            class="bg-white px-4 py-3 border-t border-slate-100 flex flex-wrap items-center justify-center gap-4">
-                                            <!-- Tombol Tambah Materi -->
-                                            <a href="{{ route('admin-pusat.management-course.course-sections-contents.create', ['course_slug' => $course->slug, 'section_id' => $section->id]) }}"
-                                                class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center transition-colors">
-                                                <i class="fas fa-plus-circle mr-1.5"></i> Tambah Materi Baru
-                                            </a>
+                                                        <div class="flex items-center gap-2 self-end sm:self-auto shrink-0 border-t sm:border-t-0 border-slate-100 pt-3 sm:pt-0 w-full sm:w-auto justify-end">
+                                                            <a href="{{ route('admin-pusat.management-course.course-sections-contents.show', $content->id) }}?course_slug={{ $course->slug }}"
+                                                                class="px-3 py-1.5 text-xs font-bold text-[#13416B] bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-1.5" title="Lihat">
+                                                                <i class="fas fa-eye"></i> <span class="sm:hidden lg:inline">Lihat</span>
+                                                            </a>
+                                                            <a href="{{ route('admin-pusat.management-course.course-sections-contents.edit', $content->id) }}?course_slug={{ $course->slug }}"
+                                                                class="px-3 py-1.5 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors shadow-sm flex items-center gap-1.5" title="Edit">
+                                                                <i class="fas fa-edit"></i> <span class="sm:hidden lg:inline">Edit</span>
+                                                            </a>
+                                                            <button type="button" x-data @click="$dispatch('open-modal', 'delete-content-{{ $content->id }}')"
+                                                                class="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100 transition-colors shadow-sm flex items-center gap-1.5" title="Hapus">
+                                                                <i class="fas fa-trash-alt"></i> <span class="sm:hidden lg:inline">Hapus</span>
+                                                            </button>
+                                                        </div>
 
-                                            <div class="w-px h-4 bg-slate-300 hidden sm:block"></div>
+                                                        <!-- Modal Hapus Content Materi -->
+                                                        <x-modal name="delete-content-{{ $content->id }}" title="Konfirmasi Hapus" maxWidth="sm:max-w-xl">
+                                                            <form action="{{ route('admin-pusat.management-course.course-sections-contents.destroy', $content->id) }}" method="POST" class="p-6">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <input type="hidden" name="course_slug" value="{{ $course->slug }}" />
+                                                                <div class="text-center">
+                                                                    <div class="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-4 border border-red-100">
+                                                                        <i class="fas fa-trash-alt text-2xl"></i>
+                                                                    </div>
+                                                                    <h3 class="text-lg font-bold text-slate-800">Hapus Materi</h3>
+                                                                    <p class="text-sm text-slate-500 mt-2">Yakin hapus materi <strong>"{{ $content->name }}"</strong>?</p>
+                                                                </div>
+                                                                <div class="flex justify-center gap-3 mt-6">
+                                                                    <button type="button" x-data @click="$dispatch('close-modal', 'delete-content-{{ $content->id }}')"
+                                                                        class="px-5 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-xl shadow-sm">Batal</button>
+                                                                    <button type="submit"
+                                                                        class="px-5 py-2.5 text-sm font-bold text-white bg-red-600 rounded-xl shadow-sm hover:bg-red-700">Ya, Hapus</button>
+                                                                </div>
+                                                            </form>
+                                                        </x-modal>
+                                                    </div>
+                                                @empty
+                                                    <div class="p-4 text-center text-slate-500 text-sm bg-white rounded-xl border border-dashed border-slate-200">
+                                                        <i class="fas fa-folder-open mb-2 text-slate-300 text-xl block"></i>
+                                                        Belum ada materi di bagian ini.
+                                                    </div>
+                                                @endforelse
 
-                                            <!-- Tombol Post Test Bagian (Dinamis) -->
-                                            @if ($existingPostTest)
-                                                <a href="{{ route('admin-pusat.management-course.post-tests.edit', $existingPostTest->id) }}?course_slug={{ $course->slug }}"
-                                                    class="text-sm font-semibold text-amber-600 hover:text-amber-800 flex items-center transition-colors">
-                                                    <i class="fas fa-edit mr-1.5"></i> Edit Post Test Bagian
-                                                </a>
-                                            @else
-                                                <a href="{{ route('admin-pusat.management-course.post-tests.create', ['course_slug' => $course->slug, 'section_id' => $section->id]) }}"
-                                                    class="text-sm font-semibold text-emerald-600 hover:text-emerald-800 flex items-center transition-colors">
-                                                    <i class="fas fa-clipboard-check mr-1.5"></i> Tambah Post Test
-                                                    Bagian
-                                                </a>
-                                            @endif
+                                                <!-- Footer Section: Tambah Materi & Post Test -->
+                                                @php
+                                                    $existingPostTest = \Modules\LMS\Models\PostTest::where('course_section_id', $section->id)->first();
+                                                @endphp
+                                                <div class="mt-4 pt-4 border-t border-slate-200/80 flex flex-col sm:flex-row gap-3">
+                                                    
+                                                    <a href="{{ route('admin-pusat.management-course.course-sections-contents.create', ['course_slug' => $course->slug, 'section_id' => $section->id]) }}"
+                                                        class="flex-1 px-4 py-3 border-2 border-dashed border-[#13416B]/30 rounded-xl text-sm font-bold text-[#13416B] bg-white hover:bg-[#13416B]/5 transition-colors flex items-center justify-center gap-2">
+                                                        <i class="fas fa-plus-circle"></i> Tambah Materi
+                                                    </a>
+                                                    
+                                                    @if ($existingPostTest)
+                                                        <a href="{{ route('admin-pusat.management-course.post-tests.edit', $existingPostTest->id) }}?course_slug={{ $course->slug }}"
+                                                            class="flex-1 px-4 py-3 rounded-xl text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                                            <i class="fas fa-edit"></i> Edit Post Test
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ route('admin-pusat.management-course.post-tests.create', ['course_slug' => $course->slug, 'section_id' => $section->id]) }}"
+                                                            class="flex-1 px-4 py-3 border border-emerald-200 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                                            <i class="fas fa-clipboard-check"></i> Buat Post Test
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -278,35 +276,27 @@
                                         ->whereNull('course_section_id')
                                         ->first();
                                 @endphp
-                                <div
-                                    class="border-2 border-emerald-100 bg-emerald-50/30 rounded-lg overflow-hidden shadow-sm mt-8 relative">
-                                    <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-                                    <div class="p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                                        <div class="flex items-start gap-4">
-                                            <div
-                                                class="p-3 bg-emerald-100 text-emerald-600 rounded-full shrink-0 mt-1">
+                                <div class="bg-gradient-to-r from-[#13416B] to-[#0f3354] rounded-2xl overflow-hidden shadow-md mt-8 relative">
+                                    <div class="p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                                        <div class="flex items-start sm:items-center gap-4 flex-1">
+                                            <div class="w-12 h-12 rounded-full bg-white/20 text-white flex items-center justify-center shrink-0 border border-white/30 mt-1 sm:mt-0">
                                                 <i class="fas fa-graduation-cap text-xl"></i>
                                             </div>
                                             <div>
-                                                <h3 class="text-base font-bold text-slate-800 mb-1">Evaluasi Akhir
-                                                    Course</h3>
-                                                <p class="text-sm text-slate-600">
-                                                    Post Test utama sebagai syarat penyelesaian kursus dan perhitungan
-                                                    nilai akhir.
-                                                </p>
+                                                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-200 mb-1">Tahap Akhir</p>
+                                                <h3 class="text-lg font-extrabold text-white tracking-wide leading-tight">Evaluasi Akhir Course</h3>
                                             </div>
                                         </div>
 
-                                        <!-- Tombol Buat / Edit Evaluasi Akhir (Dinamis) -->
                                         @if ($existingFinalTest)
                                             <a href="{{ route('admin-pusat.management-course.post-tests.edit', $existingFinalTest->id) }}?course_slug={{ $course->slug }}"
-                                                class="shrink-0 px-4 py-2 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition-colors shadow-sm flex items-center gap-2">
-                                                <i class="fas fa-edit"></i> Edit Evaluasi Akhir
+                                                class="w-full sm:w-auto px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 transition-all shadow-sm flex items-center justify-center gap-2 shrink-0">
+                                                <i class="fas fa-edit"></i> Edit Evaluasi
                                             </a>
                                         @else
                                             <a href="{{ route('admin-pusat.management-course.post-tests.create', ['course_slug' => $course->slug, 'course_id' => $course->id]) }}"
-                                                class="shrink-0 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors shadow-sm flex items-center gap-2">
-                                                <i class="fas fa-plus"></i> Buat Evaluasi Akhir
+                                                class="w-full sm:w-auto px-5 py-2.5 bg-white text-[#13416B] text-sm font-bold rounded-xl hover:bg-slate-50 transition-all shadow-sm flex items-center justify-center gap-2 shrink-0">
+                                                <i class="fas fa-plus"></i> Buat Evaluasi
                                             </a>
                                         @endif
                                     </div>
@@ -314,18 +304,15 @@
                             </div>
                         @else
                             <!-- Empty State Kurikulum -->
-                            <div class="text-center py-10">
-                                <div
-                                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 text-indigo-500 mb-4">
+                            <div class="text-center py-12 px-4 border border-dashed border-slate-200 rounded-2xl bg-slate-50">
+                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white text-[#13416B] mb-4 border border-slate-200 shadow-sm">
                                     <i class="fas fa-folder-open text-2xl"></i>
                                 </div>
-                                <h3 class="text-base font-medium text-slate-800 mb-1">Kurikulum Kosong</h3>
-                                <p class="text-slate-500 text-sm mb-4">Mulai bangun struktur materi course Anda dengan
-                                    menambahkan bagian pertama.</p>
-                                <button type="button" x-data
-                                    @click="$dispatch('open-modal', 'course_sections-{{ $course->slug }}')"
-                                    class="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-lg hover:bg-indigo-100 transition-colors">
-                                    <i class="fas fa-plus mr-1"></i> Buat Bagian Pertama
+                                <h3 class="text-base font-bold text-slate-800 mb-1">Kurikulum Kosong</h3>
+                                <p class="text-slate-500 text-sm mb-6 max-w-sm mx-auto">Mulai bangun struktur materi course Anda dengan menambahkan bagian pertama.</p>
+                                <button type="button" x-data @click="$dispatch('open-modal', 'course_sections-{{ $course->slug }}')"
+                                    class="px-5 py-2.5 text-sm font-bold text-[#13416B] bg-white border border-[#13416B]/30 rounded-xl hover:bg-[#13416B]/10 transition-colors shadow-sm inline-flex items-center gap-2">
+                                    <i class="fas fa-plus"></i> Buat Bagian Pertama
                                 </button>
                             </div>
                         @endif
@@ -334,43 +321,57 @@
             </div>
 
             <!-- KOLOM KANAN (Sidebar: Aksi, Informasi, Catatan) -->
-            <div class="lg:col-span-1 space-y-6">
+            <div class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+                
                 <!-- Card Aksi -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Aksi Course</h3>
                     <div class="space-y-3">
                         <a href="{{ route('admin-pusat.management-course.courses.edit', $course->slug) }}"
-                            class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-amber-500 border border-transparent rounded-lg hover:bg-amber-600 transition-colors shadow-sm">
-                            <i class="fas fa-edit mr-2"></i> Edit Course
+                            class="flex items-center justify-center w-full px-4 py-3 text-sm font-bold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors shadow-sm gap-2">
+                            <i class="fas fa-edit"></i> Edit Informasi Course
                         </a>
                         <a href="{{ route('admin-pusat.management-course.courses.index') }}"
-                            class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm">
-                            <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar
+                            class="flex items-center justify-center w-full px-4 py-3 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors shadow-sm gap-2">
+                            <i class="fas fa-arrow-left"></i> Kembali ke Daftar
                         </a>
                     </div>
                 </div>
 
+                <!-- Card Pengaturan Sertifikat (WIDGET BARU) -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center gap-3 mb-4 border-b border-slate-100 pb-4">
+                        <div class="w-10 h-10 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-xl shrink-0 border border-emerald-100">
+                            <i class="fas fa-certificate text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 tracking-wide">Sertifikat Kelulusan</h3>
+                            <p class="text-[11px] text-slate-500 mt-0.5">Atur dokumen penghargaan</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-5 leading-relaxed">
+                        Pastikan Anda telah mengatur template dan tanda tangan digital untuk sertifikat yang akan diterbitkan ke peserta kursus.
+                    </p>
+                    <a href="{{ route('admin-pusat.certificates.index') }}"
+                        class="flex items-center justify-center w-full px-4 py-3 text-sm font-bold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition-colors shadow-sm gap-2">
+                        <i class="fas fa-cog"></i> Atur Sertifikat
+                    </a>
+                </div>
+
                 <!-- Card Informasi Tambahan -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-5 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/50">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Informasi Tambahan</h3>
                     </div>
                     <div class="p-0">
                         <ul class="divide-y divide-slate-100">
-                            <li class="flex justify-between items-center px-6 py-3.5">
-                                <span class="text-sm text-slate-500">Total Siswa</span>
-                                <span class="text-sm font-semibold text-slate-800">{{ $course->students_count ?? 0 }}
-                                    Orang</span>
+                            <li class="flex justify-between items-center px-5 sm:px-6 py-3.5 hover:bg-slate-50 transition-colors">
+                                <span class="text-sm font-medium text-slate-500">Kategori</span>
+                                <span class="text-sm font-bold text-[#13416B]">{{ $course->category->name ?? '-' }}</span>
                             </li>
-                            <li class="flex justify-between items-center px-6 py-3.5">
-                                <span class="text-sm text-slate-500">Kategori</span>
-                                <span
-                                    class="text-sm font-semibold text-slate-800">{{ $course->category->name ?? '-' }}</span>
-                            </li>
-                            <!-- Dibuat Pada -->
-                            <li class="flex justify-between items-center px-6 py-3.5">
-                                <span class="text-sm text-slate-500">Dibuat Pada</span>
-                                <span class="text-sm font-semibold text-slate-800">
+                            <li class="flex justify-between items-center px-5 sm:px-6 py-3.5 hover:bg-slate-50 transition-colors">
+                                <span class="text-sm font-medium text-slate-500">Dibuat Pada</span>
+                                <span class="text-sm font-bold text-slate-800">
                                     {{ \Carbon\Carbon::parse($course->created_at)->translatedFormat('d M Y') }}
                                 </span>
                             </li>
@@ -378,36 +379,16 @@
                     </div>
                 </div>
 
-                <!-- Card Pengaturan Sertifikat (WIDGET BARU) -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
-                            <i class="fas fa-certificate text-lg"></i>
-                        </div>
-                        <h3 class="text-base font-bold text-slate-800">Sertifikat Kelulusan</h3>
-                    </div>
-                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">
-                        Pastikan Anda telah mengatur template dan tanda tangan digital untuk sertifikat yang akan
-                        diterbitkan ke peserta kursus.
-                    </p>
-                    <a href="{{ route('admin-pusat.certificates.index') }}"
-                        class="flex items-center justify-center w-full px-4 py-2.5 text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm">
-                        <i class="fas fa-cog mr-2"></i> Atur Sertifikat
-                    </a>
-                </div>
-
                 <!-- Card Peringatan / Wajib Post Test -->
-                <div class="bg-amber-50 rounded-xl border border-amber-200 p-5 flex items-start gap-3">
-                    <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5"></i>
+                <div class="bg-amber-50 rounded-2xl border border-amber-200 p-5 flex items-start gap-3 shadow-sm">
+                    <i class="fas fa-info-circle text-amber-500 mt-0.5 text-lg shrink-0"></i>
                     <div>
-                        <h4 class="text-sm font-semibold text-amber-800 mb-1">Catatan Penting</h4>
-                        <p class="text-xs text-amber-700 leading-relaxed">
-                            Anda <strong>wajib menambahkan Post Test</strong> pada setiap akhir bagian (section) materi
-                            sebagai syarat kelulusan peserta untuk lanjut ke bagian berikutnya.
+                        <h4 class="text-sm font-bold text-amber-800 mb-1">Panduan Evaluasi</h4>
+                        <p class="text-[11px] sm:text-xs text-amber-700 leading-relaxed font-medium">
+                            Anda <strong>wajib menambahkan Post Test</strong> pada setiap akhir bagian (section) materi sebagai syarat kelulusan peserta untuk lanjut ke bagian berikutnya.
                         </p>
                     </div>
                 </div>
-
 
             </div>
         </div>
