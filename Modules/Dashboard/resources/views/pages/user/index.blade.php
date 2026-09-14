@@ -18,8 +18,9 @@
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['total'] }}</h3>
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Seluruh modul pada sistem</p>
                 </div>
+                <!-- Soft Badge Professional -->
                 <div
-                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0">
                     <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -35,7 +36,7 @@
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Tingkat penyelesaian materi</p>
                 </div>
                 <div
-                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0">
                     <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -51,7 +52,7 @@
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Modul yang telah dituntaskan</p>
                 </div>
                 <div
-                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#0f3354]">
+                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0">
                     <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -68,7 +69,7 @@
                 class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
+                        class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] rounded-xl shrink-0">
                         <i class="fas fa-chart-bar text-lg"></i>
                     </div>
                     <div>
@@ -81,7 +82,7 @@
                 @if (isset($chartDataByCourse) && count($chartDataByCourse) > 0)
                     <div class="w-full sm:w-auto sm:max-w-xs shrink-0">
                         <select id="courseChartFilter"
-                            class="w-full text-sm border-slate-200 rounded-lg focus:ring-blue-600 focus:border-blue-600 text-ellipsis overflow-hidden pr-8 cursor-pointer">
+                            class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden pr-8 cursor-pointer">
                             @foreach ($chartDataByCourse as $cId => $cData)
                                 <option value="{{ $cId }}">{{ $cData['course_name'] }}</option>
                             @endforeach
@@ -110,13 +111,14 @@
         <!-- ===================================== -->
         <!-- 3. GRID BAWAH (LANJUTKAN & RECENT)    -->
         <!-- ===================================== -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <!-- items-start agar tinggi kotak bebas menyesuaikan isinya, menghilangkan ruang kosong -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start"> 
 
             <!-- KOLOM KIRI: Lanjutkan Belajar -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col">
                 <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 shrink-0">
                     <div
-                        class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
+                        class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] rounded-xl shrink-0">
                         <i class="fas fa-play-circle text-base"></i>
                     </div>
                     <div>
@@ -127,20 +129,18 @@
 
                 @if ($lastCourse)
                     <div
-                        class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm flex flex-col flex-1 transition-shadow hover:shadow-md">
-                        <!-- Wrapper dengan Flex Row yang Responsif -->
-                        <div
-                            class="p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5 flex-1 items-center sm:items-stretch">
-
-                            <!-- Thumbnail Sisi Kiri (Dibuat proporsional & responsif) -->
-                            <div class="w-full sm:w-2/5 shrink-0 flex items-center">
+                        class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm flex flex-col transition-shadow hover:shadow-md">
+                        
+                        <div class="p-5 flex flex-col sm:flex-row gap-5 sm:gap-6 items-start">
+                            <!-- Thumbnail Sisi Kiri -->
+                            <div class="w-full sm:w-2/5 shrink-0">
                                 <img src="{{ $lastCourse->thumbnail ? (str_starts_with($lastCourse->thumbnail, 'http') ? $lastCourse->thumbnail : asset('storage/' . $lastCourse->thumbnail)) : 'https://placehold.co/600x400/13416B/FFF?text=' . urlencode(substr($lastCourse->name, 0, 2)) }}"
                                     alt="{{ $lastCourse->name }}"
-                                    class="w-full h-36 sm:h-full min-h-[140px] max-h-[180px] sm:max-h-none object-cover rounded-xl shadow-sm border border-slate-100">
+                                    class="w-full aspect-video sm:aspect-[4/3] object-cover rounded-xl shadow-sm border border-slate-200">
                             </div>
 
                             <!-- Title & Deskripsi Sisi Kanan -->
-                            <div class="flex flex-col flex-1 min-w-0 w-full justify-between">
+                            <div class="flex flex-col min-w-0 w-full">
                                 <div>
                                     <p
                                         class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex justify-between items-center">
@@ -156,24 +156,25 @@
                                         {{ $lastCourse->name }}
                                     </h3>
 
-                                    <p class="text-sm text-slate-500 line-clamp-2 mb-4 leading-relaxed">
+                                    <p class="text-sm text-slate-500 line-clamp-2 leading-relaxed">
                                         {{ $lastCourse->description ?? 'Lanjutkan materi pembelajaran Anda pada kursus ini untuk meningkatkan kompetensi dan mendapatkan sertifikat kelulusan.' }}
                                     </p>
                                 </div>
 
-                                <div class="mt-auto">
+                                <!-- Bagian Action Lanjutkan menempel natural di bawah teks -->
+                                <div class="mt-4 pt-4 border-t border-slate-100">
                                     <div
                                         class="flex items-center justify-between text-[11px] font-bold text-slate-700 mb-1.5">
                                         <span>Progress Belajar</span>
-                                        <span class="text-blue-600">{{ $lastCourse->progress }}%</span>
+                                        <span class="text-[#13416B]">{{ $lastCourse->progress }}%</span>
                                     </div>
                                     <div class="w-full bg-slate-100 rounded-full h-2 mb-4 overflow-hidden">
-                                        <div class="bg-blue-600 rounded-full h-full transition-all duration-500 shadow-[0_0_10px_rgba(37,99,235,0.3)]"
+                                        <div class="bg-[#13416B] rounded-full h-full transition-all duration-500"
                                             style="width: {{ $lastCourse->progress }}%"></div>
                                     </div>
 
                                     <a href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}?target=auto"
-                                        class="flex items-center justify-center gap-2 w-full bg-transparent border-2 border-[#13416B] text-[#13416B] hover:bg-[#13416B] hover:text-white hover:shadow px-4 py-2 rounded-lg font-bold transition-all text-sm group">
+                                        class="flex items-center justify-center gap-2 w-full bg-transparent border border-[#13416B] text-[#13416B] hover:bg-[#13416B] hover:text-white px-4 py-2 rounded-lg font-bold transition-all text-sm group">
                                         <i class="fas fa-play group-hover:scale-110 transition-transform"></i>
                                         <span>Lanjutkan</span>
                                     </a>
@@ -200,11 +201,11 @@
             </div>
 
             <!-- KOLOM KANAN: Kursus Saya -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
+            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center gap-3">
                         <div
-                            class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
+                            class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] rounded-xl shrink-0">
                             <i class="fas fa-graduation-cap text-base"></i>
                         </div>
                         <div>
@@ -212,14 +213,13 @@
                             <p class="text-[11px] sm:text-xs text-slate-500">Daftar kursus yang Anda ikuti</p>
                         </div>
                     </div>
-                    <!-- Tautan Lihat semua dengan warna slate -->
                     <a href="{{ route('user.course.my-course') }}"
-                        class="text-xs font-bold text-slate-500 hover:text-slate-700 hover:underline flex items-center gap-1">
+                        class="text-xs font-bold text-slate-500 hover:text-[#13416B] hover:underline flex items-center gap-1">
                         <span>Lihat semua</span>
                     </a>
                 </div>
 
-                <div class="space-y-3 flex-1 flex flex-col justify-between">
+                <div class="space-y-3 flex-1 flex flex-col">
                     @forelse ($recentCourses as $course)
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
                             class="flex flex-col sm:flex-row gap-3 bg-white border border-slate-200 rounded-lg p-3 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group items-start">
@@ -245,7 +245,7 @@
                                                 class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-green-700 bg-green-100 border border-green-200 shrink-0">Selesai</span>
                                         @elseif ($course->pivot->status === 'in_progress')
                                             <span
-                                                class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-blue-700 bg-blue-100 border border-blue-200 shrink-0">Berjalan</span>
+                                                class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-[#13416B] bg-[#13416B]/10 border border-[#13416B]/20 shrink-0">Berjalan</span>
                                         @else
                                             <span
                                                 class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border border-slate-200 shrink-0">Terdaftar</span>
@@ -263,7 +263,7 @@
                                         <span class="font-bold text-slate-700">{{ $course->pivot->progress }}%</span>
                                     </div>
                                     <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-300"
+                                        <div class="bg-[#13416B] h-full rounded-full transition-all duration-300"
                                             style="width: {{ $course->pivot->progress }}%"></div>
                                     </div>
                                 </div>
@@ -437,7 +437,7 @@
                             datasets: [{
                                     label: 'Skor Anda',
                                     data: currentData.user_scores,
-                                    backgroundColor: '#2563eb', // Warna blue-600 untuk grafik
+                                    backgroundColor: '#13416B', // Warna Sirenata Utama
                                     borderRadius: 4,
                                     barPercentage: 0.6,
                                     categoryPercentage: 0.8
@@ -445,7 +445,7 @@
                                 {
                                     label: 'Rata-rata Peserta',
                                     data: currentData.avg_scores,
-                                    backgroundColor: '#e2e8f0',
+                                    backgroundColor: '#cbd5e1', // Warna Muted/Slate untuk Average
                                     borderRadius: 4,
                                     barPercentage: 0.6,
                                     categoryPercentage: 0.8
