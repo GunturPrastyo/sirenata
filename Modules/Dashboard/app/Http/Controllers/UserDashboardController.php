@@ -35,20 +35,28 @@ class UserDashboardController extends Controller
         $provinces = Province::all();
         $stats = $this->courseService->myCourseStats();
 
+        // 1. PENGAMBILAN THUMBNAIL UNTUK LAST COURSE
         $lastCourse = $this->courseService->getLastAccessedCourse();
         if ($lastCourse) {
             $dbLastCourse = \Modules\LMS\Models\Course::with('category')->where('slug', $lastCourse->slug)->first();
             if ($dbLastCourse) {
                 $lastCourse->description = $dbLastCourse->description;
                 $lastCourse->category_name = $dbLastCourse->category ? $dbLastCourse->category->name : null;
+                $lastCourse->thumbnail = $dbLastCourse->thumbnail ?? null; // Menambahkan properti thumbnail
+            } else {
+                $lastCourse->thumbnail = null; // Fallback jika course tidak ditemukan di DB
             }
         }
 
+        // 2. PENGAMBILAN THUMBNAIL UNTUK RECENT COURSES
         $recentCourses = $this->courseService->getRecentCourses()->take(4);
         $recentCourses->transform(function ($course) {
             $dbCourse = \Modules\LMS\Models\Course::where('slug', $course->slug)->first();
             if ($dbCourse) {
                 $course->description = $dbCourse->description;
+                $course->thumbnail = $dbCourse->thumbnail ?? null; // Menambahkan properti thumbnail
+            } else {
+                $course->thumbnail = null; // Fallback
             }
             return $course;
         });
@@ -86,9 +94,7 @@ class UserDashboardController extends Controller
                 $aScores = [];
 
                 foreach ($courseTests as $test) {
-
                     $labels[] = $test->title;
-
                     $uScores[] = $userResults[$test->id] ?? 0;
                     $aScores[] = isset($avgResults[$test->id]) ? round($avgResults[$test->id], 1) : 0;
                 }
@@ -178,9 +184,6 @@ class UserDashboardController extends Controller
         return to_route('user.profile');
     }
 
-    /**
-     * API Endpoint untuk Auto-Suggest Searchbar
-     */
     public function searchSuggest(Request $request)
     {
         $keyword = $request->input('q');
@@ -203,7 +206,6 @@ class UserDashboardController extends Controller
 
         $enrolledCourseIds = $user->enrolledCourses()->pluck('course_id')->toArray();
 
-        // 1. Pencarian Kursus yang Sudah Didaftar (Warna: Biru SIRENATA)
         $enrolledCourses = \Modules\LMS\Models\Course::whereIn('id', $enrolledCourseIds)
             ->where(function ($query) use ($keyword) {
                 $query->where('name', 'like', "%{$keyword}%")
@@ -222,7 +224,6 @@ class UserDashboardController extends Controller
                 ];
             });
 
-        // 2. Pencarian Katalog (Kursus Belum Didaftar) (Warna: Hijau Emerald)
         $availableCatalogs = \Modules\LMS\Models\Course::whereNotIn('id', $enrolledCourseIds)
             ->where(function ($query) use ($keyword) {
                 $query->where('name', 'like', "%{$keyword}%")
@@ -235,14 +236,12 @@ class UserDashboardController extends Controller
                 return [
                     'title' => $item->name,
                     'subtitle' => 'Katalog: ' . ($item->category->name ?? 'Kategori Umum'),
-                    'url' => route('user.course.index', $item->slug), // Route to catalog
+                    'url' => route('user.course.index', $item->slug), 
                     'initials' => $getInitials($item->name),
                     'color' => 'bg-emerald-600'
                 ];
             });
 
-
-        // 3. Pencarian Perpustakaan / Buku (Warna: Oranye Amber)
         $libraries = \Modules\LMS\Models\Library::where('title', 'like', "%{$keyword}%")
             ->orWhere('description', 'like', "%{$keyword}%")
             ->with('libraryCategory')
