@@ -15,7 +15,7 @@
                 <div>
                     <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase  mb-1">Total Kursus
                     </p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['total'] }}</h3>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-700">{{ $stats['total'] }}</h3>
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Seluruh modul pada sistem</p>
                 </div>
                 <div
@@ -32,7 +32,7 @@
                 <div>
                     <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase mb-1">Rata-rata
                         Progress</p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['avg_progress'] }}%</h3>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-700">{{ $stats['avg_progress'] }}%</h3>
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Tingkat penyelesaian materi</p>
                 </div>
                 <div
@@ -49,7 +49,7 @@
                 <div>
                     <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase  mb-1">Kursus
                         Selesai</p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['selesai'] }}</h3>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-700">{{ $stats['selesai'] }}</h3>
                     <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Modul yang telah dituntaskan</p>
                 </div>
                 <div
@@ -133,10 +133,12 @@
 
                         <!-- Body & Deskripsi (Thumbnail Dihilangkan) -->
                         <div class="p-5 sm:p-6 flex flex-col flex-1">
-                            <p class="text-xs font-bold text-[#13416B] uppercase tracking-wider mb-2 flex justify-between items-center">
+                            <p
+                                class="text-xs font-bold text-[#13416B] uppercase tracking-wider mb-2 flex justify-between items-center">
                                 <span>Aktivitas Terakhir</span>
                                 @if (isset($lastCourse->category_name))
-                                    <span class="px-2 py-0.5 text-[10px] font-extrabold rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+                                    <span
+                                        class="px-2 py-0.5 text-[10px] font-extrabold rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                                         {{ $lastCourse->category_name }}
                                     </span>
                                 @endif
@@ -159,7 +161,7 @@
                                         style="width: {{ $lastCourse->progress }}%"></div>
                                 </div>
 
-                                <a href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}"
+                                <a href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}?target=auto"
                                     class="flex items-center justify-center gap-2 w-full bg-transparent border-2 border-[#13416B] text-[#13416B] hover:bg-[#13416B]/5 hover:shadow px-5 py-3 rounded-lg font-bold transition-all text-sm">
                                     <i class="fas fa-play"></i>
                                     <span>Lanjutkan Materi</span>
@@ -207,7 +209,7 @@
                     @forelse ($recentCourses as $course)
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
                             class="block bg-white border border-slate-200 rounded-lg p-3.5 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group">
-                          
+
                             <div class="min-w-0">
                                 <div class="flex items-start justify-between gap-2 mb-1">
                                     <h3

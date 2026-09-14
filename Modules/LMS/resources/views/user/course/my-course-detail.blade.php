@@ -236,27 +236,145 @@
                             {{ count(data_get($course, 'sections', [])) }} Modul
                         </span>
                     </div>
-
                     <div x-data="{
                         activeAccordion: localStorage.getItem('active_section_{{ $courseSlug }}') || 'section-0',
+                    
                         init() {
                             const urlParams = new URLSearchParams(window.location.search);
                             const targetId = urlParams.get('target');
                     
-                            if (targetId) {
+                            /*
+                             * Jika dashboard mengirim target=auto,
+                             * cari modul pertama yang belum selesai.
+                             */
+                            if (targetId === 'auto') {
+                    
                                 setTimeout(() => {
-                                    const el = document.querySelector(`[data-section-id='${targetId}']`);
-                                    if (el) {
-                                        this.activeAccordion = el.getAttribute('id');
-                                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                        el.classList.add('ring-2', 'ring-[#13416B]');
-                                        setTimeout(() => el.classList.remove('ring-2', 'ring-[#13416B]'), 2000);
+                    
+                                    const sections = Array.from(
+                                        document.querySelectorAll('[data-section-id]')
+                                    );
+                    
+                                    let targetSection = null;
+                    
+                                    for (const section of sections) {
+                    
+                                        /*
+                                         * Modul terkunci tidak dipilih.
+                                         */
+                                        if (section.querySelector('.fa-lock')) {
+                                            continue;
+                                        }
+                    
+                                        /*
+                                         * Cari bagian yang belum selesai.
+                                         */
+                                        const completedIcon =
+                                            section.querySelector('.fa-check');
+                    
+                                        if (!completedIcon) {
+                                            targetSection = section;
+                                            break;
+                                        }
                                     }
+                    
+                                    /*
+                                     * Jika semua modul selesai,
+                                     * buka modul pertama.
+                                     */
+                                    if (!targetSection && sections.length > 0) {
+                                        targetSection = sections[0];
+                                    }
+                    
+                                    if (targetSection) {
+                    
+                                        this.activeAccordion =
+                                            targetSection.getAttribute('id');
+                    
+                                        setTimeout(() => {
+                    
+                                            targetSection.scrollIntoView({
+                                                behavior: 'smooth',
+                                                block: 'center'
+                                            });
+                    
+                                            targetSection.classList.add(
+                                                'ring-2',
+                                                'ring-[#2563EB]'
+                                            );
+                    
+                                            setTimeout(() => {
+                    
+                                                targetSection.classList.remove(
+                                                    'ring-2',
+                                                    'ring-[#2563EB]'
+                                                );
+                    
+                                            }, 2000);
+                    
+                                        }, 150);
+                    
+                                    }
+                    
+                                }, 300);
+                    
+                                return;
+                            }
+                    
+                    
+                            /*
+                             * Target normal berdasarkan section ID.
+                             */
+                            if (targetId) {
+                    
+                                setTimeout(() => {
+                    
+                                    const el = document.querySelector(
+                                        `[data-section-id='${targetId}']`
+                                    );
+                    
+                                    if (el) {
+                    
+                                        this.activeAccordion =
+                                            el.getAttribute('id');
+                    
+                                        setTimeout(() => {
+                    
+                                            el.scrollIntoView({
+                                                behavior: 'smooth',
+                                                block: 'center'
+                                            });
+                    
+                                            el.classList.add(
+                                                'ring-2',
+                                                'ring-[#2563EB]'
+                                            );
+                    
+                                            setTimeout(() => {
+                    
+                                                el.classList.remove(
+                                                    'ring-2',
+                                                    'ring-[#2563EB]'
+                                                );
+                    
+                                            }, 2000);
+                    
+                                        }, 150);
+                    
+                                    }
+                    
                                 }, 300);
                             }
                         }
                     }" x-init="init();
-                    $watch('activeAccordion', value => localStorage.setItem('active_section_{{ $courseSlug }}', value))" class="space-y-3 sm:space-y-4">
+                    
+                    $watch(
+                        'activeAccordion',
+                        value => localStorage.setItem(
+                            'active_section_{{ $courseSlug }}',
+                            value
+                        )
+                    )" class="space-y-3 sm:space-y-4">
 
                         @php
                             $isPreviousSectionDone = true;
@@ -298,8 +416,10 @@
                             <div x-data="{ id: 'section-{{ $index }}', locked: {{ $isLocked ? 'true' : 'false' }} }" id="section-{{ $index }}"
                                 data-section-id="{{ $sectionId }}"
                                 class="border {{ $isLocked ? 'border-slate-100 bg-slate-50' : 'border-slate-200 bg-white' }} rounded-xl overflow-hidden shadow-sm transition-all duration-500"
-                                :class="{ 'border-[#13416B] shadow-md ring-1 ring-[#13416B]/30': activeAccordion == id && !
-                                        locked }">
+                                :class="{
+                                    'border-[#13416B] shadow-md ring-1 ring-[#13416B]/30': activeAccordion == id && !
+                                        locked
+                                }">
 
                                 <button @click="if(!locked) activeAccordion = (activeAccordion == id ? '' : id)"
                                     class="flex items-start sm:items-center justify-between w-full p-3.5 sm:p-5 text-left transition-colors border-l-4 border-l-transparent {{ $isLocked ? 'cursor-not-allowed opacity-80' : 'hover:bg-slate-50/50' }}"
@@ -582,7 +702,7 @@
                     <div class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
                         <div
                             class="w-10 h-10 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] border border-[#13416B]/20 rounded-xl shrink-0">
-                             <i class="fas fa-award"></i> 
+                            <i class="fas fa-award"></i>
                         </div>
                         <div>
                             <h3 class="text-base md:text-lg font-extrabold text-slate-800">Sertifikat Kelulusan</h3>
