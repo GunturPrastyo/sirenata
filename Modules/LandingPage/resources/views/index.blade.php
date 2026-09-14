@@ -393,15 +393,15 @@
     <!-- ========================================== -->
     <!-- FITUR UTAMA                                -->
     <!-- ========================================== -->
-    <section id="features" class="py-24 bg-white relative overflow-hidden">
+    <section id="features" class="py-24 md:py-18 bg-white relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
 
                 <div class="lg:sticky lg:top-24 reveal-left">
                     <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
-                    <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
+                    {{-- <span class="text-[#13416B] font-kalam font-bold text-lg lg:text-2xl mb-2 block">
                         Fitur Utama
-                    </span>
+                    </span> --}}
                     <!-- FONT OSWALD UNTUK TITLE -->
                     <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight"
                         style="font-family: 'Oswald', sans-serif;">
@@ -428,52 +428,82 @@
                     </ul>
                 </div>
 
-                <div class="relative h-[600px] overflow-hidden reveal-right"
-                    style="mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);">
-                    <div class="flex flex-col gap-6 animate-scroll-y hover:[animation-play-state:paused]">
-                        @php
-                            $features = [
-                                [
-                                    'icon' => 'fa-calculator',
-                                    'title' => 'Kalkulator RTK',
-                                    'desc' =>
-                                        'Alat bantu simulasi perhitungan rencana tenaga kerja makro sesuai kondisi daerah.',
-                                ],
-                                [
-                                    'icon' => 'fa-chart-pie',
-                                    'title' => 'Pengukuran IPK',
-                                    'desc' =>
-                                        'Penilaian otomatis 7 indikator dengan verifikasi berjenjang dari pusat dan daerah.',
-                                ],
-                                [
-                                    'icon' => 'fa-graduation-cap',
-                                    'title' => 'LMS Terintegrasi',
-                                    'desc' =>
-                                        'Transfer pengetahuan terstruktur melalui modul pelatihan, video, dan sertifikasi.',
-                                ],
-                                [
-                                    'icon' => 'fa-file-invoice',
-                                    'title' => 'Pelaporan & Arsip',
-                                    'desc' =>
-                                        'Pemantauan dokumen RTKD dan fitur sanggahan nilai dengan bukti pendukung.',
-                                ],
-                            ];
-                            $loopFeatures = array_merge($features, $features);
-                        @endphp
+                <!-- Kanan: Bento Grid Fitur -->
+                <div class="reveal-right w-full h-full flex flex-col justify-center">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
 
-                        @foreach ($loopFeatures as $feat)
+                        <!-- Card 1: Kalkulator RTK (Span Full Width) -->
+                        <div
+                            class="sm:col-span-2 bg-[#13416B] rounded-lg p-6 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+                            <!-- Decorative Glow -->
                             <div
-                                class="bg-slate-50 rounded-3xl p-8 border border-slate-100 flex items-start gap-5 mx-2 hover:border-[#13416B]/20 hover:shadow-sm transition-all">
+                                class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-150">
+                            </div>
+
+                            <div
+                                class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
                                 <div
-                                    class="w-14 h-14 rounded-2xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-md border border-[#0f3354]">
-                                    <i class="fas {{ $feat['icon'] }} text-2xl"></i>
+                                    class="w-16 h-16 rounded-2xl bg-white/10 text-white flex items-center justify-center shrink-0 backdrop-blur-md border border-white/20 shadow-inner">
+                                    <i class="fas fa-calculator text-3xl"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-bold text-slate-800 mb-1.5">{{ $feat['title'] }}</h3>
-                                    <p class="text-slate-600 leading-relaxed text-sm">{{ $feat['desc'] }}</p>
+                                    <h3 class="text-xl sm:text-xl font-bold text-white mb-2 tracking-tight">Penghitungan
+                                        RTK</h3>
+                                    <p class="text-white/80 leading-relaxed text-sm sm:text-base max-w-lg">
+                                        Alat bantu dalam perhitungan rencana tenaga kerja makro sesuai kondisi daerah
+                                        secara cepat dan presisi.
+                                    </p>
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
+
+                        <!-- Card 2: Pengukuran IPK (Kotak Kiri) -->
+                        <div
+                            class="bg-slate-50 rounded-lg p-6 sm:p-8 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between h-full">
+                            <div>
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-100 mb-6 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-chart-pie text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-2">Pengukuran IPK</h3>
+                                <p class="text-slate-600 leading-relaxed text-sm">
+                                    Penilaian otomatis 7 indikator dengan verifikasi berjenjang dari pusat dan daerah.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: LMS Terintegrasi (Kotak Kanan) -->
+                        <div
+                            class="bg-slate-50 rounded-lg p-6 sm:p-8 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between h-full">
+                            <div>
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-100 mb-6 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-graduation-cap text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-2">LMS Terintegrasi</h3>
+                                <p class="text-slate-600 leading-relaxed text-sm">
+                                    Transfer pengetahuan terstruktur melalui modul pelatihan, video, dan sertifikasi
+                                    kelulusan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Pelaporan & Arsip (Span Full Width) -->
+                        <div
+                            class="sm:col-span-2 bg-gradient-to-r from-blue-50 to-slate-50 rounded-lg p-6 sm:p-8 border border-blue-100/60 hover:border-blue-200 hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row items-center gap-5 sm:gap-6 group">
+                            <div
+                                class="w-14 h-14 rounded-full bg-white text-[#13416B] flex items-center justify-center shrink-0 shadow-sm border border-blue-100 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                                <i class="fas fa-file-invoice text-2xl"></i>
+                            </div>
+                            <div class="text-center sm:text-left">
+                                <h3 class="text-lg font-bold text-slate-800 mb-1">Pelaporan & Arsip</h3>
+                                <p class="text-slate-600 text-sm sm:text-base max-w-xl">
+                                    Pemantauan dokumen RTKD dan fitur sanggahan nilai dengan integrasi bukti pendukung
+                                    yang aman.
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
