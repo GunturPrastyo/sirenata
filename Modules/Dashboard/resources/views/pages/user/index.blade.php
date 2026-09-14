@@ -7,55 +7,71 @@
     <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6">
 
         <!-- ===================================== -->
-        <!-- 1. STATS GRID                         -->
+        <!-- 1. STATS GRID (Professional Monokrom) -->
         <!-- ===================================== -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-            <div
-                class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
-                <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase mb-1">Total Kursus
-                    </p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['total'] }}</h3>
-                    <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Seluruh modul pada sistem</p>
+            <!-- Total Kursus -->
+            <div class="relative overflow-hidden bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 transition-all duration-300 hover:shadow-md hover:border-[#13416B]/40 group z-0">
+                <div class="relative z-10 flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase mb-1">Total Kursus</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-800">{{ $stats['total'] }}</h3>
+                        <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Seluruh modul pada sistem</p>
+                    </div>
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-md">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
                 </div>
-                <!-- Soft Badge Professional -->
-                <div
-                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0">
-                    <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                <!-- Dekorasi Watermark Background -->
+                <div class="absolute -right-6 -bottom-6 text-[#13416B] opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                    <svg class="w-36 h-36" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                 </div>
             </div>
 
-            <div
-                class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
-                <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase mb-1">Rata-rata Progress</p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['avg_progress'] }}%</h3>
-                    <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Tingkat penyelesaian materi</p>
+            <!-- Rata-rata Progress -->
+            <div class="relative overflow-hidden bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 transition-all duration-300 hover:shadow-md hover:border-[#13416B]/40 group z-0">
+                <div class="relative z-10 flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase mb-1">Rata-rata Progress</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-800">{{ $stats['avg_progress'] }}%</h3>
+                        <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Tingkat penyelesaian materi</p>
+                    </div>
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-md">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                    </div>
                 </div>
-                <div
-                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0">
-                    <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                <!-- Dekorasi Watermark Background -->
+                <div class="absolute -right-6 -bottom-6 text-[#13416B] opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                    <svg class="w-36 h-36" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                 </div>
             </div>
 
-            <div
-                class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
-                <div>
-                    <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase mb-1">Kursus Selesai</p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $stats['selesai'] }}</h3>
-                    <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Modul yang telah dituntaskan</p>
+            <!-- Kursus Selesai -->
+            <div class="relative overflow-hidden bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 transition-all duration-300 hover:shadow-md hover:border-[#13416B]/40 group z-0">
+                <div class="relative z-10 flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-500 text-xs sm:text-sm font-bold uppercase mb-1">Kursus Selesai</p>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-800">{{ $stats['selesai'] }}</h3>
+                        <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Modul yang telah dituntaskan</p>
+                    </div>
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-md">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                        </svg>
+                    </div>
                 </div>
-                <div
-                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B]/10 text-[#13416B] flex items-center justify-center shrink-0">
-                    <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                <!-- Dekorasi Watermark Background -->
+                <div class="absolute -right-6 -bottom-6 text-[#13416B] opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                    <svg class="w-36 h-36" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                 </div>
             </div>
@@ -64,25 +80,24 @@
         <!-- ===================================== -->
         <!-- 2. ANALITIK EVALUASI FULL WIDTH       -->
         <!-- ===================================== -->
-        <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200">
+        <div class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200">
             <div
                 class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] rounded-xl shrink-0">
+                        class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-md">
                         <i class="fas fa-chart-bar text-lg"></i>
                     </div>
                     <div>
                         <h2 class="text-base font-extrabold text-slate-800">Evaluasi Anda per Kursus</h2>
-                        <p class="text-[11px] sm:text-xs text-slate-500">Perbandingan skor post-test Anda dengan
-                            rata-rata peserta lain</p>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Nilai akhir dari post-test yang telah Anda kerjakan</p>
                     </div>
                 </div>
 
                 @if (isset($chartDataByCourse) && count($chartDataByCourse) > 0)
                     <div class="w-full sm:w-auto sm:max-w-xs shrink-0">
                         <select id="courseChartFilter"
-                            class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden pr-8 cursor-pointer">
+                            class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden pr-8 cursor-pointer shadow-sm">
                             @foreach ($chartDataByCourse as $cId => $cData)
                                 <option value="{{ $cId }}">{{ $cData['course_name'] }}</option>
                             @endforeach
@@ -96,7 +111,7 @@
                     <canvas id="postTestChart"></canvas>
                 </div>
             @else
-                <div class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4">
+                <div class="bg-slate-50 rounded-xl p-10 text-center border border-dashed border-slate-200 my-4">
                     <div
                         class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
                         <i class="fas fa-chart-area text-xl"></i>
@@ -111,14 +126,13 @@
         <!-- ===================================== -->
         <!-- 3. GRID BAWAH (LANJUTKAN & RECENT)    -->
         <!-- ===================================== -->
-        <!-- items-start agar tinggi kotak bebas menyesuaikan isinya, menghilangkan ruang kosong -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start"> 
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch"> 
 
             <!-- KOLOM KIRI: Lanjutkan Belajar -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col">
+            <div class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 shrink-0">
                     <div
-                        class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] rounded-xl shrink-0">
+                        class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-md">
                         <i class="fas fa-play-circle text-base"></i>
                     </div>
                     <div>
@@ -129,18 +143,20 @@
 
                 @if ($lastCourse)
                     <div
-                        class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm flex flex-col transition-shadow hover:shadow-md">
+                        class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col flex-1 transition-all hover:shadow-md">
                         
-                        <div class="p-5 flex flex-col sm:flex-row gap-5 sm:gap-6 items-start">
-                            <!-- Thumbnail Sisi Kiri -->
-                            <div class="w-full sm:w-2/5 shrink-0">
+                        <div class="p-0 flex flex-col sm:flex-row flex-1">
+                            
+                            <!-- Thumbnail Sisi Kiri (Edge-to-Edge) -->
+                            <div class="w-full sm:w-2/5 shrink-0 bg-slate-100 relative">
                                 <img src="{{ $lastCourse->thumbnail ? (str_starts_with($lastCourse->thumbnail, 'http') ? $lastCourse->thumbnail : asset('storage/' . $lastCourse->thumbnail)) : 'https://placehold.co/600x400/13416B/FFF?text=' . urlencode(substr($lastCourse->name, 0, 2)) }}"
                                     alt="{{ $lastCourse->name }}"
-                                    class="w-full aspect-video sm:aspect-[4/3] object-cover rounded-xl shadow-sm border border-slate-200">
+                                    class="absolute inset-0 w-full h-full object-cover">
+                                <div class="w-full pb-[60%] sm:pb-0"></div> 
                             </div>
 
                             <!-- Title & Deskripsi Sisi Kanan -->
-                            <div class="flex flex-col min-w-0 w-full">
+                            <div class="p-5 sm:p-6 flex flex-col flex-1 justify-between bg-white z-10">
                                 <div>
                                     <p
                                         class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex justify-between items-center">
@@ -156,25 +172,24 @@
                                         {{ $lastCourse->name }}
                                     </h3>
 
-                                    <p class="text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                                    <p class="text-sm text-slate-500 line-clamp-3 leading-relaxed mb-6">
                                         {{ $lastCourse->description ?? 'Lanjutkan materi pembelajaran Anda pada kursus ini untuk meningkatkan kompetensi dan mendapatkan sertifikat kelulusan.' }}
                                     </p>
                                 </div>
 
-                                <!-- Bagian Action Lanjutkan menempel natural di bawah teks -->
-                                <div class="mt-4 pt-4 border-t border-slate-100">
+                                <div class="mt-auto">
                                     <div
                                         class="flex items-center justify-between text-[11px] font-bold text-slate-700 mb-1.5">
                                         <span>Progress Belajar</span>
                                         <span class="text-[#13416B]">{{ $lastCourse->progress }}%</span>
                                     </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-2 mb-4 overflow-hidden">
+                                    <div class="w-full bg-slate-100 rounded-full h-2 mb-5 overflow-hidden shadow-inner">
                                         <div class="bg-[#13416B] rounded-full h-full transition-all duration-500"
                                             style="width: {{ $lastCourse->progress }}%"></div>
                                     </div>
 
                                     <a href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}?target=auto"
-                                        class="flex items-center justify-center gap-2 w-full bg-transparent border border-[#13416B] text-[#13416B] hover:bg-[#13416B] hover:text-white px-4 py-2 rounded-lg font-bold transition-all text-sm group">
+                                        class="flex items-center justify-center gap-2 w-full bg-transparent border-2 border-[#13416B] text-[#13416B] hover:bg-[#13416B] hover:text-white hover:shadow-md px-4 py-2.5 rounded-lg font-bold transition-all text-sm group">
                                         <i class="fas fa-play group-hover:scale-110 transition-transform"></i>
                                         <span>Lanjutkan</span>
                                     </a>
@@ -185,9 +200,9 @@
                 @else
                     <!-- Tampilan Jika Kosong -->
                     <div
-                        class="bg-slate-50 rounded-lg p-12 text-center border border-dashed border-slate-200 mt-2 flex-1 flex flex-col justify-center items-center">
+                        class="bg-slate-50 rounded-xl p-12 text-center border border-dashed border-slate-200 mt-2 flex-1 flex flex-col justify-center items-center">
                         <div
-                            class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-slate-400">
+                            class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-slate-400 border border-slate-100">
                             <i class="fas fa-book-open text-2xl"></i>
                         </div>
                         <p class="text-sm font-semibold text-slate-700">Belum ada aktivitas belajar</p>
@@ -201,11 +216,11 @@
             </div>
 
             <!-- KOLOM KANAN: Kursus Saya -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col">
+            <div class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center gap-3">
                         <div
-                            class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] rounded-xl shrink-0">
+                            class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-md">
                             <i class="fas fa-graduation-cap text-base"></i>
                         </div>
                         <div>
@@ -214,7 +229,7 @@
                         </div>
                     </div>
                     <a href="{{ route('user.course.my-course') }}"
-                        class="text-xs font-bold text-slate-500 hover:text-[#13416B] hover:underline flex items-center gap-1">
+                        class="text-xs font-bold text-slate-500 hover:text-[#13416B] hover:underline flex items-center gap-1 transition-colors">
                         <span>Lihat semua</span>
                     </a>
                 </div>
@@ -222,11 +237,11 @@
                 <div class="space-y-3 flex-1 flex flex-col">
                     @forelse ($recentCourses as $course)
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                            class="flex flex-col sm:flex-row gap-3 bg-white border border-slate-200 rounded-lg p-3 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group items-start">
+                            class="flex flex-col sm:flex-row gap-3 bg-white border border-slate-200 rounded-xl p-3 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group items-start">
 
                             <!-- Thumbnail Kiri (Mini) -->
                             <div
-                                class="w-full sm:w-24 h-32 sm:h-24 shrink-0 rounded-md overflow-hidden bg-slate-100 border border-slate-200 relative">
+                                class="w-full sm:w-24 h-32 sm:h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 relative">
                                 <img src="{{ $course->thumbnail ? (str_starts_with($course->thumbnail, 'http') ? $course->thumbnail : asset('storage/' . $course->thumbnail)) : 'https://placehold.co/300x200/13416B/FFF?text=' . urlencode(substr($course->name, 0, 2)) }}"
                                     alt="{{ $course->name }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
@@ -262,7 +277,7 @@
                                         <span>Progress</span>
                                         <span class="font-bold text-slate-700">{{ $course->pivot->progress }}%</span>
                                     </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden shadow-inner">
                                         <div class="bg-[#13416B] h-full rounded-full transition-all duration-300"
                                             style="width: {{ $course->pivot->progress }}%"></div>
                                     </div>
@@ -271,9 +286,9 @@
                         </a>
                     @empty
                         <div
-                            class="text-center py-10 bg-slate-50 rounded-lg border border-dashed border-slate-200 flex-1 flex flex-col justify-center">
+                            class="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-200 flex-1 flex flex-col justify-center">
                             <div
-                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-auto mb-2 text-slate-400 shadow-sm">
+                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-auto mb-2 text-slate-400 shadow-sm border border-slate-100">
                                 <i class="fas fa-folder-open text-sm"></i>
                             </div>
                             <p class="text-xs font-semibold text-slate-600">Belum ada kursus yang diikuti.</p>
@@ -435,22 +450,13 @@
                         data: {
                             labels: currentData.labels.map(label => formatMultilineLabel(label)),
                             datasets: [{
-                                    label: 'Skor Anda',
-                                    data: currentData.user_scores,
-                                    backgroundColor: '#13416B', // Warna Sirenata Utama
-                                    borderRadius: 4,
-                                    barPercentage: 0.6,
-                                    categoryPercentage: 0.8
-                                },
-                                {
-                                    label: 'Rata-rata Peserta',
-                                    data: currentData.avg_scores,
-                                    backgroundColor: '#cbd5e1', // Warna Muted/Slate untuk Average
-                                    borderRadius: 4,
-                                    barPercentage: 0.6,
-                                    categoryPercentage: 0.8
-                                }
-                            ]
+                                label: 'Skor Anda',
+                                data: currentData.user_scores,
+                                backgroundColor: '#13416B', // Hanya Skor Anda yang tampil
+                                borderRadius: 4,
+                                barPercentage: 0.5, // Disesuaikan agar batang lebih solid jika berdiri sendiri
+                                categoryPercentage: 0.8
+                            }]
                         },
                         options: {
                             indexAxis: 'y',
@@ -458,17 +464,7 @@
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    position: 'bottom',
-                                    labels: {
-                                        usePointStyle: true,
-                                        boxWidth: 8,
-                                        boxPadding: 12,
-                                        padding: 20,
-                                        font: {
-                                            size: 11,
-                                            family: "'Inter', sans-serif"
-                                        }
-                                    }
+                                    display: false // Mematikan legend karena hanya ada 1 dataset
                                 },
                                 tooltip: {
                                     mode: 'index',
@@ -550,7 +546,6 @@
                                 postTestChart.data.labels = newData.labels.map(label => formatMultilineLabel(
                                     label));
                                 postTestChart.data.datasets[0].data = newData.user_scores;
-                                postTestChart.data.datasets[1].data = newData.avg_scores;
                                 postTestChart.update();
                             }
                         });
