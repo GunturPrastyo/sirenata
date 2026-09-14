@@ -40,7 +40,7 @@ class CourseController extends Controller
 
         foreach ($dbCourse->sections as $section) {
             $totalContents += $section->contents->count();
-            
+
             // Hitung materi yang sudah selesai
             $completedContents += \Modules\LMS\Models\StudentContentProgress::where('user_id', $userId)
                 ->whereIn('section_content_id', $section->contents->pluck('id'))
@@ -73,7 +73,7 @@ class CourseController extends Controller
 
         $totalItems = $totalContents + $totalTests;
         $completedItems = $completedContents + $passedTests;
-        
+
         return $totalItems > 0 ? (int) round(($completedItems / $totalItems) * 100) : 0;
     }
 
@@ -81,7 +81,7 @@ class CourseController extends Controller
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        
+
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage);
 
         $courses = collect($result['data'])->map(function ($item) {
@@ -97,7 +97,7 @@ class CourseController extends Controller
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
                     $courseObj->thumbnail_url = $dbCourse->thumbnail ?? $courseObj->thumbnail_url;
-                    
+
                     $courseObj->total_modul = $dbCourse->sections->count();
                     $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
 
@@ -122,7 +122,7 @@ class CourseController extends Controller
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        
+
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage, status: self::IN_PROGRESS);
 
         $courses = collect($result['data'])->map(function ($item) {
@@ -163,7 +163,7 @@ class CourseController extends Controller
     {
         $page   = $request->get('page', 1);
         $perPage = $request->get('row_per_page', 11);
-        
+
         $result = $this->courseService->myCourses(page: $page, perPage: $perPage, status: self::COMPLETED);
 
         $courses = collect($result['data'])->map(function ($item) {
@@ -213,12 +213,12 @@ class CourseController extends Controller
 
         $course->course_name = $course->name;
         $course->thumbnail_url = $course->thumbnail ? Storage::url($course->thumbnail) : null;
-        
+
         if ($enrollment) {
             $course->certificate_code = $enrollment->pivot->certificate_code;
             $course->certificate_issued_at = $enrollment->pivot->certificate_issued_at;
-            $course->certificate_file = $enrollment->pivot->certificate_file 
-                ? Storage::url($enrollment->pivot->certificate_file) 
+            $course->certificate_file = $enrollment->pivot->certificate_file
+                ? Storage::url($enrollment->pivot->certificate_file)
                 : null;
         }
 
@@ -228,7 +228,6 @@ class CourseController extends Controller
             'message' => $result['message'],
         ]);
     }
-
     public function generateCertificate(string $slug)
     {
         $user = Auth::user();
@@ -265,22 +264,14 @@ class CourseController extends Controller
             $issuedAt = now();
         }
 
-        $backgroundPath = storage_path('app/public/' . $activeSetting->background_image);
-        $signaturePath = storage_path('app/public/' . $activeSetting->signature_image);
+        // Menggunakan Storage::url() alih-alih konversi base64
+        $backgroundUrl = $activeSetting->background_image
+            ? Storage::url($activeSetting->background_image)
+            : null;
 
-        $backgroundBase64 = '';
-        if (file_exists($backgroundPath)) {
-            $type = pathinfo($backgroundPath, PATHINFO_EXTENSION);
-            $data = file_get_contents($backgroundPath);
-            $backgroundBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-        }
-
-        $signatureBase64 = '';
-        if (file_exists($signaturePath)) {
-            $type = pathinfo($signaturePath, PATHINFO_EXTENSION);
-            $data = file_get_contents($signaturePath);
-            $signatureBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-        }
+        $signatureUrl = $activeSetting->signature_image
+            ? Storage::url($activeSetting->signature_image)
+            : null;
 
         $completedDate = Carbon::parse($issuedAt)->translatedFormat('d F Y');
         $fullName = $user->profile?->full_name ?? $user->name;
@@ -290,8 +281,8 @@ class CourseController extends Controller
             'nama_kursus' => $course->name,
             'tanggal_selesai' => $completedDate,
             'nomor_sertifikat' => $certificateCode,
-            'background_url' => $backgroundBase64,
-            'signature_url' => $signatureBase64,
+            'background_url' => $backgroundUrl,
+            'signature_url' => $signatureUrl,
             'signer_name' => $activeSetting->signer_name,
             'signer_title' => $activeSetting->signer_title,
         ]);
@@ -358,7 +349,7 @@ class CourseController extends Controller
     public function submitTest(Request $request, string $slug, string $postTestId)
     {
         $postTest = \Modules\LMS\Models\PostTest::with('questions.choices')->findOrFail($postTestId);
-        $userAnswers = $request->input('answers', []); 
+        $userAnswers = $request->input('answers', []);
 
         $totalQuestions = $postTest->questions->count();
         if ($totalQuestions === 0) {
