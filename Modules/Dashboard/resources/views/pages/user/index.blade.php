@@ -11,68 +11,86 @@
         <!-- ===================================== -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <!-- Total Kursus (Dark Navy) -->
-            <div class="relative overflow-hidden bg-[#13416B] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
+            <div
+                class="relative overflow-hidden bg-[#13416B] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
                 <div class="relative z-10 flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Total Kursus</p>
+                        <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Total Kursus
+                        </p>
                         <h3 class="text-2xl sm:text-3xl font-extrabold text-white">{{ $stats['total'] }}</h3>
                         <p class="text-[10px] sm:text-xs text-white/60 mt-1">Seluruh modul pada sistem</p>
                     </div>
                     <!-- Badge Putih Solid, Ikon Dark Navy -->
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#13416B] flex items-center justify-center shrink-0 shadow-sm">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#13416B] flex items-center justify-center shrink-0 shadow-sm">
                         <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
                     </div>
                 </div>
                 <!-- Dekorasi Watermark Background -->
-                <div class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                <div
+                    class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
                     <svg class="w-36 h-36" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                 </div>
             </div>
 
             <!-- Rata-rata Progress (Slate Blue) -->
-            <div class="relative overflow-hidden bg-[#547996] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
+            <div
+                class="relative overflow-hidden bg-[#547996] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
                 <div class="relative z-10 flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Rata-rata Progress</p>
+                        <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Rata-rata
+                            Progress</p>
                         <h3 class="text-2xl sm:text-3xl font-extrabold text-white">{{ $stats['avg_progress'] }}%</h3>
                         <p class="text-[10px] sm:text-xs text-white/60 mt-1">Tingkat penyelesaian materi</p>
                     </div>
                     <!-- Badge Putih Solid, Ikon Slate Blue -->
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#547996] flex items-center justify-center shrink-0 shadow-sm">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#547996] flex items-center justify-center shrink-0 shadow-sm">
                         <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
                     </div>
                 </div>
-                <div class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                <div
+                    class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
                     <svg class="w-36 h-36" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                 </div>
             </div>
 
             <!-- Kursus Selesai (Light Blue) -->
-            <div class="relative overflow-hidden bg-[#8BB1CC] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
+            <div
+                class="relative overflow-hidden bg-[#8BB1CC] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
                 <div class="relative z-10 flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Kursus Selesai</p>
+                        <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Kursus
+                            Selesai</p>
                         <h3 class="text-2xl sm:text-3xl font-extrabold text-white">{{ $stats['selesai'] }}</h3>
                         <p class="text-[10px] sm:text-xs text-white/60 mt-1">Modul yang telah dituntaskan</p>
                     </div>
                     <!-- Badge Putih Solid, Ikon Light Blue -->
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#8BB1CC] flex items-center justify-center shrink-0 shadow-sm">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#8BB1CC] flex items-center justify-center shrink-0 shadow-sm">
                         <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                         </svg>
                     </div>
                 </div>
-                <div class="absolute -right-6 -bottom-6 text-white opacity-[0.1] group-hover:opacity-[0.15] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                <div
+                    class="absolute -right-6 -bottom-6 text-white opacity-[0.1] group-hover:opacity-[0.15] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
                     <svg class="w-36 h-36" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                 </div>
             </div>
@@ -85,10 +103,11 @@
             <div
                 class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                  
+
                     <div>
                         <h2 class="text-base lg:text-lg font-extrabold text-slate-800">Evaluasi Anda per Kursus</h2>
-                        <p class="text-[11px] sm:text-xs text-slate-500">Nilai akhir dari post-test yang telah Anda kerjakan</p>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Nilai akhir dari post-test yang telah Anda
+                            kerjakan</p>
                     </div>
                 </div>
 
@@ -121,98 +140,157 @@
             @endif
         </div>
 
-        <!-- ===================================== -->
+      <!-- ===================================== -->
         <!-- 3. GRID BAWAH (LANJUTKAN & RECENT)    -->
         <!-- ===================================== -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch"> 
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
 
-            <!-- KOLOM KIRI: Lanjutkan Belajar -->
-            <div class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
-                <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 shrink-0">
-                    <div
-                        class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-md shrink-0 shadow-md">
-                        <i class="fas fa-play-circle text-base"></i>
-                    </div>
+            <!-- KOLOM KIRI: Membungkus Lanjutkan Belajar & Terakhir Dilihat dengan h-full -->
+            <div class="flex flex-col gap-6 h-full">
+
+                <!-- CARD 1: Lanjutkan Belajar -->
+                <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col flex-1 justify-between">
                     <div>
-                        <h2 class="text-base font-extrabold text-slate-800">Lanjutkan Belajar</h2>
-                        <p class="text-[11px] sm:text-xs text-slate-500">Aktivitas pembelajaran terakhir Anda</p>
+                        <!-- Header Card -->
+                        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 shrink-0">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-md shrink-0 shadow-md">
+                                <i class="fas fa-play-circle text-base"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-extrabold text-slate-800">Lanjutkan Belajar</h2>
+                                <p class="text-[11px] sm:text-xs text-slate-500">Aktivitas pembelajaran terakhir Anda</p>
+                            </div>
+                        </div>
+
+                        @if ($lastCourse)
+                            @php
+                                // Logika untuk mengecilkan ukuran teks pada ui-avatars
+                                $lThumb = $lastCourse->thumbnail ? (str_starts_with($lastCourse->thumbnail, 'http') ? $lastCourse->thumbnail : asset('storage/' . $lastCourse->thumbnail)) : 'https://ui-avatars.com/api/?name='.urlencode(substr($lastCourse->name, 0, 2)).'&background=13416B&color=fff';
+                                if (str_contains($lThumb, 'ui-avatars.com') && !str_contains($lThumb, 'font-size')) {
+                                    $lThumb .= '&font-size=0.33';
+                                }
+                            @endphp
+                            
+                            <!-- Desain Card dengan Thumbnail Edge-to-Edge (Kiri) & Tombol Rounded (Kanan) -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-row overflow-hidden transition-all hover:border-[#13416B]/40 hover:shadow-md mb-2">
+                                
+                                <!-- Thumbnail Kiri (Edge to Edge, tanpa padding) -->
+                                <div class="w-28 sm:w-36 shrink-0 bg-slate-100 relative border-r border-slate-100">
+                                    <img src="{{ $lThumb }}" alt="{{ $lastCourse->name }}" class="absolute inset-0 w-full h-full object-cover">
+                                </div>
+
+                                <!-- Konten Teks & Progress Kanan -->
+                                <div class="min-w-0 flex-1 flex flex-col justify-between p-3 sm:p-4">
+                                    <div class="mb-2">
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Aktivitas Terakhir</span>
+                                        <h3 class="font-bold text-slate-800 text-sm sm:text-base line-clamp-2 mb-1">
+                                            {{ $lastCourse->name }}
+                                        </h3>
+                                        <p class="text-[10px] sm:text-[11px] text-slate-500 line-clamp-1 sm:line-clamp-2">
+                                            {{ $lastCourse->description ?? 'Lanjutkan materi pembelajaran Anda pada kursus ini.' }}
+                                        </p>
+                                    </div>
+
+                                    <!-- Bagian Progress Bar & Tombol -->
+                                    <div class="mt-auto">
+                                        <div class="flex items-center justify-between text-[9px] sm:text-[10px] text-slate-500 mb-1 font-medium">
+                                            <span>Progress</span>
+                                            <span class="font-bold text-[#13416B]">{{ $lastCourse->progress }}%</span>
+                                        </div>
+                                        
+                                        <!-- Progress Bar -->
+                                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden shadow-inner mb-3">
+                                            <div class="bg-[#13416B] h-full rounded-full transition-all duration-300"
+                                                style="width: {{ $lastCourse->progress }}%"></div>
+                                        </div>
+                                        
+                                        <!-- Tombol Lanjut (Rounded-lg, di bawah progress bar) -->
+                                        <a href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}?target=auto"
+                                            class="flex items-center justify-center gap-1.5 w-full bg-[#13416B] text-white hover:bg-[#0f3354] px-4 py-2 rounded-xl font-bold transition-all shadow-sm text-xs group">
+                                            <i class="fas fa-play text-[10px] group-hover:scale-110 transition-transform"></i>
+                                            <span>Lanjutkan Materi</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Tampilan Jika Kosong -->
+                            <div class="bg-slate-50 rounded-xl p-6 text-center border border-dashed border-slate-200 my-2 flex flex-col justify-center items-center">
+                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-2 shadow-sm text-slate-400 border border-slate-100">
+                                    <i class="fas fa-book-open text-lg"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-slate-700 mb-3">Belum ada aktivitas belajar</p>
+                                <a href="{{ route('user.course.my-course') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-[#13416B] text-xs font-bold hover:bg-slate-50 shadow-sm transition-all">
+                                    <span>Lihat Katalog Kursus</span>
+                                    <i class="fas fa-arrow-right text-[10px]"></i>
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
-                @if ($lastCourse)
-                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col flex-1 transition-all hover:shadow-md">
-                        <div class="p-0 flex flex-row flex-1">
-                            
-                            <!-- Thumbnail Sisi Kiri (DISEMBUNYIKAN DI MOBILE: hidden sm:block) -->
-                            <div class="hidden sm:block sm:w-2/5 shrink-0 bg-slate-100 relative min-h-[140px]">
-                                <img src="{{ $lastCourse->thumbnail ? (str_starts_with($lastCourse->thumbnail, 'http') ? $lastCourse->thumbnail : asset('storage/' . $lastCourse->thumbnail)) : 'https://placehold.co/600x400/13416B/FFF?text=' . urlencode(substr($lastCourse->name, 0, 2)) }}"
-                                    alt="{{ $lastCourse->name }}"
-                                    class="absolute inset-0 w-full h-full object-cover">
+                <!-- CARD 2: Terakhir Dilihat (Perpustakaan) -->
+                <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between flex-1">
+                    <div>
+                        <div class="flex items-center gap-3 mb-3 pb-3 border-b border-slate-100 shrink-0">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#547996] text-white rounded-md shrink-0 shadow-md">
+                                <i class="fas fa-history text-base"></i>
                             </div>
+                            <div>
+                                <h2 class="text-base font-extrabold text-slate-800">Terakhir Dilihat</h2>
+                                <p class="text-[11px] sm:text-xs text-slate-500">Materi perpustakaan terakhir diakses</p>
+                            </div>
+                        </div>
 
-                            <!-- Title & Deskripsi Sisi Kanan (Full width di mobile, w-3/5 di desktop) -->
-                            <div class="p-4 sm:p-6 flex flex-col flex-1 justify-between bg-white z-10 w-full sm:w-3/5">
-                                <div>
-                                    <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex justify-between items-center flex-wrap gap-1">
-                                        <span>Aktivitas Terakhir</span>
-                                        @if (isset($lastCourse->category_name))
-                                            <span class="px-2 py-0.5 text-[9px] sm:text-[10px] font-extrabold rounded-md bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
-                                                {{ $lastCourse->category_name }}
-                                            </span>
-                                        @endif
-                                    </p>
-                                    <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-1.5 sm:mb-2 leading-snug line-clamp-2">
-                                        {{ $lastCourse->name }}
+                        @if (isset($lastLibrary) && $lastLibrary)
+                            <a href="{{ route('user.library.index') }}?search={{ urlencode($lastLibrary->title) }}"
+                                class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all group">
+                                <div class="w-12 h-12 rounded-lg overflow-hidden shrink-0 shadow-sm relative bg-white border border-slate-200 flex items-center justify-center">
+                                    @if ($lastLibrary->cover_image)
+                                        <img src="{{ str_starts_with($lastLibrary->cover_image, 'http') ? $lastLibrary->cover_image : asset('storage/' . $lastLibrary->cover_image) }}"
+                                            alt="Cover" class="w-full h-full object-cover">
+                                        <div class="absolute bottom-0.5 right-0.5 w-4 h-4 bg-[#13416B] text-white rounded-full flex items-center justify-center text-[8px] shadow-sm">
+                                            <i class="{{ $lastLibrary->icon }}"></i>
+                                        </div>
+                                    @else
+                                        <i class="{{ $lastLibrary->icon }} text-[#547996] text-lg group-hover:scale-110 transition-transform"></i>
+                                    @endif
+                                </div>
+
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-start mb-0.5">
+                                        <span class="px-2 py-0.5 text-[9px] font-extrabold rounded-md bg-[#547996]/10 text-[#547996] border border-[#547996]/20">
+                                            {{ $lastLibrary->libraryCategory->name ?? 'Kategori Umum' }}
+                                        </span>
+                                        <span class="text-[9px] text-slate-400 font-medium">
+                                            {{ \Carbon\Carbon::parse($lastLibrary->last_accessed_at)->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                    <h3 class="text-xs sm:text-sm font-bold text-slate-800 line-clamp-1 group-hover:text-[#13416B] transition-colors mb-0.5">
+                                        {{ $lastLibrary->title }}
                                     </h3>
-
-                                    <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 sm:line-clamp-3 leading-relaxed mb-4 sm:mb-6">
-                                        {{ $lastCourse->description ?? 'Lanjutkan materi pembelajaran Anda pada kursus ini untuk meningkatkan kompetensi dan mendapatkan sertifikat kelulusan.' }}
+                                    <p class="text-[10px] sm:text-[11px] text-slate-500 line-clamp-1">
+                                        {{ $lastLibrary->description ?? 'Tidak ada deskripsi' }}
                                     </p>
                                 </div>
-
-                                <div class="mt-auto">
-                                    <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-slate-700 mb-1.5">
-                                        <span>Progress Belajar</span>
-                                        <span class="text-[#13416B]">{{ $lastCourse->progress }}%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-1.5 sm:h-2 mb-4 sm:mb-5 overflow-hidden shadow-inner">
-                                        <div class="bg-[#13416B] rounded-full h-full transition-all duration-500"
-                                            style="width: {{ $lastCourse->progress }}%"></div>
-                                    </div>
-
-                                    <a href="{{ route('user.course.my-course.detail', $lastCourse->slug) }}?target=auto"
-                                        class="flex items-center justify-center gap-1.5 sm:gap-2 w-full bg-transparent border-2 border-[#13416B] text-[#13416B] hover:bg-[#13416B] hover:text-white hover:shadow-md px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-bold transition-all text-xs sm:text-sm group">
-                                        <i class="fas fa-play group-hover:scale-110 transition-transform"></i>
-                                        <span>Lanjutkan</span>
-                                    </a>
-                                </div>
+                            </a>
+                        @else
+                            <div class="text-center py-5 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                <p class="text-xs font-semibold text-slate-600 mb-1.5">Belum ada riwayat baca.</p>
+                                <a href="{{ route('user.library.index') }}" class="text-xs font-bold text-[#13416B] hover:underline">
+                                    Jelajahi Perpustakaan
+                                </a>
                             </div>
-                        </div>
+                        @endif
                     </div>
-                @else
-                    <!-- Tampilan Jika Kosong -->
-                    <div
-                        class="bg-slate-50 rounded-xl p-12 text-center border border-dashed border-slate-200 mt-2 flex-1 flex flex-col justify-center items-center">
-                        <div
-                            class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-slate-400 border border-slate-100">
-                            <i class="fas fa-book-open text-2xl"></i>
-                        </div>
-                        <p class="text-sm font-semibold text-slate-700">Belum ada aktivitas belajar</p>
-                        <a href="{{ route('user.course.my-course') }}"
-                            class="inline-flex items-center justify-center gap-2 mt-4 px-6 py-2.5 bg-white border border-slate-200 rounded-lg text-[#13416B] text-sm font-bold hover:bg-slate-50 shadow-sm transition-all">
-                            <span>Lihat Katalog Kursus</span>
-                            <i class="fas fa-arrow-right text-xs"></i>
-                        </a>
-                    </div>
-                @endif
+                </div>
             </div>
 
             <!-- KOLOM KANAN: Kursus Saya -->
-            <div class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
+            <div class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col relative">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center gap-3">
-                        <div
-                            class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-md shrink-0 shadow-md">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-md shrink-0 shadow-md">
                             <i class="fas fa-graduation-cap text-base"></i>
                         </div>
                         <div>
@@ -220,66 +298,70 @@
                             <p class="text-[11px] sm:text-xs text-slate-500">Daftar kursus yang Anda ikuti</p>
                         </div>
                     </div>
-                    <a href="{{ route('user.course.my-course') }}"
-                        class="text-xs font-bold text-slate-500 hover:text-[#13416B] hover:underline flex items-center gap-1 transition-colors">
+                    <a href="{{ route('user.course.my-course') }}" class="text-xs font-bold text-[#13416B] hover:underline flex items-center gap-1 transition-colors">
                         <span>Lihat semua</span>
                     </a>
                 </div>
 
-                <div class="space-y-3 flex-1 flex flex-col">
-                    @forelse ($recentCourses as $course)
-                        <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                            class="flex flex-row gap-3 sm:gap-4 bg-white border border-slate-200 rounded-xl p-3 sm:p-4 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group items-center sm:items-start">
+                <div class="relative overflow-hidden" style="max-height: 520px;">
+                    <div class="space-y-3 pb-8">
+                        @forelse ($recentCourses as $course)
+                            @php
+                                // Logika untuk mengecilkan ukuran teks pada ui-avatars di daftar Kursus Saya
+                                $rThumb = $course->thumbnail ? (str_starts_with($course->thumbnail, 'http') ? $course->thumbnail : asset('storage/' . $course->thumbnail)) : 'https://ui-avatars.com/api/?name='.urlencode(substr($course->name, 0, 2)).'&background=13416B&color=fff';
+                                if (str_contains($rThumb, 'ui-avatars.com') && !str_contains($rThumb, 'font-size')) {
+                                    $rThumb .= '&font-size=0.33';
+                                }
+                            @endphp
+                            <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
+                                class="flex flex-row gap-3 sm:gap-4 bg-white border border-slate-200 rounded-xl p-3 sm:p-4 transition-all duration-200 hover:border-[#13416B]/40 hover:shadow-sm group items-center sm:items-start">
 
-                            <!-- Thumbnail Kiri (DISEMBUNYIKAN DI MOBILE: hidden sm:block) -->
-                            <div class="hidden sm:block w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 relative">
-                                <img src="{{ $course->thumbnail ? (str_starts_with($course->thumbnail, 'http') ? $course->thumbnail : asset('storage/' . $course->thumbnail)) : 'https://placehold.co/300x200/13416B/FFF?text=' . urlencode(substr($course->name, 0, 2)) }}"
-                                    alt="{{ $course->name }}"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                            </div>
-
-                            <!-- Konten Kanan -->
-                            <div class="min-w-0 flex-1 flex flex-col justify-between h-full w-full py-0.5">
-                                <div>
-                                    <div class="flex items-start justify-between gap-2 mb-1">
-                                        <h3 class="font-bold text-slate-800 text-sm sm:text-sm truncate group-hover:text-[#13416B] transition-colors">
-                                            {{ $course->name }}
-                                        </h3>
-                                        @if ($course->pivot->status === 'completed')
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-green-700 bg-green-100 border border-green-200 shrink-0">Selesai</span>
-                                        @elseif ($course->pivot->status === 'in_progress')
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-[#13416B] bg-[#13416B]/10 border border-[#13416B]/20 shrink-0">Berjalan</span>
-                                        @else
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border border-slate-200 shrink-0">Terdaftar</span>
-                                        @endif
-                                    </div>
-                                    <p class="text-[11px] sm:text-xs text-slate-500 line-clamp-1 sm:line-clamp-2 mb-2 leading-relaxed">
-                                        {{ $course->description ?? 'Deskripsi kursus tidak tersedia.' }}
-                                    </p>
+                                <!-- Thumbnail Kiri -->
+                                <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-md overflow-hidden bg-slate-100 border border-slate-200 relative shadow-sm">
+                                    <img src="{{ $rThumb }}" alt="{{ $course->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 </div>
 
-                                <div>
-                                    <div class="flex items-center justify-between text-[9px] sm:text-[10px] text-slate-500 mb-1 font-medium">
-                                        <span>Progress</span>
-                                        <span class="font-bold text-slate-700">{{ $course->pivot->progress }}%</span>
+                                <!-- Konten Kanan -->
+                                <div class="min-w-0 flex-1 flex flex-col justify-between h-full w-full py-0.5">
+                                    <div>
+                                        <div class="flex items-start justify-between gap-2 mb-1">
+                                            <h3 class="font-bold text-slate-800 text-sm truncate group-hover:text-[#13416B] transition-colors">
+                                                {{ $course->name }}
+                                            </h3>
+                                            @if ($course->pivot->status === 'completed')
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase text-green-700 bg-green-100 border border-green-200 shrink-0">Selesai</span>
+                                            @elseif ($course->pivot->status === 'in_progress')
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase text-[#13416B] bg-[#13416B]/10 border border-[#13416B]/20 shrink-0">Berjalan</span>
+                                            @else
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase text-slate-500 bg-slate-50 border border-slate-200 shrink-0">Terdaftar</span>
+                                            @endif
+                                        </div>
+                                        <p class="text-[11px] sm:text-xs text-slate-500 line-clamp-1 mb-2">
+                                            {{ $course->description ?? 'Deskripsi kursus tidak tersedia.' }}
+                                        </p>
                                     </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden shadow-inner">
-                                        <div class="bg-[#13416B] h-full rounded-full transition-all duration-300"
-                                            style="width: {{ $course->pivot->progress }}%"></div>
+
+                                    <div>
+                                        <div class="flex items-center justify-between text-[9px] sm:text-[10px] text-slate-500 mb-1 font-medium">
+                                            <span>Progress</span>
+                                            <span class="font-bold text-slate-700">{{ $course->pivot->progress }}%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden shadow-inner">
+                                            <div class="bg-[#13416B] h-full rounded-full transition-all duration-300"
+                                                style="width: {{ $course->pivot->progress }}%"></div>
+                                        </div>
                                     </div>
                                 </div>
+                            </a>
+                        @empty
+                            <div class="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                <p class="text-xs font-semibold text-slate-600">Belum ada kursus yang diikuti.</p>
                             </div>
-                        </a>
-                    @empty
-                        <div
-                            class="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-200 flex-1 flex flex-col justify-center">
-                            <div
-                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-auto mb-2 text-slate-400 shadow-sm border border-slate-100">
-                                <i class="fas fa-folder-open text-sm"></i>
-                            </div>
-                            <p class="text-xs font-semibold text-slate-600">Belum ada kursus yang diikuti.</p>
-                        </div>
-                    @endforelse
+                        @endforelse
+                    </div>
+
+                    <!-- Efek Gradasi Blur/Fade di Bagian Bawah -->
+                    <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
                 </div>
             </div>
         </div>
@@ -413,7 +495,7 @@
                     '#8BB1CC', // Light Blue (Blok I/F/O)
                     '#79A736', // Muted Green (Blok J)
                     '#E58A18', // Muted Orange (Blok K)
-                    '#6E4B82'  // Muted Purple (Blok L)
+                    '#6E4B82' // Muted Purple (Blok L)
                 ];
 
                 function formatMultilineLabel(text) {
@@ -442,7 +524,8 @@
                     let currentCourseId = courseKeys[0];
                     let currentData = allChartData[currentCourseId];
 
-                    const dynamicColors = currentData.user_scores.map((_, index) => chartColors[index % chartColors.length]);
+                    const dynamicColors = currentData.user_scores.map((_, index) => chartColors[index % chartColors
+                        .length]);
 
                     const postTestChart = new Chart(ctx.getContext('2d'), {
                         type: 'bar',
@@ -453,7 +536,7 @@
                                 data: currentData.user_scores,
                                 backgroundColor: dynamicColors,
                                 borderRadius: 4,
-                                barPercentage: 0.5, 
+                                barPercentage: 0.5,
                                 categoryPercentage: 0.8
                             }]
                         },
@@ -542,9 +625,11 @@
                                 const newHeight = Math.max(180, newData.labels.length * 80);
                                 ctx.parentElement.style.height = newHeight + 'px';
 
-                                postTestChart.data.labels = newData.labels.map(label => formatMultilineLabel(label));
+                                postTestChart.data.labels = newData.labels.map(label => formatMultilineLabel(
+                                    label));
                                 postTestChart.data.datasets[0].data = newData.user_scores;
-                                postTestChart.data.datasets[0].backgroundColor = newData.user_scores.map((_, index) => chartColors[index % chartColors.length]);
+                                postTestChart.data.datasets[0].backgroundColor = newData.user_scores.map((_,
+                                    index) => chartColors[index % chartColors.length]);
                                 postTestChart.update();
                             }
                         });

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Modules\LMS\Models\LibraryCategory;
 use Modules\LMS\Models\Library;
 use Modules\LMS\Services\LibraryService;
+use Illuminate\Support\Facades\Auth; // Tambahkan ini
 
 class LibraryController extends Controller
 {
@@ -50,5 +51,23 @@ class LibraryController extends Controller
             'totalDokumen',
             'totalVideo'
         ));
+    }
+
+    /**
+     * Display the specified resource and track access history.
+     */
+    public function show($id)
+    {
+        $library = Library::findOrFail($id);
+        $userId = Auth::id();
+
+        // Rekam jejak user jika sudah login
+        if ($userId) {
+            $this->libraryService->recordUserAccess($library, $userId);
+        }
+
+        // Tampilkan halaman detail atau langsung response file/video
+        // Sesuaikan nama view ini dengan struktur folder Anda
+        return view('lms::user.library.show', compact('library'));
     }
 }

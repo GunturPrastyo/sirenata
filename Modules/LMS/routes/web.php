@@ -69,7 +69,10 @@ Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->na
 });
 
 Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(function () {
+    
+    // --> PENAMBAHAN ROUTE UNTUK FITUR TERAKHIR DILIHAT (LIBRARY) <--
     Route::get('/library', [UserLibraryController::class, 'index'])->name('library.index');
+    Route::get('/library/{id}', [UserLibraryController::class, 'show'])->name('library.show');
 
     Route::prefix('course')->name('course.')->controller(UserCourseController::class)->group(function () {
         Route::get('/my-course', 'allMyCourse')->name('my-course');

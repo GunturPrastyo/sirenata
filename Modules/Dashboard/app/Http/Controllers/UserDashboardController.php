@@ -3,20 +3,21 @@
 namespace Modules\Dashboard\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\MasterData\Models\Province;
-use Modules\User\Enums\InstitutionType;
-use Modules\User\Models\UserProfile;
-use Modules\User\Models\UserScope;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
 use Modules\Dashboard\Services\DashboardService;
-use Modules\LMS\Services\CourseService;
-use Modules\LMS\Models\PostTestResult;
+use Modules\LMS\Models\Library;
 use Modules\LMS\Models\PostTest;
+use Modules\LMS\Models\PostTestResult;
+use Modules\LMS\Services\CourseService;
+use Modules\MasterData\Models\Province;
+use Modules\User\Enums\InstitutionType;
+use Modules\User\Models\UserProfile;
+use Modules\User\Models\UserScope;
 
 class UserDashboardController extends Controller
 {
@@ -41,21 +42,17 @@ class UserDashboardController extends Controller
             if ($dbLastCourse) {
                 $lastCourse->description = $dbLastCourse->description;
                 $lastCourse->category_name = $dbLastCourse->category ? $dbLastCourse->category->name : null;
-                $lastCourse->thumbnail = $dbLastCourse->thumbnail ?? null; // Menambahkan properti thumbnail
-            } else {
-                $lastCourse->thumbnail = null; // Fallback jika course tidak ditemukan di DB
+                $lastCourse->thumbnail = $dbLastCourse->thumbnail; // Apa adanya dari DB
             }
         }
 
-        // 2. PENGAMBILAN THUMBNAIL UNTUK RECENT COURSES
-        $recentCourses = $this->courseService->getRecentCourses()->take(4);
+      // 2. PENGAMBILAN THUMBNAIL UNTUK RECENT COURSES (Dari Total Terdaftar)
+        $recentCourses = $user->enrolledCourses()->latest()->take(5)->get();
         $recentCourses->transform(function ($course) {
             $dbCourse = \Modules\LMS\Models\Course::where('slug', $course->slug)->first();
             if ($dbCourse) {
                 $course->description = $dbCourse->description;
-                $course->thumbnail = $dbCourse->thumbnail ?? null; // Menambahkan properti thumbnail
-            } else {
-                $course->thumbnail = null; // Fallback
+                $course->thumbnail = $dbCourse->thumbnail; 
             }
             return $course;
         });
@@ -97,6 +94,29 @@ class UserDashboardController extends Controller
             }
         }
 
+        $lastAccessedLibrary = Library::select('libraries.*', 'user_library_history.last_accessed_at')
+            ->join('user_library_history', 'libraries.id', '=', 'user_library_history.library_id')
+            ->where('user_library_history.user_id', $user->id)
+            ->with('libraryCategory')
+            ->orderBy('user_library_history.last_accessed_at', 'desc')
+            ->first();
+
+        if ($lastAccessedLibrary) {
+            if ($lastAccessedLibrary->video_path) {
+                $lastAccessedLibrary->type = 'video';
+                $lastAccessedLibrary->icon = 'fas fa-video';
+            } elseif ($lastAccessedLibrary->file_path) {
+                $lastAccessedLibrary->type = 'document';
+                $lastAccessedLibrary->icon = 'fas fa-file-pdf';
+            } elseif ($lastAccessedLibrary->external_link) {
+                $lastAccessedLibrary->type = 'link';
+                $lastAccessedLibrary->icon = 'fas fa-link';
+            } else {
+                $lastAccessedLibrary->type = 'other';
+                $lastAccessedLibrary->icon = 'fas fa-book-open';
+            }
+        }
+
         return view('dashboard::pages.user.index', [
             'profile' => $profile,
             'provinces' => $provinces,
@@ -104,6 +124,7 @@ class UserDashboardController extends Controller
             'lastCourse' => $lastCourse,
             'recentCourses' => $recentCourses,
             'chartDataByCourse' => $chartDataByCourse,
+            'lastLibrary' => $lastAccessedLibrary,
         ]);
     }
 
@@ -224,7 +245,7 @@ class UserDashboardController extends Controller
                 return [
                     'title' => $item->name,
                     'subtitle' => 'Katalog: ' . ($item->category->name ?? 'Kategori Umum'),
-                    'url' => route('user.course.index', $item->slug), 
+                    'url' => route('user.course.index', $item->slug),
                     'initials' => $getInitials($item->name),
                     'color' => 'bg-emerald-600'
                 ];

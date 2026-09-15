@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Modules\LMS\Models\Library;
 use Modules\LMS\Models\LibraryCategory;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Carbon\Carbon; // Tambahkan ini
 
 class LibraryService
 {
@@ -42,7 +43,6 @@ class LibraryService
 
             $coverImage = null;
             if (!empty($data['thumb_mode']) && $data['thumb_mode'] === 'auto') {
-                // 4 Warna pilihan utama (Navy, Slate Blue, Light Blue, Muted Green)
                 $colors = ['13416B', '547996', '8BB1CC', '79A736'];
                 $selectedColor = $data['bg_color'] ?? $colors[0];
 
@@ -51,7 +51,6 @@ class LibraryService
                 $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
 
                 $encodedInitials = urlencode($initials);
-                // Menyimpan URL thumbnail otomatis ke kolom cover_image
                 $coverImage = "https://ui-avatars.com/api/?name={$encodedInitials}&background={$selectedColor}&color=fff&size=512&bold=true&length=2";
             } elseif (!empty($data['cover_image'])) {
                 $coverImage = $data['cover_image']->store('libraries/covers', 'public');
@@ -144,7 +143,7 @@ class LibraryService
 
     public function deleteLibrary(Library $library): void
     {
-        if ($library->cover_image) {
+        if ($library->cover_image && !str_starts_with($library->cover_image, 'http')) {
             Storage::disk('public')->delete($library->cover_image);
         }
 
@@ -159,5 +158,22 @@ class LibraryService
         $library->delete();
 
         ToastMagic::success('Materi Perpustakaan berhasil dihapus!');
+    }
+
+    /**
+     * Mencatat riwayat akses user ke materi perpustakaan
+     */
+    public function recordUserAccess(Library $library, int $userId): void
+    {
+        DB::table('user_library_history')->updateOrInsert(
+            [
+                'user_id' => $userId,
+                'library_id' => $library->id
+            ],
+            [
+                'last_accessed_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]
+        );
     }
 }

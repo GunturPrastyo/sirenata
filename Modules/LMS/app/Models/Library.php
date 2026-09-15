@@ -29,4 +29,12 @@ class Library extends Model
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by');
     }
+
+    // Modules/LMS/Models/Library.php
+    public function usersAccessed()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'user_library_history')
+            ->withPivot('last_accessed_at')
+            ->orderByPivot('last_accessed_at', 'desc');
+    }
 }
