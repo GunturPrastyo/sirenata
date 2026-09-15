@@ -85,12 +85,9 @@
             <div
                 class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-md">
-                        <i class="fas fa-chart-bar text-lg"></i>
-                    </div>
+                  
                     <div>
-                        <h2 class="text-base font-extrabold text-slate-800">Evaluasi Anda per Kursus</h2>
+                        <h2 class="text-base lg:text-lg font-extrabold text-slate-800">Evaluasi Anda per Kursus</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Nilai akhir dari post-test yang telah Anda kerjakan</p>
                     </div>
                 </div>
@@ -133,7 +130,7 @@
             <div class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 shrink-0">
                     <div
-                        class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-md">
+                        class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-md shrink-0 shadow-md">
                         <i class="fas fa-play-circle text-base"></i>
                     </div>
                     <div>
@@ -215,7 +212,7 @@
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center gap-3">
                         <div
-                            class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-md">
+                            class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-[#13416B] text-white rounded-md shrink-0 shadow-md">
                             <i class="fas fa-graduation-cap text-base"></i>
                         </div>
                         <div>

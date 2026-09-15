@@ -1,60 +1,91 @@
 <x-dashboard::layouts.dashboard title="Dashboard Admin Pusat">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap');
-        .font-oswald { font-family: 'Oswald', sans-serif; }
-    </style>
-
     <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6 sm:space-y-8 bg-slate-50/50 min-h-screen">
-        
+
         <!-- ===================================== -->
-        <!-- 1. STATS GRID (Full Sirenata Theme)   -->
+        <!-- 1. STATS GRID (4 Core Color Palette)  -->
         <!-- ===================================== -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            
-            <!-- RTK Disetujui -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
-                <div>
-                    <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1 font-oswald">RTK Disetujui</p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('approved', 0) }}</h3>
-                    <p class="text-[10px] text-slate-400 mt-1">Dokumen terverifikasi</p>
+
+            <!-- RTK Disetujui (Navy #13416B) -->
+            <div
+                class="relative overflow-hidden bg-[#13416B] text-white rounded-lg p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
+                <!-- Efek Decorative Background & Watermark Icon -->
+                <div
+                    class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                    <i class="fas fa-check-double text-[130px]"></i>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
+
+                <div class="relative z-10">
+                    <p class="text-white text-sm font-semibold uppercase tracking-wider mb-1">RTK Disetujui</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white">
+                        {{ $rtkStatusDistribution->get('approved', 0) }}</h3>
+                    <p class="text-[10px] text-white mt-1">Dokumen terverifikasi</p>
+                </div>
+                <div
+                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#13416B] flex items-center justify-center shrink-0 shadow-sm relative z-10 transition-transform duration-300 group-hover:scale-105">
                     <i class="fas fa-check-double text-xl sm:text-2xl"></i>
                 </div>
             </div>
 
-            <!-- RTK Menunggu Verifikasi -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
-                <div>
-                    <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1 font-oswald">Status Menunggu</p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('pending', 0) }}</h3>
-                    <p class="text-[10px] text-slate-400 mt-1">Butuh peninjauan</p>
+            <!-- RTK Menunggu Verifikasi (Slate Blue #547996) -->
+            <div
+                class="relative overflow-hidden bg-[#547996] text-white rounded-lg p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
+                <!-- Efek Decorative Background & Watermark Icon -->
+                <div
+                    class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                    <i class="fas fa-hourglass-half text-[130px]"></i>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
+
+                <div class="relative z-10">
+                    <p class="text-white text-sm font-semibold uppercase tracking-wider mb-1">Status Menunggu</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white">
+                        {{ $rtkStatusDistribution->get('pending', 0) }}</h3>
+                    <p class="text-[10px] text-white mt-1">Butuh peninjauan</p>
+                </div>
+                <div
+                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#547996] flex items-center justify-center shrink-0 shadow-sm relative z-10 transition-transform duration-300 group-hover:scale-105">
                     <i class="fas fa-hourglass-half text-xl sm:text-2xl"></i>
                 </div>
             </div>
 
-            <!-- RTK Ditolak -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
-                <div>
-                    <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1 font-oswald">RTK Ditolak</p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkStatusDistribution->get('rejected', 0) }}</h3>
-                    <p class="text-[10px] text-slate-400 mt-1">Dikembalikan ke daerah</p>
+            <!-- RTK Ditolak (Light Blue #8BB1CC) -->
+            <div
+                class="relative overflow-hidden bg-[#8BB1CC] text-white rounded-lg p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
+                <!-- Efek Decorative Background & Watermark Icon -->
+                <div
+                    class="absolute -right-6 -bottom-6 text-white opacity-[0.1] group-hover:opacity-[0.15] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                    <i class="fas fa-ban text-[130px]"></i>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
+
+                <div class="relative z-10">
+                    <p class="text-white text-sm font-semibold uppercase tracking-wider mb-1">RTK Ditolak</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white">
+                        {{ $rtkStatusDistribution->get('rejected', 0) }}</h3>
+                    <p class="text-[10px] text-white mt-1">Dikembalikan ke daerah</p>
+                </div>
+                <div
+                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#547996] flex items-center justify-center shrink-0 shadow-sm relative z-10 transition-transform duration-300 group-hover:scale-105">
                     <i class="fas fa-ban text-xl sm:text-2xl"></i>
                 </div>
             </div>
 
-            <!-- RTK Berlaku -->
-            <div class="bg-white rounded-lg p-5 sm:p-6 shadow-sm border border-slate-200 flex items-center justify-between transition-all duration-200 hover:border-[#13416B]/30 hover:shadow-md">
-                <div>
-                    <p class="text-slate-500 text-sm font-semibold uppercase  mb-1 font-oswald">RTK Berlaku</p>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#13416B]">{{ $rtkMasaAktifPerProvinsi->sum('total') ?? 0 }}</h3>
-                    <p class="text-[10px] text-slate-400 mt-1">Dokumen acuan aktif</p>
+            <!-- RTK Berlaku (Muted Green #79A736) -->
+            <div
+                class="relative overflow-hidden bg-[#79A736] text-white rounded-lg p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
+                <!-- Efek Decorative Background & Watermark Icon -->
+                <div
+                    class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
+                    <i class="fas fa-file-contract text-[130px]"></i>
                 </div>
-                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#13416B] text-white flex items-center justify-center shrink-0 shadow-sm">
+
+                <div class="relative z-10">
+                    <p class="text-white text-sm font-semibold uppercase tracking-wider mb-1">RTK Berlaku</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white">
+                        {{ $rtkMasaAktifPerProvinsi->sum('total') ?? 0 }}</h3>
+                    <p class="text-[10px] text-white mt-1">Dokumen acuan aktif</p>
+                </div>
+                <div
+                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#79A736] flex items-center justify-center shrink-0 shadow-sm relative z-10 transition-transform duration-300 group-hover:scale-105">
                     <i class="fas fa-file-contract text-xl sm:text-2xl"></i>
                 </div>
             </div>
@@ -64,39 +95,46 @@
         <!-- 2. GRAFIK KOMPARASI RTK HORIZONTAL                        -->
         <!-- ========================================================= -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-            <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div
+                class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
-                        <i class="fas fa-chart-bar text-lg"></i>
-                    </div>
+
                     <div>
-                        <h2 class="text-lg font-semibold text-slate-800 font-oswald">Komparasi Masa Berlaku RTK</h2>
-                        <p class="text-[11px] sm:text-xs text-slate-500">Tahun penyusunan dan masa berakhir dokumen per Provinsi</p>
+                        <h2 class="text-lg font-semibold text-slate-800">Komparasi Masa Berlaku RTK</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Tahun penyusunan dan masa berakhir dokumen per
+                            Provinsi</p>
                     </div>
                 </div>
 
                 <!-- Dropdown Filter Tahun -->
                 <div class="w-full sm:w-auto sm:max-w-xs shrink-0 flex items-center gap-2">
-                    <select id="rtkYearFilter" onchange="fetchRtkPusatData(this.value)" class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
-                        <option value="all" {{ $selectedRtkYear === 'all' ? 'selected' : '' }}>Semua Tahun (Default)</option>
-                        @foreach($rtkYearsOptions as $y)
-                            <option value="{{ $y }}" {{ (string)$y === (string)$selectedRtkYear ? 'selected' : '' }}>Mulai {{ $y }}</option>
+                    <select id="rtkYearFilter" onchange="fetchRtkPusatData(this.value)"
+                        class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
+                        <option value="all" {{ $selectedRtkYear === 'all' ? 'selected' : '' }}>Semua Tahun (Default)
+                        </option>
+                        @foreach ($rtkYearsOptions as $y)
+                            <option value="{{ $y }}"
+                                {{ (string) $y === (string) $selectedRtkYear ? 'selected' : '' }}>Mulai
+                                {{ $y }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            
+
             <div class="p-5 sm:p-6">
                 <!-- CHART CONTAINER DENGAN SCROLL VERTICAL -->
-                <div class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? '' : 'hidden' }}">
+                <div
+                    class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? '' : 'hidden' }}">
                     <div id="rtkCombinedChartContainer" class="relative w-full" style="min-height: 400px;">
                         <canvas id="rtkCombinedBarChart"></canvas>
                     </div>
                 </div>
-                
+
                 <!-- EMPTY STATE -->
-                <div id="rtkCombinedEmptyState" class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? 'hidden' : '' }}">
-                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
+                <div id="rtkCombinedEmptyState"
+                    class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? 'hidden' : '' }}">
+                    <div
+                        class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
                         <i class="fas fa-chart-area text-xl"></i>
                     </div>
                     <p class="text-sm font-semibold text-slate-700">Belum ada data RTK</p>
@@ -109,35 +147,40 @@
         <!-- 3. DISTRIBUSI E-LEARNING (SPLIT HTML LEADERBOARD)         -->
         <!-- ========================================================= -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-            <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div
+                class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-[#13416B] text-white rounded-xl shrink-0 shadow-sm border border-[#0f3354]">
-                        <i class="fas fa-users text-lg"></i>
-                    </div>
+
                     <div>
-                        <h2 class="text-lg font-semibold text-slate-800 font-oswald">Distribusi Pendaftar E-Learning</h2>
-                        <p class="text-[11px] sm:text-xs text-slate-500">Jumlah pengguna terdaftar berdasarkan Provinsi</p>
+                        <h2 class="text-lg font-semibold text-slate-800">Distribusi Pendaftar E-Learning</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Jumlah pengguna terdaftar berdasarkan Provinsi
+                        </p>
                     </div>
                 </div>
 
                 <div class="w-full sm:w-auto sm:max-w-xs shrink-0">
-                    <select id="sdmYearFilter" onchange="fetchSdmPusatData(this.value)" class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
-                        @foreach($sdmYears as $year)
-                            <option value="{{ $year }}" {{ $selectedSdmYear == $year ? 'selected' : '' }}>Tahun Registrasi {{ $year }}</option>
+                    <select id="sdmYearFilter" onchange="fetchSdmPusatData(this.value)"
+                        class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
+                        @foreach ($sdmYears as $year)
+                            <option value="{{ $year }}" {{ $selectedSdmYear == $year ? 'selected' : '' }}>
+                                Tahun Registrasi {{ $year }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            
+
             <div class="p-5 sm:p-6">
                 <!-- LEADERBOARD CONTAINER -->
-                <div id="sdmListContainer" class="space-y-6 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar {{ $sdmPerProvinsi->count() > 0 ? '' : 'hidden' }}">
+                <div id="sdmListContainer"
+                    class="space-y-6 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar {{ $sdmPerProvinsi->count() > 0 ? '' : 'hidden' }}">
                     <!-- Di-render via JavaScript agar dinamis -->
                 </div>
-                
+
                 <!-- EMPTY STATE -->
-                <div id="sdmEmptyState" class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $sdmPerProvinsi->count() > 0 ? 'hidden' : '' }}">
-                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
+                <div id="sdmEmptyState"
+                    class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $sdmPerProvinsi->count() > 0 ? 'hidden' : '' }}">
+                    <div
+                        class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
                         <i class="fas fa-users-slash text-xl"></i>
                     </div>
                     <p class="text-sm font-semibold text-slate-700">Belum Ada Pendaftar</p>
@@ -150,11 +193,10 @@
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
 
-                // Fungsi untuk memecah teks panjang menjadi array string agar turun baris (Wrap) di Canvas
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
                 function formatMultilineLabel(text) {
                     if (!text) return text;
                     const maxChars = window.innerWidth >= 640 ? 25 : 15;
@@ -177,50 +219,54 @@
                 // =========================================================
                 // 1. GRAFIK KOMPARASI RTK (HORIZONTAL FLOATING BAR)
                 // =========================================================
-                @if($rtkMasaAktifPerProvinsi->count() > 0)
+                @if ($rtkMasaAktifPerProvinsi->count() > 0)
                     const rtkCombinedCtx = document.getElementById('rtkCombinedBarChart').getContext('2d');
-                    
+
                     const rtkLabelsRaw = @json($rtkMasaAktifPerProvinsi->pluck('province_name'));
                     const rtkLabels = rtkLabelsRaw.map(label => formatMultilineLabel(label));
-                    
+
                     const rtkStartData = @json($rtkMasaAktifPerProvinsi->pluck('start_date'));
                     const rtkEndData = @json($rtkMasaAktifPerProvinsi->pluck('end_date'));
 
-                    // Format data menjadi array [start, end] untuk menampilkan floating bar
                     const floatingData = rtkStartData.map((start, index) => [start, rtkEndData[index]]);
+
+                    const chartColorPalette = ['#13416B', '#547996', '#8BB1CC'];
+                    const barColors = floatingData.map((_, i) => chartColorPalette[i % chartColorPalette.length]);
 
                     window.rtkCombinedChartInstance = new Chart(rtkCombinedCtx, {
                         type: 'bar',
                         data: {
                             labels: rtkLabels,
-                            datasets: [
-                                {
-                                    label: 'Periode Aktif',
-                                    data: floatingData,
-                                    backgroundColor: '#13416B', // Biru Sirenata
-                                    borderRadius: 6,
-                                    borderSkipped: false, // Membulatkan sisi kiri dan kanan bar
-                                    barPercentage: 0.6,
-                                    categoryPercentage: 0.8
-                                }
-                            ]
+                            datasets: [{
+                                label: 'Periode Aktif',
+                                data: floatingData,
+                                backgroundColor: barColors,
+                                borderRadius: 6,
+                                borderSkipped: false,
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.8
+                            }]
                         },
-                      options: {
-                            indexAxis: 'y', // HORIZONTAL
+                        options: {
+                            indexAxis: 'y',
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    display: false // Sembunyikan legenda karena 1 bar sudah cukup jelas
+                                    display: false
                                 },
                                 tooltip: {
                                     backgroundColor: 'rgba(19, 65, 107, 0.95)',
                                     padding: 12,
                                     cornerRadius: 6,
-                                    titleFont: { size: 13, weight: 'bold' },
+                                    titleFont: {
+                                        size: 13,
+                                        weight: 'bold'
+                                    },
                                     callbacks: {
                                         title: function(context) {
-                                            return Array.isArray(context[0].label) ? context[0].label.join(' ') : context[0].label;
+                                            return Array.isArray(context[0].label) ? context[0].label.join(
+                                                ' ') : context[0].label;
                                         },
                                         label: function(context) {
                                             const startYear = context.raw[0];
@@ -232,20 +278,32 @@
                             },
                             scales: {
                                 x: {
-                                    min: Math.min(...rtkStartData) - 1, 
+                                    min: Math.min(...rtkStartData) - 1,
                                     max: Math.max(...rtkEndData) + 1,
-                                    grid: { color: '#f1f5f9' },
-                                    ticks: { 
-                                        font: { size: 11 }, 
+                                    grid: {
+                                        color: '#f1f5f9'
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 11
+                                        },
                                         stepSize: 1,
                                         callback: function(value) {
-                                            return value; 
+                                            return value;
                                         }
                                     }
                                 },
                                 y: {
-                                    grid: { display: false },
-                                    ticks: { font: { size: 11, family: "'Inter', sans-serif" }, autoSkip: false },
+                                    grid: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 11,
+                                            family: "'Inter', sans-serif"
+                                        },
+                                        autoSkip: false
+                                    },
                                     afterFit: function(scaleInstance) {
                                         scaleInstance.width = window.innerWidth >= 640 ? 160 : 120;
                                     }
@@ -254,52 +312,60 @@
                         }
                     });
 
-                    // Penyesuaian tinggi canvas dinamis agar tidak gepeng ketika provinsinya banyak
                     const initialRtkHeight = Math.max(400, rtkLabelsRaw.length * 50);
                     document.getElementById('rtkCombinedChartContainer').style.height = initialRtkHeight + 'px';
                 @endif
 
                 window.fetchRtkPusatData = function(year) {
                     fetch(`{{ route('admin-pusat.dashboard') }}?rtk_year=${year}`, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        const rtkData = data.rtkMasaAktifPerProvinsi;
-                        const containerScroll = document.querySelector('#rtkCombinedChartContainer').parentElement;
-                        const container = document.getElementById('rtkCombinedChartContainer');
-                        const emptyState = document.getElementById('rtkCombinedEmptyState');
-                        
-                        if (!rtkData || rtkData.length === 0) {
-                            containerScroll.classList.add('hidden');
-                            emptyState.classList.remove('hidden');
-                        } else {
-                            containerScroll.classList.remove('hidden');
-                            emptyState.classList.add('hidden');
-                            
-                            const rawLabels = rtkData.map(item => item.province_name);
-                            const labels = rawLabels.map(label => formatMultilineLabel(label));
-                            const start = rtkData.map(item => item.start_date);
-                            const end = rtkData.map(item => item.end_date);
-                            
-                            // Map ke format floating bar saat AJAX dirender ulang
-                            const newFloatingData = start.map((s, index) => [s, end[index]]);
-                            
-                            if (window.rtkCombinedChartInstance) {
-                                container.style.height = Math.max(400, rawLabels.length * 50) + 'px';
-
-                                window.rtkCombinedChartInstance.data.labels = labels;
-                                window.rtkCombinedChartInstance.data.datasets[0].data = newFloatingData;
-                                
-                                const minYear = Math.min(...start) - 1;
-                                const maxYear = Math.max(...end) + 1;
-                                window.rtkCombinedChartInstance.options.scales.x.min = isFinite(minYear) ? minYear : 2020;
-                                window.rtkCombinedChartInstance.options.scales.x.max = isFinite(maxYear) ? maxYear : 2030;
-
-                                window.rtkCombinedChartInstance.update();
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
                             }
-                        }
-                    });
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const rtkData = data.rtkMasaAktifPerProvinsi;
+                            const containerScroll = document.querySelector('#rtkCombinedChartContainer')
+                                .parentElement;
+                            const container = document.getElementById('rtkCombinedChartContainer');
+                            const emptyState = document.getElementById('rtkCombinedEmptyState');
+
+                            if (!rtkData || rtkData.length === 0) {
+                                containerScroll.classList.add('hidden');
+                                emptyState.classList.remove('hidden');
+                            } else {
+                                containerScroll.classList.remove('hidden');
+                                emptyState.classList.add('hidden');
+
+                                const rawLabels = rtkData.map(item => item.province_name);
+                                const labels = rawLabels.map(label => formatMultilineLabel(label));
+                                const start = rtkData.map(item => item.start_date);
+                                const end = rtkData.map(item => item.end_date);
+
+                                const newFloatingData = start.map((s, index) => [s, end[index]]);
+                                const chartColorPalette = ['#13416B', '#547996', '#8BB1CC'];
+                                const newBarColors = newFloatingData.map((_, i) => chartColorPalette[i %
+                                    chartColorPalette.length]);
+
+                                if (window.rtkCombinedChartInstance) {
+                                    container.style.height = Math.max(400, rawLabels.length * 50) + 'px';
+
+                                    window.rtkCombinedChartInstance.data.labels = labels;
+                                    window.rtkCombinedChartInstance.data.datasets[0].data = newFloatingData;
+                                    window.rtkCombinedChartInstance.data.datasets[0].backgroundColor =
+                                        newBarColors;
+
+                                    const minYear = Math.min(...start) - 1;
+                                    const maxYear = Math.max(...end) + 1;
+                                    window.rtkCombinedChartInstance.options.scales.x.min = isFinite(minYear) ?
+                                        minYear : 2020;
+                                    window.rtkCombinedChartInstance.options.scales.x.max = isFinite(maxYear) ?
+                                        maxYear : 2030;
+
+                                    window.rtkCombinedChartInstance.update();
+                                }
+                            }
+                        });
                 };
 
                 // =========================================================
@@ -318,21 +384,17 @@
                     container.classList.remove('hidden');
                     emptyState.classList.add('hidden');
 
-                    // Cari nilai total tertinggi untuk menentukan lebar maksimum bar (100%)
                     let maxTotal = Math.max(...data.map(item => item.total));
                     if (maxTotal === 0) maxTotal = 1;
 
-                    // Mengurutkan dari pendaftar terbanyak ke tersedikit
                     const sortedData = [...data].sort((a, b) => b.total - a.total);
 
                     let htmlContent = '';
                     sortedData.forEach((item, index) => {
-                        // Menghitung persentase lebar bar berdasarkan data tertinggi
                         const maleWidth = (item.male / maxTotal) * 100;
                         const femaleWidth = (item.female / maxTotal) * 100;
 
-                        // Perhatikan: Menampilkan data provinsi
-                        const wilayahName = item.province_name; 
+                        const wilayahName = item.province_name;
 
                         htmlContent += `
                             <div class="flex items-center gap-4 group">
@@ -346,17 +408,15 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Split Progress Bar -->
                                     <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden flex shadow-inner">
                                         <div class="bg-[#13416B] h-full transition-all duration-700 ease-out border-r border-white/20" style="width: ${maleWidth}%" title="Laki-laki: ${item.male}"></div>
-                                        <div class="bg-[#cbd5e1] h-full transition-all duration-700 ease-out" style="width: ${femaleWidth}%" title="Perempuan: ${item.female}"></div>
+                                        <div class="bg-[#547996] h-full transition-all duration-700 ease-out" style="width: ${femaleWidth}%" title="Perempuan: ${item.female}"></div>
                                     </div>
                                     
-                                    <!-- Rincian Gender di bawah bar -->
                                     <div class="flex justify-between items-center mt-1.5 px-0.5">
                                         <div class="flex gap-3">
                                             <span class="text-[10px] font-medium text-slate-500"><i class="fas fa-male text-[#13416B] mr-1 text-xs"></i>${item.male}</span>
-                                            <span class="text-[10px] font-medium text-slate-500"><i class="fas fa-female text-slate-400 mr-1 text-xs"></i>${item.female}</span>
+                                            <span class="text-[10px] font-medium text-slate-500"><i class="fas fa-female text-[#547996] mr-1 text-xs"></i>${item.female}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -367,19 +427,19 @@
                     container.innerHTML = htmlContent;
                 }
 
-                // Render pertama kali saat halaman dimuat
-                const initialSdmData = @json($sdmPerProvinsi); 
+                const initialSdmData = @json($sdmPerProvinsi);
                 renderSdmLeaderboard(initialSdmData);
 
-                // Fungsi AJAX saat filter SDM diganti
                 window.fetchSdmPusatData = function(year) {
                     fetch(`{{ route('admin-pusat.dashboard') }}?sdm_year=${year}`, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        renderSdmLeaderboard(data.sdmPerProvinsi); 
-                    });
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            renderSdmLeaderboard(data.sdmPerProvinsi);
+                        });
                 };
             });
         </script>
