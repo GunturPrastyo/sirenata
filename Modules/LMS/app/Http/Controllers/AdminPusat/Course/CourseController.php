@@ -58,10 +58,11 @@ class CourseController extends Controller
         try {
             $validated = $request->validated();
 
-            $payload = [
+          $payload = [
                 'category_id' => $request->input('category_id'),
                 'name'        => $request->input('name'),
                 'description' => $request->input('description'),
+                'bg_color'    => $request->input('bg_color'), 
             ];
 
             $thumbnailFile = $request->file('thumbnail');

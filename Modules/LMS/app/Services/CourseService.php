@@ -410,25 +410,23 @@ class CourseService
             if ($thumbnailFile) {
                 $thumbnailPath = $thumbnailFile->store('courses/thumbnails', 'public');
             } else {
-                // Palet warna konsisten (Navy, Slate Blue, Light Blue, Muted Green)
+                // 4 Warna pilihan utama sesuai palet chart
                 $colors = [
-                    '13416B',
-                    '547996',
-                    '8BB1CC',
-                    '79A736',
-                    'E58A18',
-                    '6E4B82'
+                    '13416B', // Navy
+                    '547996', // Slate Blue
+                    '8BB1CC', // Light Blue
+                    '79A736', // Muted Green
                 ];
 
-                $randomColor = $colors[array_rand($colors)];
+                // Gunakan warna pilihan dari user jika ada, jika tidak pilih secara acak
+                $selectedColor = $data['bg_color'] ?? $colors[array_rand($colors)];
 
                 $rawName = $data['name'] ?? 'Course';
                 $words = explode(' ', trim($rawName));
                 $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
 
-                // Menggunakan ui-avatars dengan inisial yang bersih dan warna latar palet kustom
                 $encodedInitials = urlencode($initials);
-                $thumbnailPath = "https://ui-avatars.com/api/?name={$encodedInitials}&background={$randomColor}&color=fff&size=512&bold=true&length=2";
+                $thumbnailPath = "https://ui-avatars.com/api/?name={$encodedInitials}&background={$selectedColor}&color=fff&size=512&bold=true&length=2";
             }
 
             $course = Course::create([
@@ -473,10 +471,18 @@ class CourseService
             $thumbnailPath = $course->thumbnail;
 
             if ($thumbnailFile) {
-                if ($thumbnailPath && Storage::disk('public')->exists($thumbnailPath)) {
+                if ($thumbnailPath && Storage::disk('public')->exists($thumbnailPath) && !str_starts_with($thumbnailPath, 'http')) {
                     Storage::disk('public')->delete($thumbnailPath);
                 }
                 $thumbnailPath = $thumbnailFile->store('courses/thumbnails', 'public');
+            } elseif (!empty($data['bg_color']) && str_starts_with($thumbnailPath ?? '', 'http')) {
+                // Jika tidak upload file baru tapi mengubah warna thumbnail otomatisnya
+                $rawName = $data['name'] ?? $course->name;
+                $words = explode(' ', trim($rawName));
+                $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                $encodedInitials = urlencode($initials);
+
+                $thumbnailPath = "https://ui-avatars.com/api/?name={$encodedInitials}&background={$data['bg_color']}&color=fff&size=512&bold=true&length=2";
             }
 
             $course->update([
@@ -501,6 +507,8 @@ class CourseService
             ];
         }
     }
+
+
 
     /**
      * Hapus course (Database Lokal)
