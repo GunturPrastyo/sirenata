@@ -46,7 +46,13 @@ class LibraryController extends Controller implements HasMiddleware
 
     public function store(LibraryStoreRequest $request)
     {
-        $this->libraryService->createLibrary($request->validated());
+        // Gabungkan data tervalidasi dengan input thumb_mode dan bg_color secara manual
+        $data = array_merge($request->validated(), [
+            'thumb_mode' => $request->input('thumb_mode'),
+            'bg_color'   => $request->input('bg_color'),
+        ]);
+
+        $this->libraryService->createLibrary($data);
         ToastMagic::success('Materi Perpustakaan berhasil ditambahkan.');
         return redirect()->route('admin-pusat.libraries.index');
     }
@@ -54,11 +60,17 @@ class LibraryController extends Controller implements HasMiddleware
     public function update(LibraryUpdateRequest $request, string $id)
     {
         $library = Library::findOrFail($id);
-        $this->libraryService->updateLibrary($library, $request->validated());
+
+        // Gabungkan data tervalidasi dengan input thumb_mode dan bg_color untuk proses update
+        $data = array_merge($request->validated(), [
+            'thumb_mode' => $request->input('thumb_mode'),
+            'bg_color'   => $request->input('bg_color'),
+        ]);
+
+        $this->libraryService->updateLibrary($library, $data);
         ToastMagic::success('Materi Perpustakaan berhasil diperbarui.');
         return redirect()->route('admin-pusat.libraries.index');
     }
-
     public function destroy(string $id)
     {
         $library = Library::findOrFail($id);

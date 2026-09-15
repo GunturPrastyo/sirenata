@@ -259,8 +259,68 @@
                             @endforeach
                         </x-form.select>
 
-                        <x-form.input type="file" name="cover_image" label="Gambar Sampul" helper="(max 2MB)" accept="image/*"
-                            class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                        <!-- Cover / Thumbnail Section dengan Pilihan Mode Otomatis & Upload -->
+                    <div class="col-span-1 sm:col-span-2 space-y-3" x-data="{ thumbMode: 'auto' }">
+                        <label class="block text-sm font-medium text-gray-700">Gambar Sampul</label>
+                        
+                        <!-- Pilihan Mode Thumbnail -->
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                                <input type="radio" name="thumb_mode" value="auto" x-model="thumbMode" class="text-indigo-600 focus:ring-indigo-500">
+                                <span>Otomatis (Inisial & 4 Warna Tema)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                                <input type="radio" name="thumb_mode" value="upload" x-model="thumbMode" class="text-indigo-600 focus:ring-indigo-500">
+                                <span>Upload Gambar Kustom</span>
+                            </label>
+                        </div>
+
+                        <!-- Mode 1: Pilihan Warna Kotak Tipis & Checkbox -->
+                        <div x-show="thumbMode === 'auto'" class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <span class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">Pilih Warna Background Thumbnail:</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <!-- Navy -->
+                                <label class="relative flex items-center justify-between p-2.5 rounded-lg border border-slate-200 cursor-pointer transition-all bg-white hover:border-slate-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/30">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-sm bg-[#13416B] shrink-0"></span>
+                                        <span class="text-xs font-bold text-slate-700">Navy</span>
+                                    </div>
+                                    <input type="checkbox" name="bg_color" value="13416B" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5" checked onclick="if(this.checked){document.querySelectorAll('input[name=\'bg_color\']').forEach(el=>el.checked=false);this.checked=true;}">
+                                </label>
+                                <!-- Slate Blue -->
+                                <label class="relative flex items-center justify-between p-2.5 rounded-lg border border-slate-200 cursor-pointer transition-all bg-white hover:border-slate-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/30">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-sm bg-[#547996] shrink-0"></span>
+                                        <span class="text-xs font-bold text-slate-700">Slate Blue</span>
+                                    </div>
+                                    <input type="checkbox" name="bg_color" value="547996" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5" onclick="if(this.checked){document.querySelectorAll('input[name=\'bg_color\']').forEach(el=>el.checked=false);this.checked=true;}">
+                                </label>
+                                <!-- Light Blue -->
+                                <label class="relative flex items-center justify-between p-2.5 rounded-lg border border-slate-200 cursor-pointer transition-all bg-white hover:border-slate-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/30">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-sm bg-[#8BB1CC] shrink-0"></span>
+                                        <span class="text-xs font-bold text-slate-700">Light Blue</span>
+                                    </div>
+                                    <input type="checkbox" name="bg_color" value="8BB1CC" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5" onclick="if(this.checked){document.querySelectorAll('input[name=\'bg_color\']').forEach(el=>el.checked=false);this.checked=true;}">
+                                </label>
+                                <!-- Muted Green -->
+                                <label class="relative flex items-center justify-between p-2.5 rounded-lg border border-slate-200 cursor-pointer transition-all bg-white hover:border-slate-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/30">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-sm bg-[#79A736] shrink-0"></span>
+                                        <span class="text-xs font-bold text-slate-700">Muted Green</span>
+                                    </div>
+                                    <input type="checkbox" name="bg_color" value="79A736" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5" onclick="if(this.checked){document.querySelectorAll('input[name=\'bg_color\']').forEach(el=>el.checked=false);this.checked=true;}">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Mode 2: Upload File -->
+                        <div x-show="thumbMode === 'upload'" class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <input type="file" name="cover_image" accept="image/*"
+                                class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <p class="text-[10px] text-gray-500 mt-1 font-medium">(max 2MB)</p>
+                        </div>
+                    </div>
                     </div>
 
                     <x-form.textarea name="description" label="Deskripsi Singkat" rows="2" placeholder="Deskripsi materi..." />

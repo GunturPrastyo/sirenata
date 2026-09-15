@@ -19,7 +19,8 @@
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <a href="{{ route('admin-pusat.libraries.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Perpustakaan</a>
+                        <a href="{{ route('admin-pusat.libraries.index') }}"
+                            class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">Perpustakaan</a>
                     </div>
                 </li>
                 <li>
@@ -60,62 +61,165 @@
                                 <label for="create-title" class="block text-sm font-medium text-gray-700 mb-1">
                                     Judul Materi <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="create-title" name="title" required value="{{ old('title') }}"
+                                <input type="text" id="create-title" name="title" required
+                                    value="{{ old('title') }}"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                                     placeholder="Judul buku / dokumen">
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
-                                    <label for="create-library-category" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label for="create-library-category"
+                                        class="block text-sm font-medium text-gray-700 mb-1">
                                         Kategori <span class="text-red-500">*</span>
                                     </label>
                                     <select id="create-library-category" name="library_category_id" required
                                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                                         <option value="">Pilih Kategori</option>
-                                        @foreach($libraryCategories as $category)
-                                            <option value="{{ $category->id }}" {{ old('library_category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                        @foreach ($libraryCategories as $category)
+                                            <option value="{{ $category->id }}"
+                                                {{ old('library_category_id') == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                                        Gambar Sampul <span class="text-xs text-gray-500">(max 2MB)</span>
+                                    <!-- Bagian Kosong untuk Keseimbangan Grid -->
+                                </div>
+                            </div>
+
+                            <!-- Cover / Thumbnail Section yang Diperbarui -->
+                            <div class="space-y-3 pt-2">
+                                <label class="block text-sm font-medium text-gray-700">Gambar Sampul</label>
+
+                                <!-- Pilihan Mode Thumbnail -->
+                                <div class="flex items-center gap-4">
+                                    <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                                        <input type="radio" name="thumb_mode" value="auto" x-model="thumbMode"
+                                            class="text-indigo-600 focus:ring-indigo-500">
+                                        <span>Otomatis (Inisial & 4 Warna Tema)</span>
                                     </label>
+                                    <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                                        <input type="radio" name="thumb_mode" value="upload" x-model="thumbMode"
+                                            class="text-indigo-600 focus:ring-indigo-500">
+                                        <span>Upload Gambar Kustom</span>
+                                    </label>
+                                </div>
+
+                                <!-- Mode 1: Pilihan Warna Kotak Tipis & Checkbox -->
+                                <div x-show="thumbMode === 'auto'"
+                                    class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                                    <span class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Pilih Warna Background Thumbnail:</span>
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                        <!-- Navy -->
+                                        <label class="relative flex items-center justify-between p-3 rounded-lg border border-slate-200 cursor-pointer transition-all bg-white hover:border-slate-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/30 shadow-2xs">
+                                            <div class="flex items-center gap-2.5">
+                                                <span class="w-4 h-4 rounded-sm bg-[#13416B] shrink-0"></span>
+                                                <span class="text-xs font-bold text-slate-700">Navy</span>
+                                            </div>
+                                            <input type="checkbox" name="bg_color" value="13416B"
+                                                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                                                checked
+                                                onclick="if(this.checked){document.querySelectorAll('input[name=\'bg_color\']').forEach(el=>el.checked=false);this.checked=true;}">
+                                        </label>
+                                        <!-- Slate Blue -->
+                                        <label class="relative flex items-center justify-between p-3 rounded-lg border border-slate-200 cursor-pointer transition-all bg-white hover:border-slate-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/30 shadow-2xs">
+                                            <div class="flex items-center gap-2.5">
+                                                <span class="w-4 h-4 rounded-sm bg-[#547996] shrink-0"></span>
+                                                <span class="text-xs font-bold text-slate-700">Slate Blue</span>
+                                            </div>
+                                            <input type="checkbox" name="bg_color" value="547996"
+                                                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                                                onclick="if(this.checked){document.querySelectorAll('input[name=\'bg_color\']').forEach(el=>el.checked=false);this.checked=true;}">
+                                        </label>
+                                        <!-- Light Blue -->
+                                        <label class="relative flex items-center justify-between p-3 rounded-lg border border-slate-200 cursor-pointer transition-all bg-white hover:border-slate-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/30 shadow-2xs">
+                                            <div class="flex items-center gap-2.5">
+                                                <span class="w-4 h-4 rounded-sm bg-[#8BB1CC] shrink-0"></span>
+                                                <span class="text-xs font-bold text-slate-700">Light Blue</span>
+                                            </div>
+                                            <input type="checkbox" name="bg_color" value="8BB1CC"
+                                                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                                                onclick="if(this.checked){document.querySelectorAll('input[name=\'bg_color\']').forEach(el=>el.checked=false);this.checked=true;}">
+                                        </label>
+                                        <!-- Muted Green -->
+                                        <label class="relative flex items-center justify-between p-3 rounded-lg border border-slate-200 cursor-pointer transition-all bg-white hover:border-slate-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/30 shadow-2xs">
+                                            <div class="flex items-center gap-2.5">
+                                                <span class="w-4 h-4 rounded-sm bg-[#79A736] shrink-0"></span>
+                                                <span class="text-xs font-bold text-slate-700">Muted Green</span>
+                                            </div>
+                                            <input type="checkbox" name="bg_color" value="79A736"
+                                                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                                                onclick="if(this.checked){document.querySelectorAll('input[name=\'bg_color\']').forEach(el=>el.checked=false);this.checked=true;}">
+                                        </label>
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 font-medium">Sistem akan otomatis merender *cover* pustaka berdasarkan inisial judul dan warna palet yang dipilih.</p>
+                                </div>
+
+                                <!-- Mode 2: Upload File -->
+                                <div x-show="thumbMode === 'upload'"
+                                    class="p-4 bg-slate-50 rounded-xl border border-slate-200">
                                     <input type="file" name="cover_image" accept="image/*"
                                         class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                    <p class="text-[11px] text-gray-500 mt-2 font-medium">Format gambar (max 2MB).</p>
                                 </div>
                             </div>
 
                             <div>
-                                <label for="create-description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat</label>
+                                <label for="create-description"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat</label>
                                 <textarea id="create-description" name="description" rows="3"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                                     placeholder="Deskripsi materi...">{{ old('description') }}</textarea>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Jenis File <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Jenis File <span
+                                        class="text-red-500">*</span></label>
                                 <div class="flex gap-4">
-                                    <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition-colors text-sm"
-                                        :class="fileType === 'document' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-semibold' : 'border-gray-300 text-gray-600 hover:bg-gray-50'">
-                                        <input type="radio" name="file_type_ui" value="document" x-model="fileType" class="sr-only"
+                                    <label
+                                        class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition-colors text-sm"
+                                        :class="fileType === 'document' ?
+                                            'border-indigo-500 bg-indigo-50 text-indigo-700 font-semibold' :
+                                            'border-gray-300 text-gray-600 hover:bg-gray-50'">
+                                        <input type="radio" name="file_type_ui" value="document"
+                                            x-model="fileType" class="sr-only"
                                             @change="previewUrl = null; linkUrl = ''">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
                                         Dokumen
                                     </label>
-                                    <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition-colors text-sm"
-                                        :class="fileType === 'video' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-semibold' : 'border-gray-300 text-gray-600 hover:bg-gray-50'">
-                                        <input type="radio" name="file_type_ui" value="video" x-model="fileType" class="sr-only"
-                                            @change="previewUrl = null; linkUrl = ''">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <label
+                                        class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition-colors text-sm"
+                                        :class="fileType === 'video' ?
+                                            'border-indigo-500 bg-indigo-50 text-indigo-700 font-semibold' :
+                                            'border-gray-300 text-gray-600 hover:bg-gray-50'">
+                                        <input type="radio" name="file_type_ui" value="video" x-model="fileType"
+                                            class="sr-only" @change="previewUrl = null; linkUrl = ''">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
                                         Video
                                     </label>
-                                    <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition-colors text-sm"
-                                        :class="fileType === 'link' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 font-semibold' : 'border-gray-300 text-gray-600 hover:bg-gray-50'">
-                                        <input type="radio" name="file_type_ui" value="link" x-model="fileType" class="sr-only"
-                                            @change="previewUrl = null; linkUrl = ''">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                                    <label
+                                        class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition-colors text-sm"
+                                        :class="fileType === 'link' ?
+                                            'border-indigo-500 bg-indigo-50 text-indigo-700 font-semibold' :
+                                            'border-gray-300 text-gray-600 hover:bg-gray-50'">
+                                        <input type="radio" name="file_type_ui" value="link" x-model="fileType"
+                                            class="sr-only" @change="previewUrl = null; linkUrl = ''">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                        </svg>
                                         Link
                                     </label>
                                 </div>
@@ -125,7 +229,8 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     File Dokumen PDF <span class="text-xs text-gray-500">(max 20MB)</span>
                                 </label>
-                                <input type="file" name="file_path" accept=".pdf" @change="handleFileChange($event)"
+                                <input type="file" name="file_path" accept=".pdf"
+                                    @change="handleFileChange($event)"
                                     class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
                             </div>
 
@@ -133,8 +238,8 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     File Video <span class="text-xs text-gray-500">(mp4, webm, max 50MB)</span>
                                 </label>
-                                <input type="file" name="video_path" accept="video/mp4,video/webm" @change="handleVideoChange($event)"
-                                    x-bind:disabled="fileType !== 'video'"
+                                <input type="file" name="video_path" accept="video/mp4,video/webm"
+                                    @change="handleVideoChange($event)" x-bind:disabled="fileType !== 'video'"
                                     class="w-full border border-gray-300 rounded-md p-1 text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
 
                                 <div class="relative mt-4 mb-4">
@@ -157,7 +262,8 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     URL Link Eksternal <span class="text-red-500">*</span>
                                 </label>
-                                <input type="url" name="external_link" x-model="linkUrl" x-bind:required="fileType === 'link'"
+                                <input type="url" name="external_link" x-model="linkUrl"
+                                    x-bind:required="fileType === 'link'"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                                     placeholder="https://...">
                             </div>
@@ -165,9 +271,11 @@
 
                         <div class="lg:w-96 shrink-0">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Preview</label>
-                            <div class="border border-gray-200 rounded-xl bg-gray-50 min-h-[350px] flex items-center justify-center overflow-hidden">
+                            <div
+                                class="border border-gray-200 rounded-xl bg-gray-50 min-h-[350px] flex items-center justify-center overflow-hidden">
                                 <template x-if="previewContent && previewContent.type === 'pdf'">
-                                    <iframe :src="previewContent.url" class="w-full h-[400px] rounded-lg" frameborder="0"></iframe>
+                                    <iframe :src="previewContent.url" class="w-full h-[400px] rounded-lg"
+                                        frameborder="0"></iframe>
                                 </template>
 
                                 <template x-if="previewContent && previewContent.type === 'videofile'">
@@ -175,21 +283,35 @@
                                 </template>
 
                                 <template x-if="previewContent && previewContent.type === 'youtube'">
-                                    <iframe :src="previewContent.url" class="w-full h-[250px] rounded-lg" frameborder="0" allowfullscreen></iframe>
+                                    <iframe :src="previewContent.url" class="w-full h-[250px] rounded-lg"
+                                        frameborder="0" allowfullscreen></iframe>
                                 </template>
 
                                 <template x-if="previewContent && previewContent.type === 'link'">
                                     <div class="p-6 text-center w-full">
-                                        <svg class="mx-auto w-12 h-12 text-indigo-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                        <svg class="mx-auto w-12 h-12 text-indigo-400 mb-3" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
                                         <p class="text-sm text-gray-500 mb-2">Link Eksternal:</p>
-                                        <a :href="linkUrl" target="_blank" class="text-sm font-medium text-indigo-600 hover:underline break-all" x-text="linkUrl"></a>
+                                        <a :href="linkUrl" target="_blank"
+                                            class="text-sm font-medium text-indigo-600 hover:underline break-all"
+                                            x-text="linkUrl"></a>
                                     </div>
                                 </template>
 
                                 <template x-if="!previewContent">
                                     <div class="text-center p-8">
-                                        <svg class="mx-auto w-14 h-14 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                        <p class="text-sm text-gray-400">Pilih jenis file dan masukkan konten untuk melihat preview</p>
+                                        <svg class="mx-auto w-14 h-14 text-gray-300 mb-3" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <p class="text-sm text-gray-400">Pilih jenis file dan masukkan konten untuk
+                                            melihat preview</p>
                                     </div>
                                 </template>
                             </div>
@@ -212,46 +334,60 @@
     </div>
 
     @push('scripts')
-    <script>
-        function createLibraryForm() {
-            return {
-                fileType: 'document',
-                previewUrl: null,
-                videoPreviewUrl: null,
-                linkUrl: '',
-                handleFileChange(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        this.previewUrl = URL.createObjectURL(file);
-                    } else {
-                        this.previewUrl = null;
+        <script>
+            function createLibraryForm() {
+                return {
+                    fileType: 'document',
+                    thumbMode: 'auto', // Diperbarui agar mendeteksi state thumbMode
+                    previewUrl: null,
+                    videoPreviewUrl: null,
+                    linkUrl: '',
+                    handleFileChange(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            this.previewUrl = URL.createObjectURL(file);
+                        } else {
+                            this.previewUrl = null;
+                        }
+                    },
+                    handleVideoChange(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            this.videoPreviewUrl = URL.createObjectURL(file);
+                        } else {
+                            this.videoPreviewUrl = null;
+                        }
+                    },
+                    getYoutubeEmbedUrl(url) {
+                        if (!url) return null;
+                        let match = url.match(
+                            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+                        return match ? 'https://www.youtube.com/embed/' + match[1] : null;
+                    },
+                    get previewContent() {
+                        if (this.fileType === 'document' && this.previewUrl) return {
+                            type: 'pdf',
+                            url: this.previewUrl
+                        };
+                        if (this.fileType === 'video' && this.videoPreviewUrl) return {
+                            type: 'videofile',
+                            url: this.videoPreviewUrl
+                        };
+                        if (this.fileType === 'link' && this.linkUrl) {
+                            let embed = this.getYoutubeEmbedUrl(this.linkUrl);
+                            if (embed) return {
+                                type: 'youtube',
+                                url: embed
+                            };
+                            return {
+                                type: 'link',
+                                url: this.linkUrl
+                            };
+                        }
+                        return null;
                     }
-                },
-                handleVideoChange(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        this.videoPreviewUrl = URL.createObjectURL(file);
-                    } else {
-                        this.videoPreviewUrl = null;
-                    }
-                },
-                getYoutubeEmbedUrl(url) {
-                    if (!url) return null;
-                    let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-                    return match ? 'https://www.youtube.com/embed/' + match[1] : null;
-                },
-                get previewContent() {
-                    if (this.fileType === 'document' && this.previewUrl) return { type: 'pdf', url: this.previewUrl };
-                    if (this.fileType === 'video' && this.videoPreviewUrl) return { type: 'videofile', url: this.videoPreviewUrl };
-                    if (this.fileType === 'link' && this.linkUrl) {
-                        let embed = this.getYoutubeEmbedUrl(this.linkUrl);
-                        if (embed) return { type: 'youtube', url: embed };
-                        return { type: 'link', url: this.linkUrl };
-                    }
-                    return null;
-                }
-            };
-        }
-    </script>
+                };
+            }
+        </script>
     @endpush
 </x-dashboard::layouts.dashboard>
