@@ -182,7 +182,7 @@
                                 <!-- Konten Teks & Progress Kanan -->
                                 <div class="min-w-0 flex-1 flex flex-col justify-between p-3 sm:p-4">
                                     <div class="mb-2">
-                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Aktivitas Terakhir</span>
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Aktivitas Terakhir</span>
                                         <h3 class="font-bold text-slate-800 text-sm sm:text-base line-clamp-2 mb-1">
                                             {{ $lastCourse->name }}
                                         </h3>
