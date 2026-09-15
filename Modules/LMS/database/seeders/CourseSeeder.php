@@ -13,55 +13,98 @@ class CourseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Data Kursus dengan penanda masuk "Kursus Saya" atau "Katalog"
+        // Total 12 Kursus: 6 Terdaftar (Kursus Saya) & 6 Katalog
         $courseData = [
+            // --- 6 KURSUS TERDAFTAR (KURSUS SAYA) ---
             [
                 'name' => 'Perencanaan Tenaga Kerja Makro',
                 'category' => 'Perencanaan',
                 'description' => 'Mempelajari metodologi penyusunan rencana tenaga kerja makro pada level nasional dan daerah dengan indikator demografi dan ketenagakerjaan.',
-                'is_enrolled' => true, // Akan muncul di Kursus Saya
+                'is_enrolled' => true,
             ],
             [
                 'name' => 'Perencanaan Tenaga Kerja Mikro',
                 'category' => 'Praktik',
                 'description' => 'Panduan teknis analisis kebutuhan dan ketersediaan tenaga kerja pada tingkat unit kerja dan instansi/perusahaan.',
-                'is_enrolled' => true, // Akan muncul di Kursus Saya
+                'is_enrolled' => true,
             ],
             [
                 'name' => 'Indeks Pembangunan Ketenagakerjaan (IPK)',
                 'category' => 'Perkiraan',
                 'description' => 'Kajian mendalam mengenai pengukuran performa indikator pembangunan ketenagakerjaan secara komprehensif.',
-                'is_enrolled' => true, // Akan muncul di Kursus Saya
+                'is_enrolled' => true,
             ],
+            [
+                'name' => 'Implementasi Sistem Merit dalam Manajemen ASN',
+                'category' => 'Perpres',
+                'description' => 'Penerapan kualifikasi, kompetensi, dan kinerja secara adil dalam pengembangan karier aparatur sipil negara.',
+                'is_enrolled' => true,
+            ],
+            [
+                'name' => 'Teknik Proyeksi Penduduk dan Angkatan Kerja',
+                'category' => 'Teori',
+                'description' => 'Belajar menghitung laju pertumbuhan penduduk, partisipasi angkatan kerja, dan proyeksi ketenagakerjaan masa depan.',
+                'is_enrolled' => true,
+            ],
+            [
+                'name' => 'Audit dan Pengawasan Ketenagakerjaan Sektoral',
+                'category' => 'Praktik',
+                'description' => 'Standar operasional prosedur pengawasan norma kerja, Keselamatan dan Kesehatan Kerja (K3) di berbagai sektor.',
+                'is_enrolled' => true,
+            ],
+
+            // --- 6 KURSUS KATALOG (BELUM TERDAFTAR) ---
             [
                 'name' => 'Analisis Kebutuhan Pelatihan Kerja',
                 'category' => 'Praktik',
                 'description' => 'Metodologi identifikasi gap kompetensi dan perencanaan diklat pegawai berbasis kebutuhan riil industri.',
-                'is_enrolled' => false, // Akan murni masuk Katalog
+                'is_enrolled' => false,
             ],
             [
                 'name' => 'Regulasi dan Kebijakan Ketenagakerjaan Terkini',
                 'category' => 'Perpres',
                 'description' => 'Tinjauan yuridis peraturan pemerintah dan instrumen kepatuhan hukum ketenagakerjaan di Indonesia.',
-                'is_enrolled' => false, // Akan murni masuk Katalog
+                'is_enrolled' => false,
+            ],
+            [
+                'name' => 'Optimalisasi Sistem Informasi Pasar Kerja (SIPKerja)',
+                'category' => 'Perencanaan',
+                'description' => 'Teknik pemanfaatan platform digital ketenagakerjaan untuk mempertemukan pencari kerja dan pemberi kerja.',
+                'is_enrolled' => false,
+            ],
+            [
+                'name' => 'Manajemen Produktivitas Tenaga Kerja Nasional',
+                'category' => 'Teori',
+                'description' => 'Strategi peningkatan daya saing dan produktivitas tenaga kerja melalui program vokasi serta pelatihan bersertifikat.',
+                'is_enrolled' => false,
+            ],
+            [
+                'name' => 'Pengelolaan Big Data Ketenagakerjaan',
+                'category' => 'Perkiraan',
+                'description' => 'Pemanfaatan data analitik modern guna merumuskan kebijakan intervensi pasar kerja yang akurat dan tepat sasaran.',
+                'is_enrolled' => false,
+            ],
+            [
+                'name' => 'Evaluasi Kinerja Program Pelatihan Vokasi',
+                'category' => 'Praktik',
+                'description' => 'Metode pengukuran dampak dan efektivitas penyelenggaraan balai latihan kerja terhadap penyerapan tenaga kerja.',
+                'is_enrolled' => false,
             ],
         ];
 
-        // Palet Warna yang disesuaikan dengan referensi gambar (Muted/Deep)
+        // 4 Palet Warna Utama Sesuai Permintaan
         $brandColors = [
-            '13416B', // Base Navy (Blok D/M/A)
-            '547996', // Slate Blue (Blok E/H)
-            '8BB1CC', // Light Blue (Blok I/F/O)
-            '79A736', // Muted Green (Blok J)
-            'E58A18', // Muted Orange (Blok K)
-            '6E4B82'  // Muted Purple (Blok L)
+            '13416B', // Navy
+            '547996', // Slate Blue
+            '8BB1CC', // Light Blue
+            '79A736', // Muted Green
         ];
 
         foreach ($courseData as $index => $item) {
             $cat = Category::where('name', $item['category'])->first() ?? Category::first();
             $bgColor = $brandColors[$index % count($brandColors)];
 
-            // Ambil maksimal 2 kata pertama agar inisial API tidak mengambil tanda baca di akhir
+            // Ambil maksimal 2 kata pertama agar inisial UI Avatars bersih
             $words = explode(' ', trim($item['name']));
             $safeName = $words[0] . ' ' . ($words[1] ?? '');
 
@@ -70,14 +113,13 @@ class CourseSeeder extends Seeder
                 [
                     'category_id' => $cat?->id,
                     'name'        => $item['name'],
-                    // Gunakan $safeName untuk API thumbnail
-                    'thumbnail'   => 'https://ui-avatars.com/api/?name=' . urlencode($safeName) . '&background=' . $bgColor . '&color=fff&size=512&bold=true',
+                    'thumbnail'   => 'https://ui-avatars.com/api/?name=' . urlencode($safeName) . '&background=' . $bgColor . '&color=fff&size=512&bold=true&length=2',
                     'description' => $item['description'],
                 ]
             );
         }
 
-        // 2. Logika Pendaftaran (Enrollment) User (Tetap Sama)
+        // 2. Logika Pendaftaran (Enrollment) User
         $courses = Course::with(['sections.contents'])->get();
 
         $users = User::role('user')->get();
@@ -101,6 +143,7 @@ class CourseSeeder extends Seeder
 
                 $isEnrolledTarget = collect($courseData)->firstWhere('name', $course->name)['is_enrolled'] ?? false;
 
+                // Hanya daftarkan user jika kursus tersebut ditandai is_enrolled = true (Kursus Saya)
                 if ($isEnrolledTarget) {
                     $allContents   = $course->sections->flatMap->contents;
                     $totalContents = $allContents->count();
@@ -146,6 +189,6 @@ class CourseSeeder extends Seeder
             }
         }
 
-        $this->command->info("CourseSeeder berhasil dengan warna thumbnail yang disesuaikan! 🚀");
+        $this->command->info("CourseSeeder berhasil memperbarui 6 kursus terdaftar dan 6 kursus katalog dengan 4 palet warna utama! 🚀");
     }
 }

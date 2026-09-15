@@ -75,9 +75,11 @@ class LibrarySeeder extends Seeder
                     'library_category_id' => $item['library_category_id'],
                     'description'         => $item['description'],
                     'external_link'       => $item['external_link'],
-                    'created_by'          => $userId, // Menyertakan ID creator
+                    'created_by'          => $userId,
                 ]
             );
         }
+        
+        $this->command->info("LibrarySeeder berhasil dijalankan! 🚀");
     }
 }
