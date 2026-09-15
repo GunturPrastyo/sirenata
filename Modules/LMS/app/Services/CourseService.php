@@ -411,25 +411,28 @@ class CourseService
             if ($thumbnailFile) {
                 $thumbnailPath = $thumbnailFile->store('courses/thumbnails', 'public');
             } else {
-                // 1. Siapkan daftar warna latar belakang yang elegan (Hex tanpa tanda #)
+                // 1. Siapkan daftar warna latar belakang dari referensi (Hex tanpa tanda #)
                 $colors = [
-                    '13416B', // Utama: Biru Gelap SIRENATA (Wajib ada)
-                    '0F5A9A', // Senada: Biru Terang Korporat
-                    '0891B2', // Senada: Cyan / Ocean Blue
-                    '0F766E', // Senada: Teal / Biru Kehijauan Gelap
-                    'D97706', // Kontras: Amber / Kuning Keemasan (Sangat cocok dengan Biru)
-                    'C2410C', // Kontras: Burnt Orange / Oranye Bata
-                    '475569', // Netral: Slate Gray (Abu-abu kebiruan yang elegan)
+                    '13416B',
+                    '547996',
+                    '8BB1CC',
+                    '79A736',
+                    'E58A18',
+                    '6E4B82'
                 ];
 
                 // 2. Pilih satu warna secara acak
                 $randomColor = $colors[array_rand($colors)];
 
-                // 3. Generate gambar dummy avatar dengan warna acak tersebut
-                $encodedName = urlencode($data['name'] ?? 'Course');
+                // 3. Ambil 2 kata pertama saja agar inisial tetap aman
+                $rawName = $data['name'] ?? 'Course';
+                $words = explode(' ', trim($rawName));
+                $safeName = $words[0] . ' ' . ($words[1] ?? '');
+
+                // 4. Generate gambar dummy avatar
+                $encodedName = urlencode($safeName);
                 $thumbnailPath = "https://ui-avatars.com/api/?name={$encodedName}&background={$randomColor}&color=fff&size=512&bold=true";
             }
-
             $course = Course::create([
                 'category_id' => $data['category_id'],
                 'name'        => $data['name'],
@@ -603,7 +606,7 @@ class CourseService
             ];
         }
     }
-    
+
     /**
      * Ambil semua kursus untuk halaman Katalog (Mengecualikan yang sudah diikuti user)
      */

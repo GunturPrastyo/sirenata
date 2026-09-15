@@ -47,29 +47,39 @@ class CourseSeeder extends Seeder
             ],
         ];
 
-        // Palet 3 Warna SIRENATA untuk variasi thumbnail (Biru, Abu-abu, Kuning)
-        $brandColors = ['13416B', '475569', 'F59E0B'];
+        // Palet Warna yang disesuaikan dengan referensi gambar (Muted/Deep)
+        $brandColors = [
+            '13416B', // Base Navy (Blok D/M/A)
+            '547996', // Slate Blue (Blok E/H)
+            '8BB1CC', // Light Blue (Blok I/F/O)
+            '79A736', // Muted Green (Blok J)
+            'E58A18', // Muted Orange (Blok K)
+            '6E4B82'  // Muted Purple (Blok L)
+        ];
 
         foreach ($courseData as $index => $item) {
             $cat = Category::where('name', $item['category'])->first() ?? Category::first();
             $bgColor = $brandColors[$index % count($brandColors)];
+
+            // Ambil maksimal 2 kata pertama agar inisial API tidak mengambil tanda baca di akhir
+            $words = explode(' ', trim($item['name']));
+            $safeName = $words[0] . ' ' . ($words[1] ?? '');
 
             Course::updateOrCreate(
                 ['slug' => Str::slug($item['name'])],
                 [
                     'category_id' => $cat?->id,
                     'name'        => $item['name'],
-                    // Thumbnail digenerate otomatis dengan warna background yang bergantian
-                    'thumbnail'   => 'https://ui-avatars.com/api/?name=' . urlencode($item['name']) . '&background=' . $bgColor . '&color=fff&size=512&bold=true',
+                    // Gunakan $safeName untuk API thumbnail
+                    'thumbnail'   => 'https://ui-avatars.com/api/?name=' . urlencode($safeName) . '&background=' . $bgColor . '&color=fff&size=512&bold=true',
                     'description' => $item['description'],
                 ]
             );
         }
 
-        // 2. Logika Pendaftaran (Enrollment) User
+        // 2. Logika Pendaftaran (Enrollment) User (Tetap Sama)
         $courses = Course::with(['sections.contents'])->get();
-        
-        // Ambil user biasa, gunakan fallback jika spatie roles belum teraplikasi sempurna di lokal
+
         $users = User::role('user')->get();
         if ($users->isEmpty()) {
             $users = User::all();
@@ -89,7 +99,6 @@ class CourseSeeder extends Seeder
                     ]);
                 }
 
-                // Cek apakah kursus ini ditargetkan untuk didaftarkan ke user
                 $isEnrolledTarget = collect($courseData)->firstWhere('name', $course->name)['is_enrolled'] ?? false;
 
                 if ($isEnrolledTarget) {
@@ -106,7 +115,6 @@ class CourseSeeder extends Seeder
                             default         => 'completed',
                         };
 
-                        // Daftarkan ke tabel pivot
                         $course->students()->syncWithoutDetaching([
                             $student->id => [
                                 'status'       => $status,
@@ -117,7 +125,6 @@ class CourseSeeder extends Seeder
                             ]
                         ]);
 
-                        // Catat progress spesifik per materi
                         if ($totalContents > 0 && $completedCount > 0) {
                             $contentsToComplete = $allContents->shuffle()->take($completedCount);
                             foreach ($contentsToComplete as $content) {
@@ -139,6 +146,6 @@ class CourseSeeder extends Seeder
             }
         }
 
-        $this->command->info("CourseSeeder berhasil: Sebagian kursus masuk 'Kursus Saya', sisanya bersih di 'Katalog' 🚀");
+        $this->command->info("CourseSeeder berhasil dengan warna thumbnail yang disesuaikan! 🚀");
     }
 }
