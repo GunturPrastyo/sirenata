@@ -96,7 +96,7 @@ class CourseController extends Controller
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail_url = $dbCourse->thumbnail ?? $courseObj->thumbnail_url;
+                    $courseObj->thumbnail = $dbCourse->thumbnail ?? $courseObj->thumbnail;
 
                     $courseObj->total_modul = $dbCourse->sections->count();
                     $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
@@ -137,7 +137,7 @@ class CourseController extends Controller
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail_url = $dbCourse->thumbnail ?? $courseObj->thumbnail_url;
+                    $courseObj->thumbnail = $dbCourse->thumbnail ?? $courseObj->thumbnail;
 
                     $courseObj->total_modul = $dbCourse->sections->count();
                     $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
@@ -178,7 +178,7 @@ class CourseController extends Controller
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail_url = $dbCourse->thumbnail ?? $courseObj->thumbnail_url;
+                    $courseObj->thumbnail = $dbCourse->thumbnail ?? $courseObj->thumbnail;
 
                     $courseObj->total_modul = $dbCourse->sections->count();
                     $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());

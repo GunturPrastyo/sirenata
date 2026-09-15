@@ -138,21 +138,10 @@
         {{-- ========================================== --}}
         <!-- Grid diatur maksimal 3 kolom (lg:grid-cols-3) agar card lebih lebar di desktop -->
         <div id="library-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            @php
-                $gradients = [
-                    'from-[#13416B] to-[#0f3354]',
-                    'from-slate-700 to-slate-900',
-                    'from-indigo-600 to-indigo-800',
-                    'from-emerald-600 to-teal-800',
-                ];
-            @endphp
-
             @forelse($libraries as $library)
                 @php
                     $typeName = strtolower($library->libraryCategory->name ?? 'default');
-                    $colorIdx = abs(crc32($library->libraryCategory->name ?? 'default')) % count($gradients);
-                    $gradient = $gradients[$colorIdx];
-
+                    
                     $isVideo =
                         !empty($library->video_path) ||
                         str_contains($library->external_link ?? '', 'youtube') ||
@@ -161,19 +150,14 @@
                     $isDoc = !empty($library->file_path);
 
                     if ($isVideo) {
-                        $fallbackIcon = 'fa-play-circle';
                         $buttonLabel = 'Tonton Video';
                     } elseif ($isPeraturan) {
-                        $fallbackIcon = 'fa-gavel';
                         $buttonLabel = 'Baca Dokumen';
                     } elseif ($isDoc) {
-                        $fallbackIcon = 'fa-file-pdf';
                         $buttonLabel = 'Baca File';
                     } elseif (!empty($library->external_link)) {
-                        $fallbackIcon = 'fa-external-link-alt';
                         $buttonLabel = 'Buka Tautan';
                     } else {
-                        $fallbackIcon = 'fa-book-open';
                         $buttonLabel = 'Buka Pustaka';
                     }
                 @endphp
@@ -182,22 +166,45 @@
                 <div
                     class="group flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-[#13416B]/30 transition-all duration-300 hover:-translate-y-1">
 
-                    {{-- Cover Area (Dikembalikan ke aspect-[3/4] agar lebih tinggi proporsional) --}}
+                    {{-- Cover Area (Disesuaikan dengan gaya Kursus & Inisial)[cite: 15] --}}
                     <div class="relative aspect-[3/4] overflow-hidden bg-slate-100">
                         @if ($library->cover_image)
                             <img src="{{ Storage::url($library->cover_image) }}" alt="{{ $library->title }}"
                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         @else
-                            <div
-                                class="w-full h-full bg-gradient-to-br {{ $gradient }} flex items-center justify-center p-3 sm:p-6 text-center relative overflow-hidden">
-                                <div
-                                    class="absolute -right-4 -bottom-4 sm:-right-6 sm:-bottom-6 w-24 h-24 bg-white/10 rounded-full blur-2xl">
-                                </div>
-                                <div
-                                    class="absolute -left-4 -top-4 sm:-left-6 sm:-top-6 w-16 h-16 bg-black/10 rounded-full blur-xl">
-                                </div>
-                                <i
-                                    class="fas {{ $fallbackIcon }} text-6xl sm:text-7xl text-white/80 drop-shadow-md transition-transform group-hover:scale-110 duration-300 relative z-10"></i>
+                            @php
+                                // Palet warna konsisten dengan kursus (Deep/Muted Palette)
+                                $brandColors = [
+                                    '13416B', // Base Navy
+                                    '547996', // Slate Blue
+                                    '8BB1CC', // Light Blue
+                                    '79A736', // Muted Green
+                                    'E58A18', // Muted Orange
+                                    '6E4B82'  // Muted Purple
+                                ];
+                                $colorHex = $brandColors[abs(crc32($library->id)) % count($brandColors)];
+                                
+                                // Ambil inisial 2 kata pertama dari judul perpustakaan
+                                $words = explode(' ', trim($library->title));
+                                $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                            @endphp
+
+                            <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center relative overflow-hidden transition-transform duration-300 group-hover:scale-105"
+                                 style="background-color: #{{ $colorHex }};">
+                                
+                                <!-- Efek Watermark Lingkaran Transparan di Background -->
+                                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                                <div class="absolute -left-6 -top-6 w-24 h-24 bg-black/10 rounded-full blur-lg pointer-events-none"></div>
+
+                                <!-- Menampilkan Inisial Judul di Tengah -->
+                                <span class="text-4xl sm:text-5xl font-black text-white tracking-widest drop-shadow-md relative z-10 font-sans">
+                                    {{ $initials }}
+                                </span>
+                                
+                                <!-- Subtitle kecil penanda tipe dokumen -->
+                                <span class="mt-2 text-[10px] uppercase font-bold text-white/70 tracking-wider relative z-10 px-2 py-0.5 bg-black/15 rounded-md">
+                                    {{ $library->libraryCategory->name ?? 'Pustaka' }}
+                                </span>
                             </div>
                         @endif
 

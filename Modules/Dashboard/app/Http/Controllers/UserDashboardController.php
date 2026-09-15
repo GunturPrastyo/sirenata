@@ -12,7 +12,6 @@ use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 use Modules\Dashboard\Http\Requests\UpdateProfileRequest;
 use Modules\Dashboard\Services\DashboardService;
 use Modules\LMS\Services\CourseService;
@@ -78,25 +77,15 @@ class UserDashboardController extends Controller
                 ->groupBy('post_test_id')
                 ->pluck('user_score', 'post_test_id');
 
-            $cacheKey = 'avg_post_test_' . md5($postTestIds->toJson());
-            $avgResults = Cache::remember($cacheKey, 3600, function () use ($postTestIds) {
-                return PostTestResult::selectRaw('post_test_id, AVG(score) as avg_score')
-                    ->whereIn('post_test_id', $postTestIds)
-                    ->groupBy('post_test_id')
-                    ->pluck('avg_score', 'post_test_id');
-            });
-
             foreach ($myCourses as $c) {
                 $courseTests = $allPostTests->where('course_id', $c->id);
 
                 $labels = [];
                 $uScores = [];
-                $aScores = [];
 
                 foreach ($courseTests as $test) {
                     $labels[] = $test->title;
                     $uScores[] = $userResults[$test->id] ?? 0;
-                    $aScores[] = isset($avgResults[$test->id]) ? round($avgResults[$test->id], 1) : 0;
                 }
 
                 $chartDataByCourse[$c->id] = [
@@ -104,7 +93,6 @@ class UserDashboardController extends Controller
                     'course_name' => $c->name,
                     'labels' => $labels,
                     'user_scores' => $uScores,
-                    'avg_scores' => $aScores,
                 ];
             }
         }
