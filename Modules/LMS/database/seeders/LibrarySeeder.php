@@ -68,18 +68,38 @@ class LibrarySeeder extends Seeder
             ],
         ];
 
-        foreach ($libraries as $item) {
+        // 4 Palet Warna Utama Sesuai Tema Aplikasi
+        $brandColors = [
+            '13416B', // Navy
+            '547996', // Slate Blue
+            '8BB1CC', // Light Blue
+            '79A736', // Muted Green
+        ];
+
+        foreach ($libraries as $index => $item) {
+            // Ambil warna secara berurutan atau acak dari 4 palet utama
+            $bgColor = $brandColors[$index % count($brandColors)];
+
+            // Ambil 2 kata pertama untuk inisial teks yang bersih
+            $words = explode(' ', trim($item['title']));
+            $safeTitle = $words[0] . ' ' . ($words[1] ?? '');
+            $encodedInitials = urlencode($safeTitle);
+
+            // Buat URL *cover* otomatis menggunakan konsep inisial dan warna palet
+            $coverUrl = "https://ui-avatars.com/api/?name={$encodedInitials}&background={$bgColor}&color=fff&size=512&bold=true&length=2";
+
             Library::updateOrCreate(
                 ['title' => $item['title']],
                 [
                     'library_category_id' => $item['library_category_id'],
                     'description'         => $item['description'],
                     'external_link'       => $item['external_link'],
+                    'cover_image'         => $coverUrl, // Menyimpan URL sampul otomatis berpalet warna
                     'created_by'          => $userId,
                 ]
             );
         }
         
-        $this->command->info("LibrarySeeder berhasil dijalankan! 🚀");
+        $this->command->info("LibrarySeeder berhasil dijalankan dengan 4 palet warna dan konsep inisial! 🚀");
     }
 }

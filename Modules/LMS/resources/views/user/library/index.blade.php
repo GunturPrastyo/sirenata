@@ -166,10 +166,15 @@
                 <div
                     class="group flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-[#13416B]/30 transition-all duration-300 hover:-translate-y-1">
 
-                    {{-- Cover Area (Disesuaikan dengan gaya Kursus & Inisial)[cite: 15] --}}
+                  {{-- Cover Area (Disesuaikan untuk mendukung URL Eksternal / Inisial maupun Upload Lokal) --}}
                     <div class="relative aspect-[3/4] overflow-hidden bg-slate-100">
                         @if ($library->cover_image)
-                            <img src="{{ Storage::url($library->cover_image) }}" alt="{{ $library->title }}"
+                            @php
+                                // Cek apakah cover_image adalah URL eksternal (seperti dari ui-avatars atau link web) atau file lokal dari storage
+                                $isExternalCover = filter_var($library->cover_image, FILTER_VALIDATE_URL);
+                                $coverSource = $isExternalCover ? $library->cover_image : Storage::url($library->cover_image);
+                            @endphp
+                            <img src="{{ $coverSource }}" alt="{{ $library->title }}"
                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         @else
                             @php
