@@ -96,12 +96,19 @@ class CourseController extends Controller
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail = $dbCourse->thumbnail ?? $courseObj->thumbnail;
+
+                    // Perbaikan penanganan URL thumbnail
+                    if ($dbCourse->thumbnail) {
+                        $courseObj->thumbnail_url = str_starts_with($dbCourse->thumbnail, 'http')
+                            ? $dbCourse->thumbnail
+                            : Storage::url($dbCourse->thumbnail);
+                    } else {
+                        $courseObj->thumbnail_url = null;
+                    }
 
                     $courseObj->total_modul = $dbCourse->sections->count();
                     $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
 
-                    // Override nilai progress dari DB dengan hasil perhitungan dinamis
                     $courseObj->progress = $this->calculateDynamicProgress($dbCourse);
                     $courseObj->status = $courseObj->progress >= 100 ? self::COMPLETED : self::IN_PROGRESS;
                 }
@@ -137,12 +144,19 @@ class CourseController extends Controller
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail = $dbCourse->thumbnail ?? $courseObj->thumbnail;
+
+                    // Perbaikan penanganan URL thumbnail
+                    if ($dbCourse->thumbnail) {
+                        $courseObj->thumbnail_url = str_starts_with($dbCourse->thumbnail, 'http')
+                            ? $dbCourse->thumbnail
+                            : Storage::url($dbCourse->thumbnail);
+                    } else {
+                        $courseObj->thumbnail_url = null;
+                    }
 
                     $courseObj->total_modul = $dbCourse->sections->count();
                     $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
 
-                    // Override nilai progress dari DB dengan hasil perhitungan dinamis
                     $courseObj->progress = $this->calculateDynamicProgress($dbCourse);
                     $courseObj->status = $courseObj->progress >= 100 ? self::COMPLETED : self::IN_PROGRESS;
                 }
@@ -178,12 +192,19 @@ class CourseController extends Controller
                 if ($dbCourse) {
                     $courseObj->description = $dbCourse->description;
                     $courseObj->category = $dbCourse->category ? (object) $dbCourse->category->toArray() : null;
-                    $courseObj->thumbnail = $dbCourse->thumbnail ?? $courseObj->thumbnail;
+
+                    // Perbaikan penanganan URL thumbnail
+                    if ($dbCourse->thumbnail) {
+                        $courseObj->thumbnail_url = str_starts_with($dbCourse->thumbnail, 'http')
+                            ? $dbCourse->thumbnail
+                            : Storage::url($dbCourse->thumbnail);
+                    } else {
+                        $courseObj->thumbnail_url = null;
+                    }
 
                     $courseObj->total_modul = $dbCourse->sections->count();
                     $courseObj->total_materi = $dbCourse->sections->sum(fn($s) => $s->contents->count());
 
-                    // Override nilai progress dari DB dengan hasil perhitungan dinamis
                     $courseObj->progress = $this->calculateDynamicProgress($dbCourse);
                     $courseObj->status = $courseObj->progress >= 100 ? self::COMPLETED : self::IN_PROGRESS;
                 }

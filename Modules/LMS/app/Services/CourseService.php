@@ -407,11 +407,10 @@ class CourseService
     public function storeCourse(array $data, $thumbnailFile = null): array
     {
         try {
-            // Cek apakah ada file yang diunggah
             if ($thumbnailFile) {
                 $thumbnailPath = $thumbnailFile->store('courses/thumbnails', 'public');
             } else {
-                // 1. Siapkan daftar warna latar belakang dari referensi (Hex tanpa tanda #)
+                // Palet warna konsisten (Navy, Slate Blue, Light Blue, Muted Green)
                 $colors = [
                     '13416B',
                     '547996',
@@ -421,18 +420,17 @@ class CourseService
                     '6E4B82'
                 ];
 
-                // 2. Pilih satu warna secara acak
                 $randomColor = $colors[array_rand($colors)];
 
-                // 3. Ambil 2 kata pertama saja agar inisial tetap aman
                 $rawName = $data['name'] ?? 'Course';
                 $words = explode(' ', trim($rawName));
-                $safeName = $words[0] . ' ' . ($words[1] ?? '');
+                $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
 
-                // 4. Generate gambar dummy avatar
-                $encodedName = urlencode($safeName);
-                $thumbnailPath = "https://ui-avatars.com/api/?name={$encodedName}&background={$randomColor}&color=fff&size=512&bold=true";
+                // Menggunakan ui-avatars dengan inisial yang bersih dan warna latar palet kustom
+                $encodedInitials = urlencode($initials);
+                $thumbnailPath = "https://ui-avatars.com/api/?name={$encodedInitials}&background={$randomColor}&color=fff&size=512&bold=true&length=2";
             }
+
             $course = Course::create([
                 'category_id' => $data['category_id'],
                 'name'        => $data['name'],
