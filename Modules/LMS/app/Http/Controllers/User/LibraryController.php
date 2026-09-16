@@ -70,4 +70,20 @@ class LibraryController extends Controller
         // Sesuaikan nama view ini dengan struktur folder Anda
         return view('lms::user.library.show', compact('library'));
     }
+
+    /**
+     * Mencatat riwayat akses melalui AJAX saat modal dibuka
+     */
+    public function track($id)
+    {
+        $userId = Auth::id();
+
+        if ($userId) {
+            $library = Library::findOrFail($id);
+            // Menggunakan service yang sudah Anda buat sebelumnya
+            $this->libraryService->recordUserAccess($library, $userId); 
+        }
+
+        return response()->json(['success' => true]);
+    }
 }

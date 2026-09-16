@@ -163,7 +163,7 @@ class LibraryService
     /**
      * Mencatat riwayat akses user ke materi perpustakaan
      */
-    public function recordUserAccess(Library $library, int $userId): void
+    public function recordUserAccess(Library $library, $userId): void
     {
         DB::table('user_library_history')->updateOrInsert(
             [

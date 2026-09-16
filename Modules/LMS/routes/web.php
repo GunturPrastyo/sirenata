@@ -74,6 +74,8 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->name('user.')->group(f
     Route::get('/library', [UserLibraryController::class, 'index'])->name('library.index');
     Route::get('/library/{id}', [UserLibraryController::class, 'show'])->name('library.show');
 
+    Route::post('/library/{id}/track', [UserLibraryController::class, 'track'])->name('library.track');
+
     Route::prefix('course')->name('course.')->controller(UserCourseController::class)->group(function () {
         Route::get('/my-course', 'allMyCourse')->name('my-course');
         Route::get('/my-course/progress', 'myCourseProgress')->name('my-course.progress');
