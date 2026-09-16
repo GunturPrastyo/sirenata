@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('institutions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->string('province_code', 10)->nullable();
+            $table->string('regency_code', 10)->nullable();
             $table->enum('type', ['pusat', 'daerah']);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

@@ -467,7 +467,8 @@
                             <select id="kementerian" class="w-full">
                                 <option value="">Pilih Kementerian/Lembaga</option>
                             </select>
-                            <input type="hidden" name="instansi" id="finalInstansi" />
+                            <!-- Input tersembunyi untuk menampung nilai akhir pusat -->
+                            <input type="hidden" name="instansi" id="finalInstansiPusat" />
                         </div>
 
                         <div id="provinsiSection" class="hidden">
@@ -496,7 +497,8 @@
                             <label for="instansi"
                                 class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Instansi
                                 <span class="text-red-500">*</span></label>
-                            <select id="instansi" class="w-full">
+                            <select id="instansi" name="instansi" class="w-full">
+                                <!-- Tambahkan name="instansi" di sini -->
                                 <option value="">Pilih Instansi</option>
                             </select>
                             <p class="mt-1.5 text-xs text-slate-500">Pilih opsi "Lainnya" apabila instansi Anda tidak
@@ -691,9 +693,9 @@
                     }
                 }
             });
-
             @if (!$profile || empty($profile->instansi))
                 $(document).ready(function() {
+                    // 1. Muat data pusat saat pertama kali modal muncul
                     $.ajax({
                         url: '{{ route('api.masterdata.institutions.index') }}?type=pusat',
                         type: 'GET',
@@ -702,10 +704,12 @@
                                 response.data.forEach(k => {
                                     $('#kementerian').append(new Option(k.name, k.name));
                                 });
+                                $('#kementerian').trigger('change');
                             }
                         }
                     });
 
+                    // 2. Inisialisasi Select2 untuk semua elemen dropdown terkait
                     $('#kementerian, #provinsi, #kabkota, #instansi').select2({
                         placeholder: function() {
                             return $(this).find('option:first').text();
@@ -714,6 +718,7 @@
                         width: '100%'
                     });
 
+                    // 3. Handler saat radio Asal Instansi berubah (Pusat / Provinsi / Kab Kota)
                     $('input[name="asalInstansi"]').on('change', function() {
                         const value = $(this).val();
                         $('#kementerianSection, #provinsiSection, #kabkotaSection, #instansiSection, #customInstansiSection, #unitKerjaSection')
@@ -728,6 +733,46 @@
                         }
                     });
 
+                    // 4. Fungsi helper untuk mengambil data instansi daerah berdasarkan wilayah terpilih
+                    function populateInstansi() {
+                        $('#instansi').empty().append(new Option('Pilih Instansi', ''));
+
+                        const provinceCode = $('#provinsi').val();
+                        const regencyCode = $('#kabkota').val();
+                        const asalInstansi = $('input[name="asalInstansi"]:checked')
+                    .val(); // Ambil tipe level (provinsi/kabkota)
+
+                        $.ajax({
+                            url: '{{ route('api.masterdata.institutions.index') }}',
+                            type: 'GET',
+                            data: {
+                                type: 'daerah',
+                                province_code: provinceCode,
+                                regency_code: regencyCode,
+                                regional_level: asalInstansi
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    if (response.data.length > 0) {
+                                        response.data.forEach(i => {
+                                            $('#instansi').append(new Option(i.name, i.name));
+                                        });
+                                    } else {
+                                        $('#instansi').append(new Option(
+                                            'Tidak ada instansi spesifik di wilayah ini, pilih Lainnya',
+                                            ''));
+                                    }
+
+                                    // Selalu sediakan opsi "Lainnya" di bagian akhir
+                                    $('#instansi').append(new Option(
+                                        'Lainnya (Instansi tidak ada dalam daftar)', 'lainnya'));
+                                    $('#instansi').trigger('change'); // Wajib untuk memperbarui Select2
+                                }
+                            }
+                        });
+                    }
+
+                    // 5. Handler saat Provinsi dipilih
                     $('#provinsi').on('change', function() {
                         const provinsiCode = $(this).val();
                         const asalInstansi = $('input[name="asalInstansi"]:checked').val();
@@ -748,6 +793,7 @@
                                                 $('#kabkota').append(new Option(regency
                                                     .name, regency.code));
                                             });
+                                            $('#kabkota').trigger('change');
                                             $('#kabkotaSection').removeClass('hidden');
                                             $('#instansiSection, #customInstansiSection, #unitKerjaSection')
                                                 .addClass('hidden');
@@ -759,34 +805,24 @@
                                 $('#instansiSection').removeClass('hidden');
                                 $('#kabkotaSection, #customInstansiSection').addClass('hidden');
                             }
+                        } else {
+                            $('#kabkotaSection, #instansiSection, #customInstansiSection, #unitKerjaSection')
+                                .addClass('hidden');
                         }
                     });
 
-                    function populateInstansi() {
-                        $('#instansi').empty().append(new Option('Pilih Instansi', ''));
-                        $.ajax({
-                            url: '{{ route('api.masterdata.institutions.index') }}?type=daerah',
-                            type: 'GET',
-                            success: function(response) {
-                                if (response.success) {
-                                    response.data.forEach(i => {
-                                        $('#instansi').append(new Option(i.name, i.name));
-                                    });
-                                    $('#instansi').append(new Option(
-                                        'Lainnya (Instansi tidak ada dalam daftar)', 'lainnya'));
-                                }
-                            }
-                        });
-                    }
-
+                    // 6. Handler saat Kabupaten/Kota dipilih
                     $('#kabkota').on('change', function() {
                         if ($(this).val()) {
                             populateInstansi();
                             $('#instansiSection').removeClass('hidden');
                             $('#customInstansiSection, #unitKerjaSection').addClass('hidden');
+                        } else {
+                            $('#instansiSection, #customInstansiSection, #unitKerjaSection').addClass('hidden');
                         }
                     });
 
+                    // 7. Handler saat pilihan instansi berubah (menangani opsi "Lainnya")
                     $('#instansi').on('change', function() {
                         const value = $(this).val();
                         if (value === 'lainnya') {
@@ -800,6 +836,7 @@
                         }
                     });
 
+                    // 8. Handler input teks kustom instansi
                     $('#customInstansi').on('input', function() {
                         if ($(this).val().trim()) {
                             $('#unitKerjaSection').removeClass('hidden');
@@ -808,6 +845,7 @@
                         }
                     });
 
+                    // 9. Validasi sebelum form disubmit
                     $('#instansiForm').on('submit', function(e) {
                         const asalInstansi = $('input[name="asalInstansi"]:checked').val();
                         if (!asalInstansi) {
@@ -823,15 +861,29 @@
                                 alert('Pilih Kementerian/Lembaga!');
                                 return;
                             }
-                            $('#finalInstansi').val(kemVal);
+
+                            // Matikan select daerah agar tidak ikut terkirim, lalu isi hidden input pusat
+                            $('#instansi').prop('disabled', true);
+                            $('#finalInstansiPusat').val(kemVal);
                         }
 
                         if (asalInstansi === 'provinsi' || asalInstansi === 'kabkota') {
                             const instansiVal = $('#instansi').val();
                             if (instansiVal === 'lainnya') {
-                                $('#finalInstansi').val($('#customInstansi').val().trim());
+                                const customVal = $('#customInstansi').val().trim();
+                                if (!customVal) {
+                                    e.preventDefault();
+                                    alert('Masukkan nama instansi secara manual!');
+                                    return;
+                                }
+
                             } else {
-                                $('#finalInstansi').val(instansiVal);
+                                if (!instansiVal) {
+                                    e.preventDefault();
+                                    alert('Pilih instansi terlebih dahulu!');
+                                    return;
+                                }
+
                             }
                         }
                     });

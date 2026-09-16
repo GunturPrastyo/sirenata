@@ -12,6 +12,8 @@ class Institution extends Model
     protected $fillable = [
         'name',
         'type',
+        'province_code', 
+        'regency_code',
         'is_active',
     ];
 }

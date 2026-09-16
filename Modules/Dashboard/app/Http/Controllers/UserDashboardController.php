@@ -46,13 +46,13 @@ class UserDashboardController extends Controller
             }
         }
 
-      // 2. PENGAMBILAN THUMBNAIL UNTUK RECENT COURSES (Dari Total Terdaftar)
+        // 2. PENGAMBILAN THUMBNAIL UNTUK RECENT COURSES (Dari Total Terdaftar)
         $recentCourses = $user->enrolledCourses()->latest()->take(5)->get();
         $recentCourses->transform(function ($course) {
             $dbCourse = \Modules\LMS\Models\Course::where('slug', $course->slug)->first();
             if ($dbCourse) {
                 $course->description = $dbCourse->description;
-                $course->thumbnail = $dbCourse->thumbnail; 
+                $course->thumbnail = $dbCourse->thumbnail;
             }
             return $course;
         });
@@ -156,7 +156,22 @@ class UserDashboardController extends Controller
             'kabkota' => InstitutionType::KAB_KOTA,
         };
 
+        // Menentukan nama instansi final
         $instansi = $request->instansi === 'lainnya' ? $request->instansi_lainnya : $request->instansi;
+       
+        if ($request->instansi === 'lainnya' && !empty($request->instansi_lainnya)) {
+            \Modules\MasterData\Models\Institution::firstOrCreate(
+                [
+                    'name' => trim($request->instansi_lainnya),
+                    'type' => $request->asalInstansi === 'pusat' ? 'pusat' : 'daerah',
+                    'province_code' => $request->province_code,
+                    'regency_code' => $request->asalInstansi === 'provinsi' ? null : $request->regency_code,
+                ],
+                [
+                    'is_active' => true
+                ]
+            );
+        }
 
         $profile->institution_type = $institutionType->value;
         $profile->instansi = $instansi;
@@ -170,6 +185,7 @@ class UserDashboardController extends Controller
                 'regency_code' => $request->regency_code ?? null,
             ]
         );
+
         ToastMagic::success("Data instansi berhasil disimpan!");
         return redirect()->route('user.dashboard')->with('success', 'Data instansi berhasil disimpan.');
     }
