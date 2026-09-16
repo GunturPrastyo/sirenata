@@ -163,7 +163,7 @@
                 @endphp
 
                 <!-- Card Style Buku -->
-                <div
+                <div id="library-card-{{ $library->id }}"
                     class="group flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-[#13416B]/30 transition-all duration-300 hover:-translate-y-1">
 
                     {{-- Cover Area (Disesuaikan untuk mendukung URL Eksternal / Inisial maupun Upload Lokal) --}}
@@ -392,9 +392,8 @@
     </div>
     @push('scripts')
         <script>
-            // Daftarkan fungsi ke window (scope global) agar Alpine.js pasti bisa membacanya
+            // Fungsi Ajax Tracking Modal Perpustakaan
             window.recordLibraryHistory = function(libraryId) {
-                // Ambil token CSRF dengan aman
                 let token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
                     '{{ csrf_token() }}';
 
@@ -407,6 +406,40 @@
                     }
                 }).catch(error => console.error('Gagal mencatat riwayat:', error));
             }
+
+            // Fitur AUTO-OPEN & SCROLL Modal berdasarkan parameter URL
+            document.addEventListener('DOMContentLoaded', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const openModalId = urlParams.get('open');
+
+                if (openModalId) {
+                    // Cari elemen card berdasarkan ID
+                    const targetCard = document.getElementById('library-card-' + openModalId);
+
+                    if (targetCard) {
+                        // 1. Gulir layar secara halus (smooth) agar card berada di tengah (center)
+                        targetCard.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+
+                        // 2. Beri jeda 800 milidetik (0.8 detik) untuk menunggu animasi scroll selesai, lalu buka modal
+                        setTimeout(() => {
+                            window.dispatchEvent(new CustomEvent('open-modal', {
+                                detail: 'library-modal-' + openModalId
+                            }));
+                        }, 800);
+
+                    } else {
+                        // Fallback: Jika card tidak ditemukan di layar, langsung buka modal saja
+                        setTimeout(() => {
+                            window.dispatchEvent(new CustomEvent('open-modal', {
+                                detail: 'library-modal-' + openModalId
+                            }));
+                        }, 300);
+                    }
+                }
+            });
         </script>
     @endpush
 </x-dashboard::layouts.dashboard>

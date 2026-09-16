@@ -260,7 +260,8 @@
                         </div>
 
                         @if (isset($lastLibrary) && $lastLibrary)
-                            <a href="{{ route('user.library.index') }}?search={{ urlencode($lastLibrary->title) }}"
+                            <!-- Tautan mengarah ke halaman library dengan membawa parameter '?open=ID' -->
+                            <a href="{{ route('user.library.index') }}?open={{ $lastLibrary->id }}"
                                 class="flex items-center sm:items-start gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all group">
 
                                 <div
