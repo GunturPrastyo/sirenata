@@ -408,10 +408,9 @@
                                 </div>
                             @endforelse
                         </div>
-
-                        <!-- Efek Gradasi Blur/Fade tebal di Bagian Bawah -->
+                        <!-- Efek Gradasi Blur/Fade halus di Bagian Bawah -->
                         <div
-                            class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white via-white/95 to-transparent pointer-events-none z-10">
+                            class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none z-10">
                         </div>
                     </div>
                 </div>
