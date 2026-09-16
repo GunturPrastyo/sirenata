@@ -141,7 +141,7 @@
             @forelse($libraries as $library)
                 @php
                     $typeName = strtolower($library->libraryCategory->name ?? 'default');
-                    
+
                     $isVideo =
                         !empty($library->video_path) ||
                         str_contains($library->external_link ?? '', 'youtube') ||
@@ -166,13 +166,15 @@
                 <div
                     class="group flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-[#13416B]/30 transition-all duration-300 hover:-translate-y-1">
 
-                  {{-- Cover Area (Disesuaikan untuk mendukung URL Eksternal / Inisial maupun Upload Lokal) --}}
+                    {{-- Cover Area (Disesuaikan untuk mendukung URL Eksternal / Inisial maupun Upload Lokal) --}}
                     <div class="relative aspect-[3/4] overflow-hidden bg-slate-100">
                         @if ($library->cover_image)
                             @php
                                 // Cek apakah cover_image adalah URL eksternal (seperti dari ui-avatars atau link web) atau file lokal dari storage
                                 $isExternalCover = filter_var($library->cover_image, FILTER_VALIDATE_URL);
-                                $coverSource = $isExternalCover ? $library->cover_image : Storage::url($library->cover_image);
+                                $coverSource = $isExternalCover
+                                    ? $library->cover_image
+                                    : Storage::url($library->cover_image);
                             @endphp
                             <img src="{{ $coverSource }}" alt="{{ $library->title }}"
                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
@@ -185,29 +187,37 @@
                                     '8BB1CC', // Light Blue
                                     '79A736', // Muted Green
                                     'E58A18', // Muted Orange
-                                    '6E4B82'  // Muted Purple
+                                    '6E4B82', // Muted Purple
                                 ];
                                 $colorHex = $brandColors[abs(crc32($library->id)) % count($brandColors)];
-                                
+
                                 // Ambil inisial 2 kata pertama dari judul perpustakaan
                                 $words = explode(' ', trim($library->title));
-                                $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                                $initials = strtoupper(
+                                    substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''),
+                                );
                             @endphp
 
                             <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center relative overflow-hidden transition-transform duration-300 group-hover:scale-105"
-                                 style="background-color: #{{ $colorHex }};">
-                                
+                                style="background-color: #{{ $colorHex }};">
+
                                 <!-- Efek Watermark Lingkaran Transparan di Background -->
-                                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
-                                <div class="absolute -left-6 -top-6 w-24 h-24 bg-black/10 rounded-full blur-lg pointer-events-none"></div>
+                                <div
+                                    class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none">
+                                </div>
+                                <div
+                                    class="absolute -left-6 -top-6 w-24 h-24 bg-black/10 rounded-full blur-lg pointer-events-none">
+                                </div>
 
                                 <!-- Menampilkan Inisial Judul di Tengah -->
-                                <span class="text-4xl sm:text-5xl font-black text-white tracking-widest drop-shadow-md relative z-10 font-sans">
+                                <span
+                                    class="text-4xl sm:text-5xl font-black text-white tracking-widest drop-shadow-md relative z-10 font-sans">
                                     {{ $initials }}
                                 </span>
-                                
+
                                 <!-- Subtitle kecil penanda tipe dokumen -->
-                                <span class="mt-2 text-[10px] uppercase font-bold text-white/70 tracking-wider relative z-10 px-2 py-0.5 bg-black/15 rounded-md">
+                                <span
+                                    class="mt-2 text-[10px] uppercase font-bold text-white/70 tracking-wider relative z-10 px-2 py-0.5 bg-black/15 rounded-md">
                                     {{ $library->libraryCategory->name ?? 'Pustaka' }}
                                 </span>
                             </div>
@@ -216,7 +226,8 @@
                         {{-- Hover Overlay (Hanya Desktop) --}}
                         <div
                             class="hidden lg:flex absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center backdrop-blur-[2px]">
-                            <button x-data @click="$dispatch('open-modal', 'library-modal-{{ $library->id }}')"
+                            <button x-data
+                                @click="$dispatch('open-modal', 'library-modal-{{ $library->id }}'); window.recordLibraryHistory('{{ $library->id }}')"
                                 class="bg-white text-[#13416B] font-bold text-sm px-6 py-3 rounded-full shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-slate-50 hover:scale-105">
                                 <i class="fas {{ $isVideo ? 'fa-play' : 'fa-book-reader' }} mr-2"></i> Buka Koleksi
                             </button>
@@ -240,7 +251,8 @@
 
                         {{-- Action Button Dibuat Lebar Penuh --}}
                         <div class="mt-auto pt-4 border-t border-slate-100">
-                            <button x-data @click="$dispatch('open-modal', 'library-modal-{{ $library->id }}')"
+                            <button x-data
+                                @click="$dispatch('open-modal', 'library-modal-{{ $library->id }}'); window.recordLibraryHistory('{{ $library->id }}')"
                                 class="w-full py-2.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl group-hover:bg-[#13416B] group-hover:text-white group-hover:border-[#13416B] text-[11px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2">
                                 <span>{{ $buttonLabel }}</span>
                                 <i class="fas fa-arrow-right text-[10px]"></i>
@@ -378,4 +390,23 @@
             </div>
         @endif
     </div>
+    @push('scripts')
+        <script>
+            // Daftarkan fungsi ke window (scope global) agar Alpine.js pasti bisa membacanya
+            window.recordLibraryHistory = function(libraryId) {
+                // Ambil token CSRF dengan aman
+                let token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                    '{{ csrf_token() }}';
+
+                fetch(`/user/library/${libraryId}/track`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }).catch(error => console.error('Gagal mencatat riwayat:', error));
+            }
+        </script>
+    @endpush
 </x-dashboard::layouts.dashboard>
