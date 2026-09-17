@@ -12,7 +12,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <!-- Total Kursus (Dark Navy) -->
             <div
-                class="relative overflow-hidden bg-[#13416B] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
+                class="relative overflow-hidden bg-[#13416B] rounded-md p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
                 <div class="relative z-10 flex items-center justify-between">
                     <div>
                         <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Total Kursus
@@ -41,7 +41,7 @@
 
             <!-- Rata-rata Progress (Slate Blue) -->
             <div
-                class="relative overflow-hidden bg-[#547996] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
+                class="relative overflow-hidden bg-[#547996] rounded-md p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
                 <div class="relative z-10 flex items-center justify-between">
                     <div>
                         <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Rata-rata
@@ -69,7 +69,7 @@
 
             <!-- Kursus Selesai (Light Blue) -->
             <div
-                class="relative overflow-hidden bg-[#8BB1CC] rounded-xl p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
+                class="relative overflow-hidden bg-[#8BB1CC] rounded-md p-5 sm:p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group z-0">
                 <div class="relative z-10 flex items-center justify-between">
                     <div>
                         <p class="text-white/70 text-xs sm:text-sm font-bold uppercase mb-1 tracking-wider">Kursus
@@ -99,7 +99,7 @@
         <!-- ===================================== -->
         <!-- 2. ANALITIK EVALUASI FULL WIDTH       -->
         <!-- ===================================== -->
-        <div class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200">
+        <div class="bg-white rounded-md p-5 sm:p-6 shadow-sm border border-slate-200">
             <div
                 class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
@@ -151,7 +151,7 @@
 
                 <!-- CARD 1: Lanjutkan Belajar -->
                 <div
-                    class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                    class="bg-white rounded-md p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
                     <div>
                         <!-- Header Card -->
                         <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 shrink-0">
@@ -245,7 +245,7 @@
 
                 <!-- CARD 2: Terakhir Dilihat (Perpustakaan) -->
                 <div
-                    class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                    class="bg-white rounded-md p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center gap-3 mb-3 pb-3 border-b border-slate-100 shrink-0">
                             <div
@@ -316,7 +316,7 @@
             <div class="relative h-[480px] lg:h-auto">
                 <!-- Tambahan lg:absolute dan lg:inset-0 akan memaksa card ini menyalin tinggi kolom kiri di sebelahnya -->
                 <div
-                    class="bg-white rounded-xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full lg:absolute lg:inset-0 w-full overflow-hidden">
+                    class="bg-white rounded-md p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col h-full lg:absolute lg:inset-0 w-full overflow-hidden">
 
                     <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 shrink-0">
                         <div class="flex items-center gap-3">
