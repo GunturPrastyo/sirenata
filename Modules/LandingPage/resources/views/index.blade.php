@@ -291,7 +291,7 @@
 
                 <!-- CARD 1: Kanan Atas (z-10, DI BELAKANG ILUSTRASI ORANG) -->
                 <div
-                    class="absolute top-8 -right-4 w-[260px] bg-white rounded-lg shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
+                    class="absolute top-8 -right-4 w-[260px] bg-white rounded-xl shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
                     <div class="h-24 bg-[#184A78] flex items-center justify-center relative">
                         <span
                             class="absolute top-3 left-3 bg-white/10 border border-white/20 text-white text-[9px] font-bold px-2.5 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perkiraan</span>
@@ -307,7 +307,7 @@
 
                 <!-- CARD 2: Kiri Bawah (z-30, DI DEPAN ILUSTRASI ORANG) -->
                 <div
-                    class="absolute bottom-12 -left-10 w-[250px] bg-white rounded-2xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
+                    class="absolute bottom-12 -left-10 w-[250px] bg-white rounded-xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
                     <div class="h-20 bg-[#184A78] flex items-center justify-center relative">
                         <span
                             class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perencanaan</span>
@@ -323,7 +323,7 @@
 
                 <!-- CARD 3: Kiri Atas (z-10, DI BELAKANG ILUSTRASI ORANG) -->
                 <div
-                    class="absolute top-40 -left-14 w-[240px] bg-white rounded-2xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
+                    class="absolute top-40 -left-14 w-[240px] bg-white rounded-xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
                     <div class="h-16 bg-[#184A78] flex items-center justify-center relative">
                         <span
                             class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase tracking-wider">Teori</span>
@@ -393,48 +393,55 @@
     <!-- ========================================== -->
     <!-- FITUR UTAMA                                -->
     <!-- ========================================== -->
-    <section id="features" class="py-24 md:py-18 bg-white relative overflow-hidden">
+    <section id="features" class="py-24 md:py-28 bg-white relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
-                <div class="lg:sticky lg:top-24 reveal-left">
-                    <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
-                    {{-- <span class="text-[#13416B] font-kalam font-bold text-lg lg:text-2xl mb-2 block">
-                        Fitur Utama
-                    </span> --}}
+                <!-- Kiri: Teks & Penjelasan -->
+                <div class="lg:sticky lg:top-24 flex flex-col justify-center reveal-left">
+                    <!-- Teks dengan Font Kalam & Tanpa Background Badge -->
+                    <div class="flex items-center gap-4 mb-2">
+                        {{-- <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl">
+                            Fitur Unggulan
+                        </span>
+                        <div class="h-[2px] w-40 bg-[#13416B]/30"></div> --}}
+                    </div>
+
                     <!-- FONT OSWALD UNTUK TITLE -->
                     <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight"
                         style="font-family: 'Oswald', sans-serif;">
                         Solusi Terpadu <span class="text-[#13416B]">Perencanaan Ketenagakerjaan</span>
                     </h2>
                     <p class="text-slate-600 text-lg leading-relaxed mb-8">
-                        Aplikasi yang mendigitalkan pengumpulan data, perhitungan indeks, dan pemantauan capaian kinerja
-                        daerah secara terukur dan konsisten.
+                        Aplikasi yang mendigitalkan pengumpulan data, perhitungan rencana tenaga kerja, dan pemantauan
+                        capaian kinerja daerah secara terukur dan konsisten.
                     </p>
 
-                    <ul class="space-y-4 mb-8">
+                    <ul class="space-y-4 mb-2">
                         <li class="flex items-start gap-3 text-slate-700 font-medium">
                             <i class="fas fa-check-circle text-[#13416B] opacity-80 mt-1"></i> Perhitungan Rencana
-                            Tenaga Kerja (Makro & Mikro) otomatis.
+                            Tenaga Kerja (Makro & Mikro) secara otomatis dan akurat.
                         </li>
                         <li class="flex items-start gap-3 text-slate-700 font-medium">
-                            <i class="fas fa-check-circle text-[#13416B] opacity-80 mt-1"></i> Evaluasi 7 Indikator
-                            Pembangunan Ketenagakerjaan.
+                            <i class="fas fa-check-circle text-[#13416B] opacity-80 mt-1"></i> Fasilitas pelatihan
+                            mandiri
+                            berbasis LMS untuk aparatur daerah.
                         </li>
                         <li class="flex items-start gap-3 text-slate-700 font-medium">
-                            <i class="fas fa-check-circle text-[#13416B] opacity-80 mt-1"></i> Akses modul pembelajaran
-                            interaktif berjenjang.
+                            <i class="fas fa-check-circle text-[#13416B] opacity-80 mt-1"></i> Pemantauan dokumen RTKD
+                            dan pelaporan
+                            yang terintegrasi secara aman.
                         </li>
                     </ul>
                 </div>
 
-                <!-- Kanan: Bento Grid Fitur -->
+                <!-- Kanan: Bento Grid (Total 3 Card: 1 Full Width di atas, 2 Sejajar di bawah) -->
                 <div class="reveal-right w-full h-full flex flex-col justify-center">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
 
-                        <!-- Card 1: Kalkulator RTK (Span Full Width) -->
+                        <!-- Card 1: Penghitungan RTK (Full Width di atas) -->
                         <div
-                            class="sm:col-span-2 bg-[#13416B] rounded-lg p-6 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+                            class="sm:col-span-2 bg-[#13416B] rounded-xl p-6 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
                             <!-- Decorative Glow -->
                             <div
                                 class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-150">
@@ -447,57 +454,42 @@
                                     <i class="fas fa-calculator text-3xl"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-xl sm:text-xl font-bold text-white mb-2 tracking-tight">Penghitungan
-                                        RTK</h3>
-                                    <p class="text-white/80 leading-relaxed text-sm sm:text-base max-w-lg">
-                                        Alat bantu dalam perhitungan rencana tenaga kerja makro sesuai kondisi daerah
-                                        secara cepat dan presisi.
+                                    <h3 class="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">
+                                        Penghitungan RTK</h3>
+                                    <p class="text-white/80 leading-relaxed text-sm sm:text-base">
+                                        Alat bantu dalam perhitungan rencana tenaga kerja makro dan mikro sesuai kondisi
+                                        daerah secara cepat dan presisi.
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Card 2: Pengukuran IPK (Kotak Kiri) -->
+                        <!-- Card 2: LMS Terintegrasi (Sejajar di kiri bawah, tanpa badge & dekorasi) -->
                         <div
-                            class="bg-slate-50 rounded-lg p-6 sm:p-8 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between h-full">
+                            class="bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between">
                             <div>
                                 <div
-                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-100 mb-6 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
-                                    <i class="fas fa-chart-pie text-xl"></i>
-                                </div>
-                                <h3 class="text-lg font-bold text-slate-800 mb-2">Pengukuran IPK</h3>
-                                <p class="text-slate-600 leading-relaxed text-sm">
-                                    Penilaian otomatis 7 indikator dengan verifikasi berjenjang dari pusat dan daerah.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Card 3: LMS Terintegrasi (Kotak Kanan) -->
-                        <div
-                            class="bg-slate-50 rounded-lg p-6 sm:p-8 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between h-full">
-                            <div>
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-100 mb-6 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
+                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-200 mb-4 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
                                     <i class="fas fa-graduation-cap text-xl"></i>
                                 </div>
-                                <h3 class="text-lg font-bold text-slate-800 mb-2">LMS Terintegrasi</h3>
-                                <p class="text-slate-600 leading-relaxed text-sm">
-                                    Transfer pengetahuan terstruktur melalui modul pelatihan, video, dan sertifikasi
-                                    kelulusan.
+                                <h3 class="text-base font-bold text-slate-800 mb-1.5">LMS Terintegrasi</h3>
+                                <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
+                                    Transfer pengetahuan terstruktur melalui modul pelatihan, video pembelajaran, hingga
+                                    sertifikasi kelulusan resmi.
                                 </p>
                             </div>
                         </div>
 
-                        <!-- Card 4: Pelaporan & Arsip (Span Full Width) -->
+                        <!-- Card 3: Pelaporan & Arsip (Sejajar di kanan bawah) -->
                         <div
-                            class="sm:col-span-2 bg-gradient-to-r from-blue-50 to-slate-50 rounded-lg p-6 sm:p-8 border border-blue-100/60 hover:border-blue-200 hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row items-center gap-5 sm:gap-6 group">
-                            <div
-                                class="w-14 h-14 rounded-full bg-white text-[#13416B] flex items-center justify-center shrink-0 shadow-sm border border-blue-100 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                                <i class="fas fa-file-invoice text-2xl"></i>
-                            </div>
-                            <div class="text-center sm:text-left">
-                                <h3 class="text-lg font-bold text-slate-800 mb-1">Pelaporan & Arsip</h3>
-                                <p class="text-slate-600 text-sm sm:text-base max-w-xl">
+                            class="bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between">
+                            <div>
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-200 mb-4 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-file-invoice text-xl"></i>
+                                </div>
+                                <h3 class="text-base font-bold text-slate-800 mb-1.5">Pelaporan & Arsip</h3>
+                                <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
                                     Pemantauan dokumen RTKD dan fitur sanggahan nilai dengan integrasi bukti pendukung
                                     yang aman.
                                 </p>
@@ -506,6 +498,7 @@
 
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -541,7 +534,7 @@
                                 @endphp
 
                                 <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                                    class="block bg-white border border-slate-200 rounded-[20px] overflow-hidden hover:shadow-md hover:border-[#13416B]/30 hover:-translate-y-1 transition-all group mx-2">
+                                    class="block bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-[#13416B]/30 hover:-translate-y-1 transition-all group mx-2">
                                     <div
                                         class="relative h-[120px] bg-[#184A78] flex items-center justify-center overflow-hidden">
                                         @if ($course->category)
@@ -585,9 +578,13 @@
                     <!-- Kanan: Judul & Deskripsi Section Sticky -->
                     <div class="lg:sticky lg:top-12 order-1 lg:order-2 w-full text-left reveal-right">
                         <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
-                        <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
-                            LMS Terintegrasi
-                        </span>
+
+                        <div class="flex items-center gap-4 mb-2">
+                            <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
+                                LMS Terintegrasi
+                            </span>
+                            <div class="h-[2px] w-40 bg-[#13416B]/30"></div>
+                        </div>
                         <!-- FONT OSWALD UNTUK TITLE -->
                         <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight"
                             style="font-family: 'Oswald', sans-serif;">
@@ -598,7 +595,7 @@
                             berkelanjutan dari pusat ke daerah terkait Perencanaan Tenaga Kerja Makro, Mikro, dan IPK.
                         </p>
 
-                        <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-left">
+                        <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm text-left">
                             <div class="flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 bg-[#13416B] text-white rounded-xl flex items-center justify-center shrink-0 shadow-md border border-[#0f3354]">
@@ -774,7 +771,7 @@
         </div>
     </section>
 
-    <!-- ========================================== -->
+  <!-- ========================================== -->
     <!-- CTA SECTION                                -->
     <!-- ========================================== -->
     <section id="cta" class="py-24 md:py-36 lg:py-8 px-4 md:px-16 relative overflow-hidden"
@@ -784,7 +781,7 @@
             class="absolute inset-0 bg-blue-400/20 blur-[120px] rounded-full w-[80%] h-[80%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
         </div>
 
-        <!-- Ornamen SVG (L Chevron Raksasa Menyambung Siku + Lingkaran Kanan) -->
+        <!-- Ornamen SVG -->
         <div
             class="absolute -left-[50%] sm:-left-[20%] top-1/2 -translate-y-1/2 w-[1600px] h-[1600px] lg:w-[2200px] lg:h-[2200px] text-white opacity-[0.06] pointer-events-none z-0 transition-transform duration-1000">
             <svg viewBox="0 0 1600 1600" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
@@ -804,8 +801,8 @@
                         Siap Memulai Perencanaan?
                     </h2>
                     <p class="text-slate-300 mb-10 max-w-2xl text-md md:text-xl leading-relaxed">
-                        Tingkatkan efisiensi dan akurasi data dengan bergabung bersama
-                        {{ $stats['regencies'] ?? 514 }}+ daerah lain di seluruh Indonesia menggunakan SIRENATA.
+                        Tingkatkan efisiensi dan akurasi data dengan bergabung bersama 
+                        <span class="text-yellow-300 font-extrabold stat-counter" data-target="{{ $stats['regencies'] ?? 514 }}" data-suffix="+">0</span> daerah lain di seluruh Indonesia menggunakan <span class="text-yellow-300 font-extrabold">SIRENATA</span>.
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-start gap-4 reveal-up"
@@ -836,6 +833,7 @@
             </div>
         </div>
     </section>
+    
     <!-- ========================================== -->
     <!-- FOOTER                                     -->
     <!-- ========================================== -->
@@ -853,10 +851,10 @@
                     <div>
                         <div class="flex items-center gap-4 mb-6">
                             <img src="{{ asset('images/logo.png') }}" alt="SIRENATA"
-                                class="h-12 w-auto brightness-0 invert">
-                            <span class="text-2xl font-bold text-white tracking-tight">SIRENATA</span>
+                                class="h-8 w-auto brightness-0 invert">
+                            <span class="text-xl font-bold text-white tracking-tight">SIRENATA</span>
                         </div>
-                        <p class="text-slate-400 leading-relaxed text-base mb-10 max-w-md">
+                        <p class="text-slate-400 leading-relaxed text-sm mb-10 max-w-md">
                             Aplikasi digital terpadu untuk kebutuhan penyusunan RTK Makro, RTK Mikro, dan pengukuran
                             Indeks Pembangunan Ketenagakerjaan.
                         </p>
