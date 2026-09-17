@@ -4,8 +4,8 @@
         <a href="{{ route('admin-pusat.dashboard') }}"
             class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-pusat.dashboard')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-home text-lg"></i>
             </span>
@@ -13,18 +13,47 @@
         </a>
     </li>
 
-    <!-- Proyek -->
-    <li>
-        <a href="{{ route('admin-pusat.project.index') }}"
-            class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
-            {{ request()->routeIs('admin-pusat.project.*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
-            <span class="w-7 shrink-0 flex items-center justify-center">
-                <i class="fas fa-briefcase text-lg"></i>
+    <!-- Manajemen Proyek (Dropdown) -->
+    <li x-data="{ open: {{ request()->routeIs('admin-pusat.project.*', 'admin-pusat.prerequisite.*') ? 'true' : 'false' }} }">
+        <button @click="open = !open"
+            class="flex items-center gap-4 w-full px-4 py-3.5 rounded-2xl transition-all duration-200
+            {{ request()->routeIs('admin-pusat.project.*', 'admin-pusat.prerequisite.*')
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
+            <span class="w-6 shrink-0 flex items-center justify-center">
+                <i class="fas fa-briefcase text-[1.1rem]"></i>
             </span>
-            <span class="ms-3 text-[15px]">Proyek</span>
-        </a>
+
+            <span class="flex-1 text-left text-[15px]">Manajemen Proyek</span>
+
+            <svg class="w-4 h-4 shrink-0 transition-transform duration-200 text-slate-400"
+                :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+            </svg>
+        </button>
+
+        <ul x-show="open" x-collapse x-cloak class="mt-1 space-y-1">
+            <li>
+                <a href="{{ route('admin-pusat.project.index') }}"
+                    class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
+                    {{ request()->routeIs('admin-pusat.project.*')
+                        ? 'text-[#13416B] bg-slate-100 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
+                    Daftar Proyek
+                </a>
+            </li>
+            <li>
+                <!-- Ganti href="#" dengan route prasyarat Anda nanti -->
+                <a href="#"
+                    class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
+                    {{ request()->routeIs('admin-pusat.prerequisite.*')
+                        ? 'text-[#13416B] bg-slate-100 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
+                    Prasyarat Kursus
+                </a>
+            </li>
+        </ul>
     </li>
 
     <!-- Dropdown: Pelaporan -->
@@ -32,13 +61,14 @@
         <button @click="open = !open"
             class="flex items-center cursor-pointer w-full px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-pusat.rtkn*', 'admin-pusat.rtkd*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-file-alt text-lg"></i>
             </span>
-            <span class="flex-1 ms-3 text-left text-[15px]">Pelaporan</span>
-            <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span class="flex-1 ms-3 text-left text-[15px]">Pelaporan RTK</span>
+            <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
             </svg>
         </button>
@@ -70,8 +100,8 @@
         <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
             class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-pusat.rekapitulasi*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-users text-lg"></i>
             </span>
@@ -84,13 +114,14 @@
         <button @click="open = !open"
             class="flex items-center cursor-pointer w-full px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-pusat.survey-periods.*', 'admin-pusat.hasil-pemanfaatan-rtkd.*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-chart-pie text-lg"></i>
             </span>
             <span class="flex-1 ms-3 text-left text-[15px]">Pemanfaatan RTKD</span>
-            <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
             </svg>
         </button>
@@ -122,27 +153,55 @@
         <a href="{{ route('admin-pusat.management-course.courses.index') }}"
             class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-pusat.management-course*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-graduation-cap text-lg"></i>
             </span>
-            <span class="ms-3 text-[15px]">Management Course</span>
+            <span class="ms-3 text-[15px]">Manajemen Kursus</span>
         </a>
     </li>
 
-    <!-- Perpustakaan (Single Menu) -->
-    <li>
-        <a href="{{ route('admin-pusat.libraries.index') }}"
-            class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
+    <!-- Manajemen Perpustakaan (Dropdown) -->
+    <li x-data="{ open: {{ request()->routeIs('admin-pusat.libraries.*', 'admin-pusat.library-categories.*') ? 'true' : 'false' }} }">
+        <button @click="open = !open"
+            class="flex items-center gap-4 w-full px-4 py-3.5 rounded-2xl transition-all duration-200
             {{ request()->routeIs('admin-pusat.libraries.*', 'admin-pusat.library-categories.*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
-            <span class="w-7 shrink-0 flex items-center justify-center">
-                <i class="fas fa-bookmark text-lg"></i>
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
+            <span class="w-6 shrink-0 flex items-center justify-center">
+                <i class="fas fa-bookmark text-[1.1rem]"></i>
             </span>
-            <span class="ms-3 text-[15px]">Perpustakaan</span>
-        </a>
+
+            <span class="flex-1 text-left text-[15px]">Manajemen Perpustakaan</span>
+
+            <svg class="w-4 h-4 shrink-0 transition-transform duration-200 text-slate-400"
+                :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+            </svg>
+        </button>
+
+        <ul x-show="open" x-collapse x-cloak class="mt-1 space-y-1">
+            <li>
+                <a href="{{ route('admin-pusat.library-categories.index') }}"
+                    class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
+                    {{ request()->routeIs('admin-pusat.library-categories.*')
+                        ? 'text-[#13416B] bg-slate-100 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
+                    Kategori
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin-pusat.libraries.index') }}"
+                    class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
+                    {{ request()->routeIs('admin-pusat.libraries.*')
+                        ? 'text-[#13416B] bg-slate-100 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
+                    Koleksi
+                </a>
+            </li>
+        </ul>
     </li>
 
     <!-- Sertifikat -->
@@ -150,8 +209,8 @@
         <a href="{{ route('admin-pusat.certificates.index') }}"
             class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-pusat.certificates.*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-award text-lg"></i>
             </span>

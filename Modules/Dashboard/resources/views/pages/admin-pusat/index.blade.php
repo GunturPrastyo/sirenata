@@ -8,7 +8,7 @@
 
             <!-- RTK Disetujui (Navy #13416B) -->
             <div
-                class="relative overflow-hidden bg-[#13416B] text-white rounded-lg p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
+                class="relative overflow-hidden bg-[#13416B] text-white rounded-md p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
                 <!-- Efek Decorative Background & Watermark Icon -->
                 <div
                     class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
@@ -29,7 +29,7 @@
 
             <!-- RTK Menunggu Verifikasi (Slate Blue #547996) -->
             <div
-                class="relative overflow-hidden bg-[#547996] text-white rounded-lg p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
+                class="relative overflow-hidden bg-[#547996] text-white rounded-md p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
                 <!-- Efek Decorative Background & Watermark Icon -->
                 <div
                     class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
@@ -50,7 +50,7 @@
 
             <!-- RTK Ditolak (Light Blue #8BB1CC) -->
             <div
-                class="relative overflow-hidden bg-[#8BB1CC] text-white rounded-lg p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
+                class="relative overflow-hidden bg-[#8BB1CC] text-white rounded-md p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
                 <!-- Efek Decorative Background & Watermark Icon -->
                 <div
                     class="absolute -right-6 -bottom-6 text-white opacity-[0.1] group-hover:opacity-[0.15] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
@@ -71,7 +71,7 @@
 
             <!-- RTK Berlaku (Muted Green #79A736) -->
             <div
-                class="relative overflow-hidden bg-[#79A736] text-white rounded-lg p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
+                class="relative overflow-hidden bg-[#79A736] text-white rounded-md p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
                 <!-- Efek Decorative Background & Watermark Icon -->
                 <div
                     class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
@@ -94,7 +94,7 @@
         <!-- ========================================================= -->
         <!-- 2. GRAFIK KOMPARASI RTK HORIZONTAL                        -->
         <!-- ========================================================= -->
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden">
             <div
                 class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div class="flex items-center gap-3">
@@ -146,7 +146,7 @@
         <!-- ========================================================= -->
         <!-- 3. DISTRIBUSI E-LEARNING (SPLIT HTML LEADERBOARD)         -->
         <!-- ========================================================= -->
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden">
             <div
                 class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
