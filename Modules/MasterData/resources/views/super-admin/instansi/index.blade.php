@@ -35,6 +35,7 @@
                     <tr>
                         <x-table.th align="center" class="w-12">No</x-table.th>
                         <x-table.th>Nama Dinas / Instansi</x-table.th>
+                        <x-table.th>Kategori Wilayah</x-table.th>
                         <x-table.th align="center" class="w-40">Tanggal Dibuat</x-table.th>
                         <x-table.th align="center" class="w-32">Status</x-table.th>
                         <x-table.th align="center" class="w-24">Aksi</x-table.th>
@@ -49,11 +50,32 @@
                             <x-table.td>
                                 <div class="text-sm font-semibold text-slate-900">{{ $instansi->name }}</div>
                             </x-table.td>
+                            <x-table.td>
+                                <!-- Logika pembeda Tingkat Wilayah berdasarkan ada/tidaknya regency_code -->
+                                @if(empty($instansi->regency_code))
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#13416B]/10 text-[#13416B] border border-[#13416B]/20">
+                                        Tingkat Provinsi
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-amber-100 text-amber-700 border border-amber-200">
+                                        Tingkat Kab/Kota
+                                    </span>
+                                @endif
+                            </x-table.td>
                             <x-table.td align="center">
                                 <p class="text-slate-600">{{ $instansi->created_at ? $instansi->created_at->format('d M Y H:i') : '-' }}</p>
                             </x-table.td>
                             <x-table.td align="center">
-                                <x-badge color="{{ $instansi->is_active ? 'emerald' : 'red' }}" text="{{ $instansi->is_active ? 'Aktif' : 'Tidak Aktif' }}" />
+                                <!-- Modifikasi Badge Aktif (Bg Hijau, Teks Putih) -->
+                                @if($instansi->is_active)
+                                    <span class="inline-flex items-center px-3 py-1 rounded text-xs font-bold bg-green-600 text-white shadow-sm">
+                                        Aktif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-3 py-1 rounded text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200">
+                                        Tidak Aktif
+                                    </span>
+                                @endif
                             </x-table.td>
                             <x-table.td align="center">
                                 <x-table.action>
@@ -109,7 +131,7 @@
                         </x-modal>
                     @empty
                         <tr>
-                            <x-table.td colspan="5" align="center" class="py-8">
+                            <x-table.td colspan="6" align="center" class="py-8">
                                 <p class="text-slate-500">Belum ada data instansi daerah.</p>
                             </x-table.td>
                         </tr>
@@ -122,6 +144,7 @@
             </div>
         </x-dashboard::filter-card>
     </div>
+    
     <x-modal name="create-instansi" title="Tambah Instansi Baru">
         <form action="{{ route('super-admin.instansi.store') }}" method="POST" class="space-y-4">
             @csrf
