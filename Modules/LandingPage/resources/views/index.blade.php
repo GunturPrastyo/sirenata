@@ -277,9 +277,19 @@
                     class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-slate-200/60 animate-[spin_60s_linear_infinite] z-0">
                 </div>
 
-                <!-- BULAT ABSTRAK (KUNING STATIC) DI BELAKANG -->
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[45%] w-[380px] h-[320px] bg-gradient-to-tr from-amber-400 to-yellow-200 z-0 opacity-80"
+                <!-- BULAT ABSTRAK (KUNING STATIC) + GARIS GELOMBANG SESUAI GAMBAR -->
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[45%] w-[380px] h-[320px] bg-gradient-to-tr from-amber-400 to-amber-300 z-0 opacity-90 overflow-hidden"
                     style="border-radius: 60% 40% 30% 70% / 60% 40% 30% 40%;">
+
+                    <!-- Gelombang Garis / Pita Organik (Soft Overlay) -->
+                    <svg class="absolute inset-0 w-full h-full opacity-30 pointer-events-none" viewBox="0 0 400 350"
+                        fill="none" preserveAspectRatio="none">
+                        <path d="M-50 80 C 80 180, 250 110, 450 140 L 450 200 C 250 170, 80 240, -50 140 Z"
+                            fill="white" />
+                        <path d="M-50 160 C 80 260, 250 190, 450 220 L 450 280 C 250 250, 80 320, -50 220 Z"
+                            fill="white" />
+                        <path d="M-50 0 C 80 100, 250 30, 450 60 L 450 110 C 250 80, 80 150, -50 50 Z" fill="white" />
+                    </svg>
                 </div>
 
                 <!-- ILUSTRASI ORANG DI TENGAH (z-20) -->
@@ -287,6 +297,17 @@
                     class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 w-[420px] pointer-events-none drop-shadow-2xl">
                     <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana"
                         class="w-full h-auto object-contain">
+                </div>
+
+                <!-- DEKORASI TITIK-TITIK MATRIX PROFESIONAL (SVG GRID PATTERN) -->
+                <div class="absolute bottom-24 right-4 z-10 w-10 h-24 pointer-events-none opacity-40">
+                    <svg width="100%" height="100%">
+                        <pattern id="dot-grid" x="0" y="0" width="12" height="12"
+                            patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1.5" class="fill-yellow-600" />
+                        </pattern>
+                        <rect width="100%" height="100%" fill="url(#dot-grid)" />
+                    </svg>
                 </div>
 
                 <!-- CARD 1: Kanan Atas (z-10, DI BELAKANG ILUSTRASI ORANG) -->
@@ -771,7 +792,7 @@
         </div>
     </section>
 
-  <!-- ========================================== -->
+    <!-- ========================================== -->
     <!-- CTA SECTION                                -->
     <!-- ========================================== -->
     <section id="cta" class="py-24 md:py-36 lg:py-8 px-4 md:px-16 relative overflow-hidden"
@@ -801,8 +822,10 @@
                         Siap Memulai Perencanaan?
                     </h2>
                     <p class="text-slate-300 mb-10 max-w-2xl text-md md:text-xl leading-relaxed">
-                        Tingkatkan efisiensi dan akurasi data dengan bergabung bersama 
-                        <span class="text-yellow-300 font-extrabold stat-counter" data-target="{{ $stats['regencies'] ?? 514 }}" data-suffix="+">0</span> daerah lain di seluruh Indonesia menggunakan <span class="text-yellow-300 font-extrabold">SIRENATA</span>.
+                        Tingkatkan efisiensi dan akurasi data dengan bergabung bersama
+                        <span class="text-yellow-300 font-extrabold stat-counter"
+                            data-target="{{ $stats['regencies'] ?? 514 }}" data-suffix="+">0</span> daerah lain di
+                        seluruh Indonesia menggunakan <span class="text-yellow-300 font-extrabold">SIRENATA</span>.
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-start gap-4 reveal-up"
@@ -833,7 +856,7 @@
             </div>
         </div>
     </section>
-    
+
     <!-- ========================================== -->
     <!-- FOOTER                                     -->
     <!-- ========================================== -->
