@@ -505,13 +505,13 @@
     <!-- ========================================== -->
     @if (isset($courses) && $courses->count() > 0)
         <section id="courses"
-            class="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50/60 border-t border-slate-200 relative overflow-hidden">
+            class="pb-8 pt-20 px-4 sm:px-6 lg:px-8 bg-slate-50/60 border-t border-slate-200 relative overflow-hidden">
             <div
                 class="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:gap-16">
 
                 <div class="order-1 min-w-0 lg:order-1">
                     <!-- Grid Kursus Satu Kolom -->
-                    <div class="custom-scrollbar max-h-[680px] scroll-smooth overflow-y-auto overscroll-contain pr-3 lg:mt-2">
+                    <div class="custom-scrollbar h-[780px] max-h-[780px] scroll-smooth overflow-y-auto overscroll-contain pr-3 lg:mt-2">
                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2 reveal-up" style="transition-delay: 0.15s;">
                     @foreach ($courses as $course)
                         @php
@@ -543,11 +543,11 @@
                         @endphp
 
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                            class="grid h-full w-full grid-cols-1 overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl sm:grid-cols-[minmax(130px,38%)_1fr]">
+                            class="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl">
 
                             <!-- Thumbnail Kursus -->
                             <div
-                                class="relative min-h-[170px] bg-[#184A78] flex h-full items-center justify-center overflow-hidden sm:min-h-[190px]">
+                                class="relative h-[180px] bg-[#184A78] flex items-center justify-center overflow-hidden">
                                 @if ($thumbUrl)
                                     <img src="{{ $thumbUrl }}" alt="{{ $course->name }}"
                                         class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -569,7 +569,7 @@
                             </div>
 
                             <!-- Detail Konten -->
-                            <div class="flex min-h-[170px] flex-col justify-center p-5 text-left sm:min-h-[190px]">
+                            <div class="flex min-h-[150px] flex-col justify-center p-5 text-left">
                                 <h3
                                     class="mb-2 line-clamp-2 font-bold text-slate-800 text-base group-hover:text-[#13416B] transition-colors">
                                     {{ $course->name }}
@@ -581,7 +581,7 @@
 
                             <!-- Card Footer -->
                             <div
-                                class="col-span-1 flex items-center justify-between border-t border-slate-100 px-5 pb-5 pt-3 text-xs font-medium text-slate-500 sm:col-span-2">
+                                class="flex items-center justify-between border-t border-slate-100 px-5 pb-5 pt-3 text-xs font-medium text-slate-500">
                                 <span
                                     class="flex items-center gap-1.5 rounded-md border border-slate-100 bg-slate-50 px-2 py-1 text-slate-600">
                                     <i class="fas fa-layer-group text-[#13416B]"></i>
@@ -615,6 +615,10 @@
                             style="font-family: 'Oswald', sans-serif;">
                             Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
                         </h2>
+                        <p class="mt-4 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
+                            Ikuti pelatihan daring yang terstruktur untuk memperkuat kompetensi dan memperluas pengetahuan
+                            ketenagakerjaan secara mandiri.
+                        </p>
                     </div>
 
                     <div class="relative hidden h-[560px] items-center justify-center lg:flex reveal-right">
@@ -660,10 +664,46 @@
                     </div>
 
                     <img src="{{ asset('images/asn-learning.png') }}" alt="Aparatur sedang belajar menggunakan laptop"
-                        class="relative z-10 w-[500px] max-w-none translate-y-8 object-contain drop-shadow-2xl animate-float">
+                        class="relative z-10 w-[500px] max-w-none translate-y-2 object-contain drop-shadow-2xl animate-float">
                     </div>
                 </div>
 
+            </div>
+        </section>
+    @endif
+
+    <!-- ========================================== -->
+    <!-- LMS STATS BANNER                           -->
+    <!-- ========================================== -->
+    @if (isset($courses) && $courses->count() > 0)
+        @php
+            $lmsCourseCount = $courses->count();
+            $lmsModuleCount = $courses->sum(
+                fn($course) =>
+                    $course->sections_count ?? (isset($course->sections) ? collect($course->sections)->count() : 0),
+            );
+            $lmsCategoryCount = $courses->pluck('category_id')->filter()->unique()->count();
+        @endphp
+
+        <section class="overflow-hidden border-t border-slate-800 bg-slate-900 pb-12 pt-6">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 reveal-up">
+                <div class="grid grid-cols-2 gap-8 divide-x-0 md:grid-cols-3 md:divide-x md:divide-slate-700">
+                    <div class="p-4 text-center">
+                        <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
+                            data-target="{{ $lmsCourseCount }}" data-suffix="" style="font-family: 'Oswald', sans-serif;">0</h4>
+                        <p class="text-sm font-medium text-slate-400">Pelatihan Tersedia</p>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
+                            data-target="{{ $lmsModuleCount }}" data-suffix="+" style="font-family: 'Oswald', sans-serif;">0</h4>
+                        <p class="text-sm font-medium text-slate-400">Modul Pembelajaran</p>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
+                            data-target="{{ $lmsCategoryCount }}" data-suffix="" style="font-family: 'Oswald', sans-serif;">0</h4>
+                        <p class="text-sm font-medium text-slate-400">Bidang Keahlian</p>
+                    </div>
+                </div>
             </div>
         </section>
     @endif
