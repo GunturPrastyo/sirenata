@@ -468,7 +468,7 @@
 
                 <!-- Kanan: Bento Grid Fitur -->
                 <div class="grid grid-cols-2 gap-4 reveal-right">
-                    <div class="col-span-2 rounded-md bg-[#13416B] p-6 text-white shadow-xl sm:p-8">
+                    <div class="col-span-2 rounded-xl bg-[#13416B] p-6 text-white shadow-xl sm:p-8">
                         <div class="mb-6 flex items-start justify-between gap-4">
                             <span class="flex h-12 w-12 items-center justify-center rounded-md bg-white/15 text-xl text-white">
                                 <i class="fas fa-chart-line"></i>
@@ -479,7 +479,7 @@
                         <p class="max-w-md text-sm leading-relaxed text-white/70">Perhitungan Rencana Tenaga Kerja Makro dan Mikro dilakukan secara otomatis dengan data yang konsisten.</p>
                     </div>
 
-                    <div class="rounded-md border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                         <span class="mb-8 flex h-14 w-14 items-center justify-center rounded-md bg-[#E8F2F8] text-xl text-[#13416B]">
                             <i class="fas fa-graduation-cap"></i>
                         </span>
@@ -487,7 +487,7 @@
                         <p class="text-sm leading-relaxed text-slate-500">Pelatihan terstruktur untuk aparatur daerah.</p>
                     </div>
 
-                    <div class="rounded-md border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                         <span class="mb-8 flex h-14 w-14 items-center justify-center rounded-md bg-[#E8F2F8] text-xl text-[#13416B]">
                             <i class="fas fa-shield-alt"></i>
                         </span>
@@ -588,10 +588,6 @@
                                     {{ $modulesCount }} Modul
                                 </span>
 
-                                <span
-                                    class="flex items-center gap-1 text-xs font-bold text-[#13416B] transition-transform group-hover:translate-x-1">
-                                    Akses <i class="fas fa-arrow-right text-[10px]"></i>
-                                </span>
                             </div>
 
                         </a>
@@ -604,12 +600,12 @@
                 <!-- Kanan: Ilustrasi LMS -->
                 <div class="order-2 min-w-0 lg:order-2 lg:sticky lg:top-24">
                     <div class="mb-8 max-w-2xl text-left reveal-right">
-                        <div class="mb-3 flex items-center gap-3">
+                        {{-- <div class="mb-3 flex items-center gap-3">
                             <span class="font-kalam text-lg font-bold text-[#13416B]">
                                 LMS Terintegrasi
                             </span>
                             <div class="h-[2px] w-16 bg-[#13416B]/30"></div>
-                        </div>
+                        </div> --}}
 
                         <h2 class="text-3xl font-extrabold leading-tight text-slate-900 sm:text-4xl md:text-5xl"
                             style="font-family: 'Oswald', sans-serif;">
@@ -839,7 +835,18 @@
                 <!-- Kolom Kanan: Ilustrasi Bantuan -->
                 <div class="relative hidden lg:flex justify-center items-center reveal-right h-full">
                     <div
-                        class="absolute right-4 top-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-full z-0">
+                        class="absolute right-0 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full border border-[#13416B]/15 border-dashed animate-[spin_55s_linear_infinite]">
+                    </div>
+                    <div
+                        class="absolute right-5 top-1/2 h-[380px] w-[380px] -translate-y-1/2 overflow-hidden bg-gradient-to-tr from-amber-400 to-yellow-200 opacity-90"
+                        style="border-radius: 44% 56% 62% 38% / 52% 42% 58% 48%;">
+                        <svg class="absolute inset-0 h-full w-full opacity-25" viewBox="0 0 380 380" fill="none"
+                            preserveAspectRatio="none" aria-hidden="true">
+                            <path d="M48 -24C96 72 10 130 58 222C88 282 38 336 60 404" stroke="white" stroke-width="18" />
+                            <path d="M132 -24C180 72 94 130 142 222C172 282 122 336 144 404" stroke="white" stroke-width="18" />
+                            <path d="M216 -24C264 72 178 130 226 222C256 282 206 336 228 404" stroke="white" stroke-width="18" />
+                            <path d="M300 -24C348 72 262 130 310 222C340 282 290 336 312 404" stroke="white" stroke-width="18" />
+                        </svg>
                     </div>
                     <img src="{{ asset('images/faq-illustration.webp') }}" alt="Pusat Bantuan Kemnaker"
                         class="relative z-10 w-full max-w-[520px] h-auto object-contain drop-shadow-2xl animate-float mt-8"
