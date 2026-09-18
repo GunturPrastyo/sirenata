@@ -509,7 +509,7 @@
             <div
                 class="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:gap-16">
 
-                <div class="order-1 min-w-0 lg:order-1">
+                <div class="order-2 min-w-0 lg:order-1">
                     <!-- Grid Kursus Satu Kolom -->
                     <div class="custom-scrollbar h-[780px] max-h-[780px] scroll-smooth overflow-y-auto overscroll-contain pr-3 lg:mt-2">
                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2 reveal-up" style="transition-delay: 0.15s;">
@@ -598,7 +598,7 @@
                 </div>
 
                 <!-- Kanan: Ilustrasi LMS -->
-                <div class="order-2 min-w-0 lg:order-2 lg:sticky lg:top-24">
+                <div class="order-1 min-w-0 lg:order-2 lg:sticky lg:top-24">
                     <div class="mb-8 max-w-2xl text-left reveal-right">
                         {{-- <div class="mb-3 flex items-center gap-3">
                             <span class="font-kalam text-lg font-bold text-[#13416B]">
