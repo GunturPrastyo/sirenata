@@ -466,51 +466,34 @@
                     </ul>
                 </div>
 
-                <!-- Kanan: Ilustrasi Fitur LMS -->
-                <div class="relative hidden lg:flex h-[520px] items-center justify-center reveal-right">
-                    <div
-                        class="absolute left-1/2 top-1/2 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-[#E8F2F8] via-[#D5E8F3] to-amber-100 opacity-90 animate-blob"
-                        style="border-radius: 42% 58% 63% 37% / 48% 40% 60% 52%;">
+                <!-- Kanan: Bento Grid Fitur -->
+                <div class="grid grid-cols-2 gap-4 reveal-right">
+                    <div class="col-span-2 rounded-3xl bg-[#13416B] p-6 text-white shadow-xl sm:p-8">
+                        <div class="mb-6 flex items-start justify-between gap-4">
+                            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-400 text-xl text-[#13416B]">
+                                <i class="fas fa-chart-line"></i>
+                            </span>
+                            <span class="rounded-full border border-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/70">Terukur</span>
+                        </div>
+                        <h3 class="mb-2 text-xl font-extrabold sm:text-2xl">Perencanaan lebih akurat</h3>
+                        <p class="max-w-md text-sm leading-relaxed text-white/70">Perhitungan Rencana Tenaga Kerja Makro dan Mikro dilakukan secara otomatis dengan data yang konsisten.</p>
                     </div>
 
-                    <div
-                        class="absolute left-1/2 top-1/2 h-[430px] w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#13416B]/15 border-dashed animate-[spin_45s_linear_infinite]">
-                    </div>
-
-                    <svg class="absolute inset-0 h-full w-full opacity-50" viewBox="0 0 560 520" fill="none"
-                        aria-hidden="true">
-                        <path d="M72 350C128 155 267 91 469 158" stroke="#13416B" stroke-width="1.5"
-                            stroke-dasharray="5 8" />
-                        <circle cx="72" cy="350" r="5" fill="#F59E0B" />
-                        <circle cx="469" cy="158" r="5" fill="#13416B" />
-                    </svg>
-
-                    <div class="absolute bottom-10 left-2 z-20 w-44 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-xl animate-card-float-2">
-                        <div class="mb-3 flex items-center justify-between">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Progres LMS</span>
-                            <i class="fas fa-chart-line text-sm text-emerald-500"></i>
-                        </div>
-                        <div class="mb-2 flex items-end justify-between">
-                            <strong class="text-2xl font-extrabold text-[#13416B]">78%</strong>
-                            <span class="text-[10px] font-bold text-emerald-500">+12%</span>
-                        </div>
-                        <div class="h-2 overflow-hidden rounded-full bg-slate-100">
-                            <div class="h-full w-[78%] rounded-full bg-emerald-400"></div>
-                        </div>
-                    </div>
-
-                    <div class="absolute right-0 top-12 z-20 flex items-center gap-3 rounded-2xl border border-white/80 bg-[#13416B] px-4 py-3 text-white shadow-xl animate-card-float-1">
-                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 text-[#13416B]">
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm sm:p-6">
+                        <span class="mb-8 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
                             <i class="fas fa-graduation-cap"></i>
                         </span>
-                        <div>
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-white/60">Status belajar</p>
-                            <p class="text-sm font-bold">Modul aktif</p>
-                        </div>
+                        <h3 class="mb-2 text-lg font-extrabold text-slate-800">LMS mandiri</h3>
+                        <p class="text-sm leading-relaxed text-slate-500">Pelatihan terstruktur untuk aparatur daerah.</p>
                     </div>
 
-                    <img src="{{ asset('images/asn-learning.png') }}" alt="Aparatur sedang belajar menggunakan laptop"
-                        class="relative z-10 w-[500px] max-w-none translate-y-8 object-contain drop-shadow-2xl animate-float">
+                    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-5 shadow-sm sm:p-6">
+                        <span class="mb-8 flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-400 text-[#13416B]">
+                            <i class="fas fa-shield-alt"></i>
+                        </span>
+                        <h3 class="mb-2 text-lg font-extrabold text-slate-800">Terintegrasi</h3>
+                        <p class="text-sm leading-relaxed text-slate-600">Dokumen RTKD dan pelaporan tersimpan aman.</p>
+                    </div>
                 </div>
 
             </div>
@@ -529,30 +512,13 @@
             @endphp
 
             <!-- Main Wrapper x-data melingkupi Kartu & Pagination -->
-            <div x-data="{ currentPage: 1, perPage: {{ $coursePerPage }}, totalPages: {{ $coursePageCount }} }" class="mx-auto max-w-7xl">
+            <div x-data="{ currentPage: 1, perPage: {{ $coursePerPage }}, totalPages: {{ $coursePageCount }} }"
+                class="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:gap-16">
 
-                <!-- Header Section -->
-                <div class="mb-10 max-w-3xl text-left reveal-up">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-[#13416B] font-kalam font-bold text-lg">
-                            LMS Terintegrasi
-                        </span>
-                        <div class="h-[2px] w-16 bg-[#13416B]/30"></div>
-                    </div>
-
-                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight"
-                        style="font-family: 'Oswald', sans-serif;">
-                        Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
-                    </h2>
-
-                    <p class="text-slate-600 text-base sm:text-lg mt-3 leading-relaxed">
-                        Fasilitas pelatihan daring terstruktur sebagai sarana transfer pengetahuan
-                        ketenagakerjaan dari pusat ke daerah secara berkelanjutan.
-                    </p>
-                </div>
-
-                <!-- Grid Masonry Kursus -->
-                <div class="columns-1 gap-5 md:columns-2 xl:columns-3 reveal-up" style="transition-delay: 0.15s;">
+                <div class="min-w-0">
+                    <!-- Grid Masonry Kursus -->
+                    <div class="custom-scrollbar max-h-[680px] overflow-y-auto pr-2 lg:mt-2">
+                        <div class="columns-1 gap-5 md:columns-2 reveal-up" style="transition-delay: 0.15s;">
                     @foreach ($courses as $course)
                         @php
                             // Penanganan URL Gambar Thumbnail
@@ -639,7 +605,8 @@
 
                         </a>
                     @endforeach
-                </div>
+                        </div>
+                    </div>
 
                 <!-- Navigasi Pagination (Tetap di dalam x-data) -->
                 @if ($coursePageCount > 1)
@@ -668,6 +635,71 @@
                         </button>
                     </nav>
                 @endif
+
+                </div>
+
+                <!-- Kanan: Ilustrasi LMS -->
+                <div class="min-w-0 lg:sticky lg:top-24">
+                    <div class="mb-8 max-w-2xl text-left reveal-right">
+                        <div class="mb-3 flex items-center gap-3">
+                            <span class="font-kalam text-lg font-bold text-[#13416B]">
+                                LMS Terintegrasi
+                            </span>
+                            <div class="h-[2px] w-16 bg-[#13416B]/30"></div>
+                        </div>
+
+                        <h2 class="text-3xl font-extrabold leading-tight text-slate-900 sm:text-4xl md:text-5xl"
+                            style="font-family: 'Oswald', sans-serif;">
+                            Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
+                        </h2>
+                    </div>
+
+                    <div class="relative hidden h-[560px] items-center justify-center lg:flex reveal-right">
+                    <div
+                        class="absolute left-1/2 top-1/2 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-[#E8F2F8] via-[#D5E8F3] to-amber-100 opacity-90 animate-blob"
+                        style="border-radius: 42% 58% 63% 37% / 48% 40% 60% 52%;">
+                    </div>
+
+                    <div
+                        class="absolute left-1/2 top-1/2 h-[430px] w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#13416B]/15 border-dashed animate-[spin_45s_linear_infinite]">
+                    </div>
+
+                    <svg class="absolute inset-0 h-full w-full opacity-50" viewBox="0 0 560 620" fill="none"
+                        aria-hidden="true">
+                        <path d="M72 430C128 205 267 111 469 188" stroke="#13416B" stroke-width="1.5"
+                            stroke-dasharray="5 8" />
+                        <circle cx="72" cy="430" r="5" fill="#F59E0B" />
+                        <circle cx="469" cy="188" r="5" fill="#13416B" />
+                    </svg>
+
+                    <div class="absolute bottom-10 left-0 z-20 w-44 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-xl animate-card-float-2">
+                        <div class="mb-3 flex items-center justify-between">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Progres Kursus</span>
+                            <i class="fas fa-chart-line text-sm text-emerald-500"></i>
+                        </div>
+                        <div class="mb-2 flex items-end justify-between">
+                            <strong class="text-2xl font-extrabold text-[#13416B]">78%</strong>
+                            <span class="text-[10px] font-bold text-emerald-500">+12%</span>
+                        </div>
+                        <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+                            <div class="h-full w-[78%] rounded-full bg-emerald-400"></div>
+                        </div>
+                    </div>
+
+                    <div class="absolute right-0 top-16 z-20 flex items-center gap-3 rounded-2xl border border-white/80 bg-[#13416B] px-4 py-3 text-white shadow-xl animate-card-float-1">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 text-[#13416B]">
+                            <i class="fas fa-award"></i>
+                        </span>
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-white/60">Sertifikat diperoleh</p>
+                            <p class="text-sm font-bold">Kursus selesai</p>
+                        </div>
+                    </div>
+
+                    <img src="{{ asset('images/asn-learning.png') }}" alt="Aparatur sedang belajar menggunakan laptop"
+                        class="relative z-10 w-[500px] max-w-none translate-y-8 object-contain drop-shadow-2xl animate-float">
+                    </div>
+                </div>
 
             </div>
         </section>
