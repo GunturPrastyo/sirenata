@@ -455,16 +455,16 @@
 
                     <ul class="space-y-4 mb-2">
                         <li class="flex items-start gap-3 text-slate-700 font-medium">
-                            <i class="fas fa-check-circle text-[#13416B] opacity-80 mt-1"></i> Perhitungan Rencana
+                            <i class="fas fa-check-circle text-emerald-500 opacity-80 mt-1"></i> Perhitungan Rencana
                             Tenaga Kerja (Makro & Mikro) secara otomatis dan akurat.
                         </li>
                         <li class="flex items-start gap-3 text-slate-700 font-medium">
-                            <i class="fas fa-check-circle text-[#13416B] opacity-80 mt-1"></i> Fasilitas pelatihan
+                            <i class="fas fa-check-circle text-emerald-500 opacity-80 mt-1"></i> Fasilitas pelatihan
                             mandiri
                             berbasis LMS untuk aparatur daerah.
                         </li>
                         <li class="flex items-start gap-3 text-slate-700 font-medium">
-                            <i class="fas fa-check-circle text-[#13416B] opacity-80 mt-1"></i> Pemantauan dokumen RTKD
+                            <i class="fas fa-check-circle text-emerald-500 opacity-80 mt-1"></i> Pemantauan dokumen RTKD
                             dan pelaporan
                             yang terintegrasi secara aman.
                         </li>
@@ -478,15 +478,11 @@
                         <!-- Card 1: Penghitungan RTK (Full Width di atas) -->
                         <div
                             class="sm:col-span-2 bg-[#13416B] rounded-xl p-6 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
-                            <!-- Decorative Glow -->
-                            <div
-                                class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-150">
-                            </div>
 
                             <div
                                 class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
                                 <div
-                                    class="w-16 h-16 rounded-2xl bg-white/10 text-white flex items-center justify-center shrink-0 backdrop-blur-md border border-white/20 shadow-inner">
+                                    class="w-16 h-16 rounded-xl bg-white text-[#13416B] flex items-center justify-center shrink-0 shadow-inner">
                                     <i class="fas fa-calculator text-3xl"></i>
                                 </div>
                                 <div>
