@@ -506,19 +506,13 @@
     @if (isset($courses) && $courses->count() > 0)
         <section id="courses"
             class="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50/60 border-t border-slate-200 relative overflow-hidden">
-            @php
-                $coursePerPage = 6;
-                $coursePageCount = (int) ceil($courses->count() / $coursePerPage);
-            @endphp
-
-            <!-- Main Wrapper x-data melingkupi Kartu & Pagination -->
-            <div x-data="{ currentPage: 1, perPage: {{ $coursePerPage }}, totalPages: {{ $coursePageCount }} }"
+            <div
                 class="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:gap-16">
 
-                <div class="min-w-0">
-                    <!-- Grid Masonry Kursus -->
-                    <div class="custom-scrollbar max-h-[680px] overflow-y-auto pr-2 lg:mt-2">
-                        <div class="columns-1 gap-5 md:columns-2 reveal-up" style="transition-delay: 0.15s;">
+                <div class="order-1 min-w-0 lg:order-1">
+                    <!-- Grid Kursus Satu Kolom -->
+                    <div class="custom-scrollbar max-h-[680px] scroll-smooth overflow-y-auto overscroll-contain pr-3 lg:mt-2">
+                        <div class="grid grid-cols-1 gap-5 md:grid-cols-2 reveal-up" style="transition-delay: 0.15s;">
                     @foreach ($courses as $course)
                         @php
                             // Penanganan URL Gambar Thumbnail
@@ -549,56 +543,53 @@
                         @endphp
 
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                            x-show="Math.floor({{ $loop->index }} / perPage) + 1 === currentPage" x-cloak
-                            class="mb-5 inline-block w-full break-inside-avoid overflow-hidden rounded-2xl border border-slate-200/80 bg-white align-top transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl">
+                            class="grid h-full w-full grid-cols-1 overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl sm:grid-cols-[minmax(130px,38%)_1fr]">
 
-                            <div>
-                                <!-- Thumbnail Kursus -->
-                                <div
-                                    class="relative {{ $thumbHeight }} bg-[#184A78] flex items-center justify-center overflow-hidden">
-                                    @if ($thumbUrl)
-                                        <img src="{{ $thumbUrl }}" alt="{{ $course->name }}"
-                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            loading="lazy">
-                                    @else
-                                        <h2
-                                            class="text-4xl font-extrabold text-white/90 leading-none tracking-wider select-none">
-                                            {{ $initials }}
-                                        </h2>
-                                    @endif
+                            <!-- Thumbnail Kursus -->
+                            <div
+                                class="relative min-h-[170px] bg-[#184A78] flex h-full items-center justify-center overflow-hidden sm:min-h-[190px]">
+                                @if ($thumbUrl)
+                                    <img src="{{ $thumbUrl }}" alt="{{ $course->name }}"
+                                        class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        loading="lazy">
+                                @else
+                                    <h2
+                                        class="text-4xl font-extrabold text-white/90 leading-none tracking-wider select-none">
+                                        {{ $initials }}
+                                    </h2>
+                                @endif
 
-                                    <!-- Badge Kategori -->
-                                    @if ($course->category)
-                                        <span
-                                            class="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold rounded-full bg-slate-900/60 border border-white/20 text-white uppercase tracking-wider backdrop-blur-md z-10">
-                                            {{ $course->category->name }}
-                                        </span>
-                                    @endif
-                                </div>
+                                <!-- Badge Kategori -->
+                                @if ($course->category)
+                                    <span
+                                        class="absolute left-3 top-3 z-10 rounded-full border border-white/20 bg-slate-900/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md">
+                                        {{ $course->category->name }}
+                                    </span>
+                                @endif
+                            </div>
 
-                                <!-- Detail Konten -->
-                                <div class="p-5 text-left">
-                                    <h3
-                                        class="font-bold text-slate-800 text-base mb-2 line-clamp-1 group-hover:text-[#13416B] transition-colors">
-                                        {{ $course->name }}
-                                    </h3>
-                                    <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                                        {{ $course->description ?? "Modul pelatihan komprehensif untuk mendalami materi {$course->name} secara terstruktur." }}
-                                    </p>
-                                </div>
+                            <!-- Detail Konten -->
+                            <div class="flex min-h-[170px] flex-col justify-center p-5 text-left sm:min-h-[190px]">
+                                <h3
+                                    class="mb-2 line-clamp-2 font-bold text-slate-800 text-base group-hover:text-[#13416B] transition-colors">
+                                    {{ $course->name }}
+                                </h3>
+                                <p class="line-clamp-3 text-xs leading-relaxed text-slate-500">
+                                    {{ $course->description ?? "Modul pelatihan komprehensif untuk mendalami materi {$course->name} secara terstruktur." }}
+                                </p>
                             </div>
 
                             <!-- Card Footer -->
                             <div
-                                class="px-5 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-500">
+                                class="col-span-1 flex items-center justify-between border-t border-slate-100 px-5 pb-5 pt-3 text-xs font-medium text-slate-500 sm:col-span-2">
                                 <span
-                                    class="flex items-center gap-1.5 text-slate-600 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                                    class="flex items-center gap-1.5 rounded-md border border-slate-100 bg-slate-50 px-2 py-1 text-slate-600">
                                     <i class="fas fa-layer-group text-[#13416B]"></i>
                                     {{ $modulesCount }} Modul
                                 </span>
 
                                 <span
-                                    class="text-[#13416B] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1 text-xs">
+                                    class="flex items-center gap-1 text-xs font-bold text-[#13416B] transition-transform group-hover:translate-x-1">
                                     Akses <i class="fas fa-arrow-right text-[10px]"></i>
                                 </span>
                             </div>
@@ -608,38 +599,10 @@
                         </div>
                     </div>
 
-                <!-- Navigasi Pagination (Tetap di dalam x-data) -->
-                @if ($coursePageCount > 1)
-                    <nav class="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-6"
-                        aria-label="Navigasi kursus">
-                        <button type="button" @click="currentPage = Math.max(1, currentPage - 1)"
-                            :disabled="currentPage === 1"
-                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-[#13416B]/30 hover:text-[#13416B] disabled:cursor-not-allowed disabled:opacity-40">
-                            <i class="fas fa-arrow-left text-xs"></i> Sebelumnya
-                        </button>
-
-                        <div class="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:w-auto">
-                            @for ($page = 1; $page <= $coursePageCount; $page++)
-                                <button type="button" @click="currentPage = {{ $page }}"
-                                    :class="currentPage === {{ $page }} ? 'bg-[#13416B] text-white' :
-                                        'bg-white text-slate-600 hover:border-[#13416B]/30 hover:text-[#13416B]'"
-                                    class="h-9 min-w-9 rounded-full border border-slate-200 px-3 text-sm font-bold transition"
-                                    aria-label="Halaman {{ $page }}">{{ $page }}</button>
-                            @endfor
-                        </div>
-
-                        <button type="button" @click="currentPage = Math.min(totalPages, currentPage + 1)"
-                            :disabled="currentPage === totalPages"
-                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-[#13416B]/30 hover:text-[#13416B] disabled:cursor-not-allowed disabled:opacity-40">
-                            Berikutnya <i class="fas fa-arrow-right text-xs"></i>
-                        </button>
-                    </nav>
-                @endif
-
                 </div>
 
                 <!-- Kanan: Ilustrasi LMS -->
-                <div class="min-w-0 lg:sticky lg:top-24">
+                <div class="order-2 min-w-0 lg:order-2 lg:sticky lg:top-24">
                     <div class="mb-8 max-w-2xl text-left reveal-right">
                         <div class="mb-3 flex items-center gap-3">
                             <span class="font-kalam text-lg font-bold text-[#13416B]">
