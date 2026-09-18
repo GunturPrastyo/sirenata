@@ -70,16 +70,6 @@
                 }
             }
 
-            @keyframes scrollVertical {
-                0% {
-                    transform: translateY(0%);
-                }
-
-                100% {
-                    transform: translateY(-50%);
-                }
-            }
-
             /* ANIMASI BULAT ABSTRAK (MORPHING BLOB) */
             @keyframes morphBlob {
 
@@ -109,12 +99,16 @@
                 animation: cardFloat 6s ease-in-out infinite 1.5s;
             }
 
-            .animate-scroll-y {
-                animation: scrollVertical 25s linear infinite;
+            .course-scroll-container {
+                cursor: grab;
+                overscroll-behavior: contain;
+                scrollbar-width: thin;
+                scrollbar-color: #cbd5e1 transparent;
             }
 
-            .animate-scroll-y:hover {
-                animation-play-state: paused;
+            .course-scroll-container.is-dragging {
+                cursor: grabbing;
+                user-select: none;
             }
 
             .animate-blob {
@@ -464,71 +458,59 @@
                             berbasis LMS untuk aparatur daerah.
                         </li>
                         <li class="flex items-start gap-3 text-slate-700 font-medium">
-                            <i class="fas fa-check-circle text-emerald-500 opacity-80 mt-1"></i> Pemantauan dokumen RTKD
+                            <i class="fas fa-check-circle text-emerald-500 opacity-80 mt-1"></i> Pemantauan dokumen
+                            RTKD
                             dan pelaporan
                             yang terintegrasi secara aman.
                         </li>
                     </ul>
                 </div>
 
-                <!-- Kanan: Bento Grid (Total 3 Card: 1 Full Width di atas, 2 Sejajar di bawah) -->
-                <div class="reveal-right w-full h-full flex flex-col justify-center">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
-
-                        <!-- Card 1: Penghitungan RTK (Full Width di atas) -->
-                        <div
-                            class="sm:col-span-2 bg-[#13416B] rounded-xl p-6 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
-
-                            <div
-                                class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
-                                <div
-                                    class="w-16 h-16 rounded-xl bg-white text-[#13416B] flex items-center justify-center shrink-0 shadow-inner">
-                                    <i class="fas fa-calculator text-3xl"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">
-                                        Penghitungan RTK</h3>
-                                    <p class="text-white/80 leading-relaxed text-sm sm:text-base">
-                                        Alat bantu dalam perhitungan rencana tenaga kerja makro dan mikro sesuai kondisi
-                                        daerah secara cepat dan presisi.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 2: LMS Terintegrasi (Sejajar di kiri bawah, tanpa badge & dekorasi) -->
-                        <div
-                            class="bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between">
-                            <div>
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-200 mb-4 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
-                                    <i class="fas fa-graduation-cap text-xl"></i>
-                                </div>
-                                <h3 class="text-base font-bold text-slate-800 mb-1.5">LMS Terintegrasi</h3>
-                                <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-                                    Transfer pengetahuan terstruktur melalui modul pelatihan, video pembelajaran, hingga
-                                    sertifikasi kelulusan resmi.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Card 3: Pelaporan & Arsip (Sejajar di kanan bawah) -->
-                        <div
-                            class="bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between">
-                            <div>
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-200 mb-4 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
-                                    <i class="fas fa-file-invoice text-xl"></i>
-                                </div>
-                                <h3 class="text-base font-bold text-slate-800 mb-1.5">Pelaporan & Arsip</h3>
-                                <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-                                    Pemantauan dokumen RTKD dan fitur sanggahan nilai dengan integrasi bukti pendukung
-                                    yang aman.
-                                </p>
-                            </div>
-                        </div>
-
+                <!-- Kanan: Ilustrasi Fitur LMS -->
+                <div class="relative hidden lg:flex h-[520px] items-center justify-center reveal-right">
+                    <div
+                        class="absolute left-1/2 top-1/2 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-[#E8F2F8] via-[#D5E8F3] to-amber-100 opacity-90 animate-blob"
+                        style="border-radius: 42% 58% 63% 37% / 48% 40% 60% 52%;">
                     </div>
+
+                    <div
+                        class="absolute left-1/2 top-1/2 h-[430px] w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#13416B]/15 border-dashed animate-[spin_45s_linear_infinite]">
+                    </div>
+
+                    <svg class="absolute inset-0 h-full w-full opacity-50" viewBox="0 0 560 520" fill="none"
+                        aria-hidden="true">
+                        <path d="M72 350C128 155 267 91 469 158" stroke="#13416B" stroke-width="1.5"
+                            stroke-dasharray="5 8" />
+                        <circle cx="72" cy="350" r="5" fill="#F59E0B" />
+                        <circle cx="469" cy="158" r="5" fill="#13416B" />
+                    </svg>
+
+                    <div class="absolute bottom-10 left-2 z-20 w-44 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-xl animate-card-float-2">
+                        <div class="mb-3 flex items-center justify-between">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Progres LMS</span>
+                            <i class="fas fa-chart-line text-sm text-emerald-500"></i>
+                        </div>
+                        <div class="mb-2 flex items-end justify-between">
+                            <strong class="text-2xl font-extrabold text-[#13416B]">78%</strong>
+                            <span class="text-[10px] font-bold text-emerald-500">+12%</span>
+                        </div>
+                        <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+                            <div class="h-full w-[78%] rounded-full bg-emerald-400"></div>
+                        </div>
+                    </div>
+
+                    <div class="absolute right-0 top-12 z-20 flex items-center gap-3 rounded-2xl border border-white/80 bg-[#13416B] px-4 py-3 text-white shadow-xl animate-card-float-1">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 text-[#13416B]">
+                            <i class="fas fa-graduation-cap"></i>
+                        </span>
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-white/60">Status belajar</p>
+                            <p class="text-sm font-bold">Modul aktif</p>
+                        </div>
+                    </div>
+
+                    <img src="{{ asset('images/asn-learning.png') }}" alt="Aparatur sedang belajar menggunakan laptop"
+                        class="relative z-10 w-[500px] max-w-none translate-y-8 object-contain drop-shadow-2xl animate-float">
                 </div>
 
             </div>
@@ -536,133 +518,157 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- COURSES SECTION (LMS)                      -->
+    <!-- COURSES SECTION (LMS) - MASONRY CATALOG    -->
     <!-- ========================================== -->
     @if (isset($courses) && $courses->count() > 0)
-        <section id="courses" class="py-24 px-4 bg-slate-50/50 border-t border-slate-200 relative overflow-hidden">
-            <div class="max-w-7xl mx-auto">
+        <section id="courses"
+            class="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50/60 border-t border-slate-200 relative overflow-hidden">
+            @php
+                $coursePerPage = 6;
+                $coursePageCount = (int) ceil($courses->count() / $coursePerPage);
+            @endphp
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+            <!-- Main Wrapper x-data melingkupi Kartu & Pagination -->
+            <div x-data="{ currentPage: 1, perPage: {{ $coursePerPage }}, totalPages: {{ $coursePageCount }} }" class="mx-auto max-w-7xl">
 
-                    <!-- Kiri: Daftar Kursus Auto Scroll -->
-                    <div class="relative h-[600px] overflow-hidden order-2 lg:order-1 reveal-left"
-                        style="mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);">
-                        <div
-                            class="flex flex-col gap-5 animate-scroll-y hover:[animation-play-state:paused] pr-2 sm:pr-4">
-                            @php
-                                $loopCourses = collect($courses)->concat($courses)->concat($courses);
-                            @endphp
+                <!-- Header Section -->
+                <div class="mb-10 max-w-3xl text-left reveal-up">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-[#13416B] font-kalam font-bold text-lg">
+                            LMS Terintegrasi
+                        </span>
+                        <div class="h-[2px] w-16 bg-[#13416B]/30"></div>
+                    </div>
 
-                            @foreach ($loopCourses as $course)
-                                @php
-                                    $words = explode(' ', $course->name);
-                                    $initials = '';
-                                    foreach (array_slice($words, 0, 2) as $w) {
-                                        $initials .= strtoupper(substr($w, 0, 1));
-                                    }
-                                    if (strlen($initials) < 2) {
-                                        $initials = substr(strtoupper($course->name), 0, 2);
-                                    }
-                                @endphp
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight"
+                        style="font-family: 'Oswald', sans-serif;">
+                        Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
+                    </h2>
 
-                                <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                                    class="block bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-[#13416B]/30 hover:-translate-y-1 transition-all group mx-2">
-                                    <div
-                                        class="relative h-[120px] bg-[#184A78] flex items-center justify-center overflow-hidden">
-                                        @if ($course->category)
-                                            <span
-                                                class="absolute top-4 left-4 px-2.5 py-1 text-[9px] font-bold rounded bg-transparent border border-white/30 text-white uppercase tracking-wider backdrop-blur-sm">
-                                                {{ $course->category->name }}
-                                            </span>
-                                        @endif
-                                        <h2 class="text-[56px] font-normal text-white leading-none tracking-tight"
-                                            style="font-family: Arial, sans-serif;">
+                    <p class="text-slate-600 text-base sm:text-lg mt-3 leading-relaxed">
+                        Fasilitas pelatihan daring terstruktur sebagai sarana transfer pengetahuan
+                        ketenagakerjaan dari pusat ke daerah secara berkelanjutan.
+                    </p>
+                </div>
+
+                <!-- Grid Masonry Kursus -->
+                <div class="columns-1 gap-5 md:columns-2 xl:columns-3 reveal-up" style="transition-delay: 0.15s;">
+                    @foreach ($courses as $course)
+                        @php
+                            // Penanganan URL Gambar Thumbnail
+                            $thumbUrl = $course->thumbnail
+                                ? (filter_var($course->thumbnail, FILTER_VALIDATE_URL)
+                                    ? $course->thumbnail
+                                    : Storage::url($course->thumbnail))
+                                : null;
+
+                            // Generate Inisial Teks untuk Fallback Thumbnail
+                            $initials = '';
+                            if (!$thumbUrl) {
+                                $words = explode(' ', trim($course->name));
+                                foreach (array_slice($words, 0, 2) as $w) {
+                                    $initials .= strtoupper(substr($w, 0, 1));
+                                }
+                                if (strlen($initials) < 2) {
+                                    $initials = substr(strtoupper($course->name), 0, 2);
+                                }
+                            }
+
+                            // Perhitungan Modul & Tinggi Thumbnail
+                            $modulesCount =
+                                $course->sections_count ??
+                                (isset($course->sections) ? collect($course->sections)->count() : 0);
+                            $thumbHeight =
+                                $loop->iteration % 3 === 0 ? 'h-52' : ($loop->iteration % 2 === 0 ? 'h-44' : 'h-40');
+                        @endphp
+
+                        <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
+                            x-show="Math.floor({{ $loop->index }} / perPage) + 1 === currentPage" x-cloak
+                            class="mb-5 inline-block w-full break-inside-avoid overflow-hidden rounded-2xl border border-slate-200/80 bg-white align-top transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl">
+
+                            <div>
+                                <!-- Thumbnail Kursus -->
+                                <div
+                                    class="relative {{ $thumbHeight }} bg-[#184A78] flex items-center justify-center overflow-hidden">
+                                    @if ($thumbUrl)
+                                        <img src="{{ $thumbUrl }}" alt="{{ $course->name }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            loading="lazy">
+                                    @else
+                                        <h2
+                                            class="text-4xl font-extrabold text-white/90 leading-none tracking-wider select-none">
                                             {{ $initials }}
                                         </h2>
-                                    </div>
-                                    <div class="p-5">
-                                        <h3
-                                            class="font-bold text-slate-800 mb-1.5 line-clamp-1 text-base group-hover:text-[#13416B] transition-colors">
-                                            {{ $course->name }}
-                                        </h3>
-                                        <p class="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
-                                            {{ $course->description ?? "Deskripsi untuk {$course->name}. Kursus ini akan membahas dasar-dasar dan materi mendalam secara terstruktur." }}
-                                        </p>
-                                        <div class="flex items-center gap-2 text-[10px] font-medium text-slate-500">
-                                            <span
-                                                class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-md border border-slate-100">
-                                                <i class="fas fa-layer-group text-slate-400"></i>
-                                                {{ collect($course->sections)->count() }} Modul
-                                            </span>
-                                            <span
-                                                class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-md border border-slate-100">
-                                                <i class="fas fa-file-alt text-slate-400"></i>
-                                                {{ collect($course->sections)->sum(fn($s) => collect(data_get($s, 'contents', []))->count()) }}
-                                                Materi
-                                            </span>
-                                        </div>
-                                    </div>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
+                                    @endif
 
-                    <!-- Kanan: Judul & Deskripsi Section Sticky -->
-                    <div class="lg:sticky lg:top-12 order-1 lg:order-2 w-full text-left reveal-right">
-                        <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
-
-                        <div class="flex items-center gap-4 mb-2">
-                            <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
-                                LMS Terintegrasi
-                            </span>
-                            <div class="h-[2px] w-40 bg-[#13416B]/30"></div>
-                        </div>
-                        <!-- FONT OSWALD UNTUK TITLE -->
-                        <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight"
-                            style="font-family: 'Oswald', sans-serif;">
-                            Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
-                        </h2>
-                        <p class="text-slate-600 text-lg leading-relaxed mb-8">
-                            Fasilitas pelatihan daring terstruktur sebagai sarana transfer pengetahuan yang
-                            berkelanjutan dari pusat ke daerah terkait Perencanaan Tenaga Kerja Makro, Mikro, dan IPK.
-                        </p>
-
-                        <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm text-left">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 bg-[#13416B] text-white rounded-xl flex items-center justify-center shrink-0 shadow-md border border-[#0f3354]">
-                                    <i class="fas fa-award text-xl"></i>
+                                    <!-- Badge Kategori -->
+                                    @if ($course->category)
+                                        <span
+                                            class="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold rounded-full bg-slate-900/60 border border-white/20 text-white uppercase tracking-wider backdrop-blur-md z-10">
+                                            {{ $course->category->name }}
+                                        </span>
+                                    @endif
                                 </div>
-                                <div>
-                                    <h4 class="font-bold text-slate-800">Sertifikat Kelulusan Resmi</h4>
-                                    <p class="text-sm text-slate-500 mt-1 leading-relaxed">Selesaikan rangkaian modul
-                                        secara berurutan dan lulus post-test untuk mendapatkan sertifikat tanda
-                                        kelulusan.</p>
+
+                                <!-- Detail Konten -->
+                                <div class="p-5 text-left">
+                                    <h3
+                                        class="font-bold text-slate-800 text-base mb-2 line-clamp-1 group-hover:text-[#13416B] transition-colors">
+                                        {{ $course->name }}
+                                    </h3>
+                                    <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                                        {{ $course->description ?? "Modul pelatihan komprehensif untuk mendalami materi {$course->name} secara terstruktur." }}
+                                    </p>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mt-12 hidden lg:flex items-start gap-4 text-[#13416B]/60">
-                            <svg width="120" height="60" viewBox="0 0 120 60" fill="none"
-                                xmlns="http://www.w3.org/2000/svg" class="shrink-0 animate-pulse mt-1">
-                                <path d="M115 15 C 80 15 40 40 15 40" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-dasharray="6 6" />
-                                <path d="M25 30 L 12 40 L 25 50" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <span class="font-bold italic tracking-wide text-sm opacity-90 leading-relaxed">
-                                Selesaikan kursus <br> untuk mendapatkan sertifikat
-                            </span>
-                        </div>
+                            <!-- Card Footer -->
+                            <div
+                                class="px-5 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-500">
+                                <span
+                                    class="flex items-center gap-1.5 text-slate-600 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                                    <i class="fas fa-layer-group text-[#13416B]"></i>
+                                    {{ $modulesCount }} Modul
+                                </span>
 
-                        <div class="mt-8 flex lg:hidden items-center justify-center gap-3 text-[#13416B]/60">
-                            <span class="font-bold italic tracking-wide text-sm opacity-90">Selesaikan kursus untuk
-                                mendapatkan sertifikat</span>
-                            <i class="fas fa-arrow-down animate-bounce"></i>
-                        </div>
-                    </div>
+                                <span
+                                    class="text-[#13416B] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1 text-xs">
+                                    Akses <i class="fas fa-arrow-right text-[10px]"></i>
+                                </span>
+                            </div>
 
+                        </a>
+                    @endforeach
                 </div>
+
+                <!-- Navigasi Pagination (Tetap di dalam x-data) -->
+                @if ($coursePageCount > 1)
+                    <nav class="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-6"
+                        aria-label="Navigasi kursus">
+                        <button type="button" @click="currentPage = Math.max(1, currentPage - 1)"
+                            :disabled="currentPage === 1"
+                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-[#13416B]/30 hover:text-[#13416B] disabled:cursor-not-allowed disabled:opacity-40">
+                            <i class="fas fa-arrow-left text-xs"></i> Sebelumnya
+                        </button>
+
+                        <div class="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:w-auto">
+                            @for ($page = 1; $page <= $coursePageCount; $page++)
+                                <button type="button" @click="currentPage = {{ $page }}"
+                                    :class="currentPage === {{ $page }} ? 'bg-[#13416B] text-white' :
+                                        'bg-white text-slate-600 hover:border-[#13416B]/30 hover:text-[#13416B]'"
+                                    class="h-9 min-w-9 rounded-full border border-slate-200 px-3 text-sm font-bold transition"
+                                    aria-label="Halaman {{ $page }}">{{ $page }}</button>
+                            @endfor
+                        </div>
+
+                        <button type="button" @click="currentPage = Math.min(totalPages, currentPage + 1)"
+                            :disabled="currentPage === totalPages"
+                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:border-[#13416B]/30 hover:text-[#13416B] disabled:cursor-not-allowed disabled:opacity-40">
+                            Berikutnya <i class="fas fa-arrow-right text-xs"></i>
+                        </button>
+                    </nav>
+                @endif
+
             </div>
         </section>
     @endif
@@ -1025,6 +1031,66 @@
 
                 const revealElements = document.querySelectorAll('.reveal-left, .reveal-right, .reveal-up');
                 revealElements.forEach(el => revealObserver.observe(el));
+
+                document.querySelectorAll('.course-scroll-container').forEach(container => {
+                    let animationFrame;
+                    let isInteracting = false;
+                    let lastPointerY = 0;
+                    let hasDragged = false;
+                    const autoScrollSpeed = 7 / 60;
+
+                    const autoScroll = () => {
+                        if (!isInteracting) {
+                            container.scrollTop += autoScrollSpeed;
+
+                            if (container.scrollTop >= container.scrollHeight / 3) {
+                                container.scrollTop -= container.scrollHeight / 3;
+                            }
+                        }
+
+                        animationFrame = requestAnimationFrame(autoScroll);
+                    };
+
+                    container.addEventListener('pointerdown', event => {
+                        isInteracting = true;
+                        hasDragged = false;
+                        lastPointerY = event.clientY;
+                        container.classList.add('is-dragging');
+                        container.setPointerCapture(event.pointerId);
+                    });
+
+                    container.addEventListener('pointermove', event => {
+                        if (!isInteracting) return;
+
+                        const distance = event.clientY - lastPointerY;
+                        if (Math.abs(distance) > 1) hasDragged = true;
+                        container.scrollTop -= distance;
+                        lastPointerY = event.clientY;
+                    });
+
+                    const stopDragging = event => {
+                        if (!isInteracting) return;
+
+                        isInteracting = false;
+                        container.classList.remove('is-dragging');
+                        if (event.pointerId !== undefined && container.hasPointerCapture(event.pointerId)) {
+                            container.releasePointerCapture(event.pointerId);
+                        }
+                    };
+
+                    container.addEventListener('pointerup', stopDragging);
+                    container.addEventListener('pointercancel', stopDragging);
+                    container.addEventListener('click', event => {
+                        if (hasDragged) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            hasDragged = false;
+                        }
+                    }, true);
+
+                    animationFrame = requestAnimationFrame(autoScroll);
+                    container.addEventListener('DOMNodeRemoved', () => cancelAnimationFrame(animationFrame));
+                });
 
                 const statOptions = {
                     root: null,
