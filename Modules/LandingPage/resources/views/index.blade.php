@@ -468,9 +468,9 @@
 
                 <!-- Kanan: Bento Grid Fitur -->
                 <div class="grid grid-cols-2 gap-4 reveal-right">
-                    <div class="col-span-2 rounded-3xl bg-[#13416B] p-6 text-white shadow-xl sm:p-8">
+                    <div class="col-span-2 rounded-md bg-[#13416B] p-6 text-white shadow-xl sm:p-8">
                         <div class="mb-6 flex items-start justify-between gap-4">
-                            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-400 text-xl text-[#13416B]">
+                            <span class="flex h-12 w-12 items-center justify-center rounded-md bg-white/15 text-xl text-white">
                                 <i class="fas fa-chart-line"></i>
                             </span>
                             <span class="rounded-full border border-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/70">Terukur</span>
@@ -479,16 +479,16 @@
                         <p class="max-w-md text-sm leading-relaxed text-white/70">Perhitungan Rencana Tenaga Kerja Makro dan Mikro dilakukan secara otomatis dengan data yang konsisten.</p>
                     </div>
 
-                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm sm:p-6">
-                        <span class="mb-8 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
+                    <div class="rounded-md border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                        <span class="mb-8 flex h-14 w-14 items-center justify-center rounded-md bg-[#E8F2F8] text-xl text-[#13416B]">
                             <i class="fas fa-graduation-cap"></i>
                         </span>
                         <h3 class="mb-2 text-lg font-extrabold text-slate-800">LMS mandiri</h3>
                         <p class="text-sm leading-relaxed text-slate-500">Pelatihan terstruktur untuk aparatur daerah.</p>
                     </div>
 
-                    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-5 shadow-sm sm:p-6">
-                        <span class="mb-8 flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-400 text-[#13416B]">
+                    <div class="rounded-md border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                        <span class="mb-8 flex h-14 w-14 items-center justify-center rounded-md bg-[#E8F2F8] text-xl text-[#13416B]">
                             <i class="fas fa-shield-alt"></i>
                         </span>
                         <h3 class="mb-2 text-lg font-extrabold text-slate-800">Terintegrasi</h3>
@@ -543,7 +543,7 @@
                         @endphp
 
                         <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                            class="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl">
+                            class="flex h-full w-full flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl">
 
                             <!-- Thumbnail Kursus -->
                             <div
@@ -683,15 +683,16 @@
                     $course->sections_count ?? (isset($course->sections) ? collect($course->sections)->count() : 0),
             );
             $lmsCategoryCount = $courses->pluck('category_id')->filter()->unique()->count();
+            $lmsParticipantCount = $stats['participants'] ?? 1200;
         @endphp
 
         <section class="overflow-hidden border-t border-slate-800 bg-slate-900 pb-12 pt-6">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 reveal-up">
-                <div class="grid grid-cols-2 gap-8 divide-x-0 md:grid-cols-3 md:divide-x md:divide-slate-700">
+                <div class="grid grid-cols-2 gap-8 divide-x-0 md:grid-cols-4 md:divide-x md:divide-slate-700">
                     <div class="p-4 text-center">
                         <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
                             data-target="{{ $lmsCourseCount }}" data-suffix="" style="font-family: 'Oswald', sans-serif;">0</h4>
-                        <p class="text-sm font-medium text-slate-400">Pelatihan Tersedia</p>
+                        <p class="text-sm font-medium text-slate-400">Kursus Tersedia</p>
                     </div>
                     <div class="p-4 text-center">
                         <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
@@ -701,7 +702,12 @@
                     <div class="p-4 text-center">
                         <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
                             data-target="{{ $lmsCategoryCount }}" data-suffix="" style="font-family: 'Oswald', sans-serif;">0</h4>
-                        <p class="text-sm font-medium text-slate-400">Bidang Keahlian</p>
+                        <p class="text-sm font-medium text-slate-400">Kategori Kursus</p>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
+                            data-target="{{ $lmsParticipantCount / 1000 }}" data-suffix="K+" style="font-family: 'Oswald', sans-serif;">0</h4>
+                        <p class="text-sm font-medium text-slate-400">Peserta Terdaftar</p>
                     </div>
                 </div>
             </div>
