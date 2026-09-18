@@ -310,51 +310,66 @@
                     </svg>
                 </div>
 
-                <!-- CARD 1: Kanan Atas (z-10, DI BELAKANG ILUSTRASI ORANG) -->
+                <!-- CARD 1: Kanan Atas (Warna 1: Dark Navy Blue - #103F6E) -->
                 <div
                     class="absolute top-8 -right-4 w-[260px] bg-white rounded-xl shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
-                    <div class="h-24 bg-[#184A78] flex items-center justify-center relative">
+                    <div class="h-24 bg-[#81A9CA] flex items-center justify-center relative">
                         <span
-                            class="absolute top-3 left-3 bg-white/10 border border-white/20 text-white text-[9px] font-bold px-2.5 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perkiraan</span>
+                            class="absolute top-3 left-3 bg-white/10 border border-white/20 text-white text-[9px] font-bold px-2.5 py-1 rounded backdrop-blur-sm uppercase tracking-wider">
+                            Perkiraan
+                        </span>
                         <h2 class="text-[54px] font-medium text-white/95 leading-none"
-                            style="font-family: Arial, sans-serif; letter-spacing: -2px;">PM</h2>
+                            style="font-family: Arial, sans-serif; letter-spacing: -2px;">
+                            PM
+                        </h2>
                     </div>
                     <div class="p-4">
                         <h3 class="font-bold text-slate-800 text-sm mb-1.5">Perencanaan Tenaga Kerja Makro</h3>
-                        <p class="text-[10px] text-slate-500 mb-0 line-clamp-2">Penyusunan Rencana Tenaga Kerja dengan
-                            pendekatan makro ekonomi dan ketenagakerjaan.</p>
+                        <p class="text-[10px] text-slate-500 mb-0 line-clamp-2">
+                            Penyusunan Rencana Tenaga Kerja dengan pendekatan makro ekonomi dan ketenagakerjaan.
+                        </p>
                     </div>
                 </div>
 
-                <!-- CARD 2: Kiri Bawah (z-30, DI DEPAN ILUSTRASI ORANG) -->
-                <div
-                    class="absolute bottom-12 -left-10 w-[250px] bg-white rounded-xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
-                    <div class="h-20 bg-[#184A78] flex items-center justify-center relative">
-                        <span
-                            class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-1 rounded backdrop-blur-sm uppercase tracking-wider">Perencanaan</span>
-                        <h2 class="text-4xl font-medium text-white/95 leading-none"
-                            style="font-family: Arial, sans-serif; letter-spacing: -1px;">PM</h2>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-slate-800 text-xs mb-1.5">Perencanaan Tenaga Kerja Mikro</h3>
-                        <p class="text-[9px] text-slate-500 line-clamp-2 mb-0">Analisis kebutuhan tenaga kerja di
-                            tingkat instansi atau perusahaan secara terperinci.</p>
-                    </div>
-                </div>
-
-                <!-- CARD 3: Kiri Atas (z-10, DI BELAKANG ILUSTRASI ORANG) -->
+                <!-- CARD 3: Kiri Atas (Warna 2: Medium Slate Blue - #507A9E) -->
                 <div
                     class="absolute top-40 -left-14 w-[240px] bg-white rounded-xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
-                    <div class="h-16 bg-[#184A78] flex items-center justify-center relative">
+                    <div class="h-16 bg-[#507A9E] flex items-center justify-center relative">
                         <span
-                            class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase tracking-wider">Teori</span>
+                            class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase tracking-wider">
+                            Teori
+                        </span>
                         <h2 class="text-3xl font-medium text-white/95 leading-none"
-                            style="font-family: Arial, sans-serif; letter-spacing: -1px;">IK</h2>
+                            style="font-family: Arial, sans-serif; letter-spacing: -1px;">
+                            IK
+                        </h2>
                     </div>
                     <div class="p-3">
                         <h3 class="font-bold text-slate-800 text-xs mb-1">Indeks Pembangunan Ketenagakerjaan</h3>
-                        <p class="text-[9px] text-slate-500 line-clamp-2 mb-0">Pengukuran dan evaluasi 7 indikator
-                            utama ketenagakerjaan daerah.</p>
+                        <p class="text-[9px] text-slate-500 line-clamp-2 mb-0">
+                            Pengukuran dan evaluasi 7 indikator utama ketenagakerjaan daerah.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- CARD 2: Kiri Bawah (Warna 3: Soft Blue - #81A9CA) -->
+                <div
+                    class="absolute bottom-12 -left-10 w-[250px] bg-white rounded-xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
+                    <div class="h-20 bg-[#103F6E] flex items-center justify-center relative">
+                        <span
+                            class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-1 rounded backdrop-blur-sm uppercase tracking-wider">
+                            Perencanaan
+                        </span>
+                        <h2 class="text-4xl font-medium text-white/95 leading-none"
+                            style="font-family: Arial, sans-serif; letter-spacing: -1px;">
+                            PM
+                        </h2>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-slate-800 text-xs mb-1.5">Perencanaan Tenaga Kerja Mikro</h3>
+                        <p class="text-[9px] text-slate-500 line-clamp-2 mb-0">
+                            Analisis kebutuhan tenaga kerja di tingkat instansi atau perusahaan secara terperinci.
+                        </p>
                     </div>
                 </div>
             </div>
