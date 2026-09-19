@@ -312,10 +312,7 @@
                 <div
                     class="absolute top-8 -right-4 w-[260px] bg-white rounded-xl shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
                     <div class="h-24 bg-[#81A9CA] flex items-center justify-center relative">
-                        <span
-                            class="absolute top-3 left-3 bg-white/10 border border-white/20 text-white text-[9px] font-bold px-2.5 py-1 rounded backdrop-blur-sm uppercase tracking-wider">
-                            Perkiraan
-                        </span>
+                       
                         <h2 class="text-[54px] font-medium text-white/95 leading-none"
                             style="font-family: Arial, sans-serif; letter-spacing: -2px;">
                             PM
@@ -333,10 +330,7 @@
                 <div
                     class="absolute top-40 -left-14 w-[240px] bg-white rounded-xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
                     <div class="h-16 bg-[#507A9E] flex items-center justify-center relative">
-                        <span
-                            class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase tracking-wider">
-                            Teori
-                        </span>
+                       
                         <h2 class="text-3xl font-medium text-white/95 leading-none"
                             style="font-family: Arial, sans-serif; letter-spacing: -1px;">
                             IK
@@ -354,10 +348,7 @@
                 <div
                     class="absolute bottom-12 -left-10 w-[250px] bg-white rounded-xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
                     <div class="h-20 bg-[#103F6E] flex items-center justify-center relative">
-                        <span
-                            class="absolute top-2 left-2 bg-white/10 border border-white/20 text-white text-[8px] font-bold px-2 py-1 rounded backdrop-blur-sm uppercase tracking-wider">
-                            Perencanaan
-                        </span>
+                      
                         <h2 class="text-4xl font-medium text-white/95 leading-none"
                             style="font-family: Arial, sans-serif; letter-spacing: -1px;">
                             PM
@@ -691,8 +682,8 @@
                             <i class="fas fa-award"></i>
                         </span>
                         <div>
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-white/60">Sertifikat diperoleh</p>
-                            <p class="text-sm font-bold">Kursus selesai</p>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-white/60">Kursus selesai</p>
+                            <p class="text-sm font-bold">Sertifikat diperoleh</p>
                         </div>
                     </div>
 
