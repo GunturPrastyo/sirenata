@@ -860,7 +860,7 @@
     <!-- ========================================== -->
     <!-- CTA SECTION                                -->
     <!-- ========================================== -->
-    <section id="cta" class="py-24 md:py-36 lg:py-8 px-4 md:px-16 relative overflow-hidden"
+    <section id="cta" class="py-24 md:py-36 lg:py-36 px-4 md:px-16 relative overflow-hidden"
         style="background-color: #13416B;">
         <!-- Efek Glow Latar Belakang -->
         <div
@@ -880,7 +880,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
                 <!-- Kolom Kiri: Teks & Tombol -->
-                <div class="text-left reveal-left lg:col-span-7 xl:col-span-8 lg:pr-10">
+                <div class="text-left reveal-left lg:col-span-10 xl:col-span-9 lg:pr-10">
                     <!-- FONT OSWALD UNTUK TITLE -->
                     <h2 class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm"
                         style="font-family: 'Oswald', sans-serif;">
@@ -905,17 +905,6 @@
                             Sudah Punya Akun? Masuk
                         </a>
                     </div>
-                </div>
-
-                <!-- Kolom Kanan: Tempat Ilustrasi Orang -->
-                <div
-                    class="relative hidden lg:flex justify-end items-end reveal-right h-full lg:col-span-5 xl:col-span-4">
-                    <div class="absolute right-10 bottom-10 w-[300px] h-[300px] bg-white/5 rounded-full blur-xl z-0">
-                    </div>
-                    <img src="{{ asset('images/cta-illustration.webp') }}"
-                        alt="Kepala Pusat Perencanaan Ketenagakerjaan"
-                        class="relative z-10 w-full max-w-[360px] lg:max-w-[340px] h-auto object-contain drop-shadow-2xl animate-float translate-y-8"
-                        style="-webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); mask-image: linear-gradient(to bottom, black 80%, transparent 100%);">
                 </div>
 
             </div>
