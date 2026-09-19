@@ -289,8 +289,12 @@
                 <!-- ILUSTRASI ORANG DI TENGAH (z-20) -->
                 <div
                     class="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 w-[420px] pointer-events-none drop-shadow-2xl">
-                    <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana"
-                        class="w-full h-auto object-contain">
+                    <div class="relative">
+                        <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana"
+                            class="relative z-10 w-full h-auto object-contain"
+                            style="-webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%); mask-image: linear-gradient(to bottom, black 78%, transparent 100%);">
+                        <div class="pointer-events-none absolute inset-x-[-8%] bottom-0 h-24 bg-gradient-to-t from-slate-50/90 via-slate-50/45 to-transparent blur-md"></div>
+                    </div>
                 </div>
 
                 <!-- DEKORASI TITIK-TITIK MATRIX PROFESIONAL (SVG GRID PATTERN) -->
@@ -692,8 +696,12 @@
                         </div>
                     </div>
 
-                    <img src="{{ asset('images/asn-learning.png') }}" alt="Aparatur sedang belajar menggunakan laptop"
-                        class="relative z-10 w-[500px] max-w-none translate-y-2 object-contain drop-shadow-2xl animate-float">
+                    <div class="relative z-10 w-[500px] max-w-none translate-y-2 animate-float">
+                        <img src="{{ asset('images/asn-learning.png') }}" alt="Aparatur sedang belajar menggunakan laptop"
+                            class="relative z-10 w-full object-contain drop-shadow-2xl"
+                            style="-webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%); mask-image: linear-gradient(to bottom, black 78%, transparent 100%);">
+                        <div class="pointer-events-none absolute inset-x-[-8%] bottom-0 h-28 bg-gradient-to-t from-slate-50/90 via-slate-50/45 to-transparent blur-md"></div>
+                    </div>
                     </div>
                 </div>
 
@@ -902,7 +910,7 @@
 
         <!-- Ornamen SVG -->
         <div
-            class="absolute -left-[50%] sm:-left-[20%] top-1/2 -translate-y-1/2 w-[1600px] h-[1600px] lg:w-[2200px] lg:h-[2200px] text-white opacity-[0.06] pointer-events-none z-0 transition-transform duration-1000">
+            class="absolute -left-[50%] sm:-left-[20%] top-1/2 -translate-y-1/2 w-[1200px] h-[1200px] lg:w-[2200px] lg:h-[2200px] text-white opacity-[0.06] pointer-events-none z-0 transition-transform duration-1000">
             <svg viewBox="0 0 1600 1600" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
                 <polyline points="300,200 900,800 300,1400" stroke="currentColor" stroke-width="260"
                     stroke-linecap="round" stroke-linejoin="miter" />
