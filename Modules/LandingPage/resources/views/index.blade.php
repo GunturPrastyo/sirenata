@@ -751,7 +751,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
                 <!-- Kolom Kiri: Judul & Accordion -->
-                <div class="reveal-left">
+                <div class="order-2 reveal-left lg:order-2">
                     <div class="text-left mb-10">
                         <!-- FONT KALAM DIAPLIKASIKAN DISINI (Tanpa tracking-wide) -->
                         {{-- <span class="text-[#13416B] font-kalam font-bold text-md lg:text-xl mb-2 block">
@@ -866,12 +866,12 @@
                 </div>
 
                 <!-- Kolom Kanan: Ilustrasi Bantuan -->
-                <div class="relative hidden lg:flex justify-center items-center reveal-right h-full">
+                <div class="order-1 relative hidden h-full items-center justify-center reveal-right lg:order-1 lg:flex">
                     <div
                         class="absolute right-0 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full border border-[#13416B]/15 border-dashed animate-[spin_55s_linear_infinite]">
                     </div>
                     <div
-                        class="absolute right-5 top-1/2 h-[380px] w-[380px] -translate-y-1/2 overflow-hidden bg-gradient-to-tr from-amber-400 to-yellow-200 opacity-90"
+                        class="absolute right-32 top-1/2 h-[380px] w-[380px] -translate-y-1/2 overflow-hidden bg-gradient-to-tr from-amber-400 to-yellow-200 opacity-90"
                         style="border-radius: 44% 56% 62% 38% / 52% 42% 58% 48%;">
                         <svg class="absolute inset-0 h-full w-full opacity-25" viewBox="0 0 380 380" fill="none"
                             preserveAspectRatio="none" aria-hidden="true">
@@ -893,7 +893,7 @@
     <!-- ========================================== -->
     <!-- CTA SECTION                                -->
     <!-- ========================================== -->
-    <section id="cta" class="py-24 md:py-36 lg:py-36 px-4 md:px-16 relative overflow-hidden"
+    <section id="cta" class="py-24 md:py-36 lg:py-8 px-4 md:px-16 relative overflow-hidden"
         style="background-color: #13416B;">
         <!-- Efek Glow Latar Belakang -->
         <div
@@ -913,7 +913,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
                 <!-- Kolom Kiri: Teks & Tombol -->
-                <div class="text-left reveal-left lg:col-span-10 xl:col-span-9 lg:pr-10">
+                <div class="text-left reveal-left lg:col-span-7 xl:col-span-8 lg:pr-10">
                     <!-- FONT OSWALD UNTUK TITLE -->
                     <h2 class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm"
                         style="font-family: 'Oswald', sans-serif;">
@@ -938,6 +938,15 @@
                             Sudah Punya Akun? Masuk
                         </a>
                     </div>
+                </div>
+
+                <!-- Kolom Kanan: Ilustrasi CTA -->
+                <div class="relative hidden lg:col-span-5 xl:col-span-4 lg:flex h-full items-end justify-end reveal-right">
+                    <div class="absolute right-10 bottom-10 h-[280px] w-[280px] rounded-full bg-white/5 blur-xl"></div>
+                    <img src="{{ asset('images/cta-illustration.webp') }}"
+                        alt="Kepala Pusat Perencanaan Ketenagakerjaan"
+                        class="relative z-10 w-full max-w-[320px] object-contain drop-shadow-2xl animate-float translate-y-8"
+                        style="-webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); mask-image: linear-gradient(to bottom, black 80%, transparent 100%);">
                 </div>
 
             </div>
