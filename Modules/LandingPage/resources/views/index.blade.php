@@ -466,33 +466,66 @@
                     </ul>
                 </div>
 
-                <!-- Kanan: Bento Grid Fitur -->
-                <div class="grid grid-cols-2 gap-4 reveal-right">
-                    <div class="col-span-2 rounded-xl bg-[#13416B] p-6 text-white shadow-xl sm:p-8">
-                        <div class="mb-6 flex items-start justify-between gap-4">
-                            <span class="flex h-12 w-12 items-center justify-center rounded-md bg-white/15 text-xl text-white">
-                                <i class="fas fa-chart-line"></i>
-                            </span>
-                            <span class="rounded-full border border-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/70">Terukur</span>
+                <div class="reveal-right w-full h-full flex flex-col justify-center">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+
+                        <!-- Card 1: Penghitungan RTK (Full Width di atas) -->
+                        <div
+                            class="sm:col-span-2 bg-[#13416B] rounded-xl p-6 sm:p-8 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+                            <!-- Decorative Glow -->
+                            <div
+                                class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-150">
+                            </div>
+
+                            <div
+                                class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
+                                <div
+                                    class="w-16 h-16 rounded-2xl bg-white/10 text-white flex items-center justify-center shrink-0 backdrop-blur-md border border-white/20 shadow-inner">
+                                    <i class="fas fa-calculator text-3xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">
+                                        Penghitungan RTK</h3>
+                                    <p class="text-white/80 leading-relaxed text-sm sm:text-base">
+                                        Alat bantu dalam perhitungan rencana tenaga kerja makro dan mikro sesuai kondisi
+                                        daerah secara cepat dan presisi.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <h3 class="mb-2 text-xl font-extrabold sm:text-2xl">Perencanaan lebih akurat</h3>
-                        <p class="max-w-md text-sm leading-relaxed text-white/70">Perhitungan Rencana Tenaga Kerja Makro dan Mikro dilakukan secara otomatis dengan data yang konsisten.</p>
-                    </div>
 
-                    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-                        <span class="mb-8 flex h-14 w-14 items-center justify-center rounded-md bg-[#E8F2F8] text-xl text-[#13416B]">
-                            <i class="fas fa-graduation-cap"></i>
-                        </span>
-                        <h3 class="mb-2 text-lg font-extrabold text-slate-800">LMS mandiri</h3>
-                        <p class="text-sm leading-relaxed text-slate-500">Pelatihan terstruktur untuk aparatur daerah.</p>
-                    </div>
+                        <!-- Card 2: LMS Terintegrasi (Sejajar di kiri bawah, tanpa badge & dekorasi) -->
+                        <div
+                            class="bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between">
+                            <div>
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-200 mb-4 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-graduation-cap text-xl"></i>
+                                </div>
+                                <h3 class="text-base font-bold text-slate-800 mb-1.5">LMS Terintegrasi</h3>
+                                <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
+                                    Transfer pengetahuan terstruktur melalui modul pelatihan, video pembelajaran, hingga
+                                    sertifikasi kelulusan resmi.
+                                </p>
+                            </div>
+                        </div>
 
-                    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-                        <span class="mb-8 flex h-14 w-14 items-center justify-center rounded-md bg-[#E8F2F8] text-xl text-[#13416B]">
-                            <i class="fas fa-shield-alt"></i>
-                        </span>
-                        <h3 class="mb-2 text-lg font-extrabold text-slate-800">Terintegrasi</h3>
-                        <p class="text-sm leading-relaxed text-slate-600">Dokumen RTKD dan pelaporan tersimpan aman.</p>
+                        <!-- Card 3: Pelaporan & Arsip (Sejajar di kanan bawah) -->
+                        <div
+                            class="bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-[#13416B]/40 hover:shadow-lg hover:bg-white transition-all duration-300 group flex flex-col justify-between">
+                            <div>
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-white text-[#13416B] flex items-center justify-center shadow-sm border border-slate-200 mb-4 group-hover:bg-[#13416B] group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-file-invoice text-xl"></i>
+                                </div>
+                                <h3 class="text-base font-bold text-slate-800 mb-1.5">Pelaporan & Arsip</h3>
+                                <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
+                                    Pemantauan dokumen RTKD dan fitur sanggahan nilai dengan integrasi bukti pendukung
+                                    yang aman.
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
