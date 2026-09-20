@@ -3,8 +3,13 @@
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat|super-admin'])->name('admin-pusat.')->group(function () {
     Route::get('projects/export', [\Modules\Project\Http\Controllers\AdminPusat\ProjectController::class, 'export'])->name('project.export');
+    
+    Route::get('projects/{project}/prerequisite', [\Modules\Project\Http\Controllers\AdminPusat\ProjectController::class, 'prerequisite'])->name('project.prerequisite');
+    Route::patch('projects/{project}/prerequisite', [\Modules\Project\Http\Controllers\AdminPusat\ProjectController::class, 'updatePrerequisite'])->name('project.update-prerequisite');
+    
     Route::resource('projects', \Modules\Project\Http\Controllers\AdminPusat\ProjectController::class)->names('project');
 });
 
