@@ -41,11 +41,14 @@
                                 @endif
                             </x-table.td>
                             <x-table.td class="whitespace-nowrap">
-                                @if($project->status === 'On Progress')
-                                    <x-badge color="blue">On Progress</x-badge>
-                                @else
-                                    <x-badge color="slate">{{ $project->status }}</x-badge>
-                                @endif
+                                @php
+                                    $statusColor = match ($project->status) {
+                                        'On Progress' => 'amber-solid',
+                                        'Completed' => 'green-solid',
+                                        default => 'slate-solid',
+                                    };
+                                @endphp
+                                <x-badge :color="$statusColor" :text="$project->status === 'Completed' ? 'Selesai' : ($project->status ?? 'Draft')" />
                             </x-table.td>
                             <x-table.td class="whitespace-nowrap text-sm text-gray-500">
                                 {{ $project->start_date?->format('d M Y') }} — {{ $project->end_date?->format('d M Y') }}

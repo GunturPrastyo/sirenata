@@ -2,7 +2,7 @@
     <div class="p-2 sm:p-6">
         <x-breadcrumb :items="[['label' => 'Proyek', 'url' => route($routePrefix . 'index')], ['label' => 'Tinjau & Setujui']]" />
 
-        <div class="bg-white rounded-lg border border-slate-100 shadow-sm p-6 sm:p-8 max-w-3xl mx-auto">
+        <div class="bg-white rounded-lg border border-slate-100 shadow-sm p-6 sm:p-8 max-w-full mx-auto">
             <!-- Header -->
             <div class="mb-6 border-b border-slate-100 pb-5">
                 <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Tinjau & Setujui Proyek</h1>

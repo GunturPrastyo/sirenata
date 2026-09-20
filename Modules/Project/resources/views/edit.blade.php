@@ -16,7 +16,14 @@
                     <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Edit Proyek</h1>
                     <p class="text-sm text-slate-500 mt-1">Perbarui data proyek dan Dokumen SK.</p>
                 </div>
-                <x-badge color="{{ $project->status == 'On Progress' ? 'emerald' : 'amber' }}" :text="$project->status" />
+                @php
+                    $statusColor = match ($project->status) {
+                        'On Progress' => 'amber-solid',
+                        'Completed' => 'green-solid',
+                        default => 'slate-solid',
+                    };
+                @endphp
+                <x-badge :color="$statusColor" :text="$project->status === 'Completed' ? 'Selesai' : ($project->status ?? 'Draft')" />
             </div>
             
             <x-validation-errors class="mb-6" />

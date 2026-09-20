@@ -6,13 +6,20 @@
     <div class="p-2 sm:p-6">
         <x-breadcrumb :items="[['label' => 'Proyek', 'url' => route($routePrefix . 'index')], ['label' => 'Detail Proyek']]" />
 
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 max-w-full mx-auto">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 border-b border-slate-100 pb-5 sm:pb-6">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Detail Proyek</h1>
                 </div>
                 <div>
-                    <x-badge :color="$project->status === 'Selesai' ? 'success' : 'indigo'" :text="$project->status ?? 'On Progress'" class="uppercase tracking-wider" />
+                    @php
+                        $statusColor = match ($project->status) {
+                            'On Progress' => 'amber-solid',
+                            'Completed' => 'green-solid',
+                            default => 'slate-solid',
+                        };
+                    @endphp
+                    <x-badge :color="$statusColor" :text="$project->status === 'Completed' ? 'Selesai' : ($project->status ?? 'Draft')" class="uppercase tracking-wider" />
                 </div>
             </div>
 

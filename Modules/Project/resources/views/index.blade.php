@@ -109,15 +109,14 @@
                             @if ($projectScope === 'daerah')
                                 <x-table.td>
                                     @php
-                                        $statusClass = match ($project->status) {
-                                            'On Progress' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                            'Completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                            default => 'bg-slate-50 text-slate-600 border-slate-200',
+                                        $status = $project->status ?? 'Draft';
+                                        $statusColor = match ($status) {
+                                            'On Progress' => 'amber-solid',
+                                            'Completed' => 'green-solid',
+                                            default => 'slate-solid',
                                         };
                                     @endphp
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full border text-xs font-semibold whitespace-nowrap {{ $statusClass }}">
-                                        {{ $project->status ?? 'Draft' }}
-                                    </span>
+                                    <x-badge :color="$statusColor" :text="$status === 'Completed' ? 'Selesai' : $status" />
                                 </x-table.td>
                             @endif
                             <x-table.td>
@@ -126,7 +125,7 @@
                                 @endphp
                                 @if ($creatorScope?->regency)
                                     <div class="flex items-start gap-2">
-                                        <i class="fas fa-map-marker-alt text-amber-500 mt-0.5"></i>
+                                     
                                         <div>
                                             <span class="block text-sm font-semibold text-slate-700">{{ $creatorScope->regency->name }}</span>
                                             <span class="block text-xs text-slate-400">{{ $creatorScope->province->name ?? 'Kab/Kota' }}</span>
