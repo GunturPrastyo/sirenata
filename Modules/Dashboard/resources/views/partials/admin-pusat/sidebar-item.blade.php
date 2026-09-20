@@ -35,22 +35,21 @@
 
         <ul x-show="open" x-collapse x-cloak class="mt-1 space-y-1">
             <li>
-                <a href="{{ route('admin-pusat.project.index') }}"
+                <a href="{{ route('admin-pusat.project.index', ['type' => 'pusat']) }}"
                     class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
-                    {{ request()->routeIs('admin-pusat.project.index') && !request()->has('status')
+                    {{ request()->routeIs('admin-pusat.project.index') && request('type', 'pusat') === 'pusat'
                         ? 'text-[#13416B] bg-slate-100 font-bold'
                         : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
-                    Tambah Proyek
+                    Proyek Pusat
                 </a>
             </li>
             <li>
-                <!-- Mengarah ke index, tapi memfilter status=Draft -->
-                <a href="{{ route('admin-pusat.project.index', ['status' => 'Draft']) }}"
+                <a href="{{ route('admin-pusat.project.index', ['type' => 'daerah']) }}"
                     class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
-                    {{ request()->routeIs('admin-pusat.project.index') && request('status') === 'Draft'
+                    {{ request()->routeIs('admin-pusat.project.index') && request('type') === 'daerah'
                         ? 'text-[#13416B] bg-slate-100 font-bold'
                         : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
-                    Persetujuan Daerah
+                    Proyek Daerah
                 </a>
             </li>
         </ul>

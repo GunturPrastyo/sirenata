@@ -29,23 +29,17 @@ class ProjectExport implements
     public function __construct(
         private ?string $search = null,
         private ?string $status = null,
+        private string $type = 'pusat',
     ) {}
 
     public function query()
     {
         $query = Project::with('leader')->latest();
 
-        if ($this->status === 'Draft') {
-            $query->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value])
-                ->where('status', 'Draft');
+        if ($this->type === 'daerah') {
+            $query->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value]);
         } else {
-            $query->where(function ($projectQuery) {
-                $projectQuery->where('type', ProjectType::NASIONAL->value)
-                    ->orWhere(function ($regionalQuery) {
-                        $regionalQuery->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value])
-                            ->where('status', '!=', 'Draft');
-                    });
-            });
+            $query->where('type', ProjectType::NASIONAL->value);
         }
 
         if ($this->search) {

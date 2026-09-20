@@ -23,6 +23,7 @@ class ProjectController extends Controller
             new ProjectExport(
                 search: $request->string('search')->toString() ?: null,
                 status: $request->string('status')->toString() ?: null,
+                type: $request->string('type')->toString() ?: 'pusat',
             ),
             $filename
         );
@@ -32,22 +33,17 @@ class ProjectController extends Controller
     {
         $query = Project::with(['leader', 'creator.scopeArea.province', 'creator.scopeArea.regency'])->latest();
 
-        // Pisahkan antrean Draft daerah dari daftar monitoring proyek yang sudah berjalan.
-        if ($request->status === 'Draft') {
-            $query->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value])
-                ->where('status', 'Draft');
-        } else {
-            $query->where(function ($projectQuery) {
-                $projectQuery->where('type', ProjectType::NASIONAL->value)
-                    ->orWhere(function ($regionalQuery) {
-                        $regionalQuery->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value])
-                            ->where('status', '!=', 'Draft');
-                    });
-            });
+        $projectScope = $request->get('type', $request->status === 'Draft' ? 'daerah' : 'pusat');
 
-            if ($request->filled('status')) {
-                $query->where('status', $request->status);
-            }
+        if ($projectScope === 'daerah') {
+            $query->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value]);
+        } else {
+            $projectScope = 'pusat';
+            $query->where('type', ProjectType::NASIONAL->value);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         if ($request->filled('search')) {
@@ -57,7 +53,7 @@ class ProjectController extends Controller
         $projects = $query->paginate($request->get('per_page', 10))->withQueryString();
         $routePrefix = $this->routePrefix;
 
-        return view('project::index', compact('projects', 'routePrefix'));
+        return view('project::index', compact('projects', 'routePrefix', 'projectScope'));
     }
 
     public function create()
@@ -232,6 +228,6 @@ class ProjectController extends Controller
         ]);
 
         ToastMagic::success('Prasyarat kursus dan persetujuan proyek berhasil diperbarui!');
-        return redirect()->route($this->routePrefix . 'index');
+        return redirect()->route($this->routePrefix . 'index', ['type' => 'daerah']);
     }
 }

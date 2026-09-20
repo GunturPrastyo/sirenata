@@ -33,8 +33,9 @@ class ProjectController extends Controller
 
         $projects = $query->paginate($request->get('per_page', 10))->withQueryString();
         $routePrefix = $this->routePrefix;
+        $projectScope = 'daerah';
 
-        return view('project::index', compact('projects', 'routePrefix'));
+        return view('project::index', compact('projects', 'routePrefix', 'projectScope'));
     }
 
     public function create()

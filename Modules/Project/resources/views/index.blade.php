@@ -3,18 +3,18 @@
         <x-breadcrumb :items="[['label' => 'Proyek']]" />
         <!-- Mengubah Judul Tabel secara dinamis -->
         <x-dashboard::filter-card
-            title="{{ request('status') === 'Draft' ? 'Antrean Persetujuan Proyek Daerah' : 'Daftar Keseluruhan Proyek' }}"
+            title="{{ $projectScope === 'daerah' ? 'Proyek Daerah' : 'Proyek Pusat' }}"
             :total="$projects->total() . ' Proyek'" :resetUrl="route($routePrefix . 'index')">
 
             <x-slot name="actions">
                 <x-button :href="route('admin-pusat.project.export') .
                     '?' .
-                    http_build_query(request()->only(['search', 'status']))" variant="success" icon="fas fa-download" title="Ekspor Data">
+                    http_build_query(request()->only(['search', 'status', 'type']))" variant="success" icon="fas fa-download" title="Ekspor Data">
                     <span class="hidden sm:inline">Ekspor</span>
                 </x-button>
 
                 <!-- Menyembunyikan tombol Tambah jika sedang di halaman Persetujuan (Draft) -->
-                @if (request('status') !== 'Draft')
+                @if ($projectScope === 'pusat' || !str_contains($routePrefix, 'admin-pusat'))
                     @can('project-create')
                         <x-button :href="route($routePrefix . 'create')" variant="primary" icon="fas fa-plus">
                             <span class="hidden sm:inline">Tambah Proyek Pusat</span>
