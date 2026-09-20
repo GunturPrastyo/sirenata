@@ -83,6 +83,9 @@
                         <x-table.th>No.</x-table.th>
                         <x-table.th>Nama</x-table.th>
                         <x-table.th>Tipe</x-table.th>
+                        @if ($projectScope === 'daerah')
+                            <x-table.th>Status</x-table.th>
+                        @endif
                         <x-table.th>Asal Wilayah</x-table.th>
                         <x-table.th>Periode</x-table.th>
                         <x-table.th>Ketua Tim</x-table.th>
@@ -103,6 +106,20 @@
                             <x-table.td>
                                 <x-badge color="slate" :text="$project->type" />
                             </x-table.td>
+                            @if ($projectScope === 'daerah')
+                                <x-table.td>
+                                    @php
+                                        $statusClass = match ($project->status) {
+                                            'On Progress' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                            'Completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                            default => 'bg-slate-50 text-slate-600 border-slate-200',
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full border text-xs font-semibold whitespace-nowrap {{ $statusClass }}">
+                                        {{ $project->status ?? 'Draft' }}
+                                    </span>
+                                </x-table.td>
+                            @endif
                             <x-table.td>
                                 @php
                                     $creatorScope = $project->creator?->scopeArea;
@@ -137,14 +154,35 @@
                                 <span class="text-slate-600">{{ $project->leader->name ?? '-' }}</span>
                             </x-table.td>
                             <x-table.td>
+                                @php
+                                    $projectProgress = $project->progress ?? 0;
+                                    $endDate = $project->end_date ? \Carbon\Carbon::parse($project->end_date)->startOfDay() : null;
+                                    $remainingLabel = null;
+
+                                    if ($project->status === 'Draft') {
+                                        $remainingLabel = 'Menunggu persetujuan';
+                                    } elseif ($endDate) {
+                                        $today = now()->startOfDay();
+
+                                        if ($project->status === 'Completed' || $endDate->lessThan($today)) {
+                                            $remainingLabel = $project->status === 'Completed' ? 'Selesai' : 'Berakhir';
+                                        } else {
+                                            $remainingDays = $today->diffInDays($endDate);
+                                            $remainingLabel = $remainingDays > 0 ? "Sisa {$remainingDays} hari" : 'Berakhir hari ini';
+                                        }
+                                    }
+                                @endphp
                                 <div class="flex items-center">
                                     <span
-                                        class="text-indigo-600 font-medium whitespace-nowrap mr-2">{{ $project->progress ?? 0 }}%</span>
+                                        class="text-indigo-600 font-medium whitespace-nowrap mr-2">{{ $projectProgress }}%</span>
                                     <div class="w-24 lg:w-32 bg-slate-200 rounded-full h-2">
                                         <div class="bg-indigo-600 h-2 rounded-full"
-                                            style="width: {{ $project->progress ?? 0 }}%"></div>
+                                            style="width: {{ $projectProgress }}%"></div>
                                     </div>
                                 </div>
+                                @if ($projectScope === 'daerah' && $remainingLabel)
+                                    <span class="block mt-1 text-xs text-slate-500">{{ $remainingLabel }}</span>
+                                @endif
                             </x-table.td>
                             <x-table.td align="center">
                                 <x-table.action>
@@ -206,7 +244,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <x-table.td colspan="8" align="center" class="py-12">
+                            <x-table.td colspan="{{ $projectScope === 'daerah' ? 9 : 8 }}" align="center" class="py-12">
                                 <span class="text-sm text-slate-500">Tidak ada proyek yang ditemukan.</span>
                             </x-table.td>
                         </tr>

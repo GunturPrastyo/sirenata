@@ -66,7 +66,7 @@ class Project extends Model
 
     public function getProgressAttribute()
     {
-        if (!$this->start_date || !$this->end_date) {
+        if ($this->status === 'Draft' || !$this->start_date || !$this->end_date) {
             return 0;
         }
 
