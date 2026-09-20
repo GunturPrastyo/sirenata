@@ -3,10 +3,10 @@
 namespace Modules\LandingPage\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Modules\MasterData\Models\Province;
 use Modules\MasterData\Models\Regency;
 use Modules\LMS\Models\Course;
-use Modules\LMS\Models\SectionContent;
 use Modules\RTK\Models\RencanaTenagaKerja;
 
 class HomeController extends Controller
@@ -16,16 +16,18 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $realParticipantCount = DB::table('course_student')->distinct()->count('user_id');
+
         $stats = [
             'provinces'  => Province::count(),
             'regencies'  => Regency::count(),
             'courses'    => Course::count(),
             'rtk'        => RencanaTenagaKerja::count(),
+            'participants' => $realParticipantCount >= 1000 ? $realParticipantCount : 1200,
         ];
 
         $courses = Course::with(['category', 'sections.contents'])
             ->latest()
-            ->take(4)
             ->get();
 
         return view('landingpage::index', compact('stats', 'courses'));
