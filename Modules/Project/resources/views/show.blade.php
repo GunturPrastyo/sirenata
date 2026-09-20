@@ -3,124 +3,238 @@
         @include('project::partials.create-styles')
     @endpush
 
-    <div class="p-2 sm:p-6">
-        <x-breadcrumb :items="[['label' => 'Proyek', 'url' => route($routePrefix . 'index')], ['label' => 'Detail Proyek']]" />
+    @php
+        $isDaerah = in_array($project->type, ['Provinsi', 'Kab/Kota', 'Kabupaten/Kota', 'provinsi', 'kab_kota']);
+        $projectScope = request('type', $isDaerah ? 'daerah' : 'pusat');
+        $breadcrumbLabel = $projectScope === 'daerah' ? 'Proyek Daerah' : 'Proyek Pusat';
 
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 max-w-full mx-auto">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 border-b border-slate-100 pb-5 sm:pb-6">
+        $statusColor = match ($project->status) {
+            'On Progress' => 'amber-solid',
+            'Completed' => 'green-solid',
+            default => 'slate-solid',
+        };
+
+        $teamMembersArr = is_array($project->team_members)
+            ? $project->team_members
+            : json_decode($project->team_members, true) ?? [];
+
+        // Hitung durasi presisi dalam satuan Hari
+        $durationDays =
+            $project->start_date && $project->end_date
+                ? \Carbon\Carbon::parse($project->start_date)->diffInDays(\Carbon\Carbon::parse($project->end_date))
+                : $project->duration ?? 0;
+
+        // Ambil ID Prasyarat
+        $prerequisiteIds = method_exists($project, 'prerequisiteCourseIds')
+            ? $project->prerequisiteCourseIds()
+            : $project->prerequisite_course_ids ?? [];
+
+        // Deteksi namespace Model Course secara dinamis
+        $courseModelClass = match (true) {
+            class_exists('Modules\Course\Models\Course') => 'Modules\Course\Models\Course',
+            class_exists('Modules\Lms\Models\Course') => 'Modules\Lms\Models\Course',
+            class_exists('App\Models\Course') => 'App\Models\Course',
+            default => null,
+        };
+
+        $prerequisiteCourses =
+            $courseModelClass && !empty($prerequisiteIds)
+                ? $courseModelClass::whereIn('id', $prerequisiteIds)->get()
+                : collect();
+    @endphp
+    <div class="p-2 sm:p-6 space-y-5">
+        <!-- Breadcrumb -->
+        <x-breadcrumb :items="[
+            ['label' => $breadcrumbLabel, 'url' => route($routePrefix . 'index', ['type' => $projectScope])],
+            ['label' => 'Detail Proyek'],
+        ]" />
+
+        <!-- Header Card -->
+        <div class="bg-white rounded-md border border-slate-200 shadow-sm p-5 sm:p-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Detail Proyek</h1>
+                    <div class="flex items-center gap-2 mb-2">
+                        <x-badge :color="$statusColor" :text="$project->status === 'Completed' ? 'Selesai' : ($project->status ?? 'Draft')" class="uppercase tracking-wider" />
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">{{ $project->name }}</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">
+                        Dibuat oleh: <span
+                            class="font-semibold text-slate-700">{{ $project->creator->name ?? 'Sistem' }}</span>
+                    </p>
                 </div>
-                <div>
-                    @php
-                        $statusColor = match ($project->status) {
-                            'On Progress' => 'amber-solid',
-                            'Completed' => 'green-solid',
-                            default => 'slate-solid',
-                        };
-                    @endphp
-                    <x-badge :color="$statusColor" :text="$project->status === 'Completed' ? 'Selesai' : ($project->status ?? 'Draft')" class="uppercase tracking-wider" />
+
+                <div class="flex items-center gap-3">
+                    @can('project-edit')
+                        <x-button :href="route($routePrefix . 'prerequisite', $project->id)" variant="primary" class="rounded-md">
+                            <i class="fas fa-edit mr-2 text-xs"></i> Edit Prasyarat
+                        </x-button>
+                    @endcan
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div class="border-b border-slate-100 pb-4">
-                    <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Nama Proyek</label>
-                    <p class="text-lg font-bold text-slate-800">{{ $project->name }}</p>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 border-b border-slate-100 pb-4">
-                    <div>
-                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tanggal Mulai</label>
-                        <p class="text-sm sm:text-base font-semibold text-slate-700">
-                             {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : '-' }}
-                        </p>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tanggal Selesai</label>
-                        <p class="text-sm sm:text-base font-semibold text-slate-700">
-                             {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : '-' }}
-                        </p>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Durasi</label>
-                        <p class="text-sm sm:text-base font-semibold text-slate-700">{{ $project->duration }} Bulan</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 border-b border-slate-100 pb-4">
-                    <div>
-                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tipe Proyek</label>
-                        <p class="mt-1">
-                            <x-badge color="slate" :text="$project->type" />
-                        </p>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Progress</label>
-                        <div class="flex items-center mt-1.5">
-                            <span class="text-indigo-600 font-bold text-sm mr-2.5">{{ $project->progress ?? 0 }}%</span>
-                            <div class="w-full bg-slate-100 border border-slate-200/60 rounded-full h-2.5 overflow-hidden">
-                                <div class="bg-indigo-600 h-2.5 rounded-full shadow-inner shadow-indigo-500/20"
-                                    style="width: {{ $project->progress ?? 0 }}%">
-                                </div>
+            <!-- Ringkasan Statistik / KPI Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+                <div class="bg-slate-50 border border-slate-200/80 rounded-md p-4">
+                    <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Progress</span>
+                    <div class="flex items-center gap-3 mt-2">
+                        <span class="text-lg font-bold text-slate-800">{{ $project->progress ?? 0 }}%</span>
+                        <div class="flex-1 bg-slate-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $project->progress ?? 0 }}%">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-2">
-                    <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        Tim Proyek
-                    </h3>
+                <div class="bg-slate-50 border border-slate-200/80 rounded-md p-4">
+                    <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Durasi
+                        Proyek</span>
+                    <span class="block text-lg font-bold text-slate-800 mt-1">{{ $durationDays }} Hari</span>
+                </div>
 
-                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-4 flex items-center justify-between">
-                        <div>
-                            <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Ketua Tim</label>
-                            <span class="font-bold text-slate-800 text-sm sm:text-base">{{ $project->leader->name ?? '-' }}</span>
-                        </div>
-                        <div class="h-10 w-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg shadow-sm">
-                            {{ substr($project->leader->name ?? '?', 0, 1) }}
+                <div class="bg-slate-50 border border-slate-200/80 rounded-md p-4">
+                    <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal
+                        Mulai</span>
+                    <span class="block text-sm font-semibold text-slate-800 mt-1">
+                        {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : '-' }}
+                    </span>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200/80 rounded-md p-4">
+                    <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal
+                        Selesai</span>
+                    <span class="block text-sm font-semibold text-slate-800 mt-1">
+                        {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : '-' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Konten Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <!-- Informasi Wilayah, SK & Prasyarat (Left - 1 Col) -->
+            <div class="space-y-5">
+                <div class="bg-white border border-slate-200 rounded-md p-5 shadow-sm space-y-5">
+                    <h2
+                        class="text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100 pb-3">
+                        Informasi Wilayah & Aturan
+                    </h2>
+
+                    <div>
+                        <span class="block text-xs text-slate-400 font-semibold mb-1.5">Asal Wilayah</span>
+                        @php $creatorScope = $project->creator?->scopeArea; @endphp
+                        @if ($creatorScope?->regency)
+                            <div class="space-y-1.5">
+                                <p class="text-sm font-bold text-slate-800 leading-snug">
+                                    {{ $creatorScope->regency->name }}</p>
+                                @if ($creatorScope->province?->name)
+                                    <span
+                                        class="inline-block text-[11px] font-semibold text-slate-600 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md">
+                                        {{ $creatorScope->province->name }}
+                                    </span>
+                                @endif
+                            </div>
+                        @elseif ($creatorScope?->province)
+                            <span
+                                class="inline-block text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-md">
+                                {{ $creatorScope->province->name }}
+                            </span>
+                        @else
+                            <span
+                                class="inline-block text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md">
+                                Pusat / Nasional
+                            </span>
+                        @endif
+                    </div>
+
+                    <div>
+                        <span class="block text-xs text-slate-400 font-semibold mb-1">Dokumen Surat Keputusan
+                            (SK)</span>
+                        @if ($project->sk_document)
+                            <a href="{{ asset('storage/' . $project->sk_document) }}" target="_blank"
+                                class="inline-flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
+                                <i class="fas fa-file-pdf text-red-500 text-sm"></i> Unduh / Lihat SK
+                            </a>
+                        @else
+                            <span class="text-xs text-red-500 italic">Belum ada dokumen SK diunggah</span>
+                        @endif
+                    </div>
+
+                    <!-- List Prasyarat Kursus LMS -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <span class="block text-xs text-slate-400 font-semibold mb-2">Prasyarat Kursus LMS</span>
+                        @if ($project->is_prerequisite_active)
+                            @if ($prerequisiteCourses->count() > 0)
+                                <div class="space-y-2">
+                                    <span
+                                        class="inline-block text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                                        Wajib Lulus 100%
+                                    </span>
+                                    <ul class="space-y-1.5">
+                                        @foreach ($prerequisiteCourses as $course)
+                                            <li
+                                                class="flex items-start gap-2 text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/80 p-2.5 rounded-md">
+                                                <i class="fas fa-graduation-cap text-blue-600 text-xs mt-0.5"></i>
+                                                <span>{{ $course->name }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @else
+                                <span
+                                    class="text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-100 font-medium inline-block">
+                                    Prasyarat Aktif (Belum Pilih Kursus)
+                                </span>
+                            @endif
+                        @else
+                            <span
+                                class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md font-medium inline-block">
+                                Tidak Ada Prasyarat Kursus
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Struktur Tim Kerja (Right - 2 Cols) -->
+            <div class="lg:col-span-2">
+                <div class="bg-white border border-slate-200 rounded-md p-5 shadow-sm">
+                    <h2
+                        class="text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100 pb-3 mb-4">
+                        Tim Kerja Proyek
+                    </h2>
+
+                    <!-- Ketua Tim -->
+                    <div class="mb-5">
+                        <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Ketua
+                            Tim</span>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-md">
+                            <span
+                                class="block text-sm font-bold text-slate-900">{{ $project->leader->name ?? 'Belum Ditentukan' }}</span>
+                            <span class="text-xs text-slate-500">{{ $project->leader->email ?? '-' }}</span>
                         </div>
                     </div>
 
-                    <div class="mt-4">
-                        @php
-                            $teamMembersArr = is_array($project->team_members) ? $project->team_members : json_decode($project->team_members, true) ?? [];
-                        @endphp
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                    <!-- Anggota Tim -->
+                    <div>
+                        <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
                             Anggota Tim ({{ count($teamMembersArr) }})
-                        </label>
-                        @if(count($teamMembersArr) > 0)
+                        </span>
+                        @if (count($teamMembersArr) > 0)
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                @foreach(App\Models\User::whereIn('id', $teamMembersArr)->get() as $member)
-                                    <div class="flex items-center p-3 bg-white border border-slate-100 rounded-xl hover:border-indigo-100 hover:shadow-sm hover:shadow-indigo-500/5 transition-all">
-                                        <div class="h-8 w-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-600 font-bold mr-3 text-sm">
-                                            {{ substr($member->name, 0, 1) }}
-                                        </div>
-                                        <span class="text-sm text-slate-700 font-semibold">{{ $member->name }}</span>
+                                @foreach (App\Models\User::whereIn('id', $teamMembersArr)->get() as $member)
+                                    <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-md">
+                                        <span
+                                            class="block text-xs font-semibold text-slate-800">{{ $member->name }}</span>
+                                        <span class="block text-[11px] text-slate-400">{{ $member->email }}</span>
                                     </div>
                                 @endforeach
                             </div>
                         @else
-                            <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 text-center">
-                                <p class="text-xs sm:text-sm text-slate-400 italic">Tidak ada anggota tim tambahan.</p>
+                            <div class="p-4 text-center border border-dashed border-slate-200 rounded-md">
+                                <p class="text-xs text-slate-400 italic">Belum ada anggota tim yang didaftarkan.</p>
                             </div>
                         @endif
                     </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 mt-6 border-t border-slate-100">
-                    <x-button :href="route($routePrefix . 'index')" variant="secondary" class="flex-1">
-                        Kembali
-                    </x-button>
-                    @can('project-edit')
-                        <x-button :href="route($routePrefix . 'edit', $project->id)" variant="primary" class="flex-1">
-                            Edit Proyek
-                        </x-button>
-                    @endcan
                 </div>
             </div>
         </div>

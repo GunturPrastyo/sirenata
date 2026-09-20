@@ -1,43 +1,47 @@
 <x-dashboard::layouts.dashboard title="Persetujuan Proyek Daerah">
     <div class="p-2 sm:p-6">
-        <x-breadcrumb :items="[['label' => 'Proyek', 'url' => route($routePrefix . 'index')], ['label' => 'Tinjau & Setujui']]" />
+        <!-- Breadcrumb Profesional khusus Proyek Daerah -->
+        <x-breadcrumb :items="[
+            ['label' => 'Proyek Daerah', 'url' => route($routePrefix . 'index', ['type' => 'daerah'])],
+            ['label' => 'Tinjau & Setujui']
+        ]" />
 
-        <div class="bg-white rounded-lg border border-slate-100 shadow-sm p-6 sm:p-8 max-w-full mx-auto">
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8 max-w-full mx-auto">
             <!-- Header -->
             <div class="mb-6 border-b border-slate-100 pb-5">
-                <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Tinjau & Setujui Proyek</h1>
-                <p class="text-sm text-slate-500 mt-1">Tinjau draft usulan dari daerah dan tentukan aturan kursus sebelum disetujui.</p>
+                <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Tinjau & Setujui Proyek Daerah</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Tinjau draft usulan dari daerah dan tentukan aturan kursus prasyarat sebelum disetujui.</p>
                 <x-validation-errors class="mt-4" />
             </div>
 
             <!-- BAGIAN 1: Informasi Proyek (Read-Only) -->
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
-                <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2">Detail Usulan Proyek</h3>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4 border-b border-slate-200 pb-2">Detail Usulan Proyek</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                        <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Nama Proyek</span>
+                        <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Nama Proyek</span>
                         <span class="text-sm font-bold text-slate-900">{{ $project->name }}</span>
                     </div>
                     <div>
-                        <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Tipe Wilayah</span>
+                        <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Tipe Wilayah</span>
                         <x-badge color="indigo" :text="$project->type" />
                     </div>
                     <div>
-                        <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Periode Proyek</span>
+                        <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Periode Proyek</span>
                         <span class="text-sm font-medium text-slate-700">
                             {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : '-' }} s/d 
                             {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('d M Y') : '-' }}
                         </span>
                     </div>
                     <div>
-                        <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Surat Keputusan (SK)</span>
+                        <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Surat Keputusan (SK)</span>
                         @if($project->sk_document)
                             <a href="{{ asset('storage/' . $project->sk_document) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 shadow-sm text-slate-700 rounded-md text-xs font-bold hover:bg-slate-100 transition">
                                 <i class="fas fa-file-pdf text-red-500 text-sm"></i> Buka File SK
                             </a>
                         @else
                             <span class="inline-flex items-center text-xs font-medium text-red-600 bg-red-50 px-2.5 py-1 rounded-md border border-red-100">
-                                <i class="fas fa-exclamation-triangle mr-1.5"></i> Belum Ada SK
+                                Belum Ada SK
                             </span>
                         @endif
                     </div>
@@ -124,9 +128,9 @@
                     </p>
                 </div>
 
-                <!-- Aksi -->
+                <!-- Aksi (Arahkan Batal ke Proyek Daerah) -->
                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-slate-100">
-                    <x-button :href="route($routePrefix . 'index', ['status' => 'Draft'])" variant="secondary" class="flex-1">
+                    <x-button :href="route($routePrefix . 'index', ['type' => 'daerah', 'status' => 'Draft'])" variant="secondary" class="flex-1">
                         Batal
                     </x-button>
                     <x-button type="submit" variant="primary" class="flex-1">
@@ -136,106 +140,4 @@
             </form>
         </div>
     </div>
-
-    @push('scripts')
-        <script>
-            const courseSelectionState = {
-                isOpen: false,
-            };
-
-            function toggleCourseSelection() {
-                const isChecked = document.getElementById('is_prerequisite_active').checked;
-                const courseDiv = document.getElementById('courseSelectionDiv');
-                
-                if (isChecked) {
-                    courseDiv.classList.remove('hidden');
-                } else {
-                    courseDiv.classList.add('hidden');
-                }
-            }
-
-            document.addEventListener('DOMContentLoaded', () => {
-                const picker = document.getElementById('coursePicker');
-                const pickerButton = document.getElementById('coursePickerButton');
-                const pickerMenu = document.getElementById('coursePickerMenu');
-                const pickerChevron = document.getElementById('coursePickerChevron');
-                const searchInput = document.getElementById('courseSearch');
-                const options = [...document.querySelectorAll('.course-option')];
-                const selectedList = document.getElementById('selectedCoursesList');
-                const selectedCount = document.getElementById('selectedCourseCount');
-                const emptyState = document.getElementById('emptySelectedCourses');
-                const noResults = document.getElementById('noCourseResults');
-
-                function closePicker() {
-                    courseSelectionState.isOpen = false;
-                    pickerMenu.classList.add('hidden');
-                    pickerButton.setAttribute('aria-expanded', 'false');
-                    pickerChevron.classList.remove('rotate-180');
-                }
-
-                function renderSelectedCourses() {
-                    selectedList.querySelectorAll('[data-selected-course]').forEach((item) => item.remove());
-                    const selectedOptions = options.filter((option) => option.checked);
-                    selectedCount.textContent = `${selectedOptions.length} kursus`;
-                    emptyState.classList.toggle('hidden', selectedOptions.length > 0);
-
-                    selectedOptions.forEach((option) => {
-                        const chip = document.createElement('span');
-                        chip.dataset.selectedCourse = option.value;
-                        chip.className = 'inline-flex items-center gap-2 max-w-full px-3 py-2 bg-indigo-50 border border-indigo-100 rounded-lg text-sm font-medium text-indigo-700';
-
-                        const label = document.createElement('span');
-                        label.className = 'truncate';
-                        label.textContent = option.dataset.courseLabel;
-
-                        const removeButton = document.createElement('button');
-                        removeButton.type = 'button';
-                        removeButton.className = 'w-5 h-5 inline-flex items-center justify-center rounded-full text-indigo-400 hover:bg-indigo-200 hover:text-indigo-700 transition';
-                        removeButton.setAttribute('aria-label', `Hapus ${option.dataset.courseLabel}`);
-                        removeButton.innerHTML = '<i class="fas fa-times text-xs"></i>';
-                        removeButton.addEventListener('click', () => {
-                            option.checked = false;
-                            renderSelectedCourses();
-                        });
-
-                        chip.append(label, removeButton);
-                        selectedList.appendChild(chip);
-                    });
-                }
-
-                function filterCourses() {
-                    const query = searchInput.value.trim().toLowerCase();
-                    let visibleCount = 0;
-
-                    document.querySelectorAll('[data-course-option]').forEach((option) => {
-                        const isVisible = option.dataset.courseName.includes(query);
-                        option.classList.toggle('hidden', !isVisible);
-                        visibleCount += isVisible ? 1 : 0;
-                    });
-
-                    noResults.classList.toggle('hidden', visibleCount > 0);
-                }
-
-                pickerButton.addEventListener('click', () => {
-                    courseSelectionState.isOpen = !courseSelectionState.isOpen;
-                    pickerMenu.classList.toggle('hidden', !courseSelectionState.isOpen);
-                    pickerButton.setAttribute('aria-expanded', courseSelectionState.isOpen ? 'true' : 'false');
-                    pickerChevron.classList.toggle('rotate-180', courseSelectionState.isOpen);
-                    if (courseSelectionState.isOpen) searchInput.focus();
-                });
-
-                options.forEach((option) => option.addEventListener('change', renderSelectedCourses));
-                searchInput.addEventListener('input', filterCourses);
-                document.addEventListener('click', (event) => {
-                    if (!picker.contains(event.target)) closePicker();
-                });
-                document.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape') closePicker();
-                });
-
-                renderSelectedCourses();
-                toggleCourseSelection();
-            });
-        </script>
-    @endpush
 </x-dashboard::layouts.dashboard>
