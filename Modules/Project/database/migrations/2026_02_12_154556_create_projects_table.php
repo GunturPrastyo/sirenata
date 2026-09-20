@@ -13,10 +13,18 @@ return new class extends Migration {
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('duration')->comment('Duration in months');
-            $table->foreignUuid('team_leader')->constrained('users');
+            
+            $table->foreignUuid('team_leader')->nullable()->constrained('users');
             $table->json('team_members')->nullable();
+            
             $table->string('type')->comment('Nasional, Provinsi, Kab/Kota');
-            $table->string('status')->nullable()->default('On Progress');
+            
+            $table->string('status')->nullable()->default('Draft'); 
+
+            $table->string('sk_document')->nullable()->comment('Path penyimpanan file Dokumen SK (PDF)');
+            $table->boolean('is_prerequisite_active')->default(false)->comment('Apakah prasyarat kursus aktif?');
+            $table->uuid('prerequisite_course_id')->nullable()->comment('ID dari tabel courses LMS');
+
             $table->timestamps();
         });
     }

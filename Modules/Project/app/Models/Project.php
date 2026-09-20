@@ -2,8 +2,9 @@
 
 namespace Modules\Project\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Modules\LMS\Models\Course;
 
 class Project extends Model
 {
@@ -18,17 +19,26 @@ class Project extends Model
         'team_members',
         'type',
         'status',
+        'sk_document',
+        'prerequisite_course_id',
+        'is_prerequisite_active'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'team_members' => 'array',
+        'is_prerequisite_active' => 'boolean',
     ];
 
     public function leader()
     {
         return $this->belongsTo(\App\Models\User::class, 'team_leader');
+    }
+
+    public function prerequisiteCourse()
+    {
+        return $this->belongsTo(Course::class, 'prerequisite_course_id');
     }
 
     public function getProgressAttribute()

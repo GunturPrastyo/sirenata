@@ -9,10 +9,14 @@ use Illuminate\Support\Facades\Auth;
 use Modules\Project\Models\Project;
 use Modules\Project\Enums\ProjectType;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Support\Facades\Storage; // Tambahkan ini untuk handle upload SK
 
 class ProjectController extends Controller
 {
     protected string $routePrefix = 'admin-province.project.';
+
+    // Asumsikan Anda sudah meng-inject ProjectService jika ingin pakai service,
+    // Di sini saya pakai query manual agar sejalan dengan file lama Anda.
 
     public function index(Request $request)
     {
@@ -35,61 +39,39 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $user = Auth::user();
-        $adminScope = $user->scopeArea;
-        
-        $usersQuery = User::role('user');
-        if ($adminScope && $adminScope->province_code) {
-            $usersQuery->whereHas('scopeArea', function ($q) use ($adminScope) {
-                $q->where('province_code', $adminScope->province_code)
-                  ->whereNull('regency_code');
-            });
-        } else {
-            $usersQuery->where('id', 0);
-        }
-        $users = $usersQuery->get();
-        
+        // Di alur baru, Create hanya buat nama & tanggal. 
+        // Ketua & Anggota TIDAK diisi di sini, jadi kita tidak perlu ambil data $users.
         $routePrefix = $this->routePrefix;
-        return view('project::create', compact('users', 'routePrefix'));
+        return view('project::create', compact('routePrefix'));
     }
 
     public function store(Request $request)
     {
-        $adminScope = Auth::user()->scopeArea;
-        $allowedUserIds = User::role('user')->whereHas('scopeArea', function ($q) use ($adminScope) {
-            $q->where('province_code', $adminScope?->province_code)
-              ->whereNull('regency_code');
-        })->pluck('id')->toArray();
-
         $request->validate([
             'proyekName' => 'required|string|max:255',
             'startDate' => 'required|date',
-            'endDate' => 'required|date',
+            'endDate' => 'required|date|after_or_equal:startDate',
             'duration' => 'nullable|integer',
-            'teamLeader' => [
-                'required',
-                'exists:users,id',
-                \Illuminate\Validation\Rule::in($allowedUserIds)
-            ],
-            'teamMembers' => 'nullable|array',
-            'teamMembers.*' => [
-                'exists:users,id',
-                \Illuminate\Validation\Rule::in($allowedUserIds)
-            ],
+            'sk_document' => 'required|file|mimes:pdf|max:5120', // Wajib upload SK (Max 5MB)
         ]);
+
+        $skPath = null;
+        if ($request->hasFile('sk_document')) {
+            $skPath = $request->file('sk_document')->store('project_sk', 'public');
+        }
 
         Project::create([
             'name' => $request->proyekName,
             'start_date' => $request->startDate,
             'end_date' => $request->endDate,
             'duration' => $request->duration,
-            'team_leader' => $request->teamLeader,
-            'team_members' => $request->teamMembers,
+            'sk_document' => $skPath,
             'type' => ProjectType::PROVINSI->value,
-            'status' => 'On Progress',
+            'status' => 'Draft', // ALUR BARU: Otomatis Draft, menunggu pusat!
+            // team_leader dan team_members dibiarkan kosong/null
         ]);
 
-        ToastMagic::success('Proyek berhasil dibuat!');
+        ToastMagic::success('Draft proyek berhasil dibuat! Menunggu persetujuan Pusat.');
         return redirect()->route($this->routePrefix . 'index');
     }
 
@@ -103,21 +85,40 @@ class ProjectController extends Controller
     public function edit($id)
     {
         $project = Project::findOrFail($id);
-        
-        $user = Auth::user();
-        $adminScope = $user->scopeArea;
-        $usersQuery = User::role('user');
-        if ($adminScope && $adminScope->province_code) {
-            $usersQuery->whereHas('scopeArea', function ($q) use ($adminScope) {
-                $q->where('province_code', $adminScope->province_code)
-                  ->whereNull('regency_code');
-            });
-        } else {
-            $usersQuery->where('id', 0);
-        }
-        $users = $usersQuery->get();
-
         $routePrefix = $this->routePrefix;
+
+        $users = collect(); // Default kosong
+
+        // HANYA ambil data users jika proyek sudah disetujui pusat (On Progress)
+        if ($project->status === 'On Progress') {
+            $user = Auth::user();
+            $adminScope = $user->scopeArea;
+
+            $usersQuery = User::role('user');
+
+            // Filter 1: Area Wilayah (Provinsi)
+            if ($adminScope && $adminScope->province_code) {
+                $usersQuery->whereHas('scopeArea', function ($q) use ($adminScope) {
+                    $q->where('province_code', $adminScope->province_code)
+                        ->whereNull('regency_code');
+                });
+            } else {
+                $usersQuery->where('id', 0); // Fallback aman
+            }
+
+            // Filter 2: Prasyarat Kursus (Bypass relasi model, tembak langsung ke tabel pivot)
+            if ($project->is_prerequisite_active && $project->prerequisite_course_id) {
+                $usersQuery->whereIn('id', function ($query) use ($project) {
+                    $query->select('user_id')
+                        ->from('course_student')
+                        ->where('course_id', $project->prerequisite_course_id)
+                        ->where('status', 'completed');
+                });
+            }
+
+            $users = $usersQuery->get();
+        }
+
         return view('project::edit', compact('project', 'users', 'routePrefix'));
     }
 
@@ -125,37 +126,72 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
 
-        $adminScope = Auth::user()->scopeArea;
-        $allowedUserIds = User::role('user')->whereHas('scopeArea', function ($q) use ($adminScope) {
-            $q->where('province_code', $adminScope?->province_code)
-              ->whereNull('regency_code');
-        })->pluck('id')->toArray();
-
-        $request->validate([
+        $rules = [
             'proyekName' => 'required|string|max:255',
             'startDate' => 'required|date',
-            'endDate' => 'required|date',
+            'endDate' => 'required|date|after_or_equal:startDate',
             'duration' => 'nullable|integer',
-            'teamLeader' => [
+            'sk_document' => 'nullable|file|mimes:pdf|max:5120',
+        ];
+
+        // Jika proyek sudah On Progress, maka validasi Ketua Tim berjalan
+        if ($project->status === 'On Progress') {
+            $adminScope = Auth::user()->scopeArea;
+
+            $usersQuery = User::role('user')->whereHas('scopeArea', function ($q) use ($adminScope) {
+                $q->where('province_code', $adminScope?->province_code)
+                    ->whereNull('regency_code');
+            });
+
+            // Filter 2: Prasyarat Kursus (Bypass relasi model, tembak langsung ke tabel pivot)
+            if ($project->is_prerequisite_active && $project->prerequisite_course_id) {
+                $usersQuery->whereIn('id', function ($query) use ($project) {
+                    $query->select('user_id')
+                        ->from('course_student')
+                        ->where('course_id', $project->prerequisite_course_id)
+                        ->where('status', 'completed');
+                });
+            }
+
+            $allowedUserIds = $usersQuery->pluck('id')->toArray();
+
+            $rules['teamLeader'] = [
                 'required',
                 'exists:users,id',
                 \Illuminate\Validation\Rule::in($allowedUserIds)
-            ],
-            'teamMembers' => 'nullable|array',
-            'teamMembers.*' => [
+            ];
+            $rules['teamMembers'] = 'nullable|array';
+            $rules['teamMembers.*'] = [
                 'exists:users,id',
                 \Illuminate\Validation\Rule::in($allowedUserIds)
-            ],
-        ]);
+            ];
+        }
 
-        $project->update([
+        $request->validate($rules);
+
+        // Update data dasar
+        $updateData = [
             'name' => $request->proyekName,
             'start_date' => $request->startDate,
             'end_date' => $request->endDate,
             'duration' => $request->duration,
-            'team_leader' => $request->teamLeader,
-            'team_members' => $request->teamMembers,
-        ]);
+        ];
+
+        // Update SK jika ada file baru yang diunggah
+        if ($request->hasFile('sk_document')) {
+            if ($project->sk_document) {
+                Storage::disk('public')->delete($project->sk_document);
+            }
+            $updateData['sk_document'] = $request->file('sk_document')->store('project_sk', 'public');
+        }
+
+        // Update anggota tim HANYA JIKA proyek sudah On Progress
+        if ($project->status === 'On Progress') {
+            $updateData['team_leader'] = $request->teamLeader;
+            $updateData['team_members'] = $request->teamMembers;
+        }
+
+        $project->update($updateData);
 
         ToastMagic::success('Proyek berhasil diperbarui!');
         return redirect()->route($this->routePrefix . 'index');
@@ -164,6 +200,9 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         $project = Project::findOrFail($id);
+        if ($project->sk_document) {
+            Storage::disk('public')->delete($project->sk_document);
+        }
         $project->delete();
         ToastMagic::success('Proyek berhasil dihapus!');
         return redirect()->route($this->routePrefix . 'index');
