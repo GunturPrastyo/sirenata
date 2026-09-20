@@ -1,11 +1,11 @@
 <ul class="space-y-3 px-3 font-medium text-sm">
     <!-- Dashboard -->
     <li>
-        <a href="{{ route('admin-kab-kota.dashboard') }}" 
+        <a href="{{ route('admin-kab-kota.dashboard') }}"
             class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-kab-kota.dashboard')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-home text-lg"></i>
             </span>
@@ -15,11 +15,11 @@
 
     <!-- Proyek -->
     <li>
-        <a href="{{ route('admin-kab-kota.project.index') }}" 
+        <a href="{{ route('admin-kab-kota.project.index') }}"
             class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-kab-kota.project.*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-briefcase text-lg"></i>
             </span>
@@ -29,11 +29,11 @@
 
     <!-- Dropdown: Pelaporan -->
     <li x-data="{ open: {{ request()->routeIs('admin-kab-kota.rtkd*', 'admin-kab-kota.laporan*') ? 'true' : 'false' }} }">
-        <button @click="open = !open" 
+        <button @click="open = !open"
             class="flex items-center cursor-pointer w-full px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-kab-kota.rtkd*', 'admin-kab-kota.laporan*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-file-alt text-lg"></i>
             </span>
@@ -48,20 +48,20 @@
 
         <ul x-show="open" x-collapse x-cloak class="mt-2 space-y-1 pl-6">
             <li>
-                <a href="{{ route('admin-kab-kota.rtkd.index') }}" 
+                <a href="{{ route('admin-kab-kota.rtkd.index') }}"
                     class="flex items-center pl-7 px-4 py-2.5 rounded-lg transition-colors text-[13px]
                     {{ request()->routeIs('admin-kab-kota.rtkd*')
-                        ? 'text-[#13416B] bg-[#13416B]/10 font-bold'
-                        : 'text-slate-500 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                        ? 'text-[#13416B] bg-slate-100 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
                     Rekapitulasi Rencana Tenaga Kerja Kab/Kota
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin-kab-kota.laporan.index') }}" 
+                <a href="{{ route('admin-kab-kota.laporan.index') }}"
                     class="flex items-center pl-7 px-4 py-2.5 rounded-lg transition-colors text-[13px]
                     {{ request()->routeIs('admin-kab-kota.laporan*')
-                        ? 'text-[#13416B] bg-[#13416B]/10 font-bold'
-                        : 'text-slate-500 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                        ? 'text-[#13416B] bg-slate-100 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
                     Rencana Tenaga Kerja (RTK)
                 </a>
             </li>
@@ -70,11 +70,11 @@
 
     <!-- Rekapitulasi SDM -->
     <li>
-        <a href="{{ route('admin-kab-kota.rekapitulasi.index') }}" 
+        <a href="{{ route('admin-kab-kota.rekapitulasi.index') }}"
             class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
             {{ request()->routeIs('admin-kab-kota.rekapitulasi*')
-                ? 'text-[#13416B] bg-slate-200/70 font-bold'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-[#13416B]' }}">
+                ? 'text-[#13416B] bg-slate-100 font-bold'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
             <span class="w-7 shrink-0 flex items-center justify-center">
                 <i class="fas fa-users text-lg"></i>
             </span>

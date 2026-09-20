@@ -37,20 +37,20 @@
             <li>
                 <a href="{{ route('admin-pusat.project.index') }}"
                     class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
-                    {{ request()->routeIs('admin-pusat.project.*')
+                    {{ request()->routeIs('admin-pusat.project.index') && !request()->has('status')
                         ? 'text-[#13416B] bg-slate-100 font-bold'
                         : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
-                    Daftar Proyek
+                    Tambah Proyek
                 </a>
             </li>
             <li>
-                <!-- Ganti href="#" dengan route prasyarat Anda nanti -->
-                <a href="#"
+                <!-- Mengarah ke index, tapi memfilter status=Draft -->
+                <a href="{{ route('admin-pusat.project.index', ['status' => 'Draft']) }}"
                     class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
-                    {{ request()->routeIs('admin-pusat.prerequisite.*')
+                    {{ request()->routeIs('admin-pusat.project.index') && request('status') === 'Draft'
                         ? 'text-[#13416B] bg-slate-100 font-bold'
                         : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
-                    Prasyarat Kursus
+                    Persetujuan Daerah
                 </a>
             </li>
         </ul>
