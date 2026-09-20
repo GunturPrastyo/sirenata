@@ -3,14 +3,15 @@
 namespace Modules\Project\Http\Controllers\AdminPusat;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use Modules\Project\Models\Project;
-use Modules\Project\Enums\ProjectType;
-use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Modules\Project\Enums\ProjectType;
 use Modules\Project\Exports\ProjectExport;
+use Modules\Project\Models\Project;
 
 class ProjectController extends Controller
 {
@@ -58,15 +59,85 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $users = User::role('user')->where(function ($query) {
-            $query->doesntHave('scopeArea')
-                ->orWhereHas('scopeArea', function ($q) {
-                    $q->whereNull('province_code')->whereNull('regency_code');
-                });
-        })->get();
+        // 1. Ambil daftar kursus dari LMS
+        $courseModelClass = match (true) {
+            class_exists('Modules\LMS\Models\Course') => 'Modules\LMS\Models\Course',
+            class_exists('Modules\Course\Models\Course') => 'Modules\Course\Models\Course',
+            class_exists('App\Models\Course') => 'App\Models\Course',
+            default => null,
+        };
+
+        $courses = $courseModelClass ? $courseModelClass::select('id', 'name')->orderBy('name')->get() : collect();
+
+        // 2. Deteksi struktur kolom tabel LMS secara dinamis
+        $hasDirectCourseId = \Illuminate\Support\Facades\Schema::hasColumn('section_contents', 'course_id');
+        $fkSectionColumn = \Illuminate\Support\Facades\Schema::hasColumn('section_contents', 'course_section_id') ? 'course_section_id' : 'section_id';
+        $sectionTable = \Illuminate\Support\Facades\Schema::hasTable('course_sections') ? 'course_sections' : 'sections';
+
+        // 3. Hitung total jumlah materi/konten per course
+        if ($hasDirectCourseId) {
+            $totalContentsPerCourse = DB::table('section_contents')
+                ->select('course_id', DB::raw('COUNT(id) as total_count'))
+                ->groupBy('course_id')
+                ->pluck('total_count', 'course_id')
+                ->toArray();
+        } else {
+            $totalContentsPerCourse = DB::table('section_contents as sc')
+                ->join("{$sectionTable} as s", "s.id", "=", "sc.{$fkSectionColumn}")
+                ->select('s.course_id', DB::raw('COUNT(sc.id) as total_count'))
+                ->groupBy('s.course_id')
+                ->pluck('total_count', 's.course_id')
+                ->toArray();
+        }
+
+        // 4. Ambil user pusat dan tentukan kursus yang lulus 100%
+        $users = User::role('user')
+            ->where(function ($query) {
+                $query->doesntHave('scopeArea')
+                    ->orWhereHas('scopeArea', function ($q) {
+                        $q->whereNull('province_code')->whereNull('regency_code');
+                    });
+            })
+            ->get()
+            ->map(function ($user) use ($totalContentsPerCourse, $hasDirectCourseId, $sectionTable, $fkSectionColumn) {
+                $query = DB::table('student_content_progress as scp')
+                    ->join('section_contents as sc', 'sc.id', '=', 'scp.section_content_id')
+                    ->where('scp.user_id', $user->id)
+                    ->whereNotNull('scp.completed_at');
+
+                if ($hasDirectCourseId) {
+                    $userCompletedCounts = $query
+                        ->select('sc.course_id', DB::raw('COUNT(DISTINCT scp.section_content_id) as completed_count'))
+                        ->groupBy('sc.course_id')
+                        ->pluck('completed_count', 'sc.course_id')
+                        ->toArray();
+                } else {
+                    $userCompletedCounts = $query
+                        ->join("{$sectionTable} as s", "s.id", "=", "sc.{$fkSectionColumn}")
+                        ->select('s.course_id', DB::raw('COUNT(DISTINCT scp.section_content_id) as completed_count'))
+                        ->groupBy('s.course_id')
+                        ->pluck('completed_count', 's.course_id')
+                        ->toArray();
+                }
+
+                $completedCourseIds = [];
+                foreach ($userCompletedCounts as $courseId => $completedCount) {
+                    $total = $totalContentsPerCourse[$courseId] ?? 0;
+                    if ($total > 0 && $completedCount >= $total) {
+                        $completedCourseIds[] = (int) $courseId;
+                    }
+                }
+
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'completed_courses' => $completedCourseIds,
+                ];
+            });
 
         $routePrefix = $this->routePrefix;
-        return view('project::create', compact('users', 'routePrefix'));
+
+        return view('project::create', compact('courses', 'users', 'routePrefix'));
     }
 
     public function store(Request $request)
@@ -83,6 +154,8 @@ class ProjectController extends Controller
             'startDate' => 'required|date',
             'endDate' => 'required|date',
             'duration' => 'nullable|integer',
+            'prerequisite_course_ids' => 'nullable|array',
+            'prerequisite_course_ids.*' => 'integer',
             'teamLeader' => [
                 'required',
                 'exists:users,id',
@@ -93,7 +166,13 @@ class ProjectController extends Controller
                 'exists:users,id',
                 \Illuminate\Validation\Rule::in($allowedUserIds)
             ],
+            'sk_document' => 'nullable|file|mimes:pdf|max:5120',
         ]);
+
+        $skPath = null;
+        if ($request->hasFile('sk_document')) {
+            $skPath = $request->file('sk_document')->store('projects/sk', 'public');
+        }
 
         Project::create([
             'name' => $request->proyekName,
@@ -103,11 +182,14 @@ class ProjectController extends Controller
             'created_by' => Auth::id(),
             'team_leader' => $request->teamLeader,
             'team_members' => $request->teamMembers,
+            'prerequisite_course_ids' => $request->prerequisite_course_ids,
+            'is_prerequisite_active' => !empty($request->prerequisite_course_ids),
+            'sk_document' => $skPath,
             'type' => ProjectType::NASIONAL->value,
-            'status' => 'On Progress',
+            'status' => 'On Progress', // Langsung Aktif / ACC
         ]);
 
-        ToastMagic::success('Proyek berhasil dibuat!');
+        ToastMagic::success('Proyek berhasil dibuat dan langsung diaktifkan!');
         return redirect()->route($this->routePrefix . 'index');
     }
 
