@@ -51,7 +51,7 @@
 
                 <!-- Atur Prasyarat -->
                 <div>
-                    <h3 class="text-sm font-bold text-slate-800 mb-3">Pengaturan Prasyarat Anggota Tim</h3>
+                    <h3 class="text-sm font-bold text-slate-800 mb-3">Pengaturan Prasyarat Ketua dan Anggota Tim</h3>
                     <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 sm:p-5">
                         <label class="flex items-start gap-3 cursor-pointer">
                             <div class="pt-0.5">
@@ -63,20 +63,51 @@
                             <div>
                                 <span class="block text-sm font-bold text-slate-900">Wajibkan Prasyarat Kursus LMS</span>
                                 <span class="block text-xs text-slate-600 mt-1 leading-relaxed">
-                                    Jika diaktifkan, Admin Daerah hanya dapat menugaskan pengguna yang telah <b>Lulus</b> dari kursus spesifik yang Anda tentukan di bawah ini.
+                                    Jika diaktifkan, Admin Daerah hanya dapat menugaskan Ketua atau Anggota Tim yang telah menyelesaikan <b>100% progress</b> dari semua kursus yang Anda tentukan di bawah ini.
                                 </span>
                             </div>
                         </label>
 
+                        @php
+                            $selectedCourseIds = collect(old('prerequisite_course_ids', $project->prerequisiteCourseIds()))
+                                ->map(fn ($id) => (string) $id)
+                                ->values();
+                        @endphp
                         <div id="courseSelectionDiv" class="mt-4 pt-4 border-t border-indigo-100/60 {{ old('is_prerequisite_active', $project->is_prerequisite_active) ? 'block' : 'hidden' }}">
-                            <x-form.select id="prerequisite_course_id" name="prerequisite_course_id" label="Pilih Kursus Prasyarat (Wajib)">
-                                <option value="">-- Pilih Kursus dari Katalog --</option>
-                                @foreach($courses as $course)
-                                    <option value="{{ $course->id }}" @selected(old('prerequisite_course_id', $project->prerequisite_course_id) == $course->id)>
-                                        {{ $course->name }}
-                                    </option>
-                                @endforeach
-                            </x-form.select>
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between gap-3 mb-2">
+                                    <label class="block text-sm font-semibold text-slate-800">Kursus prasyarat terpilih</label>
+                                    <span id="selectedCourseCount" class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2.5 py-1 rounded-full">0 kursus</span>
+                                </div>
+                                <div id="selectedCoursesList" class="min-h-12 flex flex-wrap gap-2 p-3 bg-white border border-indigo-100 rounded-xl">
+                                    <span id="emptySelectedCourses" class="text-sm text-slate-400 self-center">Belum ada kursus yang dipilih.</span>
+                                </div>
+                            </div>
+
+                            <div class="relative" id="coursePicker">
+                                <label for="courseSearch" class="block text-sm font-semibold text-slate-800 mb-2">Tambah kursus prasyarat</label>
+                                <button type="button" id="coursePickerButton" aria-expanded="false" class="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white border border-slate-300 rounded-xl text-left shadow-sm hover:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+                                    <span class="flex items-center gap-2 text-sm text-slate-500"><i class="fas fa-plus-circle text-indigo-500"></i> Pilih kursus dari katalog</span>
+                                    <i id="coursePickerChevron" class="fas fa-chevron-down text-xs text-slate-400 transition-transform"></i>
+                                </button>
+
+                                <div id="coursePickerMenu" class="hidden absolute z-20 w-full mt-2 p-2 bg-white border border-slate-200 rounded-xl shadow-xl shadow-slate-200/60">
+                                    <div class="relative mb-2">
+                                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                        <input type="search" id="courseSearch" placeholder="Cari nama kursus..." class="w-full pl-9 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none">
+                                    </div>
+                                    <div id="courseOptions" class="max-h-56 overflow-y-auto space-y-1">
+                                        @foreach($courses as $course)
+                                            <label data-course-option data-course-name="{{ strtolower($course->name) }}" class="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-indigo-50 transition">
+                                                <input type="checkbox" name="prerequisite_course_ids[]" value="{{ $course->id }}" data-course-label="{{ $course->name }}" class="course-option w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" @checked($selectedCourseIds->contains((string) $course->id))>
+                                                <span class="text-sm text-slate-700">{{ $course->name }}</span>
+                                            </label>
+                                        @endforeach
+                                        <p id="noCourseResults" class="hidden p-3 text-sm text-center text-slate-400">Kursus tidak ditemukan.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">Semua kursus yang dipilih harus mencapai progress 100% sebelum Ketua atau Anggota Tim dapat ditambahkan.</p>
                         </div>
                     </div>
                 </div>
@@ -108,21 +139,103 @@
 
     @push('scripts')
         <script>
+            const courseSelectionState = {
+                isOpen: false,
+            };
+
             function toggleCourseSelection() {
                 const isChecked = document.getElementById('is_prerequisite_active').checked;
                 const courseDiv = document.getElementById('courseSelectionDiv');
-                const courseSelect = document.getElementById('prerequisite_course_id');
                 
                 if (isChecked) {
                     courseDiv.classList.remove('hidden');
-                    courseSelect.setAttribute('required', 'required');
                 } else {
                     courseDiv.classList.add('hidden');
-                    courseSelect.removeAttribute('required');
                 }
             }
-            
-            document.addEventListener('DOMContentLoaded', toggleCourseSelection);
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const picker = document.getElementById('coursePicker');
+                const pickerButton = document.getElementById('coursePickerButton');
+                const pickerMenu = document.getElementById('coursePickerMenu');
+                const pickerChevron = document.getElementById('coursePickerChevron');
+                const searchInput = document.getElementById('courseSearch');
+                const options = [...document.querySelectorAll('.course-option')];
+                const selectedList = document.getElementById('selectedCoursesList');
+                const selectedCount = document.getElementById('selectedCourseCount');
+                const emptyState = document.getElementById('emptySelectedCourses');
+                const noResults = document.getElementById('noCourseResults');
+
+                function closePicker() {
+                    courseSelectionState.isOpen = false;
+                    pickerMenu.classList.add('hidden');
+                    pickerButton.setAttribute('aria-expanded', 'false');
+                    pickerChevron.classList.remove('rotate-180');
+                }
+
+                function renderSelectedCourses() {
+                    selectedList.querySelectorAll('[data-selected-course]').forEach((item) => item.remove());
+                    const selectedOptions = options.filter((option) => option.checked);
+                    selectedCount.textContent = `${selectedOptions.length} kursus`;
+                    emptyState.classList.toggle('hidden', selectedOptions.length > 0);
+
+                    selectedOptions.forEach((option) => {
+                        const chip = document.createElement('span');
+                        chip.dataset.selectedCourse = option.value;
+                        chip.className = 'inline-flex items-center gap-2 max-w-full px-3 py-2 bg-indigo-50 border border-indigo-100 rounded-lg text-sm font-medium text-indigo-700';
+
+                        const label = document.createElement('span');
+                        label.className = 'truncate';
+                        label.textContent = option.dataset.courseLabel;
+
+                        const removeButton = document.createElement('button');
+                        removeButton.type = 'button';
+                        removeButton.className = 'w-5 h-5 inline-flex items-center justify-center rounded-full text-indigo-400 hover:bg-indigo-200 hover:text-indigo-700 transition';
+                        removeButton.setAttribute('aria-label', `Hapus ${option.dataset.courseLabel}`);
+                        removeButton.innerHTML = '<i class="fas fa-times text-xs"></i>';
+                        removeButton.addEventListener('click', () => {
+                            option.checked = false;
+                            renderSelectedCourses();
+                        });
+
+                        chip.append(label, removeButton);
+                        selectedList.appendChild(chip);
+                    });
+                }
+
+                function filterCourses() {
+                    const query = searchInput.value.trim().toLowerCase();
+                    let visibleCount = 0;
+
+                    document.querySelectorAll('[data-course-option]').forEach((option) => {
+                        const isVisible = option.dataset.courseName.includes(query);
+                        option.classList.toggle('hidden', !isVisible);
+                        visibleCount += isVisible ? 1 : 0;
+                    });
+
+                    noResults.classList.toggle('hidden', visibleCount > 0);
+                }
+
+                pickerButton.addEventListener('click', () => {
+                    courseSelectionState.isOpen = !courseSelectionState.isOpen;
+                    pickerMenu.classList.toggle('hidden', !courseSelectionState.isOpen);
+                    pickerButton.setAttribute('aria-expanded', courseSelectionState.isOpen ? 'true' : 'false');
+                    pickerChevron.classList.toggle('rotate-180', courseSelectionState.isOpen);
+                    if (courseSelectionState.isOpen) searchInput.focus();
+                });
+
+                options.forEach((option) => option.addEventListener('change', renderSelectedCourses));
+                searchInput.addEventListener('input', filterCourses);
+                document.addEventListener('click', (event) => {
+                    if (!picker.contains(event.target)) closePicker();
+                });
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') closePicker();
+                });
+
+                renderSelectedCourses();
+                toggleCourseSelection();
+            });
         </script>
     @endpush
 </x-dashboard::layouts.dashboard>

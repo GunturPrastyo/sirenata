@@ -211,13 +211,17 @@ class ProjectController extends Controller
         $project = Project::findOrFail($id);
 
         $request->validate([
-            'prerequisite_course_id' => 'nullable|exists:courses,id',
+            'prerequisite_course_ids' => 'nullable|array|required_if:is_prerequisite_active,1',
+            'prerequisite_course_ids.*' => 'exists:courses,id',
             'status' => 'required|in:Draft,On Progress,Completed',
         ]);
 
+        $prerequisiteCourseIds = $request->input('prerequisite_course_ids', []);
+
         // Simpan prasyarat dan status (Setuju / Tolak)
         $project->update([
-            'prerequisite_course_id' => $request->prerequisite_course_id,
+            'prerequisite_course_id' => $prerequisiteCourseIds[0] ?? null,
+            'prerequisite_course_ids' => $prerequisiteCourseIds ?: null,
             'is_prerequisite_active' => $request->has('is_prerequisite_active'),
             'status' => $request->status, // Admin Pusat mengubah dari Draft menjadi On Progress
         ]);

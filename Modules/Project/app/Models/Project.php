@@ -21,6 +21,7 @@ class Project extends Model
         'status',
         'sk_document',
         'prerequisite_course_id',
+        'prerequisite_course_ids',
         'is_prerequisite_active'
     ];
 
@@ -28,6 +29,7 @@ class Project extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'team_members' => 'array',
+        'prerequisite_course_ids' => 'array',
         'is_prerequisite_active' => 'boolean',
     ];
 
@@ -39,6 +41,21 @@ class Project extends Model
     public function prerequisiteCourse()
     {
         return $this->belongsTo(Course::class, 'prerequisite_course_id');
+    }
+
+    public function prerequisiteCourseIds(): array
+    {
+        $courseIds = $this->prerequisite_course_ids ?? [];
+
+        if (! is_array($courseIds)) {
+            $courseIds = [$courseIds];
+        }
+
+        if ($this->prerequisite_course_id && ! in_array($this->prerequisite_course_id, $courseIds, true)) {
+            $courseIds[] = $this->prerequisite_course_id;
+        }
+
+        return array_values(array_unique(array_filter($courseIds)));
     }
 
     public function getProgressAttribute()

@@ -107,12 +107,15 @@ class ProjectController extends Controller
             }
 
             // Filter 2: Prasyarat Kursus (Bypass relasi model, tembak langsung ke tabel pivot)
-            if ($project->is_prerequisite_active && $project->prerequisite_course_id) {
+            $prerequisiteCourseIds = $project->prerequisiteCourseIds();
+            if ($project->is_prerequisite_active && $prerequisiteCourseIds) {
                 $usersQuery->whereIn('id', function ($query) use ($project) {
                     $query->select('user_id')
                         ->from('course_student')
-                        ->where('course_id', $project->prerequisite_course_id)
-                        ->where('status', 'completed');
+                        ->whereIn('course_id', $project->prerequisiteCourseIds())
+                        ->where('progress', '>=', 100)
+                        ->groupBy('user_id')
+                        ->havingRaw('COUNT(DISTINCT course_id) = ?', [count($project->prerequisiteCourseIds())]);
                 });
             }
 
@@ -144,12 +147,15 @@ class ProjectController extends Controller
             });
 
             // Filter 2: Prasyarat Kursus (Bypass relasi model, tembak langsung ke tabel pivot)
-            if ($project->is_prerequisite_active && $project->prerequisite_course_id) {
+            $prerequisiteCourseIds = $project->prerequisiteCourseIds();
+            if ($project->is_prerequisite_active && $prerequisiteCourseIds) {
                 $usersQuery->whereIn('id', function ($query) use ($project) {
                     $query->select('user_id')
                         ->from('course_student')
-                        ->where('course_id', $project->prerequisite_course_id)
-                        ->where('status', 'completed');
+                        ->whereIn('course_id', $project->prerequisiteCourseIds())
+                        ->where('progress', '>=', 100)
+                        ->groupBy('user_id')
+                        ->havingRaw('COUNT(DISTINCT course_id) = ?', [count($project->prerequisiteCourseIds())]);
                 });
             }
 
