@@ -62,6 +62,7 @@ class ProjectController extends Controller
             'end_date' => $request->endDate,
             'duration' => $request->duration,
             'sk_document' => $skPath,
+            'created_by' => Auth::id(),
             'type' => ProjectType::KAB_KOTA->value,
             'status' => 'Draft', // Otomatis masuk antrean Pusat
         ]);

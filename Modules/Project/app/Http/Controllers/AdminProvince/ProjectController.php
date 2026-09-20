@@ -66,6 +66,7 @@ class ProjectController extends Controller
             'end_date' => $request->endDate,
             'duration' => $request->duration,
             'sk_document' => $skPath,
+            'created_by' => Auth::id(),
             'type' => ProjectType::PROVINSI->value,
             'status' => 'Draft', // ALUR BARU: Otomatis Draft, menunggu pusat!
             // team_leader dan team_members dibiarkan kosong/null

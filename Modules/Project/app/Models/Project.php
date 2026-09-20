@@ -20,6 +20,7 @@ class Project extends Model
         'type',
         'status',
         'sk_document',
+        'created_by',
         'prerequisite_course_id',
         'prerequisite_course_ids',
         'is_prerequisite_active'
@@ -36,6 +37,11 @@ class Project extends Model
     public function leader()
     {
         return $this->belongsTo(\App\Models\User::class, 'team_leader');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by');
     }
 
     public function prerequisiteCourse()

@@ -4,6 +4,7 @@ namespace Modules\Project\Http\Controllers\AdminPusat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Modules\Project\Models\Project;
 use Modules\Project\Enums\ProjectType;
@@ -29,18 +30,21 @@ class ProjectController extends Controller
 
     public function index(Request $request)
     {
-        $query = Project::with('leader')->latest();
+        $query = Project::with(['leader', 'creator.scopeArea.province', 'creator.scopeArea.regency'])->latest();
 
-        // LOGIKA BARU: Pisahkan Tampilan Nasional vs Daerah berdasarkan filter Status
+        // Pisahkan antrean Draft daerah dari daftar monitoring proyek yang sudah berjalan.
         if ($request->status === 'Draft') {
-            // Jika masuk halaman Persetujuan Daerah, tampilkan proyek daerah (Prov & KabKota) yg masih Draft
             $query->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value])
                 ->where('status', 'Draft');
         } else {
-            // Jika halaman utama (Daftar Proyek Pusat), hanya tampilkan proyek Nasional
-            $query->where('type', ProjectType::NASIONAL->value);
+            $query->where(function ($projectQuery) {
+                $projectQuery->where('type', ProjectType::NASIONAL->value)
+                    ->orWhere(function ($regionalQuery) {
+                        $regionalQuery->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value])
+                            ->where('status', '!=', 'Draft');
+                    });
+            });
 
-            // Terapkan filter status normal (On Progress/Completed) khusus untuk Nasional
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
             }
@@ -100,6 +104,7 @@ class ProjectController extends Controller
             'start_date' => $request->startDate,
             'end_date' => $request->endDate,
             'duration' => $request->duration,
+            'created_by' => Auth::id(),
             'team_leader' => $request->teamLeader,
             'team_members' => $request->teamMembers,
             'type' => ProjectType::NASIONAL->value,

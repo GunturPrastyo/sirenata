@@ -32,6 +32,7 @@ class ProjectService
             'start_date' => $data['startDate'],
             'end_date' => $data['endDate'],
             'duration' => $data['duration'],
+            'created_by' => Auth::id(),
             'team_leader' => $data['teamLeader'],
             'team_members' => $data['teamMembers'],
             'type' => $type->value,

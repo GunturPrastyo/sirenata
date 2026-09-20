@@ -8,15 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
-            $table->json('prerequisite_course_ids')->nullable()->after('prerequisite_course_id');
-        });
+        if (! Schema::hasColumn('projects', 'prerequisite_course_ids')) {
+            Schema::table('projects', function (Blueprint $table) {
+                $table->json('prerequisite_course_ids')->nullable()->after('prerequisite_course_id');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
-            $table->dropColumn('prerequisite_course_ids');
-        });
+        if (Schema::hasColumn('projects', 'prerequisite_course_ids')) {
+            Schema::table('projects', function (Blueprint $table) {
+                $table->dropColumn('prerequisite_course_ids');
+            });
+        }
     }
 };

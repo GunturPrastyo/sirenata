@@ -34,7 +34,19 @@ class ProjectExport implements
     public function query()
     {
         $query = Project::with('leader')->latest();
-        $query->where('type', ProjectType::NASIONAL->value);
+
+        if ($this->status === 'Draft') {
+            $query->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value])
+                ->where('status', 'Draft');
+        } else {
+            $query->where(function ($projectQuery) {
+                $projectQuery->where('type', ProjectType::NASIONAL->value)
+                    ->orWhere(function ($regionalQuery) {
+                        $regionalQuery->whereIn('type', [ProjectType::PROVINSI->value, ProjectType::KAB_KOTA->value])
+                            ->where('status', '!=', 'Draft');
+                    });
+            });
+        }
 
         if ($this->search) {
             $query->where('name', 'like', '%' . $this->search . '%');

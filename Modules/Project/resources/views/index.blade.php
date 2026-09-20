@@ -79,6 +79,7 @@
                         <x-table.th>No.</x-table.th>
                         <x-table.th>Nama</x-table.th>
                         <x-table.th>Tipe</x-table.th>
+                        <x-table.th>Asal Wilayah</x-table.th>
                         <x-table.th>Periode</x-table.th>
                         <x-table.th>Ketua Tim</x-table.th>
                         <x-table.th>Persentase</x-table.th>
@@ -97,6 +98,29 @@
                             </x-table.td>
                             <x-table.td>
                                 <x-badge color="slate" :text="$project->type" />
+                            </x-table.td>
+                            <x-table.td>
+                                @php
+                                    $creatorScope = $project->creator?->scopeArea;
+                                @endphp
+                                @if ($creatorScope?->regency)
+                                    <div class="flex items-start gap-2">
+                                        <i class="fas fa-map-marker-alt text-amber-500 mt-0.5"></i>
+                                        <div>
+                                            <span class="block text-sm font-semibold text-slate-700">{{ $creatorScope->regency->name }}</span>
+                                            <span class="block text-xs text-slate-400">{{ $creatorScope->province->name ?? 'Kab/Kota' }}</span>
+                                        </div>
+                                    </div>
+                                @elseif ($creatorScope?->province)
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-map-marker-alt text-indigo-500"></i>
+                                        <span class="text-sm font-semibold text-slate-700">{{ $creatorScope->province->name }}</span>
+                                    </div>
+                                @elseif ($project->type === 'Nasional')
+                                    <span class="text-sm text-slate-500">Pusat</span>
+                                @else
+                                    <span class="text-sm text-slate-400">Belum tercatat</span>
+                                @endif
                             </x-table.td>
                             <x-table.td>
                                 <span class="text-slate-600">
@@ -178,7 +202,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <x-table.td colspan="7" align="center" class="py-12">
+                            <x-table.td colspan="8" align="center" class="py-12">
                                 <span class="text-sm text-slate-500">Tidak ada proyek yang ditemukan.</span>
                             </x-table.td>
                         </tr>
