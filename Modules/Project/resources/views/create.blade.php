@@ -1,4 +1,4 @@
-<x-dashboard::layouts.dashboard title="Tambah Proyek - E-Learning">
+<x-dashboard::layouts.dashboard title="Tambah Draft Proyek - E-Learning">
     @push('styles')
         @include('project::partials.create-styles')
     @endpush
@@ -8,15 +8,17 @@
     @endphp
 
     <div class="p-2 sm:p-6">
-        <x-breadcrumb :items="[['label' => 'Proyek', 'url' => route($routePrefix . 'index')], ['label' => 'Tambah Proyek']]" />
+        <x-breadcrumb :items="[['label' => 'Proyek', 'url' => route($routePrefix . 'index')], ['label' => 'Tambah Draft Proyek']]" />
 
         <div class="bg-white rounded-lg border border-slate-100 shadow-sm p-6 sm:p-8 max-w-full mx-auto">
             <div class="mb-6 sm:mb-8 border-b border-slate-100 pb-5 sm:pb-6">
-                <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Tambah Proyek Baru</h1>
+                <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Usulkan Proyek Baru</h1>
+                <p class="text-sm text-slate-500 mt-1">Buat draft proyek dan unggah Dokumen SK untuk ditinjau oleh Admin Pusat.</p>
                 <x-validation-errors class="mt-4" />
             </div>
 
-            <form action="{{ route($routePrefix . 'store') }}" method="POST" class="space-y-4 sm:space-y-6">
+            <!-- PERHATIAN: Tambahkan enctype="multipart/form-data" -->
+            <form action="{{ route($routePrefix . 'store') }}" method="POST" enctype="multipart/form-data" class="space-y-4 sm:space-y-6">
                 @csrf
                 <x-form.input name="proyekName" label="Nama Proyek" required value="{{ old('proyekName') }}" placeholder="Contoh: {{ $placeholderPrefix }} Sektor Industri Manufaktur 2025" />
 
@@ -32,28 +34,20 @@
                     Estimasi Durasi Proyek: &nbsp;<span id="durationText" class="font-extrabold text-indigo-700 text-base">0 Bulan</span>
                 </div>
 
-                <x-form.select id="teamLeader" name="teamLeader" label="Ketua Tim" required>
-                    <option value="">Pilih Ketua Tim</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}" @selected(old('teamLeader') == $user->id)>
-                            {{ $user->name }}
-                        </option>
-                    @endforeach
-                </x-form.select>
-
-                <!-- Pilihan Anggota Tim (Diperbesar & Dipercantik) -->
+                <!-- Input Upload SK Proyek -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Anggota Tim (Opsional)</label>
-                    <select id="teamMembers" name="teamMembers[]" multiple class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-40 p-2 text-sm">
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}" class="py-1.5 px-3 rounded-md hover:bg-indigo-50 mb-1 cursor-pointer" @selected(in_array($user->id, old('teamMembers') ?? []))>
-                                {{ $user->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <p class="text-xs text-slate-500 mt-2">
-                        <i class="fas fa-info-circle mr-1"></i> Tahan tombol <b>Ctrl</b> (Windows) atau <b>Cmd</b> (Mac) saat mengklik untuk memilih lebih dari satu nama.
-                    </p>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Unggah Dokumen SK (PDF) <span class="text-red-500">*</span></label>
+                    <input type="file" name="sk_document" accept=".pdf" required 
+                        class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-300 rounded-lg p-1.5 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
+                    <p class="text-xs text-slate-500 mt-1.5">Format wajib .pdf dengan ukuran maksimal 5 MB.</p>
+                </div>
+
+                <!-- Alert Info Alur -->
+                <div class="bg-amber-50 border border-amber-200 p-4 rounded-lg flex items-start gap-3 mt-2">
+                    <i class="fas fa-info-circle text-amber-600 mt-0.5"></i>
+                    <div class="text-sm text-amber-800 leading-relaxed">
+                        <strong>Catatan:</strong> Proyek akan tersimpan dengan status <b>Draft</b>. Anda baru dapat memilih Ketua Tim dan Anggota Tim setelah draft disetujui (Diaktifkan) oleh Admin Pusat.
+                    </div>
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t border-slate-100">
@@ -61,7 +55,7 @@
                         Batal
                     </x-button>
                     <x-button type="submit" variant="primary" class="flex-1">
-                        Tambah Proyek
+                        Kirim Draft Proyek
                     </x-button>
                 </div>
             </form>
@@ -71,7 +65,6 @@
     @push('scripts')
         @include('project::partials.create-scripts')
         <script>
-            // Fungsi hitung otomatis jumlah bulan
             function calculateDuration() {
                 const start = document.getElementById('startDate').value;
                 const end = document.getElementById('endDate').value;
@@ -85,12 +78,10 @@
                     let months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
                     months += endDate.getMonth() - startDate.getMonth();
 
-                    // Kurangi 1 bulan jika tanggal akhir lebih kecil dari tanggal mulai di bulan tersebut
                     if (endDate.getDate() < startDate.getDate()) {
                         months--;
                     }
 
-                    // Minimal durasi adalah 1 bulan
                     months = months <= 0 ? 1 : months; 
 
                     durationInput.value = months;
@@ -100,8 +91,6 @@
                     durationText.innerText = '0 Bulan';
                 }
             }
-
-            // Jalankan saat halaman pertama kali dimuat (jika ada error validasi / old input)
             document.addEventListener('DOMContentLoaded', calculateDuration);
         </script>
     @endpush
