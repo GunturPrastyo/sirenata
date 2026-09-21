@@ -19,12 +19,20 @@
             $courseModelClass && !empty($prerequisiteIds)
                 ? $courseModelClass::whereIn('id', $prerequisiteIds)->get()
                 : collect();
+
+        // Mendapatkan data anggota tim yang sudah terpilih sebelumnya
+        $selectedMembers =
+            old('teamMembers') ??
+            (is_array($project->team_members)
+                ? $project->team_members
+                : json_decode($project->team_members ?? '[]', true) ?? []);
     @endphp
 
-    <div class="p-2 sm:p-6">
+    <!-- Inisialisasi Alpine.js x-data dengan membawa $users dan $selectedMembers -->
+    <div class="p-2 sm:p-6" x-data="projectEditForm({{ json_encode($users ?? []) }}, {{ json_encode($selectedMembers) }})">
         <x-breadcrumb :items="[['label' => 'Proyek', 'url' => route($routePrefix . 'index')], ['label' => 'Edit Proyek']]" />
 
-        <div class="bg-white rounded-lg border border-slate-100 shadow-sm p-6 sm:p-8 max-w-full mx-auto">
+        <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 sm:p-8 max-w-full mx-auto">
             <div class="mb-6 sm:mb-8 border-b border-slate-100 pb-5 sm:pb-6 flex items-center justify-between">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Edit Proyek</h1>
@@ -42,8 +50,8 @@
 
             <x-validation-errors class="mb-6" />
 
-            <form action="{{ route($routePrefix . 'update', $project->id) }}" method="POST" enctype="multipart/form-data"
-                class="space-y-4 sm:space-y-6">
+            <form action="{{ route($routePrefix . 'update', $project->id) }}" method="POST"
+                enctype="multipart/form-data" class="space-y-4 sm:space-y-6">
                 @csrf
                 @method('PUT')
                 <x-form.input name="proyekName" label="Nama Proyek" required
@@ -129,42 +137,75 @@
                                 @endforeach
                             </x-form.select>
 
-                            <div>
-                                <!-- Hasil Sementara (Di atas label) -->
-                                <div id="selectedMembersContainer" class="mb-3 hidden">
+                            <!-- Dropdown Multi-Select Anggota Tim -->
+                            <div class="relative" @click.outside="isMemberDropdownOpen = false">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-sm font-medium text-slate-700">Anggota Tim
+                                        (Opsional)</label>
+                                    <span class="text-sm text-slate-500"
+                                        x-text="selectedMembers.length + ' Anggota Terpilih'"></span>
+                                </div>
+
+                                <!-- Badges Anggota Terpilih (Diperbesar) -->
+                                <div class="flex flex-wrap gap-2 my-2.5" x-show="selectedMembers.length > 0">
+                                    <template x-for="user in selectedMemberObjects" :key="user.id">
+                                        <span
+                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                            <span x-text="user.name"></span>
+                                            <button type="button" @click="removeMember(user.id)"
+                                                class="text-indigo-400 hover:text-indigo-700 focus:outline-none">
+                                                <i class="fas fa-times text-sm"></i>
+                                            </button>
+                                        </span>
+                                    </template>
+                                </div>
+
+                                <!-- Dropdown Trigger Button -->
+                                <button type="button" @click="isMemberDropdownOpen = !isMemberDropdownOpen"
+                                    class="w-full flex items-center justify-between bg-white border border-slate-300 rounded-lg p-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                     <span
-                                        class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Hasil
-                                        Sementara (Anggota Terpilih):</span>
-                                    <div id="selectedMembersBadges"
-                                        class="flex flex-wrap gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-lg min-h-[42px]">
+                                        x-text="selectedMembers.length > 0 ? selectedMembers.length + ' Anggota Terpilih' : '-- Pilih Anggota Tim --'"
+                                        :class="selectedMembers.length > 0 ? 'text-slate-900 font-medium' : 'text-slate-400'"></span>
+                                    <i class="fas fa-chevron-down text-slate-400 transition-transform duration-200"
+                                        :class="{ 'rotate-180': isMemberDropdownOpen }"></i>
+                                </button>
+
+                                <!-- Dropdown Menu Box -->
+                                <div x-show="isMemberDropdownOpen" x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                    x-transition:enter-end="transform opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="transform opacity-100 scale-100"
+                                    x-transition:leave-end="transform opacity-0 scale-95"
+                                    class="absolute z-20 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg p-3.5 space-y-3">
+
+                                    <!-- Searchbar di Dalam Dropdown -->
+                                    <div class="relative">
+                                        <input type="text" x-model.debounce.300ms="searchMember"
+                                            placeholder="Cari nama anggota tim..."
+                                            class="w-full text-sm rounded-md border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 pr-9">
+                                        <i class="fas fa-search absolute right-3 top-3 text-slate-400 text-sm"></i>
+                                    </div>
+
+                                    <!-- List Checkbox Anggota Tim -->
+                                    <div class="max-h-56 overflow-y-auto space-y-1 p-1">
+                                        <template x-for="user in filteredMembersList" :key="user.id">
+                                            <label
+                                                class="flex items-center gap-3 p-2.5 rounded-md hover:bg-slate-50 cursor-pointer text-sm font-medium text-slate-700 transition">
+                                                <input type="checkbox" name="teamMembers[]" :value="String(user.id)"
+                                                    x-model="selectedMembers"
+                                                    class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4.5 h-4.5 cursor-pointer">
+                                                <span class="line-clamp-1" x-text="user.name"></span>
+                                            </label>
+                                        </template>
+                                        <div x-show="filteredMembersList.length === 0"
+                                            class="text-sm text-slate-500 text-center py-4">
+                                            Tidak ada anggota yang cocok.
+                                        </div>
                                     </div>
                                 </div>
-
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Anggota Tim
-                                    (Opsional)</label>
-
-                                <!-- Box Checklist Anggota Tim -->
-                                <div
-                                    class="border border-slate-300 rounded-lg p-3 max-h-56 overflow-y-auto space-y-1.5 bg-white">
-                                    @php
-                                        $selectedMembers =
-                                            old('teamMembers') ??
-                                            (is_array($project->team_members)
-                                                ? $project->team_members
-                                                : json_decode($project->team_members ?? '[]', true) ?? []);
-                                    @endphp
-                                    @foreach ($users as $user)
-                                        <label
-                                            class="flex items-center gap-3 p-2 rounded-md hover:bg-slate-50 cursor-pointer transition border border-transparent hover:border-slate-200">
-                                            <input type="checkbox" name="teamMembers[]" value="{{ $user->id }}"
-                                                data-name="{{ $user->name }}"
-                                                class="team-member-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4"
-                                                @checked(in_array($user->id, $selectedMembers))>
-                                            <span class="text-sm font-medium text-slate-700">{{ $user->name }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
                             </div>
+
                         </div>
                     </div>
                 @else
@@ -196,6 +237,34 @@
     @push('scripts')
         @include('project::partials.create-scripts')
         <script>
+            // Alpine JS Logic khusus halaman Edit
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('projectEditForm', (allUsers, initialSelectedMembers) => ({
+                    allUsers: allUsers,
+                    // Konversi semua ID yang sudah terpilih ke string agar sinkron dengan input checkbox
+                    selectedMembers: initialSelectedMembers.map(id => String(id)),
+                    searchMember: '',
+                    isMemberDropdownOpen: false,
+
+                    get filteredMembersList() {
+                        if (!this.searchMember.trim()) return this.allUsers;
+                        return this.allUsers.filter(u =>
+                            u.name.toLowerCase().includes(this.searchMember.toLowerCase())
+                        );
+                    },
+
+                    get selectedMemberObjects() {
+                        return this.allUsers.filter(u => this.selectedMembers.includes(String(u.id)));
+                    },
+
+                    removeMember(userId) {
+                        this.selectedMembers = this.selectedMembers.filter(id => String(id) !== String(
+                            userId));
+                    }
+                }));
+            });
+
+            // Native JS untuk Kalkulasi Durasi
             function calculateDuration() {
                 const start = document.getElementById('startDate').value;
                 const end = document.getElementById('endDate').value;
@@ -217,51 +286,8 @@
                 }
             }
 
-            function updateSelectedMembersBadges() {
-                const checkboxes = document.querySelectorAll('.team-member-checkbox:checked');
-                const container = document.getElementById('selectedMembersContainer');
-                const badgesWrapper = document.getElementById('selectedMembersBadges');
-
-                if (!container || !badgesWrapper) return;
-
-                badgesWrapper.innerHTML = '';
-
-                if (checkboxes.length > 0) {
-                    container.classList.remove('hidden');
-                    checkboxes.forEach(cb => {
-                        const name = cb.getAttribute('data-name');
-                        const val = cb.value;
-                        const badge = document.createElement('span');
-                        badge.className =
-                            'inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-semibold rounded-full';
-                        badge.innerHTML = `
-                            ${name}
-                            <button type="button" onclick="uncheckMember('${val}')" class="hover:text-indigo-900 focus:outline-none">
-                                <i class="fas fa-times text-[10px]"></i>
-                            </button>
-                        `;
-                        badgesWrapper.appendChild(badge);
-                    });
-                } else {
-                    container.classList.add('hidden');
-                }
-            }
-
-            function uncheckMember(id) {
-                const cb = document.querySelector(`.team-member-checkbox[value="${id}"]`);
-                if (cb) {
-                    cb.checked = false;
-                    updateSelectedMembersBadges();
-                }
-            }
-
             document.addEventListener('DOMContentLoaded', () => {
                 calculateDuration();
-                updateSelectedMembersBadges();
-
-                document.querySelectorAll('.team-member-checkbox').forEach(cb => {
-                    cb.addEventListener('change', updateSelectedMembersBadges);
-                });
             });
         </script>
     @endpush
