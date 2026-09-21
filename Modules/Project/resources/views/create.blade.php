@@ -10,7 +10,7 @@
         $placeholderPrefix = $projectScope === 'daerah' ? 'RTKD' : 'RTKN';
     @endphp
 
-    <div class="p-2 sm:p-6" x-data="projectCreateForm({{ json_encode($users) }})" x-init="watchPrerequisites()">
+    <div class="p-2 sm:p-6" x-data="projectCreateForm({{ json_encode($users ?? []) }})" x-init="watchPrerequisites()">
         <!-- Breadcrumb (Tanpa Rumah / Home) -->
         <x-breadcrumb :home="false" :show-home="false" :items="[
             ['label' => $breadcrumbLabel, 'url' => route($routePrefix . 'index', ['type' => $projectScope])], 
@@ -50,6 +50,7 @@
                 <!-- ============================================== -->
                 <!-- PENGATURAN TIM PROYEK                          -->
                 <!-- ============================================== -->
+                @if(!str_contains($routePrefix, 'admin-kab-kota') && !str_contains($routePrefix, 'admin-province'))
                 <div class="border-t border-slate-200 pt-6 mt-6 space-y-6">
                     <h3 class="text-base font-bold text-slate-800">Pengaturan Tim Proyek</h3>
 
@@ -170,6 +171,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-slate-100">
                     <x-button :href="route($routePrefix . 'index', ['type' => $projectScope])" variant="secondary" class="flex-1">
@@ -194,7 +196,7 @@
                     searchMember: '',
                     isMemberDropdownOpen: false,
                     allUsers: allUsers,
-                    allCourses: @json($courses),
+                    allCourses: @json($courses ?? []),
 
                     get filteredCourses() {
                         if (!this.searchCourse.trim()) return this.allCourses;
