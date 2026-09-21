@@ -293,7 +293,9 @@
                         <img src="{{ asset('images/ilustrasi.webp') }}" alt="Ilustrasi Perencana"
                             class="relative z-10 w-full h-auto object-contain"
                             style="-webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%); mask-image: linear-gradient(to bottom, black 78%, transparent 100%);">
-                        <div class="pointer-events-none absolute inset-x-[-8%] bottom-0 h-24 bg-gradient-to-t from-slate-50/90 via-slate-50/45 to-transparent blur-md"></div>
+                        <div
+                            class="pointer-events-none absolute inset-x-[-8%] bottom-0 h-24 bg-gradient-to-t from-slate-50/90 via-slate-50/45 to-transparent blur-md">
+                        </div>
                     </div>
                 </div>
 
@@ -312,7 +314,7 @@
                 <div
                     class="absolute top-8 -right-4 w-[260px] bg-white rounded-xl shadow-lg border border-slate-100 animate-card-float-1 z-10 overflow-hidden">
                     <div class="h-24 bg-[#81A9CA] flex items-center justify-center relative">
-                       
+
                         <h2 class="text-[54px] font-medium text-white/95 leading-none"
                             style="font-family: Arial, sans-serif; letter-spacing: -2px;">
                             PM
@@ -330,7 +332,7 @@
                 <div
                     class="absolute top-40 -left-14 w-[240px] bg-white rounded-xl shadow-md border border-slate-100 animate-card-float-3 z-10 overflow-hidden">
                     <div class="h-16 bg-[#507A9E] flex items-center justify-center relative">
-                       
+
                         <h2 class="text-3xl font-medium text-white/95 leading-none"
                             style="font-family: Arial, sans-serif; letter-spacing: -1px;">
                             IK
@@ -348,7 +350,7 @@
                 <div
                     class="absolute bottom-12 -left-10 w-[250px] bg-white rounded-xl shadow-xl border border-slate-100 animate-card-float-2 z-30 overflow-hidden">
                     <div class="h-20 bg-[#103F6E] flex items-center justify-center relative">
-                      
+
                         <h2 class="text-4xl font-medium text-white/95 leading-none"
                             style="font-family: Arial, sans-serif; letter-spacing: -1px;">
                             PM
@@ -539,87 +541,92 @@
 
                 <div class="order-2 min-w-0 lg:order-1">
                     <!-- Grid Kursus Satu Kolom -->
-                    <div class="custom-scrollbar h-[780px] max-h-[780px] scroll-smooth overflow-y-auto overscroll-contain pr-3 lg:mt-2">
+                    <div
+                        class="custom-scrollbar h-[780px] max-h-[780px] scroll-smooth overflow-y-auto overscroll-contain pr-3 lg:mt-2">
                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2 reveal-up" style="transition-delay: 0.15s;">
-                    @foreach ($courses as $course)
-                        @php
-                            // Penanganan URL Gambar Thumbnail
-                            $thumbUrl = $course->thumbnail
-                                ? (filter_var($course->thumbnail, FILTER_VALIDATE_URL)
-                                    ? $course->thumbnail
-                                    : Storage::url($course->thumbnail))
-                                : null;
+                            @foreach ($courses as $course)
+                                @php
+                                    // Penanganan URL Gambar Thumbnail
+                                    $thumbUrl = $course->thumbnail
+                                        ? (filter_var($course->thumbnail, FILTER_VALIDATE_URL)
+                                            ? $course->thumbnail
+                                            : Storage::url($course->thumbnail))
+                                        : null;
 
-                            // Generate Inisial Teks untuk Fallback Thumbnail
-                            $initials = '';
-                            if (!$thumbUrl) {
-                                $words = explode(' ', trim($course->name));
-                                foreach (array_slice($words, 0, 2) as $w) {
-                                    $initials .= strtoupper(substr($w, 0, 1));
-                                }
-                                if (strlen($initials) < 2) {
-                                    $initials = substr(strtoupper($course->name), 0, 2);
-                                }
-                            }
+                                    // Generate Inisial Teks untuk Fallback Thumbnail
+                                    $initials = '';
+                                    if (!$thumbUrl) {
+                                        $words = explode(' ', trim($course->name));
+                                        foreach (array_slice($words, 0, 2) as $w) {
+                                            $initials .= strtoupper(substr($w, 0, 1));
+                                        }
+                                        if (strlen($initials) < 2) {
+                                            $initials = substr(strtoupper($course->name), 0, 2);
+                                        }
+                                    }
 
-                            // Perhitungan Modul & Tinggi Thumbnail
-                            $modulesCount =
-                                $course->sections_count ??
-                                (isset($course->sections) ? collect($course->sections)->count() : 0);
-                            $thumbHeight =
-                                $loop->iteration % 3 === 0 ? 'h-52' : ($loop->iteration % 2 === 0 ? 'h-44' : 'h-40');
-                        @endphp
+                                    // Perhitungan Modul & Tinggi Thumbnail
+                                    $modulesCount =
+                                        $course->sections_count ??
+                                        (isset($course->sections) ? collect($course->sections)->count() : 0);
+                                    $thumbHeight =
+                                        $loop->iteration % 3 === 0
+                                            ? 'h-52'
+                                            : ($loop->iteration % 2 === 0
+                                                ? 'h-44'
+                                                : 'h-40');
+                                @endphp
 
-                        <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                            class="flex h-full w-full flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl">
+                                <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
+                                    class="flex h-full w-full flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white transition-all duration-300 group hover:-translate-y-1 hover:border-[#13416B]/30 hover:shadow-xl">
 
-                            <!-- Thumbnail Kursus -->
-                            <div
-                                class="relative h-[180px] bg-[#184A78] flex items-center justify-center overflow-hidden">
-                                @if ($thumbUrl)
-                                    <img src="{{ $thumbUrl }}" alt="{{ $course->name }}"
-                                        class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        loading="lazy">
-                                @else
-                                    <h2
-                                        class="text-4xl font-extrabold text-white/90 leading-none tracking-wider select-none">
-                                        {{ $initials }}
-                                    </h2>
-                                @endif
+                                    <!-- Thumbnail Kursus -->
+                                    <div
+                                        class="relative h-[180px] bg-[#184A78] flex items-center justify-center overflow-hidden">
+                                        @if ($thumbUrl)
+                                            <img src="{{ $thumbUrl }}" alt="{{ $course->name }}"
+                                                class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                loading="lazy">
+                                        @else
+                                            <h2
+                                                class="text-4xl font-extrabold text-white/90 leading-none tracking-wider select-none">
+                                                {{ $initials }}
+                                            </h2>
+                                        @endif
 
-                                <!-- Badge Kategori -->
-                                @if ($course->category)
-                                    <span
-                                        class="absolute left-3 top-3 z-10 rounded-full border border-white/20 bg-slate-900/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md">
-                                        {{ $course->category->name }}
-                                    </span>
-                                @endif
-                            </div>
+                                        <!-- Badge Kategori -->
+                                        @if ($course->category)
+                                            <span
+                                                class="absolute left-3 top-3 z-10 rounded-full border border-white/20 bg-slate-900/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md">
+                                                {{ $course->category->name }}
+                                            </span>
+                                        @endif
+                                    </div>
 
-                            <!-- Detail Konten -->
-                            <div class="flex min-h-[150px] flex-col justify-center p-5 text-left">
-                                <h3
-                                    class="mb-2 line-clamp-2 font-bold text-slate-800 text-base group-hover:text-[#13416B] transition-colors">
-                                    {{ $course->name }}
-                                </h3>
-                                <p class="line-clamp-3 text-xs leading-relaxed text-slate-500">
-                                    {{ $course->description ?? "Modul pelatihan komprehensif untuk mendalami materi {$course->name} secara terstruktur." }}
-                                </p>
-                            </div>
+                                    <!-- Detail Konten -->
+                                    <div class="flex min-h-[150px] flex-col justify-center p-5 text-left">
+                                        <h3
+                                            class="mb-2 line-clamp-2 font-bold text-slate-800 text-base group-hover:text-[#13416B] transition-colors">
+                                            {{ $course->name }}
+                                        </h3>
+                                        <p class="line-clamp-3 text-xs leading-relaxed text-slate-500">
+                                            {{ $course->description ?? "Modul pelatihan komprehensif untuk mendalami materi {$course->name} secara terstruktur." }}
+                                        </p>
+                                    </div>
 
-                            <!-- Card Footer -->
-                            <div
-                                class="flex items-center justify-between border-t border-slate-100 px-5 pb-5 pt-3 text-xs font-medium text-slate-500">
-                                <span
-                                    class="flex items-center gap-1.5 rounded-md border border-slate-100 bg-slate-50 px-2 py-1 text-slate-600">
-                                    <i class="fas fa-layer-group text-[#13416B]"></i>
-                                    {{ $modulesCount }} Modul
-                                </span>
+                                    <!-- Card Footer -->
+                                    <div
+                                        class="flex items-center justify-between border-t border-slate-100 px-5 pb-5 pt-3 text-xs font-medium text-slate-500">
+                                        <span
+                                            class="flex items-center gap-1.5 rounded-md border border-slate-100 bg-slate-50 px-2 py-1 text-slate-600">
+                                            <i class="fas fa-layer-group text-[#13416B]"></i>
+                                            {{ $modulesCount }} Modul
+                                        </span>
 
-                            </div>
+                                    </div>
 
-                        </a>
-                    @endforeach
+                                </a>
+                            @endforeach
                         </div>
                     </div>
 
@@ -640,59 +647,67 @@
                             Tingkatkan Kapasitas <span class="text-[#13416B]">Aparatur Daerah</span>
                         </h2>
                         <p class="mt-4 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
-                            Ikuti pelatihan daring yang terstruktur untuk memperkuat kompetensi dan memperluas pengetahuan
+                            Ikuti pelatihan daring yang terstruktur untuk memperkuat kompetensi dan memperluas
+                            pengetahuan
                             ketenagakerjaan secara mandiri.
                         </p>
                     </div>
 
                     <div class="relative hidden h-[560px] items-center justify-center lg:flex reveal-right">
-                    <div
-                        class="absolute left-1/2 top-1/2 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-[#E8F2F8] via-[#D5E8F3] to-amber-100 opacity-90 animate-blob"
-                        style="border-radius: 42% 58% 63% 37% / 48% 40% 60% 52%;">
-                    </div>
-
-                    <div
-                        class="absolute left-1/2 top-1/2 h-[430px] w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#13416B]/15 border-dashed animate-[spin_45s_linear_infinite]">
-                    </div>
-
-                    <svg class="absolute inset-0 h-full w-full opacity-50" viewBox="0 0 560 620" fill="none"
-                        aria-hidden="true">
-                        <path d="M72 430C128 205 267 111 469 188" stroke="#13416B" stroke-width="1.5"
-                            stroke-dasharray="5 8" />
-                        <circle cx="72" cy="430" r="5" fill="#F59E0B" />
-                        <circle cx="469" cy="188" r="5" fill="#13416B" />
-                    </svg>
-
-                    <div class="absolute bottom-10 left-0 z-20 w-44 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-xl animate-card-float-2">
-                        <div class="mb-3 flex items-center justify-between">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Progres Kursus</span>
-                            <i class="fas fa-chart-line text-sm text-emerald-500"></i>
+                        <div class="absolute left-1/2 top-1/2 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-[#E8F2F8] via-[#D5E8F3] to-amber-100 opacity-90 animate-blob"
+                            style="border-radius: 42% 58% 63% 37% / 48% 40% 60% 52%;">
                         </div>
-                        <div class="mb-2 flex items-end justify-between">
-                            <strong class="text-2xl font-extrabold text-[#13416B]">78%</strong>
-                            <span class="text-[10px] font-bold text-emerald-500">+12%</span>
-                        </div>
-                        <div class="h-2 overflow-hidden rounded-full bg-slate-100">
-                            <div class="h-full w-[78%] rounded-full bg-emerald-400"></div>
-                        </div>
-                    </div>
 
-                    <div class="absolute right-0 top-16 z-20 flex items-center gap-3 rounded-2xl border border-white/80 bg-[#13416B] px-4 py-3 text-white shadow-xl animate-card-float-1">
-                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 text-[#13416B]">
-                            <i class="fas fa-award"></i>
-                        </span>
-                        <div>
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-white/60">Kursus selesai</p>
-                            <p class="text-sm font-bold">Sertifikat diperoleh</p>
+                        <div
+                            class="absolute left-1/2 top-1/2 h-[430px] w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#13416B]/15 border-dashed animate-[spin_45s_linear_infinite]">
                         </div>
-                    </div>
 
-                    <div class="relative z-10 w-[500px] max-w-none translate-y-2 animate-float">
-                        <img src="{{ asset('images/asn-learning.png') }}" alt="Aparatur sedang belajar menggunakan laptop"
-                            class="relative z-10 w-full object-contain drop-shadow-2xl"
-                            style="-webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%); mask-image: linear-gradient(to bottom, black 78%, transparent 100%);">
-                        <div class="pointer-events-none absolute inset-x-[-8%] bottom-0 h-28 bg-gradient-to-t from-slate-50/90 via-slate-50/45 to-transparent blur-md"></div>
-                    </div>
+                        <svg class="absolute inset-0 h-full w-full opacity-50" viewBox="0 0 560 620" fill="none"
+                            aria-hidden="true">
+                            <path d="M72 430C128 205 267 111 469 188" stroke="#13416B" stroke-width="1.5"
+                                stroke-dasharray="5 8" />
+                            <circle cx="72" cy="430" r="5" fill="#F59E0B" />
+                            <circle cx="469" cy="188" r="5" fill="#13416B" />
+                        </svg>
+
+                        <div
+                            class="absolute bottom-10 left-0 z-20 w-44 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-xl animate-card-float-2">
+                            <div class="mb-3 flex items-center justify-between">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Progres
+                                    Kursus</span>
+                                <i class="fas fa-chart-line text-sm text-emerald-500"></i>
+                            </div>
+                            <div class="mb-2 flex items-end justify-between">
+                                <strong class="text-2xl font-extrabold text-[#13416B]">78%</strong>
+                                <span class="text-[10px] font-bold text-emerald-500">+12%</span>
+                            </div>
+                            <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+                                <div class="h-full w-[78%] rounded-full bg-emerald-400"></div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="absolute right-0 top-16 z-20 flex items-center gap-3 rounded-2xl border border-white/80 bg-[#13416B] px-4 py-3 text-white shadow-xl animate-card-float-1">
+                            <span
+                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 text-[#13416B]">
+                                <i class="fas fa-award"></i>
+                            </span>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-white/60">Kursus selesai
+                                </p>
+                                <p class="text-sm font-bold">Sertifikat diperoleh</p>
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 w-[500px] max-w-none translate-y-2 animate-float">
+                            <img src="{{ asset('images/asn-learning.png') }}"
+                                alt="Aparatur sedang belajar menggunakan laptop"
+                                class="relative z-10 w-full object-contain drop-shadow-2xl"
+                                style="-webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%); mask-image: linear-gradient(to bottom, black 78%, transparent 100%);">
+                            <div
+                                class="pointer-events-none absolute inset-x-[-8%] bottom-0 h-28 bg-gradient-to-t from-slate-50/90 via-slate-50/45 to-transparent blur-md">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -707,8 +722,8 @@
         @php
             $lmsCourseCount = $courses->count();
             $lmsModuleCount = $courses->sum(
-                fn($course) =>
-                    $course->sections_count ?? (isset($course->sections) ? collect($course->sections)->count() : 0),
+                fn($course) => $course->sections_count ??
+                    (isset($course->sections) ? collect($course->sections)->count() : 0),
             );
             $lmsCategoryCount = $courses->pluck('category_id')->filter()->unique()->count();
             $lmsParticipantCount = $stats['participants'] ?? 1200;
@@ -719,22 +734,26 @@
                 <div class="grid grid-cols-2 gap-8 divide-x-0 md:grid-cols-4 md:divide-x md:divide-slate-700">
                     <div class="p-4 text-center">
                         <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
-                            data-target="{{ $lmsCourseCount }}" data-suffix="" style="font-family: 'Oswald', sans-serif;">0</h4>
+                            data-target="{{ $lmsCourseCount }}" data-suffix=""
+                            style="font-family: 'Oswald', sans-serif;">0</h4>
                         <p class="text-sm font-medium text-slate-400">Kursus Tersedia</p>
                     </div>
                     <div class="p-4 text-center">
                         <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
-                            data-target="{{ $lmsModuleCount }}" data-suffix="+" style="font-family: 'Oswald', sans-serif;">0</h4>
+                            data-target="{{ $lmsModuleCount }}" data-suffix="+"
+                            style="font-family: 'Oswald', sans-serif;">0</h4>
                         <p class="text-sm font-medium text-slate-400">Modul Pembelajaran</p>
                     </div>
                     <div class="p-4 text-center">
                         <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
-                            data-target="{{ $lmsCategoryCount }}" data-suffix="" style="font-family: 'Oswald', sans-serif;">0</h4>
+                            data-target="{{ $lmsCategoryCount }}" data-suffix=""
+                            style="font-family: 'Oswald', sans-serif;">0</h4>
                         <p class="text-sm font-medium text-slate-400">Kategori Kursus</p>
                     </div>
                     <div class="p-4 text-center">
                         <h4 class="stat-counter mb-2 text-4xl font-extrabold text-white"
-                            data-target="{{ $lmsParticipantCount / 1000 }}" data-suffix="K+" style="font-family: 'Oswald', sans-serif;">0</h4>
+                            data-target="{{ $lmsParticipantCount / 1000 }}" data-suffix="K+"
+                            style="font-family: 'Oswald', sans-serif;">0</h4>
                         <p class="text-sm font-medium text-slate-400">Peserta Terdaftar</p>
                     </div>
                 </div>
@@ -865,19 +884,23 @@
                 </div>
 
                 <!-- Kolom Kanan: Ilustrasi Bantuan -->
-                <div class="order-1 relative hidden h-full items-center justify-center reveal-right lg:order-1 lg:flex">
+                <div
+                    class="order-1 relative hidden h-full items-center justify-center reveal-right lg:order-1 lg:flex">
                     <div
                         class="absolute right-0 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full border border-[#13416B]/15 border-dashed animate-[spin_55s_linear_infinite]">
                     </div>
-                    <div
-                        class="absolute right-32 top-1/2 h-[380px] w-[380px] -translate-y-1/2 overflow-hidden bg-gradient-to-tr from-amber-400 to-yellow-200 opacity-90"
+                    <div class="absolute right-32 top-1/2 h-[380px] w-[380px] -translate-y-1/2 overflow-hidden bg-gradient-to-tr from-amber-400 to-yellow-200 opacity-90"
                         style="border-radius: 44% 56% 62% 38% / 52% 42% 58% 48%;">
                         <svg class="absolute inset-0 h-full w-full opacity-25" viewBox="0 0 380 380" fill="none"
                             preserveAspectRatio="none" aria-hidden="true">
-                            <path d="M48 -24C96 72 10 130 58 222C88 282 38 336 60 404" stroke="white" stroke-width="18" />
-                            <path d="M132 -24C180 72 94 130 142 222C172 282 122 336 144 404" stroke="white" stroke-width="18" />
-                            <path d="M216 -24C264 72 178 130 226 222C256 282 206 336 228 404" stroke="white" stroke-width="18" />
-                            <path d="M300 -24C348 72 262 130 310 222C340 282 290 336 312 404" stroke="white" stroke-width="18" />
+                            <path d="M48 -24C96 72 10 130 58 222C88 282 38 336 60 404" stroke="white"
+                                stroke-width="18" />
+                            <path d="M132 -24C180 72 94 130 142 222C172 282 122 336 144 404" stroke="white"
+                                stroke-width="18" />
+                            <path d="M216 -24C264 72 178 130 226 222C256 282 206 336 228 404" stroke="white"
+                                stroke-width="18" />
+                            <path d="M300 -24C348 72 262 130 310 222C340 282 290 336 312 404" stroke="white"
+                                stroke-width="18" />
                         </svg>
                     </div>
                     <img src="{{ asset('images/faq-illustration.webp') }}" alt="Pusat Bantuan Kemnaker"
@@ -940,7 +963,8 @@
                 </div>
 
                 <!-- Kolom Kanan: Ilustrasi CTA -->
-                <div class="relative hidden lg:col-span-5 xl:col-span-4 lg:flex h-full items-end justify-end reveal-right">
+                <div
+                    class="relative hidden lg:col-span-5 xl:col-span-4 lg:flex h-full items-end justify-end reveal-right">
                     <div class="absolute right-10 bottom-10 h-[280px] w-[280px] rounded-full bg-white/5 blur-xl"></div>
                     <img src="{{ asset('images/cta-illustration.webp') }}"
                         alt="Kepala Pusat Perencanaan Ketenagakerjaan"
@@ -1013,12 +1037,21 @@
                             class="font-bold text-white mb-6 uppercase tracking-widest text-xs border-b border-white/10 pb-4 inline-block">
                             Tautan Publik</h3>
                         <ul class="space-y-4 text-slate-400 text-sm">
+
                             <li>
                                 <a href="https://kemnaker.go.id" target="_blank"
                                     class="hover:text-white transition-colors flex items-center gap-2 group">
                                     <i
                                         class="fas fa-arrow-right text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-blue-400"></i>
                                     Kemnaker RI
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://pusren.kemnaker.go.id/" target="_blank"
+                                    class="hover:text-white transition-colors flex items-center gap-2 group">
+                                    <i
+                                        class="fas fa-arrow-right text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-blue-400"></i>
+                                    Pusrenaker
                                 </a>
                             </li>
                             <li>

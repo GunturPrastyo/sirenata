@@ -39,7 +39,11 @@
                     <x-form.input type="date" id="endDate" name="endDate" label="Tanggal Selesai" required value="{{ old('endDate', $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('Y-m-d') : '') }}" onchange="calculateDuration()" />
                 </div>
 
-                <input type="hidden" id="duration" name="duration" value="{{ old('duration', $project->duration) }}">
+                <input type="hidden" id="duration" name="duration" value="{{ old('duration') }}">
+<div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-3 text-sm text-slate-700 font-medium flex items-center">
+    <i class="fas fa-clock text-indigo-500 mr-2 text-lg"></i> 
+    Estimasi Durasi Proyek: &nbsp;<span id="durationText" class="font-extrabold text-indigo-700 text-base">0 Hari</span>
+</div>
                 <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-3 text-sm text-slate-700 font-medium flex items-center">
                     <i class="fas fa-clock text-indigo-500 mr-2 text-lg"></i> 
                     Estimasi Durasi Proyek: &nbsp;<span id="durationText" class="font-extrabold text-indigo-700 text-base">{{ $project->duration ?? 0 }} Bulan</span>

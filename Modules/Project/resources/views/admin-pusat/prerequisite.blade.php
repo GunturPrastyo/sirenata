@@ -140,4 +140,105 @@
             </form>
         </div>
     </div>
+
+     @push('scripts')
+        <script>
+            const courseSelectionState = {
+                isOpen: false,
+            };
+
+            function toggleCourseSelection() {
+                const isChecked = document.getElementById('is_prerequisite_active').checked;
+                const courseDiv = document.getElementById('courseSelectionDiv');
+                
+                if (isChecked) {
+                    courseDiv.classList.remove('hidden');
+                } else {
+                    courseDiv.classList.add('hidden');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const picker = document.getElementById('coursePicker');
+                const pickerButton = document.getElementById('coursePickerButton');
+                const pickerMenu = document.getElementById('coursePickerMenu');
+                const pickerChevron = document.getElementById('coursePickerChevron');
+                const searchInput = document.getElementById('courseSearch');
+                const options = [...document.querySelectorAll('.course-option')];
+                const selectedList = document.getElementById('selectedCoursesList');
+                const selectedCount = document.getElementById('selectedCourseCount');
+                const emptyState = document.getElementById('emptySelectedCourses');
+                const noResults = document.getElementById('noCourseResults');
+
+                function closePicker() {
+                    courseSelectionState.isOpen = false;
+                    pickerMenu.classList.add('hidden');
+                    pickerButton.setAttribute('aria-expanded', 'false');
+                    pickerChevron.classList.remove('rotate-180');
+                }
+
+                 function renderSelectedCourses() {
+                    selectedList.querySelectorAll('[data-selected-course]').forEach((item) => item.remove());
+                    const selectedOptions = options.filter((option) => option.checked);
+                    selectedCount.textContent = `${selectedOptions.length} kursus`;
+                    emptyState.classList.toggle('hidden', selectedOptions.length > 0);
+
+                    selectedOptions.forEach((option) => {
+                        const chip = document.createElement('span');
+                        chip.dataset.selectedCourse = option.value;
+                        chip.className = 'inline-flex items-center gap-2 max-w-full px-3 py-2 bg-indigo-50 border border-indigo-100 rounded-lg text-sm font-medium text-indigo-700';
+
+                        const label = document.createElement('span');
+                        label.className = 'truncate';
+                        label.textContent = option.dataset.courseLabel;
+
+                        const removeButton = document.createElement('button');
+                        removeButton.type = 'button';
+                        removeButton.className = 'w-5 h-5 inline-flex items-center justify-center rounded-full text-indigo-400 hover:bg-indigo-200 hover:text-indigo-700 transition';
+                        removeButton.setAttribute('aria-label', `Hapus ${option.dataset.courseLabel}`);
+                        removeButton.innerHTML = '<i class="fas fa-times text-xs"></i>';
+                        removeButton.addEventListener('click', () => {
+                            option.checked = false;
+                            renderSelectedCourses();
+                        });
+
+                        chip.append(label, removeButton);
+                        selectedList.appendChild(chip);
+                    });
+                }
+
+                function filterCourses() {
+                    const query = searchInput.value.trim().toLowerCase();
+                    let visibleCount = 0;
+
+                    document.querySelectorAll('[data-course-option]').forEach((option) => {
+                        const isVisible = option.dataset.courseName.includes(query);
+                        option.classList.toggle('hidden', !isVisible);
+                        visibleCount += isVisible ? 1 : 0;
+                    });
+
+                    noResults.classList.toggle('hidden', visibleCount > 0);
+                }
+                 pickerButton.addEventListener('click', () => {
+                    courseSelectionState.isOpen = !courseSelectionState.isOpen;
+                    pickerMenu.classList.toggle('hidden', !courseSelectionState.isOpen);
+                    pickerButton.setAttribute('aria-expanded', courseSelectionState.isOpen ? 'true' : 'false');
+                    pickerChevron.classList.toggle('rotate-180', courseSelectionState.isOpen);
+                    if (courseSelectionState.isOpen) searchInput.focus();
+                });
+
+                options.forEach((option) => option.addEventListener('change', renderSelectedCourses));
+                searchInput.addEventListener('input', filterCourses);
+                document.addEventListener('click', (event) => {
+                    if (!picker.contains(event.target)) closePicker();
+                });
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') closePicker();
+                });
+
+                renderSelectedCourses();
+                toggleCourseSelection();
+            });
+        </script>
+    @endpush
 </x-dashboard::layouts.dashboard>
