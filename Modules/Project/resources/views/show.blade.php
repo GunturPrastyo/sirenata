@@ -65,7 +65,7 @@
                 <div class="flex items-center gap-3">
                     @can('project-edit')
                         <x-button :href="route($routePrefix . 'prerequisite', $project->id)" variant="primary" class="rounded-md">
-                            <i class="fas fa-edit mr-2 text-xs"></i> Edit Prasyarat
+                            <i class="fas fa-edit mr-2 text-xs"></i> Edit Prasyarat & Status
                         </x-button>
                     @endcan
                 </div>
