@@ -284,23 +284,34 @@ class DashbordController extends Controller
                 'status_verification as status',
                 DB::raw('count(*) as total')
             )
+            // RTK dikelompokkan per status_verification.
+            //
+            // Khusus status "pending" (Menunggu Persetujuan), berlaku aturan:
+            //   is_active           = 1
+            //   status_verification = pending
+            //   type IN (Provinsi, Kab/Kota)
+            //
+            // is_active BUKAN penanda menunggu persetujuan. RTK yang sudah
+            // approved + valid tetap is_active = 1, namun TIDAK dihitung di
+            // sini. Penanda utamanya adalah status_verification = pending.
             ->where(function ($query) {
                 $query
                     ->where(
                         'status_verification',
                         '!=',
-                        'pending'
+                        RTKStatusVerification::PENDING->value
                     )
                     ->orWhere(function ($q) {
                         $q
                             ->where(
                                 'status_verification',
-                                'pending'
+                                RTKStatusVerification::PENDING->value
                             )
-                            ->where(
-                                'type',
-                                TypeRtk::PROVINSI->value
-                            );
+                            ->where('is_active', true)
+                            ->whereIn('type', [
+                                TypeRtk::PROVINSI->value,
+                                TypeRtk::KAB_KOTA->value,
+                            ]);
                     });
             })
             ->groupBy('status_verification')

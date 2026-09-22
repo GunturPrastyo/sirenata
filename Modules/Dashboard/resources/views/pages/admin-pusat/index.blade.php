@@ -151,8 +151,11 @@
                         <p class="text-[11px] text-slate-500">RTK & Projek Daerah yang menunggu ACC</p>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                        {{ $totalPendingApprovals }}
+                        class="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 shrink-0">
+                    
+                        <span class="text-[10px] font-medium uppercase tracking-wider text-slate-500">Total</span>
+                        <span
+                            class="text-xs font-bold text-[#13416B] tabular-nums leading-none">{{ $totalPendingApprovals }}</span>
                     </span>
                 </div>
 
@@ -163,7 +166,7 @@
                         <div id="pendingApprovalList" class="space-y-3">
                             @forelse($initialPendingApprovals as $item)
                                 <div
-                                    class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2">
+                                    class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-md border border-slate-200 transition-all duration-200 flex flex-col gap-2">
                                     <div class="flex items-center justify-between gap-2">
                                         <span
                                             class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border {{ $item['badge_color'] }}">
