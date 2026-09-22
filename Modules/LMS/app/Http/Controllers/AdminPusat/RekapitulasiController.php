@@ -21,6 +21,62 @@ class RekapitulasiController extends Controller
     ) {}
 
     /**
+     * Rekapitulasi Pusat - List instansi pusat
+     */
+    public function pusat(Request $request)
+    {
+        $limit  = $request->integer('per_page', 10);
+        $search = $request->string('search')->toString();
+        $data   = $this->rekapitulasiService->paginateFilteredRekapitulasiPusat(
+            search: $search,
+            limit: $limit,
+        );
+        return view('lms::admin-pusat.sdm.rekapitulasi-pusat', compact('data'));
+    }
+
+    /**
+     * Rekapitulasi Pusat - Users per instansi
+     */
+    public function pusatUsers(Request $request, string $instansi)
+    {
+        $limit    = $request->integer('per_page', 10);
+        $search   = $request->string('search')->toString();
+        $courseId = $request->string('course_id')->toString();
+        $courses  = $this->courseService->getCoursesForFilter();
+
+        $data = $this->courseService->paginateCourseEnrollmentsByInstansi(
+            instansi: $instansi,
+            search: $search,
+            limit: $limit,
+            courseId: $courseId,
+        );
+
+        return view('lms::admin-pusat.sdm.rekapitulasi-pusat-users', [
+            'data'     => $data,
+            'instansi' => $instansi,
+            'courses'  => $courses,
+        ]);
+    }
+
+    /**
+     * Export Users per instansi (Pusat)
+     */
+    public function exportPusatUsers(Request $request, string $instansi)
+    {
+        $filename = 'rekapitulasi-pusat-' . str($instansi)->slug() . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        return Excel::download(
+            new \App\Exports\RekapUserCourseInstansiExport(
+                instansi: $instansi,
+                courseService: $this->courseService,
+                courseId: $request->string('course_id')->toString() ?: null,
+                search: $request->string('search')->toString() ?: null,
+            ),
+            $filename
+        );
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)

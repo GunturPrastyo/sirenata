@@ -151,6 +151,47 @@ class CourseService
         return $this->baseEnrollmentsByRegencyQuery($regencyCode, $courseId, $search)->paginate($limit)->withQueryString();
     }
 
+    private function baseEnrollmentsByInstansiQuery(
+        string $instansi,
+        ?string $courseId = null,
+        ?string $search = null,
+    ) {
+        return DB::table('course_student')
+            ->join('users', 'users.id', '=', 'course_student.user_id')
+            ->join('courses', 'courses.id', '=', 'course_student.course_id')
+            ->join('user_profiles', 'user_profiles.user_id', '=', 'users.id')
+            ->where('user_profiles.institution_type', InstitutionType::PUSAT)
+            ->where('user_profiles.instansi', $instansi)
+            ->when($courseId, function ($q) use ($courseId) {
+                $q->where('courses.id', $courseId);
+            })
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('users.name', 'like', "%{$search}%")
+                        ->orWhere('user_profiles.instansi', 'like', "%{$search}%");
+                });
+            })
+            ->select([
+                'users.id',
+                'users.name as user_name',
+                'courses.name as course_name',
+                'user_profiles.instansi',
+                'user_profiles.full_name as user_full_name',
+                'course_student.status',
+                'course_student.progress',
+            ]);
+    }
+
+    public function paginateCourseEnrollmentsByInstansi(string $instansi, ?string $courseId = null, ?string $search = null, int $limit = 10)
+    {
+        return $this->baseEnrollmentsByInstansiQuery($instansi, $courseId, $search)->paginate($limit)->withQueryString();
+    }
+
+    public function exportCourseEnrollmentsByInstansi(string $instansi, ?string $courseId = null, ?string $search = null)
+    {
+        return $this->baseEnrollmentsByInstansiQuery($instansi, $courseId, $search)->orderBy('users.name');
+    }
+
     public function exportCourseEnrollmentsByRegency(string $regencyCode, ?string $courseId = null, ?string $search = null)
     {
         return $this->baseEnrollmentsByRegencyQuery($regencyCode, $courseId, $search)->orderBy('users.name');

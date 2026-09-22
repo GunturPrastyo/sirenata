@@ -16,6 +16,12 @@ use Modules\LMS\Http\Controllers\User\LibraryController as UserLibraryController
 
 Route::prefix('admin-pusat')->middleware(['auth', 'role:admin-pusat'])->name('admin-pusat.')->group(function () {
     Route::prefix('rekapitulasi')->name('rekapitulasi.')->controller(RekapitulasiController::class)->group(function () {
+        // Pusat (Instansi)
+        Route::get('/pusat', 'pusat')->name('pusat');
+        Route::get('/pusat/{instansi}', 'pusatUsers')->name('pusat.users');
+        Route::get('/pusat/{instansi}/export', 'exportPusatUsers')->name('pusat.users.export');
+
+        // Daerah (Provinsi → Kab/Kota → User)
         Route::get('/', 'index')->name('index');
         Route::get('/kab-kota/{provinceCode}', 'kabKota')->name('kab-kota');
 

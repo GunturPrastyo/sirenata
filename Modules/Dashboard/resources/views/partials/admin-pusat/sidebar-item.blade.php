@@ -94,18 +94,46 @@
         </ul>
     </li>
 
-    <!-- Rekapitulasi SDM -->
-    <li>
-        <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
-            class="flex items-center px-4 py-3 rounded-xl transition-all duration-200
+    <!-- Dropdown: Rekapitulasi SDM -->
+    <li x-data="{ open: {{ request()->routeIs('admin-pusat.rekapitulasi*') ? 'true' : 'false' }} }">
+        <button @click="open = !open"
+            class="flex items-center gap-4 w-full px-4 py-3.5 rounded-2xl transition-all duration-200
             {{ request()->routeIs('admin-pusat.rekapitulasi*')
                 ? 'text-[#13416B] bg-slate-100 font-bold'
                 : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
-            <span class="w-7 shrink-0 flex items-center justify-center">
-                <i class="fas fa-users text-lg"></i>
+            <span class="w-6 shrink-0 flex items-center justify-center">
+                <i class="fas fa-users text-[1.1rem]"></i>
             </span>
-            <span class="flex-1 ms-3 whitespace-nowrap text-[15px]">Rekapitulasi SDM</span>
-        </a>
+
+            <span class="flex-1 text-left text-[15px]">Rekapitulasi SDM</span>
+
+            <svg class="w-4 h-4 shrink-0 transition-transform duration-200 text-slate-400"
+                :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+            </svg>
+        </button>
+
+        <ul x-show="open" x-collapse x-cloak class="mt-1 space-y-1">
+            <li>
+                <a href="{{ route('admin-pusat.rekapitulasi.pusat') }}"
+                    class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
+                    {{ request()->routeIs('admin-pusat.rekapitulasi.pusat*')
+                        ? 'text-[#13416B] bg-slate-100 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
+                    Pusat
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin-pusat.rekapitulasi.index') }}"
+                    class="block w-full pl-[3.25rem] pr-4 py-3 rounded-2xl transition-colors text-[14px]
+                    {{ request()->routeIs('admin-pusat.rekapitulasi.index*') || request()->routeIs('admin-pusat.rekapitulasi.kab-kota*') || request()->routeIs('admin-pusat.rekapitulasi.rekap-user-province*') || request()->routeIs('admin-pusat.rekapitulasi.rekap-user-kab-kota*')
+                        ? 'text-[#13416B] bg-slate-100 font-bold'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#13416B]' }}">
+                    Daerah
+                </a>
+            </li>
+        </ul>
     </li>
 
     <!-- Dropdown: Pemanfaatan RTKD -->
