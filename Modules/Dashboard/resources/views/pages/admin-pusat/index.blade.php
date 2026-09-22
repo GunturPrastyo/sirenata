@@ -9,7 +9,6 @@
             <!-- RTK Disetujui (Navy #13416B) -->
             <div
                 class="relative overflow-hidden bg-[#13416B] text-white rounded-md p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
-                <!-- Efek Decorative Background & Watermark Icon -->
                 <div
                     class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
                     <i class="fas fa-check-double text-[130px]"></i>
@@ -30,7 +29,6 @@
             <!-- RTK Menunggu Verifikasi (Slate Blue #547996) -->
             <div
                 class="relative overflow-hidden bg-[#547996] text-white rounded-md p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
-                <!-- Efek Decorative Background & Watermark Icon -->
                 <div
                     class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
                     <i class="fas fa-hourglass-half text-[130px]"></i>
@@ -51,7 +49,6 @@
             <!-- RTK Ditolak (Light Blue #8BB1CC) -->
             <div
                 class="relative overflow-hidden bg-[#8BB1CC] text-white rounded-md p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
-                <!-- Efek Decorative Background & Watermark Icon -->
                 <div
                     class="absolute -right-6 -bottom-6 text-white opacity-[0.1] group-hover:opacity-[0.15] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
                     <i class="fas fa-ban text-[130px]"></i>
@@ -72,7 +69,6 @@
             <!-- RTK Berlaku (Muted Green #79A736) -->
             <div
                 class="relative overflow-hidden bg-[#79A736] text-white rounded-md p-5 sm:p-6 shadow-sm flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1 group z-0">
-                <!-- Efek Decorative Background & Watermark Icon -->
                 <div
                     class="absolute -right-6 -bottom-6 text-white opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-500 pointer-events-none transform group-hover:scale-110 z-0">
                     <i class="fas fa-file-contract text-[130px]"></i>
@@ -92,53 +88,131 @@
         </div>
 
         <!-- ========================================================= -->
-        <!-- 2. GRAFIK KOMPARASI RTK HORIZONTAL                        -->
+        <!-- 2. GRAFIK KOMPARASI RTK & CARD PERSETUJUAN (GRID LAYOUT)  -->
         <!-- ========================================================= -->
-        <div class="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden">
-            <div
-                class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <div class="flex items-center gap-3">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
+            <!-- LEFT: GRAFIK KOMPARASI RTK (8 Columns) -->
+            <div
+                class="lg:col-span-7 xl:col-span-8 bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                <div
+                    class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div>
                         <h2 class="text-lg font-semibold text-slate-800">Komparasi Masa Berlaku RTK</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Tahun penyusunan dan masa berakhir dokumen per
                             Provinsi</p>
                     </div>
+
+                    <!-- Dropdown Filter Tahun -->
+                    <div class="w-full sm:w-auto sm:max-w-xs shrink-0 flex items-center gap-2">
+                        <select id="rtkYearFilter" onchange="fetchRtkPusatData(this.value)"
+                            class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
+                            <option value="all" {{ $selectedRtkYear === 'all' ? 'selected' : '' }}>Semua Tahun
+                                (Default)</option>
+                            @foreach ($rtkYearsOptions as $y)
+                                <option value="{{ $y }}"
+                                    {{ (string) $y === (string) $selectedRtkYear ? 'selected' : '' }}>
+                                    Mulai {{ $y }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
-                <!-- Dropdown Filter Tahun -->
-                <div class="w-full sm:w-auto sm:max-w-xs shrink-0 flex items-center gap-2">
-                    <select id="rtkYearFilter" onchange="fetchRtkPusatData(this.value)"
-                        class="w-full text-sm border-slate-200 rounded-lg focus:ring-[#13416B] focus:border-[#13416B] text-ellipsis overflow-hidden cursor-pointer bg-slate-50">
-                        <option value="all" {{ $selectedRtkYear === 'all' ? 'selected' : '' }}>Semua Tahun (Default)
-                        </option>
-                        @foreach ($rtkYearsOptions as $y)
-                            <option value="{{ $y }}"
-                                {{ (string) $y === (string) $selectedRtkYear ? 'selected' : '' }}>Mulai
-                                {{ $y }}</option>
-                        @endforeach
-                    </select>
+                <div class="p-5 sm:p-6 flex-1">
+                    <!-- CHART CONTAINER DENGAN SCROLL VERTICAL -->
+                    <div
+                        class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? '' : 'hidden' }}">
+                        <div id="rtkCombinedChartContainer" class="relative w-full" style="min-height: 400px;">
+                            <canvas id="rtkCombinedBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- EMPTY STATE -->
+                    <div id="rtkCombinedEmptyState"
+                        class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? 'hidden' : '' }}">
+                        <div
+                            class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
+                            <i class="fas fa-chart-area text-xl"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700">Belum ada data RTK</p>
+                        <p class="text-xs text-slate-500 mt-1">Belum ada penyusunan dokumen RTK Provinsi yang tercatat.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div class="p-5 sm:p-6">
-                <!-- CHART CONTAINER DENGAN SCROLL VERTICAL -->
-                <div
-                    class="max-h-[500px] overflow-y-auto custom-scrollbar pr-2 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? '' : 'hidden' }}">
-                    <div id="rtkCombinedChartContainer" class="relative w-full" style="min-height: 400px;">
-                        <canvas id="rtkCombinedBarChart"></canvas>
+            <!-- RIGHT: CARD MEMBUTUHKAN PERSETUJUAN / ACC (4 Columns) -->
+            <div
+                class="lg:col-span-5 xl:col-span-4 bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-semibold text-slate-800">Perlu Persetujuan</h2>
+                        <p class="text-[11px] text-slate-500">RTK & Projek Daerah yang menunggu ACC</p>
                     </div>
+                    <span
+                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        {{ $totalPendingApprovals }}
+                    </span>
                 </div>
 
-                <!-- EMPTY STATE -->
-                <div id="rtkCombinedEmptyState"
-                    class="bg-slate-50 rounded-lg p-10 text-center border border-dashed border-slate-200 my-4 {{ $rtkMasaAktifPerProvinsi->count() > 0 ? 'hidden' : '' }}">
-                    <div
-                        class="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-slate-400">
-                        <i class="fas fa-chart-area text-xl"></i>
+                <div class="p-4 flex-1 flex flex-col justify-between">
+                    <!-- CONTAINER LIST PERSAINGAN DENGAN MAX-HEIGHT & INFINITE SCROLL -->
+                    <div id="pendingScrollContainer"
+                        class="max-h-[500px] overflow-y-auto custom-scrollbar pr-1 space-y-3">
+                        <div id="pendingApprovalList" class="space-y-3">
+                            @forelse($initialPendingApprovals as $item)
+                                <div
+                                    class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border {{ $item['badge_color'] }}">
+                                            {{ $item['category'] }}
+                                        </span>
+                                        <span class="text-[10px] font-medium text-slate-400">
+                                            <i class="far fa-clock mr-1"></i>{{ $item['date_formatted'] }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-800 line-clamp-1"
+                                            title="{{ $item['title'] }}">{{ $item['title'] }}</h4>
+                                        <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ $item['subtitle'] }}
+                                        </p>
+                                    </div>
+                                    <div class="flex justify-end pt-1 border-t border-slate-200/60 mt-1">
+                                        <a href="{{ $item['url'] }}"
+                                            class="inline-flex items-center text-[11px] font-semibold text-[#13416B] hover:text-[#547996] transition-colors">
+                                            Tinjau Persetujuan <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            @empty
+                                <div
+                                    class="bg-slate-50 rounded-lg p-8 text-center border border-dashed border-slate-200 my-2">
+                                    <div
+                                        class="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-auto mb-2 shadow-sm text-slate-400">
+                                        <i class="fas fa-check-circle text-lg text-emerald-500"></i>
+                                    </div>
+                                    <p class="text-xs font-semibold text-slate-700">Semua Terproses</p>
+                                    <p class="text-[10px] text-slate-500 mt-1">Tidak ada pengajuan RTK atau Projek yang
+                                        memerlukan persetujuan.</p>
+                                </div>
+                            @endforelse
+                        </div>
+
+                        <!-- SPINNER LOADING PERMINTAAN DATA BARU -->
+                        <div id="pendingLoadingSpinner" class="hidden py-3 text-center">
+                            <i class="fas fa-spinner fa-spin text-[#13416B] text-lg"></i>
+                            <span class="text-[11px] text-slate-500 ml-2">Memuat data berikutnya...</span>
+                        </div>
+
+                        <!-- PESAN AKHIR DATA -->
+                        <div id="pendingEndMessage"
+                            class="{{ !$hasMorePendingApprovals && count($initialPendingApprovals) > 0 ? '' : 'hidden' }} pt-2 text-center border-t border-slate-100">
+                            <p class="text-[10px] text-slate-400 font-medium">Semua data persetujuan telah ditampilkan
+                            </p>
+                        </div>
                     </div>
-                    <p class="text-sm font-semibold text-slate-700">Belum ada data RTK</p>
-                    <p class="text-xs text-slate-500 mt-1">Belum ada penyusunan dokumen RTK Provinsi yang tercatat.</p>
                 </div>
             </div>
         </div>
@@ -150,7 +224,6 @@
             <div
                 class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-
                     <div>
                         <h2 class="text-lg font-semibold text-slate-800">Distribusi Pendaftar E-Learning</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Jumlah pengguna terdaftar berdasarkan Provinsi
@@ -369,7 +442,88 @@
                 };
 
                 // =========================================================
-                // 2. GRAFIK DISTRIBUSI E-LEARNING (SPLIT HTML LEADERBOARD)
+                // 2. INFINITE SCROLL PADA CARD PERSETUJUAN
+                // =========================================================
+                let pendingPage = 1;
+                let pendingHasMore = @json($hasMorePendingApprovals);
+                let pendingLoading = false;
+
+                const pendingContainer = document.getElementById('pendingScrollContainer');
+
+                if (pendingContainer) {
+                    pendingContainer.addEventListener('scroll', function() {
+                        if (pendingLoading || !pendingHasMore) return;
+
+                        // Deteksi scroll telah mendekati bagian paling bawah (30px buffer)
+                        if (pendingContainer.scrollTop + pendingContainer.clientHeight >= pendingContainer
+                            .scrollHeight - 30) {
+                            loadMorePendingData();
+                        }
+                    });
+                }
+
+                function loadMorePendingData() {
+                    pendingLoading = true;
+                    document.getElementById('pendingLoadingSpinner').classList.remove('hidden');
+
+                    const nextPage = pendingPage + 1;
+                    fetch(`{{ route('admin-pusat.dashboard') }}?pending_page=${nextPage}`, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(res => {
+                            pendingPage = res.page;
+                            pendingHasMore = res.has_more;
+
+                            appendPendingItems(res.data);
+
+                            pendingLoading = false;
+                            document.getElementById('pendingLoadingSpinner').classList.add('hidden');
+
+                            if (!pendingHasMore) {
+                                document.getElementById('pendingEndMessage').classList.remove('hidden');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error fetching pending approvals:', err);
+                            pendingLoading = false;
+                            document.getElementById('pendingLoadingSpinner').classList.add('hidden');
+                        });
+                }
+
+                function appendPendingItems(items) {
+                    const listContainer = document.getElementById('pendingApprovalList');
+
+                    items.forEach(item => {
+                        const cardHtml = `
+                            <div class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${item.badge_color}">
+                                        ${item.category}
+                                    </span>
+                                    <span class="text-[10px] font-medium text-slate-400">
+                                        <i class="far fa-clock mr-1"></i>${item.date_formatted}
+                                    </span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-800 line-clamp-1" title="${item.title}">${item.title}</h4>
+                                    <p class="text-[11px] text-slate-500 truncate mt-0.5">${item.subtitle}</p>
+                                </div>
+                                <div class="flex justify-end pt-1 border-t border-slate-200/60 mt-1">
+                                    <a href="${item.url}" class="inline-flex items-center text-[11px] font-semibold text-[#13416B] hover:text-[#547996] transition-colors">
+                                        Tinjau Persetujuan <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        listContainer.insertAdjacentHTML('beforeend', cardHtml);
+                    });
+                }
+
+                // =========================================================
+                // 3. GRAFIK DISTRIBUSI E-LEARNING (SPLIT HTML LEADERBOARD)
                 // =========================================================
                 function renderSdmLeaderboard(data) {
                     const container = document.getElementById('sdmListContainer');
