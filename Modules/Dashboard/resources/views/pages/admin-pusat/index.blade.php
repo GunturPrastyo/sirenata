@@ -38,7 +38,7 @@
                     <p class="text-white text-sm font-semibold uppercase tracking-wider mb-1">Status Menunggu</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white">
                         {{ $rtkStatusDistribution->get('pending', 0) }}</h3>
-                    <p class="text-[10px] text-white mt-1">Butuh peninjauan</p>
+                    <p class="text-[10px] text-white mt-1">RTKD provinsi & kab/kota</p>
                 </div>
                 <div
                     class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#547996] flex items-center justify-center shrink-0 shadow-sm relative z-10 transition-transform duration-300 group-hover:scale-105">
@@ -145,18 +145,20 @@
             <!-- RIGHT: CARD MEMBUTUHKAN PERSETUJUAN / ACC (4 Columns) -->
             <div
                 class="lg:col-span-5 xl:col-span-4 bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                    <div>
-                        <h2 class="text-base font-semibold text-slate-800">Perlu Persetujuan</h2>
-                        <p class="text-[11px] text-slate-500">RTK & Projek Daerah yang menunggu ACC</p>
+                <div class="px-5 sm:px-6 py-4 border-b border-slate-100">
+                    <div class="flex items-center justify-between">
+                        <!-- Baris Judul dan Badge Angka di Sampingnya -->
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-base font-semibold text-slate-800">Perlu Persetujuan</h2>
+                            <span
+                                class="inline-flex items-center justify-center rounded-md border border-slate-200 bg-slate-50 px-2 py-2 shrink-0">
+                                <span
+                                    class="text-xs font-bold text-[#13416B] tabular-nums leading-none">{{ $totalPendingApprovals }}</span>
+                            </span>
+                        </div>
                     </div>
-                    <span
-                        class="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 shrink-0">
-                    
-                        <span class="text-[10px] font-medium uppercase tracking-wider text-slate-500">Total</span>
-                        <span
-                            class="text-xs font-bold text-[#13416B] tabular-nums leading-none">{{ $totalPendingApprovals }}</span>
-                    </span>
+                    <!-- Deskripsi dipindah ke bawah agar rapi -->
+                    <p class="text-[11px] text-slate-500 mt-1">RTKD (provinsi) & Projek Daerah yang menunggu persetujuan</p>
                 </div>
 
                 <div class="p-4 flex-1 flex flex-col justify-between">
