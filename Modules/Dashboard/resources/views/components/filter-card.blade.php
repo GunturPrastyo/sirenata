@@ -4,9 +4,10 @@
     'action' => null,
     'resetUrl' => null,
     'hasRequest' => count(request()->except(['page', '_token'])) > 0,
+    'defaultOpen' => false,
 ])
 
-<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" x-data="{ showFilter: {{ $hasRequest ? 'true' : 'false' }} }">
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" x-data="{ showFilter: {{ ($hasRequest || $defaultOpen) ? 'true' : 'false' }} }">
     <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h2 class="text-base font-semibold text-slate-800">{{ $title }}</h2>
@@ -33,7 +34,7 @@
 
     @if(isset($filter_inputs))
     <!-- Filter Form -->
-    <form method="GET" action="{{ $action ?? url()->current() }}" class="p-5 border-b border-slate-200 bg-slate-50/50" x-show="showFilter" x-transition @if(!$hasRequest) style="display: none;" @endif>
+    <form method="GET" action="{{ $action ?? url()->current() }}" class="p-5 border-b border-slate-200 bg-slate-50/50" x-show="showFilter" x-transition @if(!$hasRequest && !$defaultOpen) style="display: none;" @endif>
         <div class="flex flex-col sm:flex-row flex-wrap gap-4 items-end">
             
             <!-- Filter Inputs Slot -->

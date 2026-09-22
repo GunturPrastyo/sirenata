@@ -4,7 +4,8 @@
         <!-- Mengubah Judul Tabel secara dinamis -->
         <x-dashboard::filter-card
             title="{{ $projectScope === 'daerah' ? 'Proyek Daerah' : 'Proyek Pusat' }}"
-            :total="$projects->total() . ' Proyek'" :resetUrl="route($routePrefix . 'index', ['type' => $projectScope])">
+            :total="$projects->total() . ' Proyek'" :resetUrl="route($routePrefix . 'index', ['type' => $projectScope])"
+            :defaultOpen="str_contains($routePrefix, 'admin-province') || str_contains($routePrefix, 'admin-kab-kota')">
 
             <x-slot name="actions">
                 <x-button :href="route('admin-pusat.project.export') .
