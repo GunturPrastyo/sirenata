@@ -133,7 +133,7 @@
                                     </div>
                                 @elseif ($creatorScope?->province)
                                     <div class="flex items-center gap-2">
-                                        <i class="fas fa-map-marker-alt text-indigo-500"></i>
+                                        
                                         <span class="text-sm font-semibold text-slate-700">{{ $creatorScope->province->name }}</span>
                                     </div>
                                 @elseif ($project->type === 'Nasional')
