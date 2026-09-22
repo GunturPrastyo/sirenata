@@ -12,6 +12,7 @@ use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\Request;
 use Modules\RTK\Models\RencanaTenagaKerja;
 use Modules\RTK\Enums\TypeRtk;
+use Modules\RTK\Enums\RTKStatusVerification;
 
 class DashboardController extends Controller
 {
@@ -189,6 +190,60 @@ class DashboardController extends Controller
             $rtkEndYearsOptions[] = $y;
         }
 
+        // ================================================================
+        // DATA PERSETUJUAN — RTK Kab/Kota menunggu verifikasi
+        // ================================================================
+        $pendingRtk = RencanaTenagaKerja::query()
+            ->where('province_code', $provinceCode)
+            ->where('type', TypeRtk::KAB_KOTA->value)
+            ->where('status_verification', RTKStatusVerification::PENDING->value)
+            ->where('is_active', true)
+            ->with(['regency'])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $regencyName = $item->regency?->name ?? 'Kabupaten/Kota';
+
+                return [
+                    'id'            => $item->id,
+                    'category'      => 'RTK Kab/Kota',
+                    'title'         => $item->name,
+                    'subtitle'      => $regencyName,
+                    'created_at'    => $item->created_at?->toISOString(),
+                    'date_formatted'=> $item->created_at ? $item->created_at->diffForHumans() : '-',
+                    'type'          => 'rtk',
+                    'badge_color'   => 'bg-[#13416B] text-white border-transparent',
+                    'url'           => $item->regency_code
+                        ? route('admin-province.laporan.show-regency', $item->regency_code)
+                        : route('admin-province.laporan.index'),
+                ];
+            });
+
+        $allPendingApprovals = $pendingRtk->sortByDesc('created_at')->values();
+
+        // ================================================================
+        // AJAX HANDLER
+        // ================================================================
+
+        // Pagination Card Persetujuan
+        if ($request->ajax() && $request->has('pending_page')) {
+            $page = (int) $request->input('pending_page', 1);
+            $perPage = 10;
+
+            $pagedItems = $allPendingApprovals
+                ->slice(($page - 1) * $perPage, $perPage)
+                ->values();
+
+            $hasMore = $allPendingApprovals->count() > ($page * $perPage);
+
+            return response()->json([
+                'data'      => $pagedItems,
+                'has_more'  => $hasMore,
+                'page'      => $page,
+                'total'     => $allPendingApprovals->count(),
+            ]);
+        }
+
         if ($request->ajax()) {
             if ($request->has('rtk_end_year')) {
                 return response()->json([
@@ -226,6 +281,9 @@ class DashboardController extends Controller
             'selectedRtkEndYear' => $selectedRtkEndYear,
             'rtkYearsOptions' => $rtkYearsOptions,
             'rtkEndYearsOptions' => $rtkEndYearsOptions,
+            'initialPendingApprovals' => $allPendingApprovals->slice(0, 10)->values(),
+            'hasMorePendingApprovals' => $allPendingApprovals->count() > 10,
+            'totalPendingApprovals' => $allPendingApprovals->count(),
         ]);
     }
 
