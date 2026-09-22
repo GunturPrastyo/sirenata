@@ -150,7 +150,14 @@
                                 </span>
                             </x-table.td>
                             <x-table.td>
-                                <span class="text-slate-600">{{ $project->leader->name ?? '-' }}</span>
+                                @if ($project->leader)
+                                    <div class="space-y-0.5">
+                                        <span class="block text-sm font-semibold text-slate-700">{{ $project->leader->name }}</span>
+                                        <span class="block text-xs text-slate-400">{{ $project->leader->profile->instansi ?? '-' }}</span>
+                                    </div>
+                                @else
+                                    <span class="text-slate-400">-</span>
+                                @endif
                             </x-table.td>
                             <x-table.td>
                                 @php

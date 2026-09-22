@@ -32,7 +32,7 @@ class ProjectController extends Controller
 
     public function index(Request $request)
     {
-        $query = Project::with(['leader', 'creator.scopeArea.province', 'creator.scopeArea.regency'])->latest();
+        $query = Project::with(['leader.profile', 'creator.scopeArea.province', 'creator.scopeArea.regency'])->latest();
 
         $projectScope = $request->get('type', $request->status === 'Draft' ? 'daerah' : 'pusat');
 
@@ -195,7 +195,7 @@ class ProjectController extends Controller
 
     public function show($id)
     {
-        $project = Project::with(['leader'])->findOrFail($id);
+        $project = Project::with(['leader.profile'])->findOrFail($id);
         $routePrefix = $this->routePrefix;
         return view('project::show', compact('project', 'routePrefix'));
     }

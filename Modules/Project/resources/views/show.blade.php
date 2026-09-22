@@ -63,11 +63,13 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    @can('project-edit')
-                        <x-button :href="route($routePrefix . 'prerequisite', $project->id)" variant="primary" class="rounded-md">
-                            <i class="fas fa-edit mr-2 text-xs"></i> Edit Prasyarat & Status
-                        </x-button>
-                    @endcan
+                    @if (str_contains($routePrefix, 'admin-pusat'))
+                        @can('project-edit')
+                            <x-button :href="route($routePrefix . 'prerequisite', $project->id)" variant="primary" class="rounded-md">
+                                <i class="fas fa-edit mr-2 text-xs"></i> Edit Prasyarat & Status
+                            </x-button>
+                        @endcan
+                    @endif
                 </div>
             </div>
 
@@ -188,7 +190,10 @@
                         <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Ketua Tim</span>
                         <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-md">
                             <span class="block text-sm font-bold text-slate-900">{{ $project->leader->name ?? 'Belum Ditentukan' }}</span>
-                            <span class="text-xs text-slate-500">{{ $project->leader->email ?? '-' }}</span>
+                            <div class="mt-1 space-y-0.5">
+                                <span class="text-xs text-slate-500"><span class="font-semibold text-slate-600">Email:</span> {{ $project->leader->email ?? '-' }}</span>
+                                <span class="block text-xs text-slate-500"><span class="font-semibold text-slate-600">Instansi/Lembaga:</span> {{ $project->leader->profile->instansi ?? '-' }}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -199,10 +204,13 @@
                         </span>
                         @if (count($teamMembersArr) > 0)
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                @foreach (App\Models\User::whereIn('id', $teamMembersArr)->get() as $member)
+                                @foreach (App\Models\User::with('profile')->whereIn('id', $teamMembersArr)->get() as $member)
                                     <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-md">
                                         <span class="block text-xs font-semibold text-slate-800">{{ $member->name }}</span>
-                                        <span class="block text-[11px] text-slate-400">{{ $member->email }}</span>
+                                        <div class="mt-1 space-y-0.5">
+                                            <span class="text-[11px] text-slate-400"><span class="font-semibold text-slate-500">Email:</span> {{ $member->email }}</span>
+                                            <span class="block text-[11px] text-slate-400"><span class="font-semibold text-slate-500">Instansi/Lembaga:</span> {{ $member->profile->instansi ?? '-' }}</span>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
