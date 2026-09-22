@@ -522,12 +522,19 @@ class DashbordController extends Controller
         // ================================================================
         // 2. RTK PROVINSI AKTIF
         // ================================================================
- 
+
         $pendingRtk = RencanaTenagaKerja::with([
             'province',
         ])
             ->where('is_active', true)
-            ->where('type', TypeRtk::PROVINSI->value)
+            ->where(
+                'status_verification',
+                RTKStatusVerification::PENDING->value
+            )
+            ->where(
+                'type',
+                TypeRtk::PROVINSI->value
+            )
             ->latest()
             ->get()
             ->unique('province_code')
