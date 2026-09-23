@@ -215,55 +215,9 @@
         @auth
             <div class="flex items-center gap-2 sm:gap-4 shrink-0">
                 
-                <!-- Notifikasi (Hanya muncul untuk Admin Provinsi & Admin Kab/Kota) -->
+                <!-- Notifikasi LIVE (SSE) — Khusus Admin Provinsi & Admin Kab/Kota -->
                 @if (auth()->user()->hasRole(['admin-province', 'admin-kab-kota']))
-                    <div class="relative" x-data="{ notifOpen: false }">
-                        <button @click="notifOpen = !notifOpen" @click.outside="notifOpen = false" 
-                            class="relative p-2 text-slate-400 hover:text-[#13416B] hover:bg-slate-100 rounded-full transition-colors focus:outline-none cursor-pointer">
-                            <i class="fas fa-bell text-[1.1rem]"></i>
-                            <!-- Badge Merah Notifikasi (Opsional: Tampilkan berdasarkan kondisi data) -->
-                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-                        </button>
-
-                        <!-- Dropdown Notifikasi -->
-                        <div x-show="notifOpen" x-transition x-cloak 
-                            class="absolute right-0 top-full mt-3 bg-white border border-slate-200 rounded-2xl shadow-xl w-72 sm:w-80 z-50 overflow-hidden">
-                            <div class="px-5 py-3 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-slate-800">Notifikasi</h3>
-                                <button class="text-[10px] font-semibold text-[#13416B] hover:underline cursor-pointer">Tandai dibaca</button>
-                            </div>
-                            <div class="max-h-80 overflow-y-auto custom-scrollbar">
-                                
-                                <!-- Placeholder Notifikasi Kosong -->
-                                <div class="p-8 text-center flex flex-col items-center justify-center">
-                                    <div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-2">
-                                        <i class="far fa-bell-slash text-xl text-slate-300"></i>
-                                    </div>
-                                    <p class="text-xs font-semibold text-slate-600">Belum ada notifikasi baru</p>
-                                </div>
-                                
-                                <!-- Contoh Daftar Notifikasi jika ada data -->
-                                <!--
-                                <a href="#" class="block px-4 py-3 hover:bg-slate-50 border-b border-slate-50 transition-colors">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-blue-100 text-[#13416B] flex items-center justify-center shrink-0 mt-0.5">
-                                            <i class="fas fa-info-circle text-xs"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs font-bold text-slate-800">Pembaruan Dokumen RTK</p>
-                                            <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">Dokumen Rencana Tenaga Kerja wilayah Anda telah berhasil diverifikasi oleh Admin Pusat.</p>
-                                            <p class="text-[9px] font-medium text-slate-400 mt-1">10 Menit yang lalu</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                -->
-                                
-                            </div>
-                            <div class="px-4 py-2 border-t border-slate-100 bg-slate-50 text-center">
-                                <a href="#" class="text-xs font-bold text-[#13416B] hover:underline">Lihat Semua Notifikasi</a>
-                            </div>
-                        </div>
-                    </div>
+                    @include('dashboard::partials.notifications.dropdown')
                 @endif
 
                 <!-- Dropdown Profil -->

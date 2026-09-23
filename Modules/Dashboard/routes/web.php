@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Dashboard\Http\Controllers\NotificationController;
 use Modules\Dashboard\Http\Controllers\PortalDashboardController;
 use Modules\Dashboard\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
 use Modules\Dashboard\Http\Controllers\AdminPusat\DashbordController as AdminPusatDashboardController;
@@ -46,3 +47,21 @@ Route::prefix('admin-kab-kota')->middleware(['auth', 'role:admin-kab-kota'])->na
     Route::get('/profile', [AdminKabKotaDashboardController::class, 'profile'])->name('profile');
     Route::post('/profile', [AdminKabKotaDashboardController::class, 'storeOrUpdateProfile'])->name('profile.update');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Notifikasi (Admin Provinsi & Admin Kab/Kota)
+|--------------------------------------------------------------------------
+| Notifikasi dibuat oleh listener saat kejadian (persetujuan/verifikasi)
+| terjadi; endpoint di bawah hanya untuk membaca & membuang.
+*/
+Route::prefix('notifications')
+    ->name('notifications.')
+    ->middleware(['auth', 'role:admin-province|admin-kab-kota'])
+    ->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/latest', [NotificationController::class, 'latest'])->name('latest');
+        Route::post('/read-all', [NotificationController::class, 'readAll'])->name('read-all');
+        Route::delete('/{notification}', [NotificationController::class, 'destroy'])->name('destroy');
+        Route::post('/{notification}/read', [NotificationController::class, 'read'])->name('read');
+    });

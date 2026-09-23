@@ -84,6 +84,7 @@ class RTKApprovalPusatController extends Controller
         ]);
 
         ToastMagic::success('RTK berhasil ditolak.');
+        $this->rtkService->notifyRejected($rtk, $validated['reason']);
         return back();
     }
 
@@ -122,6 +123,7 @@ class RTKApprovalPusatController extends Controller
         ]);
 
         ToastMagic::success('RTK berhasil ditolak.');
+        $this->rtkService->notifyRejected($rtk, $validated['reason']);
         return back();
     }
 }

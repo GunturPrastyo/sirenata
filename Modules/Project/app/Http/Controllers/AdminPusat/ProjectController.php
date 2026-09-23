@@ -300,6 +300,7 @@ class ProjectController extends Controller
         ]);
 
         $prerequisiteCourseIds = $request->input('prerequisite_course_ids', []);
+        $previousStatus = $project->status;
 
         // Simpan prasyarat dan status (Setuju / Tolak)
         $project->update([
@@ -308,6 +309,20 @@ class ProjectController extends Controller
             'is_prerequisite_active' => $request->has('is_prerequisite_active'),
             'status' => $request->status, // Admin Pusat mengubah dari Draft menjadi On Progress
         ]);
+
+        // KEJADIAN: keputusan terhadap proyek daerah.
+        // Listener di modul Dashboard akan membuat notifikasi
+        // untuk Admin Provinsi & Admin Kab/Kota (event-driven push).
+        if ($previousStatus !== $project->status) {
+            event(new \Modules\Project\Events\ProjectApprovalDecided(
+                projectId: $project->id,
+                projectName: $project->name,
+                projectType: $project->type,
+                creatorId: $project->created_by,
+                previousStatus: $previousStatus,
+                newStatus: (string) $project->status,
+            ));
+        }
 
         ToastMagic::success('Prasyarat kursus dan persetujuan proyek berhasil diperbarui!');
         return redirect()->route($this->routePrefix . 'index', ['type' => 'daerah']);

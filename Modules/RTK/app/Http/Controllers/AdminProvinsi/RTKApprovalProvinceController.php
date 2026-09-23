@@ -68,6 +68,7 @@ class RTKApprovalProvinceController extends Controller
         ]);
 
         ToastMagic::success('RTK berhasil ditolak.');
+        $this->rtkService->notifyRejected($rtk, $validated['reason']);
         return back();
     }
 }

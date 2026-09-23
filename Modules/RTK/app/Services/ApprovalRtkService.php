@@ -2,13 +2,14 @@
 
 namespace Modules\RTK\Services;
 
-use Modules\RTK\Enums\RTKStatusVerification;
-use Modules\RTK\Enums\TypeRtk;
-use Modules\RTK\Models\RencanaTenagaKerja;
-use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\RTK\Enums\StatusDocument;
+use Modules\RTK\Enums\TypeRtk;
+use Modules\RTK\Enums\RTKStatusVerification;
+use Modules\RTK\Events\RtkdStatusDecided;
+use Modules\RTK\Models\RencanaTenagaKerja;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
 
 class ApprovalRtkService
 {
@@ -32,6 +33,8 @@ class ApprovalRtkService
         ]);
 
         ToastMagic::success('Status verifikasi RTK berhasil disetujui');
+
+        $this->dispatchDecision($rtk, 'verified');
 
         return ['success' => true, 'message' => 'Status verifikasi berhasil diapprove'];
     }
@@ -82,6 +85,8 @@ class ApprovalRtkService
 
             ToastMagic::success('Dokumen RTK berhasil divalidasi. RTK sekarang berlaku.');
 
+            $this->dispatchDecision($rtk, 'approved');
+
             return ['success' => true, 'message' => 'RTK sekarang berlaku'];
         });
     }
@@ -106,6 +111,8 @@ class ApprovalRtkService
         ]);
 
         ToastMagic::success('Status verifikasi RTK Kab/Kota berhasil disetujui');
+
+        $this->dispatchDecision($rtk, 'verified');
 
         return ['success' => true, 'message' => 'Status verifikasi berhasil diapprove'];
     }
@@ -153,7 +160,46 @@ class ApprovalRtkService
 
             ToastMagic::success('Dokumen RTK Kab/Kota berhasil divalidasi. RTK sekarang berlaku.');
 
+            $this->dispatchDecision($rtk, 'approved');
+
             return ['success' => true, 'message' => 'RTK Kab/Kota sekarang berlaku'];
         });
+    }
+
+    /**
+     * Lemparkan kejadian "RTKD ditolak" — listener akan
+     * mengubahnya menjadi notifikasi in-app.
+     */
+    public function notifyRejected(RencanaTenagaKerja $rtk, string $reason): void
+    {
+        $this->dispatchDecision($rtk, 'rejected', $reason);
+    }
+
+    /**
+     * Lemparkan event yang mewakili keputusan terhadap sebuah RTKD.
+     *
+     * Kejadian: verified (diverifikasi) | approved (disetujui) | rejected (ditolak)
+     */
+    private function dispatchDecision(RencanaTenagaKerja $rtk, string $decision, ?string $reason = null): void
+    {
+        $type = $rtk->type instanceof TypeRtk
+            ? $rtk->type
+            : TypeRtk::tryFrom((string) $rtk->type);
+
+        // Hanya RTKD daerah (Kab/Kota & Provinsi) yang masuk lingkup notifikasi navbar.
+        if (! in_array($type, [TypeRtk::KAB_KOTA, TypeRtk::PROVINSI], true)) {
+            return;
+        }
+
+        event(new RtkdStatusDecided(
+            decision: $decision,
+            rtkId: $rtk->id,
+            rtkName: $rtk->name,
+            rtkType: $type->value,
+            provinceCode: $rtk->province_code,
+            regencyCode: $rtk->regency_code,
+            creatorId: $rtk->user_id,
+            reason: $reason,
+        ));
     }
 }
