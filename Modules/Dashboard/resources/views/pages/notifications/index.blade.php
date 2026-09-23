@@ -1,66 +1,68 @@
 <x-dashboard::layouts.dashboard title="Notifikasi">
-    <div class="mx-auto w-full max-w-4xl space-y-6 bg-slate-50/50 p-4 min-h-screen sm:p-6 lg:p-8"
+    {{-- w-full max-w-full → mengikuti lebar layar di semua perangkat --}}
+    <div class="mx-auto w-full max-w-full space-y-4 px-3 pb-10 pt-4 sm:px-5 sm:pt-6 lg:px-6"
         x-data="notificationPage()" x-init="boot()">
 
-        <!-- Header (kalem, tanpa kartu mencolok) -->
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div class="flex items-start gap-3">
-                <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#13416B]/[0.07] text-[#13416B]">
+        <!-- Header -->
+        <header
+            class="flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div class="flex min-w-0 items-start gap-3">
+                <span
+                    class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#13416B]/[0.07] text-[#13416B] ring-1 ring-inset ring-[#13416B]/10">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
                         stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                         <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                     </svg>
                 </span>
-                <div>
-                    <h1 class="text-2xl font-extrabold tracking-tight text-slate-800">Notifikasi</h1>
-                    <p class="mt-1 text-sm text-slate-500">
-                        Pemberitahuan persetujuan proyek serta status verifikasi &amp; persetujuan RTKD
-                        wilayah Anda.
+                <div class="min-w-0">
+                    <h1 class="text-lg font-extrabold tracking-tight text-slate-800 sm:text-xl">Notifikasi</h1>
+                    <p class="mt-0.5 text-xs leading-relaxed text-slate-500 sm:text-sm">
+                        Pemberitahuan persetujuan proyek serta status verifikasi &amp; persetujuan RTKD wilayah Anda.
                     </p>
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3">
-                <!-- Penyegar ringan (event-driven: data sudah tersimpan saat kejadian terjadi) -->
+            <!-- Aksi -->
+            <div class="flex flex-wrap items-center gap-2">
                 <span
-                    class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-[11px] font-semibold text-slate-500">
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2.5 py-1.5 text-[11px] font-semibold text-slate-500">
                     <i class="fas fa-rotate text-[10px]"></i> Diperbarui otomatis
                 </span>
 
                 <span data-unread-count="{{ (int) $unreadCount }}"
-                    class="inline-flex items-center gap-2 rounded-lg bg-rose-50 px-3 py-1.5 text-[11px] font-bold text-rose-500"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-rose-50 px-2.5 py-1.5 text-[11px] font-bold text-rose-500 ring-1 ring-inset ring-rose-100"
                     @if (($unreadCount ?? 0) === 0) style="display: none" @endif>
                     <span>{{ (int) $unreadCount }} Belum Dibaca</span>
                 </span>
 
                 <button type="button" data-notif-read-all :disabled="unread <= 0 || busy"
-                    class="cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-[#13416B]/40 hover:text-[#13416B] disabled:cursor-not-allowed disabled:opacity-40">
+                    class="cursor-pointer rounded-lg bg-[#13416B] px-3.5 py-2 text-xs font-bold text-white transition-colors hover:bg-[#0d3457] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#13416B]/40 disabled:cursor-not-allowed disabled:opacity-40">
                     Tandai semua dibaca
                 </button>
             </div>
-        </div>
+        </header>
 
         <!-- Chip pembaruan: ada baris baru yang belum tampil -->
         <div x-show="pending > 0" x-cloak x-transition
-            class="sticky top-24 z-30 flex items-center justify-between gap-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
+            class="sticky top-20 z-30 flex flex-col gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 sm:top-24 sm:flex-row sm:items-center sm:justify-between">
             <p class="text-sm font-bold text-indigo-800">
                 <span x-text="pending"></span> notifikasi baru masuk.
             </p>
             <button type="button" @click="reload"
-                class="cursor-pointer rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-indigo-700">
+                class="cursor-pointer self-start rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-indigo-700 sm:self-auto">
                 Segarkan
             </button>
         </div>
 
-        <!-- Tab filter -->
-        <div class="flex flex-wrap items-center gap-2">
+        <!-- Tab filter (bisa digeser di layar sempit) -->
+        <nav class="flex gap-2 overflow-x-auto pb-1" aria-label="Filter notifikasi">
             <a href="{{ route('notifications.index') }}"
-                class="rounded-lg px-4 py-2 text-sm font-bold transition-colors {{ ($filter ?? '') !== 'unread' ? 'bg-[#13416B] text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-[#13416B]/40' }}">
+                class="shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold transition-colors {{ ($filter ?? '') !== 'unread' ? 'bg-[#13416B] text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-[#13416B]/40' }}">
                 Semua
             </a>
             <a href="{{ route('notifications.index', ['filter' => 'unread']) }}"
-                class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-colors {{ ($filter ?? '') === 'unread' ? 'bg-[#13416B] text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-[#13416B]/40' }}">
+                class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold transition-colors {{ ($filter ?? '') === 'unread' ? 'bg-[#13416B] text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-[#13416B]/40' }}">
                 Belum dibaca
                 @if (($unreadCount ?? 0) > 0)
                     <span
@@ -69,15 +71,30 @@
                     </span>
                 @endif
             </a>
-        </div>
+
+            <!-- Keterangan ikon (layar sedang ke atas) -->
+            <div class="ml-auto hidden shrink-0 items-center gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[11px] font-semibold text-slate-500 lg:flex">
+                <span class="inline-flex items-center gap-1.5"><i
+                        class="fas fa-circle-check text-emerald-500"></i> Disetujui</span>
+                <span class="inline-flex items-center gap-1.5"><i class="fas fa-check-double text-blue-500"></i>
+                    Diverifikasi</span>
+                <span class="inline-flex items-center gap-1.5"><i class="fas fa-circle-xmark text-rose-500"></i>
+                    Ditolak</span>
+                <span class="inline-flex items-center gap-1.5"><i class="fas fa-diagram-project text-indigo-500"></i>
+                    Proyek</span>
+            </div>
+        </nav>
 
         <!-- Daftar notifikasi -->
-        <div id="notif-list" class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div id="notif-list" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             @forelse ($notifications as $notification)
                 @include('dashboard::partials.notifications.item', ['notification' => $notification])
             @empty
-                <div class="px-6 py-16 text-center">
-                    <i class="far fa-bell-slash text-3xl text-slate-200"></i>
+                <div class="px-6 py-14 text-center sm:py-20">
+                    <span
+                        class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-slate-50 text-slate-300 ring-1 ring-inset ring-slate-100">
+                        <i class="far fa-bell-slash text-2xl"></i>
+                    </span>
                     <p class="mt-4 text-sm font-bold text-slate-700">
                         {{ ($filter ?? '') === 'unread' ? 'Tidak ada notifikasi yang belum dibaca' : 'Belum ada notifikasi' }}
                     </p>
@@ -90,7 +107,7 @@
 
         <!-- Pagination -->
         @if ($notifications->hasPages())
-            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
                 {{ $notifications->links() }}
             </div>
         @endif
@@ -187,7 +204,7 @@
                 };
             }
 
-            /* Aksi per-item: buang (X), tandai dibaca, buka tautan. */
+            /* Aksi per-item: buang (X), tandai dibaca, buka tabel. */
             document.addEventListener('click', async (event) => {
                 // 1) Tombol buang (X)
                 const dismissButton = event.target.closest('[data-notif-dismiss]');
@@ -243,10 +260,9 @@
                     return;
                 }
 
-                // 2) Tandai dibaca / buka tautan
+                // 2) Tandai dibaca / buka tabel
                 const readButton = event.target.closest('[data-notif-read]');
                 const openButton = event.target.closest('[data-notif-open]');
-                const row = event.target.closest('[data-notif-id]');
 
                 if (!readButton && !openButton) return;
 

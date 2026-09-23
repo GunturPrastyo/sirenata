@@ -17,26 +17,35 @@ class Notification extends Model
 {
     use HasUuids;
 
-    /** Tipe notifikasi + meta tampilan (ikon, warna tile, label grup). */
+    /**
+     * Tipe notifikasi + meta tampilan (ikon, warna tile, label grup).
+     *
+     * Makna ikon sesuai kejadiannya:
+     *  - Proyek disetujui   → diagram proyek (indigo)
+     *  - Proyek selesai     → bendera finis  (teal)
+     *  - RTKD diverifikasi  → centang ganda  (biru)    ✔ sudah dicek
+     *  - RTKD disetujui     → lingkaran centang (hijau) ✔ disetujui
+     *  - RTKD ditolak       → lingkaran silang (merah)  ✖ ditolak
+     */
     public const TYPES = [
         'project.approved' => [
             'label' => 'Proyek',
-            'icon'  => 'fas fa-briefcase',
+            'icon'  => 'fas fa-diagram-project',
             'tile'  => 'bg-indigo-50 text-indigo-600 ring-indigo-100',
         ],
         'project.completed' => [
             'label' => 'Proyek',
             'icon'  => 'fas fa-flag-checkered',
-            'tile'  => 'bg-sky-50 text-sky-600 ring-sky-100',
+            'tile'  => 'bg-teal-50 text-teal-600 ring-teal-100',
         ],
         'rtkd.verified' => [
             'label' => 'Verifikasi RTKD',
-            'icon'  => 'fas fa-clipboard-check',
-            'tile'  => 'bg-amber-50 text-amber-600 ring-amber-100',
+            'icon'  => 'fas fa-check-double',
+            'tile'  => 'bg-blue-50 text-blue-600 ring-blue-100',
         ],
         'rtkd.approved' => [
             'label' => 'Persetujuan RTKD',
-            'icon'  => 'fas fa-certificate',
+            'icon'  => 'fas fa-circle-check',
             'tile'  => 'bg-emerald-50 text-emerald-600 ring-emerald-100',
         ],
         'rtkd.rejected' => [

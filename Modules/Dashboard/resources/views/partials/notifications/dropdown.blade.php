@@ -119,7 +119,7 @@
                 <div class="notif-fade group relative flex items-start gap-3 border-b border-slate-100 px-4 py-3 last:border-b-0 hover:bg-slate-50/80">
 
                     <!-- Ikon kecil warna kalem -->
-                    <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg" :class="item.tile">
+                    <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg ring-1 ring-inset" :class="item.tile">
                         <i :class="item.icon" class="text-[13px]"></i>
                     </span>
 
