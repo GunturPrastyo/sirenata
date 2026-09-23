@@ -24,6 +24,7 @@ class SendRtkdNotification
             regencyCode: $event->regencyCode,
             creatorId: $event->creatorId,
             reason: $event->reason,
+            actorId: $event->actorId,
         );
     }
 }

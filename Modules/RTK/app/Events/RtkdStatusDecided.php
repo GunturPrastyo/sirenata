@@ -23,5 +23,7 @@ class RtkdStatusDecided implements ShouldDispatchAfterCommit
         public readonly ?string $regencyCode = null,
         public readonly ?string $creatorId = null,
         public readonly ?string $reason = null,
+        /** Pengguna yang melakukan aksi — tidak menerima notifikasi sendiri. */
+        public readonly ?string $actorId = null,
     ) {}
 }

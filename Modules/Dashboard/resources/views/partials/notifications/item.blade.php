@@ -38,7 +38,7 @@
             @if ($notification->link)
                 <a href="{{ $notification->link }}" data-notif-open="{{ $notification->id }}"
                     class="text-[11px] font-semibold text-slate-400 hover:text-[#13416B] hover:underline">Buka
-                    detail</a>
+                    tabel</a>
             @endif
         </div>
     </div>

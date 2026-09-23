@@ -200,6 +200,9 @@ class ApprovalRtkService
             regencyCode: $rtk->regency_code,
             creatorId: $rtk->user_id,
             reason: $reason,
+            // Pelaku aksi (mis. admin provinsi yang memverifikasi/menyetujui
+            // RTKD kab/kota sendiri) tidak usah menerima notifikasi.
+            actorId: Auth::id(),
         ));
     }
 }

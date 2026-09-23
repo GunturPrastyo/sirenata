@@ -20,5 +20,7 @@ class ProjectApprovalDecided implements ShouldDispatchAfterCommit
         public readonly ?string $creatorId = null,
         public readonly ?string $previousStatus = null,
         public readonly string $newStatus = 'On Progress',
+        /** Pengguna yang melakukan aksi — tidak menerima notifikasi sendiri. */
+        public readonly ?string $actorId = null,
     ) {}
 }

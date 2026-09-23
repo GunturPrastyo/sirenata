@@ -321,6 +321,7 @@ class ProjectController extends Controller
                 creatorId: $project->created_by,
                 previousStatus: $previousStatus,
                 newStatus: (string) $project->status,
+                actorId: auth()->id(),
             ));
         }
 

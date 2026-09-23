@@ -1,16 +1,9 @@
 <x-dashboard::layouts.dashboard title="Dashboard Admin Provinsi">
-    <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6 sm:space-y-8 bg-slate-50/50 min-h-screen">
+    <div class="p-4 sm:p-6 lg:p-6 max-w-full mx-auto space-y-6 sm:space-y-8 bg-slate-50/50 min-h-screen">
 
         <!-- Header & Greeting -->
         <div class="flex flex-col gap-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Halo, {{ $user->name }}</h1>
-                    <p class="text-sm text-slate-500 font-medium mt-1">
-                        Masuk sebagai <span class="text-[#13416B] font-bold">{{ $user->getRoleNames()->implode(', ') }}</span> — Wilayah {{ $user->scopeArea?->province?->name ?? 'Belum Ditetapkan' }}
-                    </p>
-                </div>
-            </div>
+         
 
             <!-- Peringatan Wilayah Belum Ditetapkan -->
             @if (!$user->hasCompleteScope())

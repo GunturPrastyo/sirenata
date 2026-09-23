@@ -48,6 +48,7 @@ class NotificationService
         ?string $creatorId = null,
         string $previousStatus = 'Draft',
         string $newStatus = 'On Progress',
+        ?string $actorId = null,
     ): void {
         try {
             $isCompleted = $newStatus === 'Completed';
@@ -57,17 +58,18 @@ class NotificationService
                 ? "Proyek \"{$projectName}\" telah ditandai selesai oleh Admin Pusat."
                 : "Proyek \"{$projectName}\" telah disetujui Admin Pusat dan siap dilaksanakan. Silakan lengkapi ketua serta anggota tim.";
 
-            foreach ($this->projectRecipients($projectType, $creatorId) as $user) {
+            foreach ($this->projectRecipients($projectType, $creatorId, $actorId) as $user) {
                 $this->push(
                     user: $user,
                     type: $isCompleted ? self::PROJECT_COMPLETED : self::PROJECT_APPROVED,
                     title: $title,
                     message: $message,
-                    link: $this->projectLink($user, $projectId),
+                    link: $this->projectLink($user, $projectName),
                     meta: [
                         'project_id'   => (string) $projectId,
                         'project_type' => $projectType,
                         'group'        => $isCompleted ? 'Proyek Selesai' : 'Proyek Disetujui',
+                        'actor_id'     => $actorId,
                     ],
                 );
             }
@@ -94,6 +96,7 @@ class NotificationService
         ?string $regencyCode = null,
         ?string $creatorId = null,
         ?string $reason = null,
+        ?string $actorId = null,
     ): void {
         $type = match ($event) {
             'verified' => self::RTKD_VERIFIED,
@@ -130,19 +133,20 @@ class NotificationService
                 default    => Notification::typeMeta($type)['label'],
             };
 
-            foreach ($this->rtkdRecipients($provinceCode, $regencyCode, $creatorId) as $user) {
+            foreach ($this->rtkdRecipients($provinceCode, $regencyCode, $creatorId, $actorId) as $user) {
                 $this->push(
                     user: $user,
                     type: $type,
                     title: $title,
                     message: $message,
-                    link: $this->rtkdLink($user),
+                    link: $this->rtkdLink($user, $rtkName),
                     meta: [
                         'rtk_type'     => $rtkType,
                         'province'     => $provinceCode,
                         'regency'      => $regencyCode,
                         'scope_name'   => $scopeName,
                         'group'        => $group,
+                        'actor_id'     => $actorId,
                     ],
                 );
             }
@@ -157,11 +161,11 @@ class NotificationService
 
     /**
      * Penerima notifikasi proyek: pembuat proyek + seluruh admin
-     * se-wilayah yang sama (scope creator).
+     * se-wilayah yang sama (scope creator). Pelaku aksi dikecualikan.
      *
      * @return \Illuminate\Support\Collection<int, User>
      */
-    private function projectRecipients(string $projectType, ?string $creatorId)
+    private function projectRecipients(string $projectType, ?string $creatorId, ?string $actorId = null)
     {
         $role = match ($projectType) {
             'Provinsi', 'provinsi', 'PROVINSI' => 'admin-province',
@@ -191,7 +195,7 @@ class NotificationService
             }
         }
 
-        return $this->resolveAdmins($ids);
+        return $this->resolveAdmins($ids, $actorId);
     }
 
     /**
@@ -199,9 +203,12 @@ class NotificationService
      *  - RTKD Kab/Kota  → Admin Kab/Kota wilayah itu + Admin Provinsi induk
      *  - RTKD Provinsi  → Admin Provinsi wilayah itu
      *
+     * Pengguna yang MELAKUKAN aksi (memverifikasi / menyetujui / menolak)
+     * selalu dikecualikan — tidak ada notifikasi untuk aksi sendiri.
+     *
      * @return \Illuminate\Support\Collection<int, User>
      */
-    private function rtkdRecipients(?string $provinceCode, ?string $regencyCode, ?string $creatorId)
+    private function rtkdRecipients(?string $provinceCode, ?string $regencyCode, ?string $creatorId, ?string $actorId = null)
     {
         $ids = collect();
 
@@ -225,16 +232,18 @@ class NotificationService
             $ids->push($creatorId);
         }
 
-        return $this->resolveAdmins($ids);
+        return $this->resolveAdmins($ids, $actorId);
     }
 
     /**
      * Ambil user admin (role yang punya akses navbar notifikasi).
      *
+     * $actorId — pelaku aksi: tidak pernah dimasukkan ke penerima.
+     *
      * @param  \Illuminate\Support\Collection<int, mixed>  $ids
      * @return \Illuminate\Support\Collection<int, User>
      */
-    private function resolveAdmins($ids)
+    private function resolveAdmins($ids, ?string $actorId = null)
     {
         $ids = $ids->filter()->unique()->values();
 
@@ -245,6 +254,8 @@ class NotificationService
         return User::whereIn('id', $ids)
             ->get()
             ->filter(fn (User $user) => $user->hasAnyRole(self::RECIPIENT_ROLES))
+            // Aksi sendiri tidak dikirimkan sebagai notifikasi.
+            ->filter(fn (User $user) => $actorId === null || $user->id !== $actorId)
             ->values();
     }
 
@@ -252,18 +263,36 @@ class NotificationService
     /* Tautan                                                              */
     /* ------------------------------------------------------------------ */
 
-    private function projectLink(User $user, int|string $projectId): string
+    /**
+     * Tautan notifikasi proyek → HALAMAN TABEL proyek milik penerima,
+     * sudah disaring (?search=) agar langsung menunjuk baris proyeknya.
+     */
+    private function projectLink(User $user, ?string $projectName = null): string
     {
-        return $user->hasRole('admin-kab-kota')
-            ? route('admin-kab-kota.project.show', $projectId)
-            : route('admin-province.project.show', $projectId);
+        $route = $user->hasRole('admin-kab-kota')
+            ? 'admin-kab-kota.project.index'
+            : 'admin-province.project.index';
+
+        return $projectName
+            ? route($route, ['search' => $projectName])
+            : route($route);
     }
 
-    private function rtkdLink(User $user): string
+    /**
+     * Tautan notifikasi RTKD → HALAMAN TABEL RTKD milik penerima:
+     *  - RTKD Provinsi  → /admin-province/rencana-tenaga-kerja-daerah-provinsi
+     *  - RTKD Kab/Kota  → /admin-kab-kota/rencana-tenaga-kerja-daerah-kab-kota
+     * Sudah disaring (?search=) agar langsung menunjuk baris RTKD-nya.
+     */
+    private function rtkdLink(User $user, ?string $rtkName = null): string
     {
-        return $user->hasRole('admin-kab-kota')
-            ? route('admin-kab-kota.rtkd.index')
-            : route('admin-province.rtkdp.index');
+        $route = $user->hasRole('admin-kab-kota')
+            ? 'admin-kab-kota.rtkd.index'
+            : 'admin-province.rtkdp.index';
+
+        return $rtkName
+            ? route($route, ['search' => $rtkName])
+            : route($route);
     }
 
     private function scopeName(?string $provinceCode, ?string $regencyCode): ?string

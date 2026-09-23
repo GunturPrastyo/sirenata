@@ -42,6 +42,7 @@ class SendProjectNotification
             creatorId: $event->creatorId,
             previousStatus: (string) $event->previousStatus,
             newStatus: $event->newStatus,
+            actorId: $event->actorId,
         );
     }
 }
