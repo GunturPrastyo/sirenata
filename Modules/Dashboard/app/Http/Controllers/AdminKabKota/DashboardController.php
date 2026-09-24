@@ -22,6 +22,7 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         $userScope = \Modules\User\Models\UserScope::where('user_id', $user->id)->first();
         $regencyCode = $userScope ? $userScope->regency_code : null;
@@ -79,65 +80,73 @@ class DashboardController extends Controller
             ->pluck('total', 'course_name');
 
         // ==========================================
-        // 2. DATA RTK DAERAH
+        // 2. DATA RTK ACUAN DAERAH (is_active = true)
         // ==========================================
-       
-        $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
+        // Sesuai aturan bisnis, HANYA dokumen RTK berstatus acuan (is_active = true)
+        // yang masuk dalam antrean review dan persetujuan (ACC) oleh Admin Pusat.
+        $rtkAcuan = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('regency_code', $regencyCode)
             ->where('is_active', true)
             ->orderByDesc('updated_at')
             ->first();
 
-        // Prioritas 2: Jika tidak ada yang aktif, ambil dokumen RTK terbaru
-        if (!$rtkActive) {
-            $rtkActive = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
-                ->where('regency_code', $regencyCode)
-                ->orderByDesc('created_at')
-                ->first();
-        }
-
-        $totalRtkDaerah = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
-            ->where('regency_code', $regencyCode)
-            ->count();
-
-        // ==========================================
-        // LOGIKA PRESENTASI RTK AKTIF
-        // ==========================================
-        $rtkActiveInfo = [
+        $rtkStatusInfo = [
+            'hasAcuan' => (bool) $rtkAcuan,
             'isApproved' => false,
             'isPending' => false,
             'isValid' => false,
+            'isRejected' => false,
+            'statusBadgeText' => 'Belum Ada Acuan',
+            'statusBadgeColor' => 'bg-slate-400 text-white',
+            'sisaTahun' => null,
             'sisaWaktuTeks' => '-',
             'sisaWaktuColor' => 'text-slate-400',
-            'docStatusText' => 'Belum Berlaku',
+            'isExpiringSoon' => false,
         ];
 
-        if ($rtkActive) {
-            $verifStatus = $rtkActive->status_verification;
-            $docStatus = $rtkActive->status_document;
+        if ($rtkAcuan) {
+            $verifStatus = $rtkAcuan->status_verification;
+            $docStatus = $rtkAcuan->status_document;
 
-            $rtkActiveInfo['isApproved'] = $verifStatus === \Modules\RTK\Enums\RTKStatusVerification::APPROVED;
-            $rtkActiveInfo['isPending'] = !$rtkActiveInfo['isApproved'] && $verifStatus !== \Modules\RTK\Enums\RTKStatusVerification::REJECTED;
-            $rtkActiveInfo['isValid'] = $docStatus === \Modules\RTK\Enums\StatusDocument::VALID;
+            $sisaTahun = (int) $rtkAcuan->end_date - (int) date('Y');
+            $rtkStatusInfo['sisaTahun'] = $sisaTahun;
 
-            $sisaTahun = (int) $rtkActive->end_date - (int) date('Y');
-
-            if ($rtkActiveInfo['isApproved'] && $rtkActiveInfo['isValid']) {
-                if ($sisaTahun > 0) {
-                    $rtkActiveInfo['sisaWaktuTeks'] = $sisaTahun . ' Tahun';
-                    $rtkActiveInfo['sisaWaktuColor'] = 'text-slate-700';
-                } elseif ($sisaTahun === 0) {
-                    $rtkActiveInfo['sisaWaktuTeks'] = 'Berakhir Tahun Ini';
-                    $rtkActiveInfo['sisaWaktuColor'] = 'text-amber-600';
+            if ($verifStatus === \Modules\RTK\Enums\RTKStatusVerification::REJECTED) {
+                $rtkStatusInfo['isRejected'] = true;
+                $rtkStatusInfo['statusBadgeText'] = 'Ditolak / Perlu Revisi';
+                $rtkStatusInfo['statusBadgeColor'] = 'bg-rose-600 text-white';
+            } elseif ($verifStatus === \Modules\RTK\Enums\RTKStatusVerification::PENDING) {
+                $rtkStatusInfo['isPending'] = true;
+                $rtkStatusInfo['statusBadgeText'] = 'Menunggu persetujuan';
+                $rtkStatusInfo['statusBadgeColor'] = 'bg-amber-500 text-white';
+            } elseif ($verifStatus === \Modules\RTK\Enums\RTKStatusVerification::APPROVED) {
+                $rtkStatusInfo['isApproved'] = true;
+                if ($docStatus === \Modules\RTK\Enums\StatusDocument::VALID) {
+                    $rtkStatusInfo['isValid'] = true;
+                    $rtkStatusInfo['statusBadgeText'] = 'Disahkan & Berlaku';
+                    $rtkStatusInfo['statusBadgeColor'] = 'bg-emerald-600 text-white';
+                } elseif ($docStatus === \Modules\RTK\Enums\StatusDocument::EXPIRED) {
+                    $rtkStatusInfo['statusBadgeText'] = 'Kedaluwarsa';
+                    $rtkStatusInfo['statusBadgeColor'] = 'bg-rose-600 text-white';
                 } else {
-                    $rtkActiveInfo['sisaWaktuTeks'] = '0 Tahun (Kadaluarsa)';
-                    $rtkActiveInfo['sisaWaktuColor'] = 'text-red-600';
+                    $rtkStatusInfo['statusBadgeText'] = 'Verifikasi Lolos';
+                    $rtkStatusInfo['statusBadgeColor'] = 'bg-blue-600 text-white';
                 }
             }
 
-            $rtkActiveInfo['docStatusText'] = $docStatus->label() ?? 'Belum Berlaku';
-            if ($docStatus === \Modules\RTK\Enums\StatusDocument::NA) {
-                $rtkActiveInfo['docStatusText'] = 'Belum Berlaku';
+            if ($rtkStatusInfo['isValid']) {
+                if ($sisaTahun > 1) {
+                    $rtkStatusInfo['sisaWaktuTeks'] = $sisaTahun . ' Tahun';
+                    $rtkStatusInfo['sisaWaktuColor'] = 'text-slate-700';
+                } elseif ($sisaTahun === 1 || $sisaTahun === 0) {
+                    $rtkStatusInfo['sisaWaktuTeks'] = $sisaTahun === 0 ? 'Berakhir Tahun Ini' : 'Sisa 1 Tahun';
+                    $rtkStatusInfo['sisaWaktuColor'] = 'text-amber-600';
+                    $rtkStatusInfo['isExpiringSoon'] = true;
+                } else {
+                    $rtkStatusInfo['sisaWaktuTeks'] = '0 Tahun (Kadaluarsa)';
+                    $rtkStatusInfo['sisaWaktuColor'] = 'text-red-600';
+                    $rtkStatusInfo['isExpiringSoon'] = true;
+                }
             }
         }
 
@@ -149,15 +158,18 @@ class DashboardController extends Controller
                 $q->where('regency_code', $regencyCode);
             });
 
-        $totalProjects = $projectQuery->count();
-        
-        // Mengambil semua project untuk dihitung progress-nya via accessor
-        $allProjects = $projectQuery->get();
-        
-        // Hanya menghitung project yang progress-nya kurang dari 100%
+        $totalProjects = (clone $projectQuery)->count();
+        $allProjects = (clone $projectQuery)->with(['leader', 'prerequisiteCourse'])->latest()->get();
+
         $onProgressProjects = $allProjects->filter(function($project) {
             return $project->progress < 100;
         })->count();
+
+        $completedProjects = $allProjects->filter(function($project) {
+            return $project->progress >= 100;
+        })->count();
+
+        $recentProjects = $allProjects->take(4);
 
         return view('dashboard::pages.admin-kab-kota.index', [
             'user' => $user,
@@ -167,11 +179,12 @@ class DashboardController extends Controller
             'courses' => $courses,
             'years' => $years,
             'selectedYear' => $selectedYear,
-            'rtkActive' => $rtkActive,
-            'rtkActiveInfo' => $rtkActiveInfo,
-            'totalRtkDaerah' => $totalRtkDaerah,
+            'rtkAcuan' => $rtkAcuan,
+            'rtkStatusInfo' => $rtkStatusInfo,
             'totalProjects' => $totalProjects,
             'onProgressProjects' => $onProgressProjects,
+            'completedProjects' => $completedProjects,
+            'recentProjects' => $recentProjects,
         ]);
     }
 
