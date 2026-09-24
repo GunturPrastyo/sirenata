@@ -11,7 +11,7 @@
     @endphp
 
     <div class="p-2 sm:p-6" x-data="projectCreateForm({{ json_encode($users ?? []) }})" x-init="watchPrerequisites()">
-        <!-- Breadcrumb (Tanpa Rumah / Home) -->
+        <!-- Breadcrumb -->
         <x-breadcrumb :home="false" :show-home="false" :items="[
             ['label' => $breadcrumbLabel, 'url' => route($routePrefix . 'index', ['type' => $projectScope])],
             ['label' => $pageTitle],

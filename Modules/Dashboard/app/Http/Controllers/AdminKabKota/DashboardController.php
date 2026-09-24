@@ -82,8 +82,6 @@ class DashboardController extends Controller
         // ==========================================
         // 2. DATA RTK ACUAN DAERAH (is_active = true)
         // ==========================================
-        // Sesuai aturan bisnis, HANYA dokumen RTK berstatus acuan (is_active = true)
-        // yang masuk dalam antrean review dan persetujuan (ACC) oleh Admin Pusat.
         $rtkAcuan = RencanaTenagaKerja::where('type', TypeRtk::KAB_KOTA->value)
             ->where('regency_code', $regencyCode)
             ->where('is_active', true)
@@ -161,6 +159,9 @@ class DashboardController extends Controller
         $totalProjects = (clone $projectQuery)->count();
         $allProjects = (clone $projectQuery)->with(['leader', 'prerequisiteCourse'])->latest()->get();
 
+        // Hitung rata-rata progress dari seluruh proyek yang ada (menggunakan accessor $project->progress)
+        $averageProgress = $allProjects->avg(fn($project) => $project->progress) ?? 0;
+
         $onProgressProjects = $allProjects->filter(function($project) {
             return $project->progress < 100;
         })->count();
@@ -182,6 +183,7 @@ class DashboardController extends Controller
             'rtkAcuan' => $rtkAcuan,
             'rtkStatusInfo' => $rtkStatusInfo,
             'totalProjects' => $totalProjects,
+            'averageProgress' => $averageProgress,
             'onProgressProjects' => $onProgressProjects,
             'completedProjects' => $completedProjects,
             'recentProjects' => $recentProjects,
