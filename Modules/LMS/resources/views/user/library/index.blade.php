@@ -6,13 +6,13 @@
             rel="stylesheet">
     @endpush
 
-    <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto bg-slate-50 min-h-screen">
+    <div class="p-0 sm:p-6 lg:p-8 max-w-full mx-auto bg-slate-50 min-h-screen">
 
         {{-- ========================================== --}}
         {{-- HEADER PERPUSTAKAAN DENGAN ILUSTRASI PAPAN --}}
         {{-- ========================================== --}}
         <div
-            class="relative bg-[#13416B] rounded-lg p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 flex items-center justify-between border border-blue-900/20 shadow-lg overflow-hidden min-h-[280px] sm:min-h-[280px] lg:min-h-[320px]">
+            class="relative bg-[#13416B] rounded-md p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 flex items-center justify-between border border-blue-900/20 shadow-lg overflow-hidden min-h-[280px] sm:min-h-[280px] lg:min-h-[320px]">
 
             <!-- Efek Dekoratif Bubbles Geometris Profesional -->
             <div class="absolute inset-0 pointer-events-none z-0">
@@ -137,7 +137,7 @@
         {{-- KONTEN UTAMA                               --}}
         {{-- ========================================== --}}
         <!-- Grid diatur maksimal 3 kolom (lg:grid-cols-3) agar card lebih lebar di desktop -->
-        <div id="library-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div id="library-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 px-4 md:px-0">
             @forelse($libraries as $library)
                 @php
                     $typeName = strtolower($library->libraryCategory->name ?? 'default');
@@ -164,7 +164,7 @@
 
                 <!-- Card Style Buku -->
                 <div id="library-card-{{ $library->id }}"
-                    class="group flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-[#13416B]/30 transition-all duration-300 hover:-translate-y-1">
+                    class="group flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-[#13416B]/30 transition-all duration-300 hover:-translate-y-1">
 
                     {{-- Cover Area (Disesuaikan untuk mendukung URL Eksternal / Inisial maupun Upload Lokal) --}}
                     <div class="relative aspect-[3/4] overflow-hidden bg-slate-100">
@@ -255,7 +255,7 @@
                                 @click="$dispatch('open-modal', 'library-modal-{{ $library->id }}'); window.recordLibraryHistory('{{ $library->id }}')"
                                 class="w-full py-2.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl group-hover:bg-[#13416B] group-hover:text-white group-hover:border-[#13416B] text-[11px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2">
                                 <span>{{ $buttonLabel }}</span>
-                                <i class="fas fa-arrow-right text-[10px]"></i>
+                             
                             </button>
                         </div>
                     </div>
