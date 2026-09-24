@@ -5,7 +5,7 @@
 
         <!-- Header -->
         <header
-            class="flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            class="flex flex-col gap-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div class="flex min-w-0 items-start gap-3">
                 <span
                     class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#13416B]/[0.07] text-[#13416B] ring-1 ring-inset ring-[#13416B]/10">
@@ -86,7 +86,7 @@
         </nav>
 
         <!-- Daftar notifikasi -->
-        <div id="notif-list" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div id="notif-list" class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
             @forelse ($notifications as $notification)
                 @include('dashboard::partials.notifications.item', ['notification' => $notification])
             @empty
@@ -107,7 +107,7 @@
 
         <!-- Pagination -->
         @if ($notifications->hasPages())
-            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+            <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
                 {{ $notifications->links() }}
             </div>
         @endif

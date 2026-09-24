@@ -118,7 +118,7 @@
                     <div class="p-5 sm:p-6 space-y-5">
                         @if ($rtkAcuan)
                             <!-- Box Ringkasan Dokumen Acuan -->
-                            <div class="bg-slate-50/80 rounded-lg p-4 border border-slate-200/80 space-y-3.5">
+                            <div class="bg-slate-50/80 rounded-xl p-4 border border-slate-200/80 space-y-3.5">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                     <div>
                                         <div class="flex items-center gap-2">
@@ -153,9 +153,9 @@
                             </div>
 
                             <!-- Tahapan Persetujuan Admin Pusat (Workflow Stepper) -->
-                            <div class="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
+                            <div class="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
                                 <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                                    <i class="fas fa-tasks text-[#13416B]"></i> Alur Verifikasi & Pengesahan Admin Pusat
+                                    <i class="fas fa-tasks text-[#13416B]"></i> Alur Verifikasi & Pengesahan 
                                 </h4>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
@@ -182,7 +182,7 @@
                                                 @elseif($rtkStatusInfo['isPending']) bg-amber-500 text-white
                                                 @elseif($rtkStatusInfo['isRejected']) bg-rose-600 text-white
                                                 @else bg-slate-300 text-slate-600 @endif">2</span>
-                                            <span class="font-bold text-slate-800">Verifikasi Pusat</span>
+                                            <span class="font-bold text-slate-800">Verifikasi Provinsi</span>
                                         </div>
                                         <p class="text-[11px] text-slate-500">
                                             @if($rtkStatusInfo['isApproved']) Verifikasi Disetujui
@@ -227,13 +227,10 @@
                 <!-- Footer Action Buttons -->
                 <div class="px-5 sm:px-6 py-3.5 bg-slate-50/80 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
                     <span class="text-xs text-slate-500">
-                        <i class="fas fa-shield-alt text-[#13416B] mr-1"></i> Hanya dokumen acuan aktif yang disetujui admin pusat
+                        <i class="fas fa-shield-alt text-[#13416B] mr-1"></i> Hanya dokumen acuan aktif yang disetujui admin provinsi
                     </span>
                     <div class="flex items-center gap-2">
-                        <a href="{{ route('admin-kab-kota.laporan.index') }}"
-                            class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors">
-                            <i class="fas fa-file-alt mr-1 text-[#13416B]"></i> Laporan RTK
-                        </a>
+                     
                         <a href="{{ route('admin-kab-kota.rtkd.index') }}"
                             class="px-3 py-1.5 rounded-lg bg-[#13416B] hover:bg-[#103355] text-white text-xs font-semibold transition-colors inline-flex items-center gap-1 shadow-sm">
                             <i class="fas fa-list"></i> Kelola Dokumen
