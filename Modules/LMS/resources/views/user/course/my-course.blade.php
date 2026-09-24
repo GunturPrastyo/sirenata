@@ -7,12 +7,12 @@
         <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
     @endpush
 
-    <div class="p-4 sm:p-6 lg:p-8 bg-slate-50 min-h-screen">
+    <div class="p-0 md:p-6 lg:p-8 bg-slate-50 min-h-screen">
 
       {{-- ========================================== --}}
         {{-- HEADER KURSUS SAYA DENGAN ILUSTRASI GRUP   --}}
         {{-- ========================================== --}}
-        <div class="relative bg-[#13416B] rounded-xl p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 flex items-center justify-between border border-blue-900/20 shadow-lg overflow-hidden min-h-[280px] sm:min-h-[280px] lg:min-h-[320px]">
+        <div class="relative bg-[#13416B] rounded-md p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 flex items-center justify-between border border-blue-900/20 shadow-lg overflow-hidden min-h-[280px] sm:min-h-[280px] lg:min-h-[320px]">
             
             <!-- Efek Dekoratif Bubbles Geometris Profesional -->
             <div class="absolute inset-0 pointer-events-none z-0">
@@ -74,10 +74,10 @@
             </div>
 
             {{-- Grid Cards Responsif --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-4 md:px-0">
                 @forelse ($courses as $course)
                     <a href="{{ route('user.course.my-course.detail', $course->slug) }}"
-                        class="group flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-[#13416B]/30 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                        class="group flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-[#13416B]/30 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
 
                         {{-- Thumbnail & Badge --}}
                         <div class="relative h-44 sm:h-48 overflow-hidden bg-slate-100">
