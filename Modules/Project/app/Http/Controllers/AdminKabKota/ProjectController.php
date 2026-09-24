@@ -14,11 +14,12 @@ use Illuminate\Support\Facades\Storage;
 class ProjectController extends Controller
 {
     protected string $routePrefix = 'admin-kab-kota.project.';
+    protected string $projectScope = 'daerah'; // Added: Scope default untuk Admin Kab/Kota
 
     public function index(Request $request)
     {
         $query = Project::with('leader')->latest();
-        $query->where('type', ProjectType::KAB_KOTA->value); // Pastikan mengambil tipe KAB_KOTA
+        $query->where('type', ProjectType::KAB_KOTA->value);
 
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -30,16 +31,17 @@ class ProjectController extends Controller
 
         $projects = $query->paginate($request->get('per_page', 10))->withQueryString();
         $routePrefix = $this->routePrefix;
-        $projectScope = 'daerah';
+        $projectScope = $this->projectScope;
 
         return view('project::index', compact('projects', 'routePrefix', 'projectScope'));
     }
 
     public function create()
     {
-        // Alur baru: Form Create hanya untuk Nama, Tanggal, dan Upload SK.
         $routePrefix = $this->routePrefix;
-        return view('project::create', compact('routePrefix'));
+        $projectScope = $this->projectScope; // Added: Diteruskan ke view create.blade.php
+
+        return view('project::create', compact('routePrefix', 'projectScope'));
     }
 
     public function store(Request $request)
@@ -49,7 +51,7 @@ class ProjectController extends Controller
             'startDate' => 'required|date',
             'endDate' => 'required|date|after_or_equal:startDate',
             'duration' => 'nullable|integer',
-            'sk_document' => 'required|file|mimes:pdf|max:5120', // SK wajib diunggah, maksimal 5MB
+            'sk_document' => 'required|file|mimes:pdf|max:5120',
         ]);
 
         $skPath = null;
@@ -65,45 +67,46 @@ class ProjectController extends Controller
             'sk_document' => $skPath,
             'created_by' => Auth::id(),
             'type' => ProjectType::KAB_KOTA->value,
-            'status' => 'Draft', // Otomatis masuk antrean Pusat
+            'status' => 'Draft',
         ]);
 
         ToastMagic::success('Draft proyek berhasil dibuat! Menunggu persetujuan Pusat.');
-        return redirect()->route($this->routePrefix . 'index');
+        
+        // Added: Menambahkan parameter type pada redirect
+        return redirect()->route($this->routePrefix . 'index', ['type' => $this->projectScope]);
     }
 
     public function show($id)
     {
         $project = Project::with(['leader'])->findOrFail($id);
         $routePrefix = $this->routePrefix;
-        return view('project::show', compact('project', 'routePrefix'));
+        $projectScope = $this->projectScope; // Added: Diteruskan ke view show
+
+        return view('project::show', compact('project', 'routePrefix', 'projectScope'));
     }
 
     public function edit($id)
     {
         $project = Project::findOrFail($id);
         $routePrefix = $this->routePrefix;
+        $projectScope = $this->projectScope; // Added: Diteruskan ke view edit
 
-        $users = collect(); // Kosong secara default
+        $users = collect();
 
-        // Form pengisian anggota tim HANYA muncul jika proyek sudah disetujui
         if ($project->status === 'On Progress') {
             $user = Auth::user();
             $adminScope = $user->scopeArea;
 
             $usersQuery = User::role('user');
 
-            // Filter 1: Area Wilayah (Kab/Kota)
             if ($adminScope && $adminScope->regency_code) {
                 $usersQuery->whereHas('scopeArea', function ($q) use ($adminScope) {
                     $q->where('regency_code', $adminScope->regency_code);
                 });
             } else {
-                $usersQuery->where('id', 0); // Fallback aman
+                $usersQuery->where('id', 0);
             }
 
-
-            // Filter 2: Prasyarat Kursus (Bypass relasi model, tembak langsung ke tabel pivot)
             $prerequisiteCourseIds = $project->prerequisiteCourseIds();
             if ($project->is_prerequisite_active && $prerequisiteCourseIds) {
                 $usersQuery->whereIn('id', function ($query) use ($project) {
@@ -119,7 +122,7 @@ class ProjectController extends Controller
             $users = $usersQuery->get();
         }
 
-        return view('project::edit', compact('project', 'users', 'routePrefix'));
+        return view('project::edit', compact('project', 'users', 'routePrefix', 'projectScope'));
     }
 
     public function update(Request $request, $id)
@@ -134,7 +137,6 @@ class ProjectController extends Controller
             'sk_document' => 'nullable|file|mimes:pdf|max:5120',
         ];
 
-        // Validasi anggota tim HANYA jika status sudah On Progress
         if ($project->status === 'On Progress') {
             $adminScope = Auth::user()->scopeArea;
 
@@ -142,7 +144,6 @@ class ProjectController extends Controller
                 $q->where('regency_code', $adminScope?->regency_code);
             });
 
-            // Filter 2: Prasyarat Kursus (Bypass relasi model, tembak langsung ke tabel pivot)
             $prerequisiteCourseIds = $project->prerequisiteCourseIds();
             if ($project->is_prerequisite_active && $prerequisiteCourseIds) {
                 $usersQuery->whereIn('id', function ($query) use ($project) {
@@ -178,7 +179,6 @@ class ProjectController extends Controller
             'duration' => $request->duration,
         ];
 
-        // Ganti SK jika Admin Kab/Kota mengunggah file baru
         if ($request->hasFile('sk_document')) {
             if ($project->sk_document) {
                 Storage::disk('public')->delete($project->sk_document);
@@ -186,7 +186,6 @@ class ProjectController extends Controller
             $updateData['sk_document'] = $request->file('sk_document')->store('project_sk', 'public');
         }
 
-        // Simpan data ketua dan anggota HANYA JIKA proyek On Progress
         if ($project->status === 'On Progress') {
             $updateData['team_leader'] = $request->teamLeader;
             $updateData['team_members'] = $request->teamMembers;
@@ -195,20 +194,21 @@ class ProjectController extends Controller
         $project->update($updateData);
 
         ToastMagic::success('Proyek berhasil diperbarui!');
-        return redirect()->route($this->routePrefix . 'index');
+        
+        return redirect()->route($this->routePrefix . 'index', ['type' => $this->projectScope]);
     }
 
     public function destroy($id)
     {
         $project = Project::findOrFail($id);
 
-        // Hapus juga file SK dari storage jika proyek dihapus
         if ($project->sk_document) {
             Storage::disk('public')->delete($project->sk_document);
         }
 
         $project->delete();
         ToastMagic::success('Proyek berhasil dihapus!');
-        return redirect()->route($this->routePrefix . 'index');
+        
+        return redirect()->route($this->routePrefix . 'index', ['type' => $this->projectScope]);
     }
 }

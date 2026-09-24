@@ -18,7 +18,7 @@
                 @if ($projectScope === 'pusat' || !str_contains($routePrefix, 'admin-pusat'))
                     @can('project-create')
                         <x-button :href="route($routePrefix . 'create')" variant="primary" icon="fas fa-plus">
-                            <span class="hidden sm:inline">Tambah Proyek Pusat</span>
+                            <span class="hidden sm:inline">Tambah Proyek</span>
                             <span class="sm:hidden">Tambah</span>
                         </x-button>
                     @endcan

@@ -5,8 +5,8 @@
 
     @php
         $projectScope = request('type', str_contains($routePrefix, 'daerah') ? 'daerah' : 'pusat');
-        $breadcrumbLabel = $projectScope === 'daerah' ? 'Proyek Daerah' : 'Proyek Pusat';
-        $pageTitle = $projectScope === 'daerah' ? 'Tambah Proyek Daerah' : 'Tambah Proyek Pusat';
+        $breadcrumbLabel = $projectScope === 'daerah' ? 'Proyek Daerah' : 'Proyek';
+        $pageTitle = $projectScope === 'daerah' ? 'Tambah Proyek Daerah' : 'Tambah Proyek';
         $placeholderPrefix = $projectScope === 'daerah' ? 'RTKD' : 'RTKN';
     @endphp
 
