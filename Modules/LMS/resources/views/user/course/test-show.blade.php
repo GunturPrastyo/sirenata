@@ -1,9 +1,9 @@
 <x-dashboard::layouts.dashboard title="{{ $postTest->title }} | SIRENATA">
     {{-- PERBAIKAN RESPONSIVE: Hilangkan padding luar di HP (p-0) agar mepet --}}
-    <div class="px-0 py-0 sm:py-4 sm:p-6 lg:p-8 max-w-7xl mx-auto font-sans min-h-screen bg-slate-50 sm:bg-transparent">
+    <div class="p-0 sm:p-6 lg:p-8 max-w-full mx-auto font-sans min-h-screen bg-slate-50 sm:bg-transparent">
 
         {{-- Main Container --}}
-        <div class="bg-transparent sm:bg-white sm:rounded-2xl shadow-none sm:shadow-sm sm:border border-slate-200 overflow-hidden min-h-screen sm:min-h-0 flex flex-col gap-4 sm:gap-0 pb-6 sm:pb-0">
+        <div class="bg-transparent sm:bg-white sm:rounded-md shadow-none sm:shadow-sm sm:border border-slate-200 overflow-hidden min-h-screen sm:min-h-0 flex flex-col gap-4 sm:gap-0 pb-0 sm:pb-0">
             
             <!-- HEADER EVALUASI -->
             <div class="bg-white p-5 sm:p-8 lg:p-10 border-b border-slate-200 sm:border-slate-100 shadow-sm sm:shadow-none">
@@ -29,13 +29,13 @@
                 {{-- Header Title --}}
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                        <span class="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white bg-[#13416B] rounded-lg mb-3 shadow-sm border border-[#0f3354]">
+                        <span class="inline-block px-2.5 py-1 text-[8px] md:text-[10px] font-bold uppercase tracking-wider text-white bg-[#13416B] rounded-lg mb-3 shadow-sm border border-[#0f3354]">
                             Lembar Evaluasi
                         </span>
-                        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight mb-2">
+                        <h1 class="text-md sm:text-2xl font-extrabold text-slate-900 leading-tight mb-2">
                             {{ $postTest->title }}
                         </h1>
-                        <p class="text-sm text-slate-500 leading-relaxed max-w-3xl">
+                        <p class="text-xs md:text-sm text-slate-500 leading-relaxed max-w-3xl">
                             {{ $postTest->description ?? 'Evaluasi ini menentukan kelulusan Anda. KKM: ' . $postTest->passing_score . '.' }}
                         </p>
                     </div>
@@ -48,19 +48,19 @@
                 </div>
             </div>
 
-            <div class="p-0 sm:p-8 lg:p-10 bg-transparent sm:bg-slate-50/50">
+            <div class=" bg-transparent sm:bg-slate-50/50">
                 @if (isset($result))
                     {{-- ======================================================= --}}
                     {{-- MODE 1: TAMPILAN HASIL TES KETIKA SUDAH SELESAI --}}
                     {{-- ======================================================= --}}
-                    <div class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y sm:border border-slate-200 overflow-hidden max-w-4xl mx-auto animate-fadeIn">
-                        <div class="p-6 sm:p-10 text-center">
+                    <div class="pt-4 pb-4 bg-slate-50/50 overflow-hidden max-w-full mx-auto animate-fadeIn">
+                        <div class="text-center">
 
                             @if ($result->is_passed)
                                 <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5 border border-emerald-200 shadow-sm">
                                     <i class="fas fa-check-circle text-4xl"></i>
                                 </div>
-                                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-2">Selamat, Anda Lulus! 🎉</h2>
+                                <h2 class="text-xl sm:text-3xl font-extrabold text-slate-800 mb-2">Selamat, Anda Lulus! 🎉</h2>
                                 <p class="text-sm sm:text-base text-slate-600 mb-8 max-w-lg mx-auto">Anda memenuhi syarat kelulusan. Akses untuk materi selanjutnya telah terbuka.</p>
                             @else
                                 <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-5 border border-red-200 shadow-sm">
@@ -107,7 +107,7 @@
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:justify-between border-t border-slate-100 pt-6 sm:pt-8 mt-2">
+                            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:justify-between border-t border-slate-100 p-8 mt-2">
                                 <a href="{{ route('user.course.my-course.detail', $slug) }}"
                                     class="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold bg-white text-slate-700 hover:bg-slate-50 transition-colors border border-slate-200 flex items-center justify-center gap-2 order-2 sm:order-1 text-sm shadow-sm">
                                     <i class="fas fa-list"></i> Kembali ke Modul
@@ -131,7 +131,7 @@
                     {{-- ======================================================= --}}
                     {{-- MODE 2: TAMPILAN PENGERJAAN TES / UJIAN BERJALAN --}}
                     {{-- ======================================================= --}}
-                    <div class="flex flex-col lg:flex-row gap-4 sm:gap-5 lg:gap-8 items-start" x-data="{
+                    <div class="flex flex-col lg:flex-row gap-4 sm:gap-4 lg:gap-6 items-start" x-data="{
                         idx: 0,
                         total: {{ count($postTest->questions) }},
                         timeLeft: {{ $postTest->duration * 60 }},
@@ -221,9 +221,9 @@
 
 
                         {{-- Kanan: Sidebar Navigasi Grid --}}
-                        <div class="w-full lg:w-80 shrink-0 order-1 lg:order-2 animate-fadeIn">
-                            <div class="p-4 sm:p-5 bg-white rounded-none sm:rounded-2xl shadow-sm sm:shadow-sm border-y sm:border border-slate-200 lg:sticky lg:top-24">
-                                <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
+                        <div class="w-full lg:w-96 shrink-0 order-1 lg:order-2 animate-fadeIn">
+                            <div class="p-4 sm:p-5 bg-white shadow-sm sm:shadow-sm border-y sm:border border-slate-200 lg:sticky lg:top-24">
+                                <div class="flex items-center gap-3 mb-2 md:mb-4 pb-0 mb:mb-4 border-b border-slate-100">
                                     <div class="w-8 h-8 flex items-center justify-center bg-[#13416B] text-white rounded-lg shadow-sm border border-[#0f3354]">
                                         <i class="fas fa-th-large text-sm"></i>
                                     </div>
@@ -238,10 +238,10 @@
                                 </div>
 
                                 {{-- Papan Grid Angka --}}
-                                <div class="grid grid-cols-6 sm:grid-cols-8 lg:grid-cols-5 gap-2">
+                                <div class="grid grid-cols-5 md:grid-cols-10 lg:grid-cols-5 gap-4">
                                     @foreach ($postTest->questions as $index => $question)
                                         <button type="button" x-on:click="idx = {{ $index }}"
-                                            class="h-9 sm:h-10 w-full rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center justify-center border"
+                                            class="h-10 sm:h-12 w-10 sm:w-12 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center border"
                                             :class="{
                                                 'border-emerald-500 bg-emerald-50 text-emerald-700 ring-2 ring-emerald-200 z-10': idx === {{ $index }},
                                                 'bg-[#13416B] text-white border-[#13416B] opacity-90': answers['{{ $question->id }}'] && idx !== {{ $index }},
@@ -255,7 +255,7 @@
                         </div>
 
                         {{-- Kiri: Area Soal & Pilihan Ganda --}}
-                        <div class="flex-1 w-full order-2 lg:order-1 bg-white rounded-none sm:rounded-2xl shadow-sm sm:shadow-sm border-y sm:border border-slate-200 overflow-hidden animate-fadeIn">
+                        <div class="flex-1 w-full order-2 lg:order-1 bg-white shadow-sm sm:shadow-sm border-y sm:border border-slate-200 overflow-hidden animate-fadeIn">
 
                             {{-- Mini Header: Indikator Soal & Timer --}}
                             <div class="flex justify-between items-center bg-slate-50/80 p-4 sm:p-5 border-b border-slate-100">

@@ -4,7 +4,7 @@
         
         {{-- Main Content Container --}}
         {{-- Di HP tidak ada border-radius, di Desktop membulat (sm:rounded-2xl) --}}
-        <div class="bg-white sm:rounded-2xl sm:shadow-sm border-b sm:border border-slate-200 overflow-hidden min-h-screen sm:min-h-0">
+        <div class="bg-white sm:rounded-md sm:shadow-sm border-b sm:border border-slate-200 overflow-hidden min-h-screen sm:min-h-0">
 
             {{-- Body Content --}}
             <div class="p-5 sm:p-10 lg:p-12">

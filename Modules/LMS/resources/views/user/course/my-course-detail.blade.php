@@ -94,7 +94,7 @@
         {{-- Header Card --}}
         <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
         <div
-            class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6 lg:p-8 mb-6 flex flex-col md:flex-row gap-6 lg:gap-8 items-start transition-all">
+            class="bg-white rounded-none sm:rounded-md shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6 lg:p-8 mb-6 flex flex-col md:flex-row gap-6 lg:gap-8 items-start transition-all">
             {{-- Bagian Kiri: Thumbnail --}}
             <div
                 class="w-full md:w-1/3 lg:w-1/4 shrink-0 rounded-xl overflow-hidden bg-slate-100 aspect-video md:aspect-[4/3] relative border border-slate-100">
@@ -148,7 +148,7 @@
         {{-- WIDGET STATISTIK BELAJAR --}}
         <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
         <div
-            class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6 mb-6">
+            class="bg-white rounded-none sm:rounded-md shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6 mb-6">
             <div class="flex items-center gap-3 mb-4 sm:mb-5 pb-3 sm:pb-4 border-b border-slate-100">
                 <div
                     class="w-10 h-10 flex items-center justify-center bg-[#13416B]/10 text-[#13416B] border border-[#13416B]/20 rounded-xl shrink-0">
@@ -220,7 +220,7 @@
             <div class="lg:col-span-2 space-y-6">
                 <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
                 <div
-                    class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6">
+                    class="bg-white rounded-none sm:rounded-md shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6">
 
                     <div
                         class="flex flex-col sm:flex-row sm:items-center justify-between mb-5 sm:mb-6 pb-4 border-b border-slate-100 gap-3 sm:gap-4">
@@ -625,7 +625,7 @@
                 @if ($evaluasiAkhir)
                     <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
                     <div
-                        class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 overflow-hidden transition-all relative">
+                        class="bg-white rounded-none sm:rounded-md shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 overflow-hidden transition-all relative">
                         <div
                             class="px-4 py-4 sm:px-6 sm:py-5 {{ $isEvaluasiAkhirLocked ? 'bg-slate-50 border-b border-slate-200' : 'bg-gradient-to-r from-[#13416B] to-[#0f3354] text-white' }} flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
                             <div class="flex items-start sm:items-center gap-4 flex-1 min-w-0">
@@ -696,7 +696,7 @@
             <div class="space-y-0 lg:sticky lg:top-24 lg:self-start">
                 <!-- PERBAIKAN: rounded-none border-x-0 di mobile -->
                 <div
-                    class="bg-white rounded-none sm:rounded-2xl shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6">
+                    class="bg-white rounded-none sm:rounded-md shadow-sm border-y border-x-0 sm:border sm:border-x border-slate-200 p-4 sm:p-6 mb-0 md:mb-4">
 
                     {{-- Header Widget --}}
                     <div class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
@@ -853,7 +853,7 @@
                 @if (!$isFullyCompleted)
                     <!-- PERBAIKAN: rounded-none border-x-0 di mobile (meski disembunyikan di mobile, tetap dikonsistensikan kelasnya) -->
                     <div
-                        class="hidden lg:flex bg-slate-50 border-y sm:border border-x-0 sm:border-x border-slate-200 rounded-none sm:rounded-xl p-4 items-start gap-3 shadow-sm mx-0 sm:mx-auto">
+                        class="hidden lg:flex bg-slate-50 border-y sm:border border-x-0 sm:border-x border-slate-200 rounded-none sm:rounded-md p-4 items-start gap-3 shadow-sm mx-0 sm:mx-auto">
                         <i class="fas fa-info-circle text-[#13416B]/60 mt-0.5 text-base shrink-0"></i>
                         <p class="text-xs text-slate-600 leading-relaxed font-medium">
                             Materi dipelajari berurutan. Buka kunci modul berikutnya dengan menekan <strong
