@@ -254,7 +254,7 @@
                             </div>
                             <div>
                                 <h2 class="text-base font-extrabold text-slate-800">Terakhir Dilihat</h2>
-                                <p class="text-[11px] sm:text-xs text-slate-500">Materi perpustakaan terakhir diakses
+                                <p class="text-[11px] sm:text-xs text-slate-500">Koleksi perpustakaan terakhir diakses
                                 </p>
                             </div>
                         </div>

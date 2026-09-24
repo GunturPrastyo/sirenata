@@ -280,15 +280,9 @@
                 class="lg:col-span-5 bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between h-full">
                 <div>
                     <!-- Header -->
-                    <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                        <div>
-                            <h2 class="text-base font-bold text-slate-800">Proyek Daerah</h2>
-                            <p class="text-[11px] text-slate-500">Pelaksanaan kegiatan & kesiapan tim</p>
-                        </div>
-                        <a href="{{ route('admin-kab-kota.project.index') }}"
-                            class="text-xs font-bold text-[#13416B] hover:text-[#547996] transition-colors">
-                            Semua Proyek
-                        </a>
+                    <div class="px-5 sm:px-6 py-4 border-b border-slate-100">
+                        <h2 class="text-base font-bold text-slate-800">Proyek Daerah</h2>
+                        <p class="text-[11px] text-slate-500">Pelaksanaan kegiatan & kesiapan tim</p>
                     </div>
 
                     <!-- Isi Ringkasan Proyek -->
@@ -327,17 +321,18 @@
                                             <strong>{{ $totalProjects }}</strong> total</span>
                                     </div>
                                     <p class="text-[11px] text-slate-500 mt-1">Selesai:
-                                        <strong>{{ $completedProjects }}</strong> proyek</p>
+                                        <strong>{{ $completedProjects }}</strong> proyek
+                                    </p>
                                 </div>
                             </div>
 
-                            <!-- Daftar Proyek Terkini (2 Penuh + Item ke-3 Terpotong Halus) -->
+                            <!-- Daftar Proyek Terkini -->
                             <div class="space-y-2">
                                 <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Proyek Terbaru
                                 </h4>
 
                                 <div class="relative">
-                                    <!-- Container dengan tinggi maks & overflow-hidden -->
+                                    <!-- Container Daftar Proyek -->
                                     <div class="max-h-[172px] overflow-hidden space-y-2.5">
                                         @foreach ($recentProjects as $p)
                                             <div
@@ -377,6 +372,16 @@
                                     <div
                                         class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none">
                                     </div>
+                                </div>
+
+                                <!-- Link "Lihat Semua Proyek" (Dinaikkan sedikit & warna lebih lembut) -->
+                                <div class="-mt-2.5 relative z-10 text-center">
+                                    <a href="{{ route('admin-kab-kota.project.index') }}"
+                                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-[#13416B] transition-colors group">
+                                        <span>Lihat Semua Proyek</span>
+                                        <i
+                                            class="fas fa-chevron-down text-[10px] animate-bounce text-slate-400 group-hover:text-[#13416B]"></i>
+                                    </a>
                                 </div>
                             </div>
                         @else
