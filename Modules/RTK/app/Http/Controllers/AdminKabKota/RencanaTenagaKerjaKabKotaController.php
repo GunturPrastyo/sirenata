@@ -3,6 +3,7 @@
 namespace Modules\RTK\Http\Controllers\AdminKabKota;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -44,6 +45,7 @@ class RencanaTenagaKerjaKabKotaController extends Controller implements HasMiddl
         $isActive           = $request->input('acuan');
         $orderBy            = in_array($request->orderBy, ['asc', 'desc']) ? $request->orderBy : 'desc';
 
+        /** @var User $user */
         $user = Auth::user();
 
         if (!$user->hasCompleteScope()) {
