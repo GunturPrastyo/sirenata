@@ -531,65 +531,51 @@ class DashbordController extends Controller
 
 
         // ================================================================
-        // 2. RTK PROVINSI AKTIF
+        // 1. RTK PROVINSI
         // ================================================================
-
-        $pendingRtk = RencanaTenagaKerja::with([
-            'province',
-        ])
+        $pendingRtk = RencanaTenagaKerja::with(['province'])
             ->where('is_active', true)
-            ->where(
-                'status_verification',
-                RTKStatusVerification::PENDING->value
-            )
-            ->where(
-                'type',
-                TypeRtk::PROVINSI->value
-            )
+            ->where('type', TypeRtk::PROVINSI->value)
+            ->where(function ($query) {
+                $query->where('status_verification', RTKStatusVerification::PENDING->value)
+                    ->orWhere(function ($q) {
+                        $q->where('status_verification', RTKStatusVerification::APPROVED->value)
+                            ->where('status_document', '!=', \Modules\RTK\Enums\StatusDocument::VALID->value);
+                    });
+            })
             ->latest()
             ->get()
             ->unique('province_code')
             ->map(function ($item) {
+                $provinceCode = $item->province_code ?? $item->province?->code;
 
-                $provinceCode =
-                    $item->province_code
-                    ?? $item->province?->code;
+                $statusVerifVal = is_object($item->status_verification) ? $item->status_verification->value : $item->status_verification;
+                $statusDocVal   = is_object($item->status_document) ? $item->status_document->value : $item->status_document;
+
+                $isVerifApproved = ($statusVerifVal === RTKStatusVerification::APPROVED->value || $statusVerifVal === 'approved');
+                $isDocValid      = ($statusDocVal === \Modules\RTK\Enums\StatusDocument::VALID->value || $statusDocVal === 'valid');
 
                 return [
                     'id' => $item->id,
-
                     'category' => 'RTK Provinsi',
-
                     'title' => $item->name,
-
-                    'subtitle' =>
-                    $item->province?->name
-                        ?? 'Provinsi',
-
-                    'created_at' =>
-                    $item->created_at?->toISOString(),
-
-                    'date_formatted' =>
-                    $item->created_at
-                        ? $item->created_at->diffForHumans()
-                        : '-',
-
+                    'subtitle' => $item->province?->name ?? 'Provinsi',
+                    'created_at' => $item->created_at?->toISOString(),
+                    'date_formatted' => $item->created_at ? $item->created_at->diffForHumans() : '-',
                     'type' => 'rtk',
-
-                    'badge_color' =>
-                    'bg-[#13416B] text-white border-transparent',
-
                     'url' => $provinceCode
-                        ? route(
-                            'admin-pusat.rtkd.show-province',
-                            $provinceCode
-                        )
-                        : route(
-                            'admin-pusat.rtkd.index'
-                        ),
+                        ? route('admin-pusat.rtkd.show-province', $provinceCode)
+                        : route('admin-pusat.rtkd.index'),
+
+                    // Label Satu Kalimat
+                    'status_verif_label' => $isVerifApproved ? 'Sudah Diverifikasi' : 'Belum Diverifikasi',
+                    'status_doc_label'   => $isDocValid ? 'Dokumen Valid' : 'Menunggu Persetujuan',
+
+                    // Badge Background -500 Solid Teks Putih
+                    'status_verif_badge' => $isVerifApproved ? 'bg-emerald-500 text-white' : 'bg-amber-400 text-white',
+                    'status_doc_badge'   => $isDocValid ? 'bg-emerald-500 text-white' : 'bg-amber-400 text-white',
                 ];
             });
-
 
         $allPendingApprovals = $pendingRtk
             ->concat($pendingProjects)
