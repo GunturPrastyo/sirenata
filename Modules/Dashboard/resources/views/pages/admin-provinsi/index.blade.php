@@ -35,7 +35,7 @@
                 <div class="relative z-10">
                     <p class="text-white text-sm font-semibold uppercase tracking-wider mb-1">RTK Disetujui</p>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white">{{ $rtkStatusDistribution->get('approved', 0) }}</h3>
-                    <p class="text-[10px] text-white mt-1">Dokumen terverifikasi</p>
+                    <p class="text-[10px] text-white mt-1">Verifikasi disetujui</p>
                 </div>
                 <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white text-[#13416B] flex items-center justify-center shrink-0 shadow-sm relative z-10 transition-transform duration-300 group-hover:scale-105">
                     <i class="fas fa-check-double text-xl sm:text-2xl"></i>
@@ -135,27 +135,41 @@
                 </div>
             </div>
 
-            <!-- RIGHT: CARD MEMBUTUHKAN PERSETUJUAN / ACC (4 Columns) -->
+            <!-- RIGHT: CARD PERLU TINDAKAN (4 Columns) -->
             <div class="lg:col-span-5 xl:col-span-4 bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden flex flex-col">
                 <div class="px-5 sm:px-6 py-4 border-b border-slate-100">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
-                            <h2 class="text-base font-semibold text-slate-800">Perlu Persetujuan</h2>
+                            <h2 class="text-base font-semibold text-slate-800">Perlu Tindakan</h2>
                             <span class="inline-flex items-center justify-center rounded-md border border-slate-200 bg-slate-50 px-2 py-2 shrink-0">
                                 <span class="text-xs font-bold text-[#13416B] tabular-nums leading-none">{{ $totalPendingApprovals }}</span>
                             </span>
                         </div>
                     </div>
-                    <p class="text-[11px] text-slate-500 mt-1">RTK kab/kota yang menunggu verifikasi & persetujuan</p>
+                    <p class="text-[11px] text-slate-500 mt-1">RTK yang masih memerlukan proses verifikasi atau dokumen</p>
                 </div>
 
                 <div class="p-4 flex-1 flex flex-col justify-between">
-                    <!-- CONTAINER LIST PERSAINGAN DENGAN MAX-HEIGHT & INFINITE SCROLL -->
+                    <!-- CONTAINER LIST DENGAN MAX-HEIGHT & INFINITE SCROLL -->
                     <div id="pendingScrollContainer"
-                        class="max-h-[500px] overflow-y-auto custom-scrollbar pr-1 space-y-3">
-                        <div id="pendingApprovalList" class="space-y-3">
-                            @forelse($initialPendingApprovals as $item)
-                                <div class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-md border border-slate-200 transition-all duration-200 flex flex-col gap-2">
+                        class="max-h-[500px] overflow-y-auto custom-scrollbar pr-1 space-y-4">
+                        <div id="pendingApprovalList" class="space-y-4">
+                            @forelse($initialPendingApprovals as $index => $item)
+                                @if ($index === 0 || $initialPendingApprovals[$index - 1]['action_group'] !== $item['action_group'])
+                                    <div class="flex items-center justify-between gap-3 pt-1 {{ $index > 0 ? 'border-t border-slate-200 pt-4' : '' }}">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $item['action_group'] === 'verification' ? 'bg-[#547996]' : 'bg-[#79A736]' }}"></span>
+                                            <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+                                                {{ $item['action_group_label'] }}
+                                            </h3>
+                                        </div>
+                                        <span class="text-[10px] font-semibold text-slate-400 tabular-nums">
+                                            {{ $item['action_group'] === 'verification' ? $pendingVerificationCount : $pendingDocumentCount }} RTK
+                                        </span>
+                                    </div>
+                                @endif
+
+                                <div class="pending-approval-item p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-md border border-slate-200 transition-all duration-200 flex flex-col gap-2" data-action-group="{{ $item['action_group'] }}">
                                     <div class="flex items-center justify-between gap-2">
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border {{ $item['badge_color'] }}">
                                             {{ $item['category'] }}
@@ -164,15 +178,32 @@
                                             <i class="far fa-clock mr-1"></i>{{ $item['date_formatted'] }}
                                         </span>
                                     </div>
+
                                     <div>
-                                        <h4 class="text-xs font-bold text-slate-800 line-clamp-1"
-                                            title="{{ $item['title'] }}">{{ $item['title'] }}</h4>
+                                        <h4 class="text-xs font-bold text-slate-800 line-clamp-1" title="{{ $item['title'] }}">{{ $item['title'] }}</h4>
                                         <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ $item['subtitle'] }}</p>
                                     </div>
+
+                                    <!-- STATUS RTK -->
+                                    <div class="grid grid-cols-2 gap-2 pt-1">
+                                        <div class="rounded-md bg-white border border-slate-200 px-2.5 py-2">
+                                            <p class="text-[9px] uppercase tracking-wide font-semibold text-slate-400 mb-1">Verifikasi</p>
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold {{ $item['verification_color'] }}">
+                                                {{ $item['verification_label'] }}
+                                            </span>
+                                        </div>
+                                        <div class="rounded-md bg-white border border-slate-200 px-2.5 py-2">
+                                            <p class="text-[9px] uppercase tracking-wide font-semibold text-slate-400 mb-1">Dokumen</p>
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold {{ $item['document_color'] }}">
+                                                {{ $item['document_label'] }}
+                                            </span>
+                                        </div>
+                                    </div>
+
                                     <div class="flex justify-end pt-1 border-t border-slate-200/60 mt-1">
                                         <a href="{{ $item['url'] }}"
                                             class="inline-flex items-center text-[11px] font-semibold text-[#13416B] hover:text-[#547996] transition-colors">
-                                            Tinjau Persetujuan <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
+                                            {{ $item['action_label'] }} <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -182,7 +213,7 @@
                                         <i class="fas fa-check-circle text-lg text-emerald-500"></i>
                                     </div>
                                     <p class="text-xs font-semibold text-slate-700">Semua Terproses</p>
-                                    <p class="text-[10px] text-slate-500 mt-1">Tidak ada RTK kab/kota yang memerlukan persetujuan.</p>
+                                    <p class="text-[10px] text-slate-500 mt-1">Tidak ada RTK yang memerlukan tindakan.</p>
                                 </div>
                             @endforelse
                         </div>
@@ -196,7 +227,7 @@
                         <!-- PESAN AKHIR DATA -->
                         <div id="pendingEndMessage"
                             class="{{ !$hasMorePendingApprovals && count($initialPendingApprovals) > 0 ? '' : 'hidden' }} pt-2 text-center border-t border-slate-100">
-                            <p class="text-[10px] text-slate-400 font-medium">Semua data persetujuan telah ditampilkan</p>
+                            <p class="text-[10px] text-slate-400 font-medium">Semua data tindakan telah ditampilkan</p>
                         </div>
                     </div>
                 </div>
@@ -398,7 +429,7 @@
                 };
 
                 // =========================================================
-                // 2. INFINITE SCROLL PADA CARD PERSETUJUAN
+                // 2. INFINITE SCROLL PADA CARD PERLU TINDAKAN
                 // =========================================================
                 let pendingPage = 1;
                 let pendingHasMore = @json($hasMorePendingApprovals);
@@ -444,32 +475,86 @@
                         });
                 }
 
+                function escapeHtml(value) {
+                    if (value === null || value === undefined) return '';
+                    return String(value)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                }
+
                 function appendPendingItems(items) {
                     const listContainer = document.getElementById('pendingApprovalList');
+                    const existingItems = listContainer.querySelectorAll('.pending-approval-item');
+                    let lastGroup = existingItems.length
+                        ? existingItems[existingItems.length - 1].dataset.actionGroup
+                        : null;
 
                     items.forEach(item => {
+                        const groupChanged = lastGroup !== item.action_group;
+
+                        if (groupChanged) {
+                            const groupColor = item.action_group === 'verification' ? 'bg-[#547996]' : 'bg-[#79A736]';
+                            const groupCount = item.action_group === 'verification'
+                                ? @json($pendingVerificationCount)
+                                : @json($pendingDocumentCount);
+
+                            const divider = document.createElement('div');
+                            divider.className = 'flex items-center justify-between gap-3 pt-1 border-t border-slate-200 pt-4';
+                            divider.innerHTML = `
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full ${groupColor}"></span>
+                                    <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+                                        ${escapeHtml(item.action_group_label)}
+                                    </h3>
+                                </div>
+                                <span class="text-[10px] font-semibold text-slate-400 tabular-nums">
+                                    ${groupCount} RTK
+                                </span>
+                            `;
+                            listContainer.appendChild(divider);
+                        }
+
                         const cardHtml = `
-                            <div class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2">
+                            <div class="pending-approval-item p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2" data-action-group="${escapeHtml(item.action_group)}">
                                 <div class="flex items-center justify-between gap-2">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${item.badge_color}">
-                                        ${item.category}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${escapeHtml(item.badge_color)}">
+                                        ${escapeHtml(item.category)}
                                     </span>
                                     <span class="text-[10px] font-medium text-slate-400">
-                                        <i class="far fa-clock mr-1"></i>${item.date_formatted}
+                                        <i class="far fa-clock mr-1"></i>${escapeHtml(item.date_formatted)}
                                     </span>
                                 </div>
                                 <div>
-                                    <h4 class="text-xs font-bold text-slate-800 line-clamp-1" title="${item.title}">${item.title}</h4>
-                                    <p class="text-[11px] text-slate-500 truncate mt-0.5">${item.subtitle}</p>
+                                    <h4 class="text-xs font-bold text-slate-800 line-clamp-1" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</h4>
+                                    <p class="text-[11px] text-slate-500 truncate mt-0.5">${escapeHtml(item.subtitle)}</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 pt-1">
+                                    <div class="rounded-md bg-white border border-slate-200 px-2.5 py-2">
+                                        <p class="text-[9px] uppercase tracking-wide font-semibold text-slate-400 mb-1">Verifikasi</p>
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold ${escapeHtml(item.verification_color)}">
+                                            ${escapeHtml(item.verification_label)}
+                                        </span>
+                                    </div>
+                                    <div class="rounded-md bg-white border border-slate-200 px-2.5 py-2">
+                                        <p class="text-[9px] uppercase tracking-wide font-semibold text-slate-400 mb-1">Dokumen</p>
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold ${escapeHtml(item.document_color)}">
+                                            ${escapeHtml(item.document_label)}
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="flex justify-end pt-1 border-t border-slate-200/60 mt-1">
-                                    <a href="${item.url}" class="inline-flex items-center text-[11px] font-semibold text-[#13416B] hover:text-[#547996] transition-colors">
-                                        Tinjau Persetujuan <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
+                                    <a href="${escapeHtml(item.url)}" class="inline-flex items-center text-[11px] font-semibold text-[#13416B] hover:text-[#547996] transition-colors">
+                                        ${escapeHtml(item.action_label)} <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
                                     </a>
                                 </div>
                             </div>
                         `;
+
                         listContainer.insertAdjacentHTML('beforeend', cardHtml);
+                        lastGroup = item.action_group;
                     });
                 }
 

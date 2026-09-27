@@ -191,35 +191,76 @@ class DashboardController extends Controller
         }
 
         // ================================================================
-        // DATA PERSETUJUAN — RTK Kab/Kota menunggu verifikasi
+        // DATA PERLU TINDAKAN — RTK Kab/Kota
+        //
+        // 1. Menunggu Verifikasi
+        //    status_verification = pending
+        //
+        // 2. Dokumen Perlu Diproses
+        //    status_verification = approved, tetapi status_document != valid
+        //
+        // Keduanya tetap ditampilkan selama is_active = true.
+        // RTK baru keluar dari daftar tindakan jika verifikasi sudah approved
+        // DAN dokumen sudah valid.
         // ================================================================
         $pendingRtk = RencanaTenagaKerja::query()
             ->where('province_code', $provinceCode)
             ->where('type', TypeRtk::KAB_KOTA->value)
-            ->where('status_verification', RTKStatusVerification::PENDING->value)
             ->where('is_active', true)
+            ->where(function ($query) {
+                $query->where('status_verification', RTKStatusVerification::PENDING->value)
+                    ->orWhere(function ($q) {
+                        $q->where('status_verification', RTKStatusVerification::APPROVED->value)
+                            ->where('status_document', '!=', 'valid');
+                    });
+            })
             ->with(['regency'])
             ->latest()
             ->get()
             ->map(function ($item) {
                 $regencyName = $item->regency?->name ?? 'Kabupaten/Kota';
+                $isVerificationPending = $item->status_verification === RTKStatusVerification::PENDING;
 
                 return [
-                    'id'            => $item->id,
-                    'category'      => 'RTK Kab/Kota',
-                    'title'         => $item->name,
-                    'subtitle'      => $regencyName,
-                    'created_at'    => $item->created_at?->toISOString(),
-                    'date_formatted'=> $item->created_at ? $item->created_at->diffForHumans() : '-',
-                    'type'          => 'rtk',
-                    'badge_color'   => 'bg-[#13416B] text-white border-transparent',
-                    'url'           => $item->regency_code
+                    'id'                    => $item->id,
+                    'category'              => 'RTK Kab/Kota',
+                    'title'                 => $item->name,
+                    'subtitle'              => $regencyName,
+                    'created_at'            => $item->created_at?->toISOString(),
+                    'date_formatted'        => $item->created_at ? $item->created_at->diffForHumans() : '-',
+                    'type'                  => 'rtk',
+                    'action_group'          => $isVerificationPending ? 'verification' : 'document',
+                    'action_group_label'    => $isVerificationPending ? 'Menunggu Verifikasi' : 'Dokumen Perlu Diproses',
+                    'action_label'          => $isVerificationPending ? 'Tinjau Verifikasi' : 'Proses Dokumen',
+                    'verification_label'    => $item->status_verification_label,
+                    'verification_color'    => $item->status_verification_color,
+                    'document_label'        => $item->status_document_label,
+                    'document_color'        => $item->status_document_color,
+                    'badge_color'           => 'bg-[#13416B] text-white border-transparent',
+                    'url'                   => $item->regency_code
                         ? route('admin-province.laporan.show-regency', $item->regency_code)
                         : route('admin-province.laporan.index'),
                 ];
-            });
+            })
+            ->sort(function ($a, $b) {
+                $groupA = $a['action_group'] === 'verification' ? 0 : 1;
+                $groupB = $b['action_group'] === 'verification' ? 0 : 1;
 
-        $allPendingApprovals = $pendingRtk->sortByDesc('created_at')->values();
+                if ($groupA !== $groupB) {
+                    return $groupA <=> $groupB;
+                }
+
+                return strcmp($b['created_at'] ?? '', $a['created_at'] ?? '');
+            })
+            ->values();
+
+        $allPendingApprovals = $pendingRtk;
+        $pendingVerificationCount = $allPendingApprovals
+            ->where('action_group', 'verification')
+            ->count();
+        $pendingDocumentCount = $allPendingApprovals
+            ->where('action_group', 'document')
+            ->count();
 
         // ================================================================
         // AJAX HANDLER
@@ -284,6 +325,8 @@ class DashboardController extends Controller
             'initialPendingApprovals' => $allPendingApprovals->slice(0, 10)->values(),
             'hasMorePendingApprovals' => $allPendingApprovals->count() > 10,
             'totalPendingApprovals' => $allPendingApprovals->count(),
+            'pendingVerificationCount' => $pendingVerificationCount,
+            'pendingDocumentCount' => $pendingDocumentCount,
         ]);
     }
 
