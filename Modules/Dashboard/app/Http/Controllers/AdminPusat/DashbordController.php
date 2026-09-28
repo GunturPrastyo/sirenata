@@ -561,19 +561,35 @@ class DashbordController extends Controller
                     'title' => $item->name,
                     'subtitle' => $item->province?->name ?? 'Provinsi',
                     'created_at' => $item->created_at?->toISOString(),
-                    'date_formatted' => $item->created_at ? $item->created_at->diffForHumans() : '-',
+                    'date_formatted' => $item->created_at
+                        ? $item->created_at->diffForHumans()
+                        : '-',
                     'type' => 'rtk',
+
                     'url' => $provinceCode
                         ? route('admin-pusat.rtkd.show-province', $provinceCode)
                         : route('admin-pusat.rtkd.index'),
 
-                    // Label Satu Kalimat
-                    'status_verif_label' => $isVerifApproved ? 'Sudah Diverifikasi' : 'Belum Diverifikasi',
-                    'status_doc_label'   => $isDocValid ? 'Dokumen Valid' : 'Menunggu Persetujuan',
+                    'verification_label' => $isVerifApproved
+                        ? 'Sudah diverifikasi'
+                        : 'Belum diverifikasi',
 
-                    // Badge Background -500 Solid Teks Putih
-                    'status_verif_badge' => $isVerifApproved ? 'bg-emerald-500 text-white' : 'bg-amber-400 text-white',
-                    'status_doc_badge'   => $isDocValid ? 'bg-emerald-500 text-white' : 'bg-amber-400 text-white',
+                    'verification_color' => $isVerifApproved
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-amber-50 text-amber-700 border border-amber-200',
+
+                    'document_label' => $isDocValid
+                        ? 'Valid'
+                        : 'Menunggu persetujuan',
+
+                    'document_color' => $isDocValid
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-amber-50 text-amber-700 border border-amber-200',
+
+                    // Action
+                    'action_label' => $isVerifApproved
+                        ? 'Tinjau Dokumen'
+                        : 'Tinjau Verifikasi',
                 ];
             });
 

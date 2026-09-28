@@ -154,22 +154,8 @@
                     <div id="pendingScrollContainer"
                         class="max-h-[500px] overflow-y-auto custom-scrollbar pr-1 space-y-4">
                         <div id="pendingApprovalList" class="space-y-4">
-                            @forelse($initialPendingApprovals as $index => $item)
-                                @if ($index === 0 || $initialPendingApprovals[$index - 1]['action_group'] !== $item['action_group'])
-                                    <div class="flex items-center justify-between gap-3 pt-1 {{ $index > 0 ? 'border-t border-slate-200 pt-4' : '' }}">
-                                        <div class="flex items-center gap-2">
-                                            <span class="w-1.5 h-1.5 rounded-full {{ $item['action_group'] === 'verification' ? 'bg-[#547996]' : 'bg-[#79A736]' }}"></span>
-                                            <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-600">
-                                                {{ $item['action_group_label'] }}
-                                            </h3>
-                                        </div>
-                                        <span class="text-[10px] font-semibold text-slate-400 tabular-nums">
-                                            {{ $item['action_group'] === 'verification' ? $pendingVerificationCount : $pendingDocumentCount }} RTK
-                                        </span>
-                                    </div>
-                                @endif
-
-                                <div class="pending-approval-item p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-md border border-slate-200 transition-all duration-200 flex flex-col gap-2" data-action-group="{{ $item['action_group'] }}">
+                            @forelse($initialPendingApprovals as $item)
+                                <div class="pending-approval-item p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-md border border-slate-200 transition-all duration-200 flex flex-col gap-2">
                                     <div class="flex items-center justify-between gap-2">
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border {{ $item['badge_color'] }}">
                                             {{ $item['category'] }}
@@ -487,38 +473,10 @@
 
                 function appendPendingItems(items) {
                     const listContainer = document.getElementById('pendingApprovalList');
-                    const existingItems = listContainer.querySelectorAll('.pending-approval-item');
-                    let lastGroup = existingItems.length
-                        ? existingItems[existingItems.length - 1].dataset.actionGroup
-                        : null;
 
                     items.forEach(item => {
-                        const groupChanged = lastGroup !== item.action_group;
-
-                        if (groupChanged) {
-                            const groupColor = item.action_group === 'verification' ? 'bg-[#547996]' : 'bg-[#79A736]';
-                            const groupCount = item.action_group === 'verification'
-                                ? @json($pendingVerificationCount)
-                                : @json($pendingDocumentCount);
-
-                            const divider = document.createElement('div');
-                            divider.className = 'flex items-center justify-between gap-3 pt-1 border-t border-slate-200 pt-4';
-                            divider.innerHTML = `
-                                <div class="flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 rounded-full ${groupColor}"></span>
-                                    <h3 class="text-[11px] font-bold uppercase tracking-wider text-slate-600">
-                                        ${escapeHtml(item.action_group_label)}
-                                    </h3>
-                                </div>
-                                <span class="text-[10px] font-semibold text-slate-400 tabular-nums">
-                                    ${groupCount} RTK
-                                </span>
-                            `;
-                            listContainer.appendChild(divider);
-                        }
-
                         const cardHtml = `
-                            <div class="pending-approval-item p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2" data-action-group="${escapeHtml(item.action_group)}">
+                            <div class="pending-approval-item p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2">
                                 <div class="flex items-center justify-between gap-2">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${escapeHtml(item.badge_color)}">
                                         ${escapeHtml(item.category)}
@@ -554,7 +512,6 @@
                         `;
 
                         listContainer.insertAdjacentHTML('beforeend', cardHtml);
-                        lastGroup = item.action_group;
                     });
                 }
 

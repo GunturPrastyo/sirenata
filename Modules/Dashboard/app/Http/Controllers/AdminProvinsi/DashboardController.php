@@ -193,15 +193,10 @@ class DashboardController extends Controller
         // ================================================================
         // DATA PERLU TINDAKAN — RTK Kab/Kota
         //
-        // 1. Menunggu Verifikasi
-        //    status_verification = pending
-        //
-        // 2. Dokumen Perlu Diproses
-        //    status_verification = approved, tetapi status_document != valid
-        //
-        // Keduanya tetap ditampilkan selama is_active = true.
-        // RTK baru keluar dari daftar tindakan jika verifikasi sudah approved
-        // DAN dokumen sudah valid.
+        // Tetap tampil selama is_active = true dan belum selesai sepenuhnya.
+        // - pending verification -> perlu verifikasi
+        // - approved + document belum valid -> perlu proses dokumen
+        // - approved + valid -> tidak ditampilkan lagi
         // ================================================================
         $pendingRtk = RencanaTenagaKerja::query()
             ->where('province_code', $provinceCode)
@@ -222,45 +217,31 @@ class DashboardController extends Controller
                 $isVerificationPending = $item->status_verification === RTKStatusVerification::PENDING;
 
                 return [
-                    'id'                    => $item->id,
-                    'category'              => 'RTK Kab/Kota',
-                    'title'                 => $item->name,
-                    'subtitle'              => $regencyName,
-                    'created_at'            => $item->created_at?->toISOString(),
-                    'date_formatted'        => $item->created_at ? $item->created_at->diffForHumans() : '-',
-                    'type'                  => 'rtk',
-                    'action_group'          => $isVerificationPending ? 'verification' : 'document',
-                    'action_group_label'    => $isVerificationPending ? 'Menunggu Verifikasi' : 'Dokumen Perlu Diproses',
-                    'action_label'          => $isVerificationPending ? 'Tinjau Verifikasi' : 'Proses Dokumen',
-                    'verification_label'    => $item->status_verification_label,
-                    'verification_color'    => $item->status_verification_color,
-                    'document_label'        => $item->status_document_label,
-                    'document_color'        => $item->status_document_color,
-                    'badge_color'           => 'bg-[#13416B] text-white border-transparent',
-                    'url'                   => $item->regency_code
+                    'id'                 => $item->id,
+                    'category'           => 'RTK Kab/Kota',
+                    'title'              => $item->name,
+                    'subtitle'           => $regencyName,
+                    'created_at'         => $item->created_at?->toISOString(),
+                    'date_formatted'     => $item->created_at ? $item->created_at->diffForHumans() : '-',
+                    'type'               => 'rtk',
+                    'verification_label' => $isVerificationPending ? 'Belum diverifikasi' : 'Sudah diverifikasi',
+                    'verification_color' => $isVerificationPending
+                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        : 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+                    'document_label'     => $item->status_document === 'valid' ? 'Valid' : 'Menunggu persetujuan',
+                    'document_color'    => $item->status_document === 'valid'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-amber-50 text-amber-700 border border-amber-200',
+                    'badge_color'        => 'bg-[#13416B] text-white border-transparent',
+                    'action_label'       => $isVerificationPending ? 'Tinjau Verifikasi' : 'Tinjau Dokumen',
+                    'url'                => $item->regency_code
                         ? route('admin-province.laporan.show-regency', $item->regency_code)
                         : route('admin-province.laporan.index'),
                 ];
             })
-            ->sort(function ($a, $b) {
-                $groupA = $a['action_group'] === 'verification' ? 0 : 1;
-                $groupB = $b['action_group'] === 'verification' ? 0 : 1;
-
-                if ($groupA !== $groupB) {
-                    return $groupA <=> $groupB;
-                }
-
-                return strcmp($b['created_at'] ?? '', $a['created_at'] ?? '');
-            })
             ->values();
 
         $allPendingApprovals = $pendingRtk;
-        $pendingVerificationCount = $allPendingApprovals
-            ->where('action_group', 'verification')
-            ->count();
-        $pendingDocumentCount = $allPendingApprovals
-            ->where('action_group', 'document')
-            ->count();
 
         // ================================================================
         // AJAX HANDLER
@@ -325,8 +306,6 @@ class DashboardController extends Controller
             'initialPendingApprovals' => $allPendingApprovals->slice(0, 10)->values(),
             'hasMorePendingApprovals' => $allPendingApprovals->count() > 10,
             'totalPendingApprovals' => $allPendingApprovals->count(),
-            'pendingVerificationCount' => $pendingVerificationCount,
-            'pendingDocumentCount' => $pendingDocumentCount,
         ]);
     }
 

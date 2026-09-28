@@ -169,65 +169,98 @@
                         <div id="pendingApprovalList" class="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[480px]">
                             @forelse($initialPendingApprovals as $item)
                                 <div
-                                    class="group relative bg-white hover:bg-slate-50/50 rounded-xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-3">
+                                    class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2">
 
-                                    <!-- Card Header: Category Tag & Timestamp -->
+                                    <!-- Header -->
                                     <div class="flex items-center justify-between gap-2">
+
+                                        <!-- Category -->
                                         <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/60">
-                                           
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border {{ $item['badge_color'] ?? 'bg-[#13416B] text-white border-transparent' }}">
                                             {{ $item['category'] }}
                                         </span>
-                                        <span class="text-[10px] font-medium text-slate-400 flex items-center gap-1">
-                                            <i class="far fa-clock text-[9px]"></i>
+
+                                        <!-- Time -->
+                                        <span class="text-[10px] font-medium text-slate-400">
+                                            <i class="far fa-clock mr-1"></i>
                                             {{ $item['date_formatted'] }}
                                         </span>
+
                                     </div>
 
-                                    <!-- Card Body: Title, Subtitle & Status Badges -->
-                                    <div class="space-y-1.5">
-                                        <h4 class="text-xs sm:text-sm font-bold text-slate-800 line-clamp-1 group-hover:text-[#13416B] transition-colors"
+                                    <!-- Body -->
+                                    <div>
+
+                                        <h4 class="text-xs font-bold text-slate-800 line-clamp-1"
                                             title="{{ $item['title'] }}">
                                             {{ $item['title'] }}
                                         </h4>
-                                        <p class="text-[11px] text-slate-500 flex items-center gap-1 truncate">
-                                           
+
+                                        <p class="text-[11px] text-slate-500 truncate mt-0.5">
                                             {{ $item['subtitle'] }}
                                         </p>
 
-                                        <!-- Status Badges khusus RTK -->
-                                        @if (($item['type'] ?? '') === 'rtk')
-                                            <div class="flex flex-wrap items-center gap-1.5 pt-1.5">
-                                                <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide shadow-sm {{ $item['status_verif_badge'] }}">
-                                                    {{ $item['status_verif_label'] }}
-                                                </span>
-                                                <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide shadow-sm {{ $item['status_doc_badge'] }}">
-                                                    {{ $item['status_doc_label'] }}
-                                                </span>
-                                            </div>
-                                        @endif
                                     </div>
 
-                                    <!-- Card Footer: Action Button -->
-                                    <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end">
+                                    <!-- Status RTK -->
+                                    @if (($item['type'] ?? '') === 'rtk')
+                                        <div class="grid grid-cols-2 gap-2 pt-1">
+                                            <div class="rounded-md bg-white border border-slate-200 px-2.5 py-2">
+                                                <p
+                                                    class="text-[9px] uppercase tracking-wide font-semibold text-slate-400 mb-1">
+                                                    Verifikasi
+                                                </p>
+
+                                                <span
+                                                    class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold {{ $item['verification_color'] }}">
+                                                    {{ $item['verification_label'] }}
+                                                </span>
+                                            </div>
+
+                                            <div class="rounded-md bg-white border border-slate-200 px-2.5 py-2">
+                                                <p
+                                                    class="text-[9px] uppercase tracking-wide font-semibold text-slate-400 mb-1">
+                                                    Dokumen
+                                                </p>
+
+                                                <span
+                                                    class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold {{ $item['document_color'] }}">
+                                                    {{ $item['document_label'] }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    <!-- Footer -->
+                                    <div class="flex justify-end pt-1 border-t border-slate-200/60 mt-1">
+
                                         <a href="{{ $item['url'] }}"
-                                            class="inline-flex items-center text-[11px] font-bold text-[#13416B] hover:text-[#285d8f] gap-1 transition-all group-hover:translate-x-0.5">
-                                            <span>Tinjau Persetujuan</span>
-                                            <i class="fas fa-chevron-right text-[9px]"></i>
+                                            class="inline-flex items-center text-[11px] font-semibold text-[#13416B] hover:text-[#547996] transition-colors">
+
+                                            {{ $item['action_label'] ?? 'Tinjau Persetujuan' }}
+
+                                            <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
+
                                         </a>
+
                                     </div>
 
                                 </div>
                             @empty
                                 <div class="flex flex-col items-center justify-center py-10 text-center">
+
                                     <div
                                         class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2">
                                         <i class="fas fa-check-circle text-lg"></i>
                                     </div>
-                                    <p class="text-xs font-semibold text-slate-600">Tidak ada persetujuan tertunda</p>
-                                    <p class="text-[11px] text-slate-400">Semua dokumen dan projek telah diproses</p>
+
+                                    <p class="text-xs font-semibold text-slate-600">
+                                        Tidak ada persetujuan tertunda
+                                    </p>
+
+                                    <p class="text-[11px] text-slate-400 mt-1">
+                                        Semua RTK dan projek telah diproses.
+                                    </p>
+
                                 </div>
                             @endforelse
                         </div>
@@ -543,37 +576,68 @@
         ` : '';
 
                         const cardHtml = `
-            <div class="group relative bg-white hover:bg-slate-50/50 rounded-xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-3">
-                <div class="flex items-center justify-between gap-2">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/60">
-                        <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
-                        ${item.category}
-                    </span>
-                    <span class="text-[10px] font-medium text-slate-400 flex items-center gap-1">
-                        <i class="far fa-clock text-[9px]"></i>
-                        ${item.date_formatted}
-                    </span>
-                </div>
+    <div class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-lg border border-slate-200 transition-all duration-200 flex flex-col gap-2">
 
-                <div class="space-y-1.5">
-                    <h4 class="text-xs sm:text-sm font-bold text-slate-800 line-clamp-1 group-hover:text-[#13416B] transition-colors" title="${item.title}">
-                        ${item.title}
-                    </h4>
-                    <p class="text-[11px] text-slate-500 flex items-center gap-1 truncate">
-                        <i class="fas fa-map-marker-alt text-[10px] text-slate-400"></i>
-                        ${item.subtitle}
-                    </p>
-                    ${statusBadges}
-                </div>
+        <div class="flex items-center justify-between gap-2">
 
-                <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end">
-                    <a href="${item.url}" class="inline-flex items-center text-[11px] font-bold text-[#13416B] hover:text-[#285d8f] gap-1 transition-all group-hover:translate-x-0.5">
-                        <span>Tinjau Persetujuan</span>
-                        <i class="fas fa-chevron-right text-[9px]"></i>
-                    </a>
-                </div>
-            </div>
-        `;
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${item.badge_color || 'bg-[#13416B] text-white border-transparent'}">
+                ${item.category}
+            </span>
+
+            <span class="text-[10px] font-medium text-slate-400">
+                <i class="far fa-clock mr-1"></i>${item.date_formatted}
+            </span>
+
+        </div>
+
+        <div>
+
+            <h4
+                class="text-xs font-bold text-slate-800 line-clamp-1"
+                title="${item.title}">
+                ${item.title}
+            </h4>
+
+            <p class="text-[11px] text-slate-500 truncate mt-0.5">
+                ${item.subtitle}
+            </p>
+
+        </div>
+
+        ${
+            item.type === 'rtk'
+                ? `
+                                            <div class="flex flex-wrap items-center gap-1.5">
+
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${item.status_verif_badge}">
+                                                    ${item.status_verif_label}
+                                                </span>
+
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${item.status_doc_badge}">
+                                                    ${item.status_doc_label}
+                                                </span>
+
+                                            </div>
+                                        `
+                : ''
+        }
+
+        <div class="flex justify-end pt-1 border-t border-slate-200/60 mt-1">
+
+            <a
+                href="${item.url}"
+                class="inline-flex items-center text-[11px] font-semibold text-[#13416B] hover:text-[#547996] transition-colors">
+
+                ${item.action_label || 'Tinjau Persetujuan'}
+
+                <i class="fas fa-chevron-right ml-1 text-[9px]"></i>
+
+            </a>
+
+        </div>
+
+    </div>
+`;
                         listContainer.insertAdjacentHTML('beforeend', cardHtml);
                     });
                 }
