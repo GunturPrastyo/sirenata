@@ -4,7 +4,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @endpush
 
-    <div class="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6">
+    <div class="p-0 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6">
 
         <!-- ===================================== -->
         <!-- 1. STATS GRID (Solid Colored Cards)   -->
